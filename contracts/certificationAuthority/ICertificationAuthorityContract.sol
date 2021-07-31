@@ -10,7 +10,7 @@ interface ICertificationAuthorityContract {
     function disableCertificationAuthority(string memory _id) external;
     function isCertificationAuthorityEnabled(string memory _id) external view returns (bool);
     function isCertificationAuthorityExists(string memory _id) external view returns (bool);
-    function getCertificationAuthority(string memory _id) external view returns (CertificationAuthorityRecord memory);
+    function getDefaultCostOfIssuingCertificate(string memory _id) external view returns (uint);
     
     // Data Structure
     struct CertificationAuthorityRecord {

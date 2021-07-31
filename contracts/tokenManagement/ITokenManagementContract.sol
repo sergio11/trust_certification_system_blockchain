@@ -8,7 +8,9 @@ interface ITokenManagementContract {
     function buyTokens(uint _tokenCount) external payable;
     function balanceOf() external view returns (uint);
     function getMyTokens() external view returns (uint);
+    function getTokens(address client) external view returns (uint);
     function generateTokens(uint _tokenCount) external;
+    function transfer(address client, address recipient, uint256 amount) external returns (bool);
     
     // Data Structure
     struct ClientRecord {
