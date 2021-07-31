@@ -8,18 +8,16 @@ contract CertificationAuthorityContract is ICertificationAuthorityContract {
     // Owner Direction
     address payable public ownerAddress;
     
+    mapping(string => CertificationAuthorityRecord) private certificationAuthorities;
     
-    mapping(string => CertificationAuthorityRecord) public certificationAuthorities;
-    
-    constructor () public {
+    constructor () {
        ownerAddress = msg.sender;
     }
     
-    function addCertificationAuthority(string memory _id, string memory _name, uint _costOfIssuingCertificate) external override restricted() CertificationAuthorityMustNotExist(_id) {
-        certificationAuthorities[_id] = CertificationAuthorityRecord(_name, _costOfIssuingCertificate, true, true);
+    function addCertificationAuthority(string memory _id, string memory _name, uint _defaultCostOfIssuingCertificate) external override restricted() CertificationAuthorityMustNotExist(_id) {
+        certificationAuthorities[_id] = CertificationAuthorityRecord(_name, _defaultCostOfIssuingCertificate, true, true);
         emit OnNewCertificationAuthorityCreated(_id);
     }
-    
     
     function removeCertificationAuthority(string memory _id) external override restricted() CertificationAuthorityMustExist(_id) { 
         delete certificationAuthorities[_id];
@@ -36,16 +34,23 @@ contract CertificationAuthorityContract is ICertificationAuthorityContract {
        emit OnCertificationAuthorityDisabled(_id);
     }
     
-    function isCertificationAuthorityEnabled(string memory _id) external view override restricted() CertificationAuthorityMustExist(_id) returns (bool)  {
+    function isCertificationAuthorityEnabled(string memory _id) external view override CertificationAuthorityMustExist(_id) returns (bool)  {
         return certificationAuthorities[_id].isAvailable;
     }
     
+    function isCertificationAuthorityExists(string memory _id) external view override returns (bool) {
+        return certificationAuthorities[_id].isExist;
+    }
+    
+    function getCertificationAuthority(string memory _id) public view override returns (CertificationAuthorityRecord memory) {
+        return certificationAuthorities[_id];
+    }
+     
     // Modifiers
     modifier restricted() {
         if (msg.sender == ownerAddress) _;
     }
-    
-    // Modifiers
+
     modifier CertificationAuthorityMustExist(string memory _id) {
         require(certificationAuthorities[_id].isExist, "Certification Authority with given id don't exists");
         _;

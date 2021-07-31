@@ -14,7 +14,7 @@ contract TokenManagementContract is ITokenManagementContract {
     
     mapping(address => ClientRecord) public clients;
     
-    constructor () public {
+    constructor () {
         // create ERC20 token with initial supply
         token = new ERC20Basic(20000);
         ownerAddress = msg.sender;

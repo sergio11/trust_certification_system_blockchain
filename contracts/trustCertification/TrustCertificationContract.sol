@@ -5,4 +5,15 @@ import "./ITrustCertificationContract.sol";
 
 contract TrustCertificationContract is ITrustCertificationContract {
     
+    address tokenManagementAddr;
+    address certificationCourseAddr;
+    
+    function setTokenManagementAddr(address _tokenManagementAddr) public payable {
+       tokenManagementAddr = _tokenManagementAddr;
+    }
+    
+    function setCertificationCourseAddr(address _certificationCourseAddr) public payable {
+       certificationCourseAddr = _certificationCourseAddr;
+    }
+    
 }
