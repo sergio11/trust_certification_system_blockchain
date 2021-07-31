@@ -4,16 +4,18 @@ pragma experimental ABIEncoderV2;
 
 interface ICertificationAuthorityContract {
     
-    function addCertificationAuthority(string memory _id, string memory _name, uint _costOfIssuingCertificate) external;
+    function addCertificationAuthority(string memory _id, string memory _name, uint _defaultCostOfIssuingCertificate) external;
     function removeCertificationAuthority(string memory _id) external;
     function enableCertificationAuthority(string memory _id) external;
     function disableCertificationAuthority(string memory _id) external;
     function isCertificationAuthorityEnabled(string memory _id) external view returns (bool);
+    function isCertificationAuthorityExists(string memory _id) external view returns (bool);
+    function getCertificationAuthority(string memory _id) external view returns (CertificationAuthorityRecord memory);
     
     // Data Structure
     struct CertificationAuthorityRecord {
         string name;
-        uint costOfIssuingCertificate;
+        uint defaultCostOfIssuingCertificate;
         bool isAvailable;
         bool isExist;
     }

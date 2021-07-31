@@ -25,7 +25,6 @@ interface IERC20{
     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
 
 
-
     //Evento que se debe emitir cuando una cantidad de tokens pase de un origen a un destino
     event Transfer(address indexed from, address indexed to, uint256 value);
 
@@ -47,7 +46,7 @@ contract ERC20Basic is IERC20{
     mapping (address => mapping (address => uint)) allowed;
     uint256 totalSupply_;
 
-    constructor (uint256 initialSupply) public{
+    constructor (uint256 initialSupply) {
         totalSupply_ = initialSupply;
         balances[msg.sender] = totalSupply_;
     }
