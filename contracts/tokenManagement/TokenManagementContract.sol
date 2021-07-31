@@ -32,6 +32,10 @@ contract TokenManagementContract is ITokenManagementContract {
         return token.balanceOf(msg.sender);
     }
     
+    function getTokens(address client) public override view returns (uint) {
+        return token.balanceOf(client);
+    }
+    
     function generateTokens(uint _tokenCount) external override restricted() {
         token.increaseTotalSupply(_tokenCount);
     }
@@ -46,9 +50,16 @@ contract TokenManagementContract is ITokenManagementContract {
         clients[msg.sender].tokensAvailables += _tokenCount;
     }
     
+    function transfer(address client, address recipient, uint256 amount) public override returns (bool) {
+        token.transfer(client, recipient, amount);
+        clients[client].tokensAvailables -= amount;
+        return true;
+    }
+    
      // Modifiers
     modifier restricted() {
-        if (msg.sender == ownerAddress) _;
+         require(msg.sender == ownerAddress, "You don't have enought permissions to execute this operation");
+         _;
     }
     
     

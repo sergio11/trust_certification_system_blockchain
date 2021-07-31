@@ -4,13 +4,14 @@ pragma experimental ABIEncoderV2;
 
 interface ICertificationCourseContract { 
     
-    function addCertificationCourse(string memory _id, string memory _name, uint _costOfIssuingCertificate, uint _durationInHours, string memory _certificationAuthorityId) external;
+    function addCertificationCourse(string memory _id, string memory _name, uint _costOfIssuingCertificate, uint _durationInHours, uint _expirationInDays, string memory _certificationAuthorityId) external;
     function removeCertificationCourse(string memory _id) external;
     function enableCertificationCourse(string memory _id) external;
     function disableCertificationCourse(string memory _id) external;
-    function isCertificationCourseEnabled(string memory _id) external view returns (bool);
+    function canBeIssued(string memory _id) external view returns (bool);
     function isCertificationCourseExists(string memory _id) external view returns (bool);
-    function getCertificationCourse(string memory _id) external view returns (CertificationCourseRecord memory);
+    function getCostOfIssuingCertificate(string memory _id) external view returns (uint);
+    function getExpirationDate(string memory _id) external view returns (uint);
     
     // Data Structure
     struct CertificationCourseRecord {

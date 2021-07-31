@@ -42,13 +42,14 @@ contract CertificationAuthorityContract is ICertificationAuthorityContract {
         return certificationAuthorities[_id].isExist;
     }
     
-    function getCertificationAuthority(string memory _id) public view override returns (CertificationAuthorityRecord memory) {
-        return certificationAuthorities[_id];
+    function getDefaultCostOfIssuingCertificate(string memory _id) public view override returns (uint) {
+        return certificationAuthorities[_id].defaultCostOfIssuingCertificate;
     }
      
     // Modifiers
     modifier restricted() {
-        if (msg.sender == ownerAddress) _;
+        require(msg.sender == ownerAddress, "You don't have enought permissions to execute this operation");
+         _;
     }
 
     modifier CertificationAuthorityMustExist(string memory _id) {
