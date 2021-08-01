@@ -1,48 +1,48 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.4 <0.7.4;
 pragma experimental ABIEncoderV2;
+import "../ownable/Ownable.sol";
 import "./ITrustCertificationContract.sol";
 import "../tokenManagement/ITokenManagementContract.sol";
 import "../certificationCourse/ICertificationCourseContract.sol";
 
-contract TrustCertificationContract is ITrustCertificationContract {
+contract TrustCertificationContract is Ownable, ITrustCertificationContract {
     
-    address tokenManagementAddr;
-    address certificationCourseAddr;
-    // Owner Direction
-    address payable public ownerAddress;
+    address private tokenManagementAddr;
+    address private certificationCourseAddr;
     
     mapping(string => CertificateRecord) private certificates;
+    mapping(address => string) certificatesByIssuer;
+    mapping(address => string) certificatesByRecipient;
     
-    constructor () {
-       ownerAddress = msg.sender;
-    }
-    
-    function setTokenManagementAddr(address _tokenManagementAddr) public payable restricted() {
+    function setTokenManagementAddr(address _tokenManagementAddr) public payable onlyOwner() {
        tokenManagementAddr = _tokenManagementAddr;
     }
     
-    function setCertificationCourseAddr(address _certificationCourseAddr) public payable restricted() {
+    function setCertificationCourseAddr(address _certificationCourseAddr) public payable onlyOwner() {
        certificationCourseAddr = _certificationCourseAddr;
     }
     
-    function addCertificate(string memory _id, string memory _certificateCourseId, uint _qualification,  uint _durationInHours) external override CertificateMustNotExist(_id) {
+    function issueCertificate(address _recipientAddress, string memory _id, string memory _certificateCourseId, uint _qualification) external override CertificateMustNotExist(_id) IssuerMustBeOwnerOfTheCourse(_certificateCourseId, msg.sender) {
         require(ICertificationCourseContract(certificationCourseAddr).isCertificationCourseExists(_certificateCourseId), "Certification Course with given id don't exists");
         require(ICertificationCourseContract(certificationCourseAddr).canBeIssued(_certificateCourseId), "Certification Course with given id can not be issued");
-        uint costOfIssuingCertificate = ICertificationCourseContract(certificationCourseAddr).getCostOfIssuingCertificate(_certificateCourseId);
-        uint myTokens = ITokenManagementContract(tokenManagementAddr).getTokens(msg.sender);
-        require(costOfIssuingCertificate <= myTokens, "You do not have enough tokens to issue the certificate");
-        require(ITokenManagementContract(tokenManagementAddr).transfer(msg.sender, address(this), costOfIssuingCertificate), "The transfer could not be made");
-        certificates[_id] = CertificateRecord(_certificateCourseId, ICertificationCourseContract(certificationCourseAddr).getExpirationDate(_certificateCourseId) , _qualification, _durationInHours, block.timestamp, true, true);
+        uint _costOfIssuingCertificate = ICertificationCourseContract(certificationCourseAddr).getCostOfIssuingCertificate(_certificateCourseId);
+        uint _durationInHours =  ICertificationCourseContract(certificationCourseAddr).getDurationInHours(_certificateCourseId);
+        uint _recipientAddressTokens = ITokenManagementContract(tokenManagementAddr).getTokens(_recipientAddress);
+        require(_costOfIssuingCertificate <= _recipientAddressTokens, "You do not have enough tokens to issue the certificate");
+        require(ITokenManagementContract(tokenManagementAddr).transfer(_recipientAddress, msg.sender, _costOfIssuingCertificate), "The transfer could not be made");
+        certificates[_id] = CertificateRecord(msg.sender, _recipientAddress, _certificateCourseId, ICertificationCourseContract(certificationCourseAddr).getExpirationDate(_certificateCourseId) , _qualification, _durationInHours, block.timestamp, true, true);
+        certificatesByIssuer[msg.sender] = _id;
+        certificatesByRecipient[_recipientAddress] = _id;
         emit OnNewCertificateGenerated(_id);
     }
     
-    function enableCertificate(string memory _id) external override restricted() CertificateMustExist(_id) { 
+    function enableCertificate(string memory _id) external override CertificateMustExist(_id) { 
         certificates[_id].isEnabled = true;
         emit OnCertificateEnabled(_id);
     }
     
-    function disableCertificate(string memory _id) external override restricted() CertificateMustExist(_id) { 
+    function disableCertificate(string memory _id) external override onlyOwner() CertificateMustExist(_id) { 
         certificates[_id].isEnabled = false;
         emit OnCertificateDisabled(_id);
     }
@@ -54,10 +54,6 @@ contract TrustCertificationContract is ITrustCertificationContract {
 
     
      // Modifiers
-    modifier restricted() {
-        require(msg.sender == ownerAddress, "You don't have enought permissions to execute this operation");
-        _;
-    }
 
     modifier CertificateMustExist(string memory _id) {
         require(certificates[_id].isExist, "Certification with given id don't exists");
@@ -68,4 +64,10 @@ contract TrustCertificationContract is ITrustCertificationContract {
         require(!certificates[_id].isExist, "Certification with given id already exists");
         _;
     }
+    
+    modifier IssuerMustBeOwnerOfTheCourse(string memory _courseId, address _certificationAuthorityAddress) {
+        require(ICertificationCourseContract(certificationCourseAddr).isYourOwner(_courseId, _certificationAuthorityAddress), "Certification Authority must be the owner of this course");
+        _;
+    }
+    
 }

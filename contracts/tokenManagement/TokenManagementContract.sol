@@ -1,23 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.4 <0.7.4;
 pragma experimental ABIEncoderV2;
+import "../ownable/Ownable.sol";
 import "./ITokenManagementContract.sol";
 import "../ERC20/ERC20.sol";
 
-contract TokenManagementContract is ITokenManagementContract {
+contract TokenManagementContract is Ownable, ITokenManagementContract {
     
     // Token contract instance
     ERC20Basic private token;
-    
-    // Owner Direction
-    address payable public ownerAddress;
     
     mapping(address => ClientRecord) public clients;
     
     constructor () {
         // create ERC20 token with initial supply
         token = new ERC20Basic(20000);
-        ownerAddress = msg.sender;
     }
     
     function getTokenPriceInWeis(uint _tokenCount) public override pure returns (uint) {
@@ -36,7 +33,7 @@ contract TokenManagementContract is ITokenManagementContract {
         return token.balanceOf(client);
     }
     
-    function generateTokens(uint _tokenCount) external override restricted() {
+    function generateTokens(uint _tokenCount) external override onlyOwner() {
         token.increaseTotalSupply(_tokenCount);
     }
     
@@ -55,12 +52,5 @@ contract TokenManagementContract is ITokenManagementContract {
         clients[client].tokensAvailables -= amount;
         return true;
     }
-    
-     // Modifiers
-    modifier restricted() {
-         require(msg.sender == ownerAddress, "You don't have enought permissions to execute this operation");
-         _;
-    }
-    
     
 }

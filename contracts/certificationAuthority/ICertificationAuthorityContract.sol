@@ -4,13 +4,13 @@ pragma experimental ABIEncoderV2;
 
 interface ICertificationAuthorityContract {
     
-    function addCertificationAuthority(string memory _id, string memory _name, uint _defaultCostOfIssuingCertificate) external;
-    function removeCertificationAuthority(string memory _id) external;
-    function enableCertificationAuthority(string memory _id) external;
-    function disableCertificationAuthority(string memory _id) external;
-    function isCertificationAuthorityEnabled(string memory _id) external view returns (bool);
-    function isCertificationAuthorityExists(string memory _id) external view returns (bool);
-    function getDefaultCostOfIssuingCertificate(string memory _id) external view returns (uint);
+    function addCertificationAuthority(string memory _name, uint _defaultCostOfIssuingCertificate) external;
+    function removeCertificationAuthority(address _address) external;
+    function enableCertificationAuthority(address _address) external;
+    function disableCertificationAuthority(address _address) external;
+    function isCertificationAuthorityEnabled(address _address) external view returns (bool);
+    function isCertificationAuthorityExists(address _address) external view returns (bool);
+    function getDefaultCostOfIssuingCertificate(address _address) external view returns (uint);
     
     // Data Structure
     struct CertificationAuthorityRecord {
@@ -21,9 +21,9 @@ interface ICertificationAuthorityContract {
     }
     
     // Events Definitions
-    event OnNewCertificationAuthorityCreated(string _id);
-    event OnCertificationAuthorityRemoved(string _id);
-    event OnCertificationAuthorityEnabled(string _id);
-    event OnCertificationAuthorityDisabled(string _id);
+    event OnNewCertificationAuthorityCreated(address _address, string name);
+    event OnCertificationAuthorityRemoved(address _address);
+    event OnCertificationAuthorityEnabled(address _address);
+    event OnCertificationAuthorityDisabled(address _address);
     
 }
