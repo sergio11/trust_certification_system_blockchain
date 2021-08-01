@@ -7,9 +7,10 @@ import "./ICertificationAuthorityContract.sol";
 
 contract CertificationAuthorityContract is Ownable, ICertificationAuthorityContract {
     
-    address private tokenManagementAddr;
-    uint8 public constant costOfAddCertificationAuthority = 20;
     
+    uint8 private constant COST_OF_ADD_CERTIFICATION_AUTHORITY = 20;
+    
+    address private tokenManagementAddr;
     mapping(address => CertificationAuthorityRecord) private certificationAuthorities;
     
     function setTokenManagementAddr(address _tokenManagementAddr) public payable onlyOwner() {
@@ -18,8 +19,8 @@ contract CertificationAuthorityContract is Ownable, ICertificationAuthorityContr
     
     function addCertificationAuthority(string memory _name, uint _defaultCostOfIssuingCertificate) external override CertificationAuthorityMustNotExist(msg.sender) {
         uint _senderTokens = ITokenManagementContract(tokenManagementAddr).getTokens(msg.sender);
-        require(_senderTokens >= costOfAddCertificationAuthority, "You do not have enough tokens to register as Certification Authority");
-        require(ITokenManagementContract(tokenManagementAddr).transfer(msg.sender, address(this), costOfAddCertificationAuthority), "The transfer could not be made");
+        require(_senderTokens >= COST_OF_ADD_CERTIFICATION_AUTHORITY, "You do not have enough tokens to register as Certification Authority");
+        require(ITokenManagementContract(tokenManagementAddr).transfer(msg.sender, address(this), COST_OF_ADD_CERTIFICATION_AUTHORITY), "The transfer could not be made");
         certificationAuthorities[msg.sender] = CertificationAuthorityRecord(_name, _defaultCostOfIssuingCertificate, true, true);
         emit OnNewCertificationAuthorityCreated(msg.sender, _name);
     }
@@ -29,18 +30,18 @@ contract CertificationAuthorityContract is Ownable, ICertificationAuthorityContr
         emit OnCertificationAuthorityRemoved(_address);
     }
     
-    function enableCertificationAuthority(address _address) external override onlyOwner() CertificationAuthorityMustExist(_address) {
-        certificationAuthorities[_address].isAvailable = true;
+    function enableCertificationAuthority(address _address) external override onlyOwner() CertificationAuthorityMustBeDisabled(msg.sender) CertificationAuthorityMustExist(_address) {
+        certificationAuthorities[_address].isEnabled = true;
         emit OnCertificationAuthorityEnabled(_address);
     }
     
-    function disableCertificationAuthority(address _address) external override onlyOwner() CertificationAuthorityMustExist(_address) {
-       certificationAuthorities[_address].isAvailable = false;
+    function disableCertificationAuthority(address _address) external override onlyOwner() CertificationAuthorityMustBeEnabled(msg.sender) CertificationAuthorityMustExist(_address) {
+       certificationAuthorities[_address].isEnabled = false;
        emit OnCertificationAuthorityDisabled(_address);
     }
     
     function isCertificationAuthorityEnabled(address _address) external view override CertificationAuthorityMustExist(_address) returns (bool)  {
-        return certificationAuthorities[_address].isAvailable;
+        return certificationAuthorities[_address].isEnabled;
     }
     
     function isCertificationAuthorityExists(address _address) external view override returns (bool) {
@@ -60,6 +61,16 @@ contract CertificationAuthorityContract is Ownable, ICertificationAuthorityContr
     
     modifier CertificationAuthorityMustNotExist(address _address) {
         require(!certificationAuthorities[_address].isExist, "Certification Authority with given id already exists");
+        _;
+    }
+    
+    modifier CertificationAuthorityMustBeEnabled(address _address) {
+        require(certificationAuthorities[_address].isEnabled, "Certification Authority must be enabled");
+        _;
+    }
+    
+    modifier CertificationAuthorityMustBeDisabled(address _address) {
+        require(!certificationAuthorities[_address].isEnabled, "Certification Authority must be disabled");
         _;
     }
     

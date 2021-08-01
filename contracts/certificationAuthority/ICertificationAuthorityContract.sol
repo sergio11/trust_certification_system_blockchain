@@ -12,11 +12,12 @@ interface ICertificationAuthorityContract {
     function isCertificationAuthorityExists(address _address) external view returns (bool);
     function getDefaultCostOfIssuingCertificate(address _address) external view returns (uint);
     
+    
     // Data Structure
     struct CertificationAuthorityRecord {
         string name;
         uint defaultCostOfIssuingCertificate;
-        bool isAvailable;
+        bool isEnabled;
         bool isExist;
     }
     
