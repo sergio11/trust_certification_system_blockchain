@@ -1,64 +1,65 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.4 <0.7.4;
 pragma experimental ABIEncoderV2;
+import "../ownable/Ownable.sol";
+import "../tokenManagement/ITokenManagementContract.sol";
 import "./ICertificationAuthorityContract.sol";
 
-contract CertificationAuthorityContract is ICertificationAuthorityContract {
+contract CertificationAuthorityContract is Ownable, ICertificationAuthorityContract {
     
-    // Owner Direction
-    address payable public ownerAddress;
+    address private tokenManagementAddr;
+    uint8 public constant costOfAddCertificationAuthority = 20;
     
-    mapping(string => CertificationAuthorityRecord) private certificationAuthorities;
+    mapping(address => CertificationAuthorityRecord) private certificationAuthorities;
     
-    constructor () {
-       ownerAddress = msg.sender;
+    function setTokenManagementAddr(address _tokenManagementAddr) public payable onlyOwner() {
+       tokenManagementAddr = _tokenManagementAddr;
     }
     
-    function addCertificationAuthority(string memory _id, string memory _name, uint _defaultCostOfIssuingCertificate) external override restricted() CertificationAuthorityMustNotExist(_id) {
-        certificationAuthorities[_id] = CertificationAuthorityRecord(_name, _defaultCostOfIssuingCertificate, true, true);
-        emit OnNewCertificationAuthorityCreated(_id);
+    function addCertificationAuthority(string memory _name, uint _defaultCostOfIssuingCertificate) external override CertificationAuthorityMustNotExist(msg.sender) {
+        uint _senderTokens = ITokenManagementContract(tokenManagementAddr).getTokens(msg.sender);
+        require(_senderTokens >= costOfAddCertificationAuthority, "You do not have enough tokens to register as Certification Authority");
+        require(ITokenManagementContract(tokenManagementAddr).transfer(msg.sender, address(this), costOfAddCertificationAuthority), "The transfer could not be made");
+        certificationAuthorities[msg.sender] = CertificationAuthorityRecord(_name, _defaultCostOfIssuingCertificate, true, true);
+        emit OnNewCertificationAuthorityCreated(msg.sender, _name);
     }
     
-    function removeCertificationAuthority(string memory _id) external override restricted() CertificationAuthorityMustExist(_id) { 
-        delete certificationAuthorities[_id];
-        emit OnCertificationAuthorityRemoved(_id);
+    function removeCertificationAuthority(address _address) external override onlyOwner() CertificationAuthorityMustExist(_address) { 
+        delete certificationAuthorities[_address];
+        emit OnCertificationAuthorityRemoved(_address);
     }
     
-    function enableCertificationAuthority(string memory _id) external override restricted() CertificationAuthorityMustExist(_id) {
-        certificationAuthorities[_id].isAvailable = true;
-        emit OnCertificationAuthorityEnabled(_id);
+    function enableCertificationAuthority(address _address) external override onlyOwner() CertificationAuthorityMustExist(_address) {
+        certificationAuthorities[_address].isAvailable = true;
+        emit OnCertificationAuthorityEnabled(_address);
     }
     
-    function disableCertificationAuthority(string memory _id) external override restricted() CertificationAuthorityMustExist(_id) {
-       certificationAuthorities[_id].isAvailable = false;
-       emit OnCertificationAuthorityDisabled(_id);
+    function disableCertificationAuthority(address _address) external override onlyOwner() CertificationAuthorityMustExist(_address) {
+       certificationAuthorities[_address].isAvailable = false;
+       emit OnCertificationAuthorityDisabled(_address);
     }
     
-    function isCertificationAuthorityEnabled(string memory _id) external view override CertificationAuthorityMustExist(_id) returns (bool)  {
-        return certificationAuthorities[_id].isAvailable;
+    function isCertificationAuthorityEnabled(address _address) external view override CertificationAuthorityMustExist(_address) returns (bool)  {
+        return certificationAuthorities[_address].isAvailable;
     }
     
-    function isCertificationAuthorityExists(string memory _id) external view override returns (bool) {
-        return certificationAuthorities[_id].isExist;
+    function isCertificationAuthorityExists(address _address) external view override returns (bool) {
+        return certificationAuthorities[_address].isExist;
     }
     
-    function getDefaultCostOfIssuingCertificate(string memory _id) public view override returns (uint) {
-        return certificationAuthorities[_id].defaultCostOfIssuingCertificate;
+    function getDefaultCostOfIssuingCertificate(address _address) public view override returns (uint) {
+        return certificationAuthorities[_address].defaultCostOfIssuingCertificate;
     }
      
     // Modifiers
-    modifier restricted() {
-        require(msg.sender == ownerAddress, "You don't have enought permissions to execute this operation");
-         _;
-    }
 
-    modifier CertificationAuthorityMustExist(string memory _id) {
-        require(certificationAuthorities[_id].isExist, "Certification Authority with given id don't exists");
+    modifier CertificationAuthorityMustExist(address _address) {
+        require(certificationAuthorities[_address].isExist, "Certification Authority with given id don't exists");
         _;
     }
     
-    modifier CertificationAuthorityMustNotExist(string memory _id) {
-        require(!certificationAuthorities[_id].isExist, "Certification Authority with given id already exists");
+    modifier CertificationAuthorityMustNotExist(address _address) {
+        require(!certificationAuthorities[_address].isExist, "Certification Authority with given id already exists");
         _;
     }
     
