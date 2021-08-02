@@ -23,8 +23,8 @@ contract CertificationCourseContract is Ownable, ICertificationCourseContract {
     function setTokenManagementAddr(address _tokenManagementContractAddr) public payable onlyOwner() {
        tokenManagementContractAddr = _tokenManagementContractAddr;
     }
-
-    function addCertificationCourse(string memory _name, uint _costOfIssuingCertificate, uint _durationInHours, uint _expirationInDays) external override MustBeAValidCertificationAuthority(msg.sender) returns(uint){
+    
+    function addCertificationCourse(string memory _name, uint _costOfIssuingCertificate, uint _durationInHours, uint _expirationInDays, bool _canBeRenewed, uint _costOfRenewingCertificate) external override MustBeAValidCertificationAuthority(msg.sender) returns(uint){
         uint _senderTokens = ITokenManagementContract(tokenManagementContractAddr).getTokens(msg.sender);
         require(_senderTokens >= COST_OF_ADD_CERTIFICATION_COURSE, "You do not have enough tokens to register as Certification Course");
         require(ITokenManagementContract(tokenManagementContractAddr).transfer(msg.sender, address(this), COST_OF_ADD_CERTIFICATION_COURSE), "The transfer could not be made");
@@ -33,10 +33,15 @@ contract CertificationCourseContract is Ownable, ICertificationCourseContract {
             _costOfIssuingCertificate = ICertificationAuthorityContract(certificationAuthorityContractAddr).getDefaultCostOfIssuingCertificate(msg.sender);
         
         lastID = lastID + 1;
-        certificationCourse[lastID] = CertificationCourseRecord(_name, _costOfIssuingCertificate, msg.sender, _durationInHours, _expirationInDays, true, true);
+        certificationCourse[lastID] = CertificationCourseRecord(_name, _costOfIssuingCertificate, _costOfRenewingCertificate,
+            msg.sender, _durationInHours, _expirationInDays, _canBeRenewed,  true, true);
         certificationAuthorityCourses[msg.sender].push(lastID);
         emit OnNewCertificationCourseCreated(lastID);
         return lastID;
+    }
+
+    function addCertificationCourse(string memory _name, uint _costOfIssuingCertificate, uint _durationInHours) external override MustBeAValidCertificationAuthority(msg.sender) returns(uint){
+        return this.addCertificationCourse(_name, _costOfIssuingCertificate, _durationInHours, 0, false, 0);
     }
     
     function removeCertificationCourse(uint _id) external override CertificationCourseMustExist(_id) MustBeOwnerOfTheCourse(_id, msg.sender) { 
@@ -60,15 +65,30 @@ contract CertificationCourseContract is Ownable, ICertificationCourseContract {
         && ICertificationAuthorityContract(certificationAuthorityContractAddr).isCertificationAuthorityEnabled(certificationCourse[_id].certificationAuthority);
     }
     
-    function isCertificationCourseExists(uint _id) external view override returns (bool) {
+    function canBeRenewed(uint _id) external view override CertificationCourseMustExist(_id) returns (bool)  { 
+        return certificationCourse[_id].isEnabled 
+        && certificationCourse[_id].canBeRenewed 
+        && ICertificationAuthorityContract(certificationAuthorityContractAddr).isCertificationAuthorityExists(certificationCourse[_id].certificationAuthority)
+        && ICertificationAuthorityContract(certificationAuthorityContractAddr).isCertificationAuthorityEnabled(certificationCourse[_id].certificationAuthority);
+    }
+    
+    function isCertificationCourseExists(uint _id) external view override CertificationCourseMustExist(_id) returns (bool) {
         return certificationCourse[_id].isExist;
     }
     
-    function getCostOfIssuingCertificate(uint _id) public view override returns (uint) {
+    function getCostOfIssuingCertificate(uint _id) public view override CertificationCourseMustExist(_id) returns (uint) {
         return certificationCourse[_id].costOfIssuingCertificate;
     }
     
-    function getDurationInHours(uint _id) public view override returns (uint) {
+    function getCostOfRenewingCertificate(uint _id) external view override CertificationCourseMustExist(_id) returns (uint) {
+        return certificationCourse[_id].costOfRenewingCertificate;
+    }
+    
+    function getCertificateAuthorityForCourse(uint _id) external view override CertificationCourseMustExist(_id) returns (address) {
+        return certificationCourse[_id].certificationAuthority;
+    }
+    
+    function getDurationInHours(uint _id) public view override CertificationCourseMustExist(_id) returns (uint) {
         return certificationCourse[_id].durationInHours;
     }
     
@@ -77,11 +97,11 @@ contract CertificationCourseContract is Ownable, ICertificationCourseContract {
         if(certificationCourse[_id].expirationInDays == 0)
             _expirationDateInSeconds = 0;
         else
-          _expirationDateInSeconds = block.timestamp + (certificationCourse[_id].expirationInDays * 24 * 60 * 60 * 60);
+          _expirationDateInSeconds = block.timestamp + (certificationCourse[_id].expirationInDays * 24 * 60 * 60);
         return _expirationDateInSeconds;
     }
     
-    function isYourOwner(uint _id, address _certificationAuthority) public view override returns (bool) {
+    function isYourOwner(uint _id, address _certificationAuthority) public view override CertificationCourseMustExist(_id) returns (bool) {
         return certificationCourse[_id].certificationAuthority == _certificationAuthority;
     }
     
