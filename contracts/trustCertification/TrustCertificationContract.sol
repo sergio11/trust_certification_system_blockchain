@@ -33,7 +33,7 @@ contract TrustCertificationContract is Ownable, ITrustCertificationContract {
         require(_costOfIssuingCertificate <= _recipientAddressTokens, "You do not have enough tokens to issue the certificate");
         require(ITokenManagementContract(tokenManagementAddr).transfer(_recipientAddress, msg.sender, _costOfIssuingCertificate), "The transfer could not be made");
         lastID = lastID + 1;
-        certificates[lastID] = CertificateRecord(msg.sender, _recipientAddress, _certificateCourseId, ICertificationCourseContract(certificationCourseAddr).getExpirationDate(_certificateCourseId) , _qualification, _durationInHours, block.timestamp, true, true);
+        certificates[lastID] = CertificateRecord(msg.sender, _recipientAddress, _certificateCourseId, ICertificationCourseContract(certificationCourseAddr).getExpirationDate(_certificateCourseId) , _qualification, _durationInHours, block.timestamp, true, true, true);
         certificatesByIssuer[msg.sender].push(lastID);
         certificatesByRecipient[_recipientAddress].push(lastID);
         emit OnNewCertificateGenerated(lastID);
@@ -62,7 +62,12 @@ contract TrustCertificationContract is Ownable, ITrustCertificationContract {
         emit OnCertificateDisabled(_id);
     }
     
-    function isCertificateValid(uint _id) external view override CertificateMustExist(_id) returns (bool) {
+    function updateCertificateVisibility(uint _id, bool _isVisible) external override CertificateMustExist(_id) MustBeOwnerOfTheCertificate(msg.sender, _id) { 
+        certificates[_id].isVisible = _isVisible;
+        emit OnCertificateVisibilityUpdated(_id, _isVisible);
+    }
+    
+    function isCertificateValid(uint _id) external view override CertificateMustExist(_id) CertificateMustVisible(_id) returns (bool) {
         return certificates[_id].isExist && certificates[_id].isEnabled && (certificates[_id].expirationDate == 0 ||
          certificates[_id].expirationDate > 0 &&  block.timestamp < certificates[_id].expirationDate);
     }
@@ -97,6 +102,11 @@ contract TrustCertificationContract is Ownable, ITrustCertificationContract {
     
     modifier CertificateMustNotExist(uint _id) {
         require(!certificates[_id].isExist, "Certification with given id already exists");
+        _;
+    }
+    
+    modifier CertificateMustVisible(uint _id) {
+        require(certificates[_id].isVisible, "Certification with given id is not visible");
         _;
     }
     
