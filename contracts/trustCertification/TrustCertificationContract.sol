@@ -40,6 +40,18 @@ contract TrustCertificationContract is Ownable, ITrustCertificationContract {
         return lastID;
     }
     
+    function renewCertificate(uint _id) external override CertificateMustExist(_id)  MustBeOwnerOfTheCertificate(msg.sender, _id) CertificateMustBeExpired(_id) {
+        CertificateRecord memory certificate = certificates[_id];
+        require(ICertificationCourseContract(certificationCourseAddr).isCertificationCourseExists(certificate.certificateCourseId), "Certification Course for given certificate id don't exists");
+        require(ICertificationCourseContract(certificationCourseAddr).canBeRenewed(certificate.certificateCourseId), "Certification Course for given certificate id can not be renewed");
+        uint _costOfRenewingCertificate = ICertificationCourseContract(certificationCourseAddr).getCostOfRenewingCertificate(certificate.certificateCourseId);
+        uint _recipientAddressTokens = ITokenManagementContract(tokenManagementAddr).getTokens(msg.sender);
+        require(_costOfRenewingCertificate <= _recipientAddressTokens, "You do not have enough tokens to renew the certificate");
+        require(ITokenManagementContract(tokenManagementAddr).transfer(msg.sender, ICertificationCourseContract(certificationCourseAddr).getCertificateAuthorityForCourse(certificate.certificateCourseId), _costOfRenewingCertificate), "The transfer could not be made");
+        certificate.expirationDate = ICertificationCourseContract(certificationCourseAddr).getExpirationDate(certificate.certificateCourseId);
+        emit OnCertificateRenewed(_id);
+    }
+    
     function enableCertificate(uint _id) external override CertificateMustExist(_id) MustBeOwnerOfTheCertificate(msg.sender, _id) { 
         certificates[_id].isEnabled = true;
         emit OnCertificateEnabled(_id);
@@ -54,12 +66,32 @@ contract TrustCertificationContract is Ownable, ITrustCertificationContract {
         return certificates[_id].isExist && certificates[_id].isEnabled && (certificates[_id].expirationDate == 0 ||
          certificates[_id].expirationDate > 0 &&  block.timestamp < certificates[_id].expirationDate);
     }
-
+    
+     function getMyCertificatesAsRecipient() public view override returns (CertificateRecord[] memory) {
+        CertificateRecord[] memory  myCertificates = new CertificateRecord[](certificatesByRecipient[msg.sender].length);
+        for (uint i=0; i < certificatesByRecipient[msg.sender].length; i++) { 
+            myCertificates[i] = certificates[certificatesByRecipient[msg.sender][i]];
+        }
+        return myCertificates;
+    }
+    
+    function getMyCertificatesAsIssuer() external view override returns (CertificateRecord[] memory) { 
+         CertificateRecord[] memory  myCertificates = new CertificateRecord[](certificatesByIssuer[msg.sender].length);
+        for (uint i=0; i < certificatesByIssuer[msg.sender].length; i++) { 
+            myCertificates[i] = certificates[certificatesByIssuer[msg.sender][i]];
+        }
+        return myCertificates;
+    }
     
      // Modifiers
 
     modifier CertificateMustExist(uint _id) {
         require(certificates[_id].isExist, "Certification with given id don't exists");
+        _;
+    }
+    
+    modifier CertificateMustBeExpired(uint _id) {
+        require(certificates[_id].isExist, "Certification with given id has not expired");
         _;
     }
     
