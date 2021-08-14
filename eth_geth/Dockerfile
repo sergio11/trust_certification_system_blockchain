@@ -10,7 +10,6 @@ RUN cd /root &&\
 
 
 COPY ./genesis.json /root/genesis.json
-COPY ./password /root/password
 
 ADD start.sh /root/start.sh
 ADD app.json /root/eth-net-intelligence-api/app.json
