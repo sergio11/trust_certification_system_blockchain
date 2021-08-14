@@ -9,6 +9,10 @@
     <description>Blockchain Gateway Service</description>
     <packaging>jar</packaging>
 
+    <properties>
+        <web3j.version>5.0.0</web3j.version>
+    </properties>
+
     <parent>
         <groupId>com.dreamsoftware</groupId>
         <artifactId>trust_certification_system_blockchain</artifactId>
@@ -17,7 +21,11 @@
     </parent>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>${web3j.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
