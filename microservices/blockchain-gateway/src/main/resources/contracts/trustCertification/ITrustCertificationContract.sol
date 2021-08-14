@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.4 <0.7.4;
+pragma solidity ^0.7.1;
 pragma experimental ABIEncoderV2;
 
 interface ITrustCertificationContract { 
@@ -10,8 +10,6 @@ interface ITrustCertificationContract {
     function disableCertificate(uint _id) external;
     function updateCertificateVisibility(uint _id, bool isVisible) external;
     function isCertificateValid(uint _id) external view returns (bool);
-    function getMyCertificatesAsRecipient() external view returns (CertificateRecord[] memory);
-    function getMyCertificatesAsIssuer() external view returns (CertificateRecord[] memory);
     
     // Data Structure
     struct CertificateRecord {
@@ -25,7 +23,7 @@ interface ITrustCertificationContract {
         bool isVisible;
         bool isEnabled;
         bool isExist;
-    }
+    } 
 
     // Events
     event OnNewCertificateGenerated(uint _id);
