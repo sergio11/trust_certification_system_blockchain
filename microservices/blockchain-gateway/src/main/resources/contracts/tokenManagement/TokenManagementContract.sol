@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.4 <0.7.4;
+pragma solidity ^0.7.1;
 pragma experimental ABIEncoderV2;
 import "../ownable/Ownable.sol";
 import "./ITokenManagementContract.sol";
@@ -12,7 +12,7 @@ contract TokenManagementContract is Ownable, ITokenManagementContract {
     
     mapping(address => ClientRecord) public clients;
     
-    constructor () {
+    constructor() {
         // create ERC20 token with initial supply
         token = new ERC20Basic(20000);
     }

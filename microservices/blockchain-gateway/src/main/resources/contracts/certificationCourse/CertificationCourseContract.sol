@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.4 <0.7.4;
+pragma solidity ^0.7.1;
 pragma experimental ABIEncoderV2;
 import "../ownable/Ownable.sol";
 import "./ICertificationCourseContract.sol";
@@ -103,14 +103,6 @@ contract CertificationCourseContract is Ownable, ICertificationCourseContract {
     
     function isYourOwner(uint _id, address _certificationAuthority) public view override CertificationCourseMustExist(_id) returns (bool) {
         return certificationCourse[_id].certificationAuthority == _certificationAuthority;
-    }
-    
-    function getMyCertificationCourses() public view override MustBeAValidCertificationAuthority(msg.sender) returns (CertificationCourseRecord[] memory) {
-        CertificationCourseRecord[] memory  courses = new CertificationCourseRecord[](certificationAuthorityCourses[msg.sender].length);
-        for (uint i=0; i < certificationAuthorityCourses[msg.sender].length; i++) { 
-            courses[i] = certificationCourse[certificationAuthorityCourses[msg.sender][i]];
-        }
-        return courses;
     }
     
     // modifiers    

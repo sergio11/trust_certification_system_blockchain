@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.4 <0.7.4;
+pragma solidity ^0.7.1;
 pragma experimental ABIEncoderV2;
 
 interface ICertificationAuthorityContract {
@@ -11,7 +11,6 @@ interface ICertificationAuthorityContract {
     function isCertificationAuthorityEnabled(address _address) external view returns (bool);
     function isCertificationAuthorityExists(address _address) external view returns (bool);
     function getDefaultCostOfIssuingCertificate(address _address) external view returns (uint);
-    
     
     // Data Structure
     struct CertificationAuthorityRecord {

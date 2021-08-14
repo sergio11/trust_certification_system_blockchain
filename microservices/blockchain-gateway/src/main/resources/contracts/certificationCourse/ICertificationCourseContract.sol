@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.4 <0.7.4;
+pragma solidity ^0.7.1;
 pragma experimental ABIEncoderV2;
+
 
 interface ICertificationCourseContract { 
     
@@ -18,7 +19,6 @@ interface ICertificationCourseContract {
     function getDurationInHours(uint _id) external view returns (uint);
     function getExpirationDate(uint _id) external view returns (uint);
     function isYourOwner(uint _id, address _certificationAuthority) external view returns (bool);
-    function getMyCertificationCourses() external view returns (CertificationCourseRecord[] memory);
     
     // Data Structure
     struct CertificationCourseRecord {
@@ -39,3 +39,5 @@ interface ICertificationCourseContract {
     event OnCertificationCourseEnabled(uint _id);
     event OnCertificationCourseDisabled(uint _id);
 }
+
+

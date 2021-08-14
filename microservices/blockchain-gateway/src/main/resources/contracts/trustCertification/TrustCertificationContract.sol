@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.4 <0.7.4;
+pragma solidity ^0.7.1;
 pragma experimental ABIEncoderV2;
 import "../ownable/Ownable.sol";
 import "./ITrustCertificationContract.sol";
@@ -72,22 +72,7 @@ contract TrustCertificationContract is Ownable, ITrustCertificationContract {
          certificates[_id].expirationDate > 0 &&  block.timestamp < certificates[_id].expirationDate);
     }
     
-     function getMyCertificatesAsRecipient() public view override returns (CertificateRecord[] memory) {
-        CertificateRecord[] memory  myCertificates = new CertificateRecord[](certificatesByRecipient[msg.sender].length);
-        for (uint i=0; i < certificatesByRecipient[msg.sender].length; i++) { 
-            myCertificates[i] = certificates[certificatesByRecipient[msg.sender][i]];
-        }
-        return myCertificates;
-    }
-    
-    function getMyCertificatesAsIssuer() external view override returns (CertificateRecord[] memory) { 
-         CertificateRecord[] memory  myCertificates = new CertificateRecord[](certificatesByIssuer[msg.sender].length);
-        for (uint i=0; i < certificatesByIssuer[msg.sender].length; i++) { 
-            myCertificates[i] = certificates[certificatesByIssuer[msg.sender][i]];
-        }
-        return myCertificates;
-    }
-    
+   
      // Modifiers
 
     modifier CertificateMustExist(uint _id) {
