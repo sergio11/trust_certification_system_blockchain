@@ -33,7 +33,6 @@ contract TrustCertificationContract is Ownable, ITrustCertificationContract {
         uint _recipientAddressTokens = ITokenManagementContract(tokenManagementAddr).getTokens(_recipientAddress);
         require(_costOfIssuingCertificate <= _recipientAddressTokens, "You do not have enough tokens to issue the certificate");
         require(ITokenManagementContract(tokenManagementAddr).transfer(_recipientAddress, msg.sender, _costOfIssuingCertificate), "The transfer could not be made");
-   
         // Generate certificate id
         string memory _certificateId = Utils.bytes32ToString(keccak256(abi.encodePacked(_recipientAddress, _certificateCourseId)));
    
@@ -76,8 +75,27 @@ contract TrustCertificationContract is Ownable, ITrustCertificationContract {
          certificates[_id].expirationDate > 0 &&  block.timestamp < certificates[_id].expirationDate);
     }
     
+    function getCertificateDetail(string memory _id) external view override CertificateMustExist(_id)  CertificateMustVisible(_id) returns (CertificateRecord memory) {
+        return certificates[_id];
+    }
+    
+    function getMyCertificatesAsRecipient() external view override returns (string[] memory) {
+        string[] memory  myCertificates = new string[](certificatesByRecipient[msg.sender].length);
+        for (uint i=0; i < certificatesByRecipient[msg.sender].length; i++) { 
+           myCertificates[i] = certificatesByRecipient[msg.sender][i];
+        }
+        return myCertificates;
+    }
+    
+    function getMyCertificatesAsIssuer() external view override returns (string[] memory) {
+        string[] memory  myCertificates = new string[](certificatesByIssuer[msg.sender].length);
+        for (uint i=0; i < certificatesByIssuer[msg.sender].length; i++) { 
+           myCertificates[i] = certificatesByIssuer[msg.sender][i];
+        }
+        return myCertificates;
+    }
    
-     // Modifiers
+    // Modifiers
 
     modifier CertificateMustExist(string memory _id) {
         require(certificates[_id].isExist, "Certification with given id don't exists");

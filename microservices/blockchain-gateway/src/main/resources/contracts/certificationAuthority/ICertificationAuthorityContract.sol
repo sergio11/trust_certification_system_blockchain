@@ -11,6 +11,8 @@ interface ICertificationAuthorityContract {
     function isCertificationAuthorityEnabled(address _address) external view returns (bool);
     function isCertificationAuthorityExists(address _address) external view returns (bool);
     function getDefaultCostOfIssuingCertificate(address _address) external view returns (uint);
+    function getCertificateAuthorityDetail(address _address) external view returns (CertificationAuthorityRecord memory);
+    function getCertificateAuthorityDetail() external view returns (CertificationAuthorityRecord memory);
     
     // Data Structure
     struct CertificationAuthorityRecord {

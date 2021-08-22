@@ -51,6 +51,14 @@ contract CertificationAuthorityContract is Ownable, ICertificationAuthorityContr
     function getDefaultCostOfIssuingCertificate(address _address) public view override returns (uint) {
         return certificationAuthorities[_address].defaultCostOfIssuingCertificate;
     }
+    
+    function getCertificateAuthorityDetail(address _address) external view override CertificationAuthorityMustExist(_address) CertificationAuthorityMustBeEnabled(_address) returns (CertificationAuthorityRecord memory) {
+        return certificationAuthorities[_address];
+    }
+    
+    function getCertificateAuthorityDetail() external view override CertificationAuthorityMustExist(msg.sender) returns (CertificationAuthorityRecord memory) {
+         return certificationAuthorities[msg.sender];
+    }
      
     // Modifiers
 

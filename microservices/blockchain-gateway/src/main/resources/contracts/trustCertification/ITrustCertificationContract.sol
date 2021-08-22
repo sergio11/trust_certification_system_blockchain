@@ -10,6 +10,9 @@ interface ITrustCertificationContract {
     function disableCertificate(string memory _id) external;
     function updateCertificateVisibility(string memory _id, bool isVisible) external;
     function isCertificateValid(string memory _id) external view returns (bool);
+    function getCertificateDetail(string memory _id) external view returns (CertificateRecord memory);
+    function getMyCertificatesAsRecipient() external view returns (string[] memory);
+    function getMyCertificatesAsIssuer() external view returns (string[] memory);
     
     // Data Structure
     struct CertificateRecord {
