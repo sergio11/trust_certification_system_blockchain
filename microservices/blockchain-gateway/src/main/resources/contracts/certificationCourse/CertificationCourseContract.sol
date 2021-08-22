@@ -29,6 +29,14 @@ contract CertificationCourseContract is Ownable, ICertificationCourseContract {
     }
     
     function addCertificationCourse(string memory _name, uint _costOfIssuingCertificate, uint _durationInHours, uint _expirationInDays, bool _canBeRenewed, uint _costOfRenewingCertificate) external override MustBeAValidCertificationAuthority(msg.sender) returns(string memory){
+       return _addCertificationCourse(_name, _costOfIssuingCertificate, _durationInHours, _expirationInDays, _canBeRenewed, _costOfRenewingCertificate);
+    }
+
+    function addCertificationCourse(string memory _name, uint _costOfIssuingCertificate, uint _durationInHours) external override MustBeAValidCertificationAuthority(msg.sender) returns(string memory){
+        return _addCertificationCourse(_name, _costOfIssuingCertificate, _durationInHours, 0, false, 0);
+    }
+    
+    function _addCertificationCourse(string memory _name, uint _costOfIssuingCertificate, uint _durationInHours, uint _expirationInDays, bool _canBeRenewed, uint _costOfRenewingCertificate) private returns(string memory) {
         uint _senderTokens = ITokenManagementContract(tokenManagementContractAddr).getTokens(msg.sender);
         require(_senderTokens >= COST_OF_ADD_CERTIFICATION_COURSE, "You do not have enough tokens to register as Certification Course");
         require(ITokenManagementContract(tokenManagementContractAddr).transfer(msg.sender, address(this), COST_OF_ADD_CERTIFICATION_COURSE), "The transfer could not be made");
@@ -44,10 +52,6 @@ contract CertificationCourseContract is Ownable, ICertificationCourseContract {
         // Emit course created event
         emit OnNewCertificationCourseCreated(_courseId);
         return _courseId;
-    }
-
-    function addCertificationCourse(string memory _name, uint _costOfIssuingCertificate, uint _durationInHours) external override MustBeAValidCertificationAuthority(msg.sender) returns(string memory){
-        return this.addCertificationCourse(_name, _costOfIssuingCertificate, _durationInHours, 0, false, 0);
     }
     
     function removeCertificationCourse(string memory  _id) external override CertificationCourseMustExist(_id) MustBeOwnerOfTheCourse(_id, msg.sender) { 
