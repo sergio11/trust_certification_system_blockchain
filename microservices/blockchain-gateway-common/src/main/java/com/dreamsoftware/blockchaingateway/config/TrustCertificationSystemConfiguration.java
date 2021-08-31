@@ -36,13 +36,13 @@ public class TrustCertificationSystemConfiguration {
     }
 
     /**
-     * Provide Tx Manager
+     * Provide Owner Tx Manager
      *
      * @param web3j
      * @return
      */
-    @Bean
-    public TransactionManager provideTxManager(final Web3j web3j) {
+    @Bean("ownerTxManager")
+    public TransactionManager provideOwnerTxManager(final Web3j web3j) {
         return new ClientTransactionManager(web3j, properties.getOwnerAddress());
     }
 

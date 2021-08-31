@@ -25,6 +25,7 @@ public class TrustCertificationSystemProperties {
     private String certificationAuthorityContractAddress;
     private String certificationCourseContractAddress;
     private String trustCertificationContractAddress;
+    private String trustEtherFaucetContractAddress;
 
     public StaticGasProvider gas() {
         return new StaticGasProvider(gasPrice, gasLimit);
