@@ -24,6 +24,7 @@
     </parent>
 
     <modules>
+        <module>blockchain-gateway-common</module>
         <module>blockchain-gateway</module>
     </modules>
 
