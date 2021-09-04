@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SaveCertificationAuthorityDTO {
+public class RegisterCertificationAuthorityDTO {
 
     /**
      * Name
@@ -32,6 +32,6 @@ public class SaveCertificationAuthorityDTO {
      * Default Cost Of Issuing Certificate
      */
     @JsonProperty("defaultCostOfIssuingCertificate")
-    private Integer defaultCostOfIssuingCertificate;
+    private Long defaultCostOfIssuingCertificate;
 
 }

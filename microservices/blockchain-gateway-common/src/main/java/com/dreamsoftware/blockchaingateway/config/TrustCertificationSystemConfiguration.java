@@ -11,7 +11,6 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.ClientTransactionManager;
 import org.web3j.tx.TransactionManager;
-import com.dreamsoftware.blockchaingateway.contracts.*;
 
 /**
  *
@@ -44,57 +43,5 @@ public class TrustCertificationSystemConfiguration {
     @Bean("ownerTxManager")
     public TransactionManager provideOwnerTxManager(final Web3j web3j) {
         return new ClientTransactionManager(web3j, properties.getOwnerAddress());
-    }
-
-    /**
-     * Provide Token Management Contract
-     *
-     * @param web3j
-     * @param transactionManager
-     * @return
-     */
-    @Bean
-    public TokenManagementContract provideTokenManagementContract(final Web3j web3j, final TransactionManager transactionManager) {
-        return TokenManagementContract.load(properties.getTokenManagementContractAddress(), web3j, transactionManager,
-                properties.gas());
-    }
-
-    /**
-     * Provide Certification Authority Contract
-     *
-     * @param web3j
-     * @param transactionManager
-     * @return
-     */
-    @Bean
-    public CertificationAuthorityContract provideCertificationAuthorityContract(final Web3j web3j, final TransactionManager transactionManager) {
-        return CertificationAuthorityContract.load(properties.getCertificationAuthorityContractAddress(), web3j, transactionManager,
-                properties.gas());
-    }
-
-    /**
-     * Provide Certification Course Contract
-     *
-     * @param web3j
-     * @param transactionManager
-     * @return
-     */
-    @Bean
-    public CertificationCourseContract provideCertificationCourseContract(final Web3j web3j, final TransactionManager transactionManager) {
-        return CertificationCourseContract.load(properties.getCertificationAuthorityContractAddress(), web3j, transactionManager,
-                properties.gas());
-    }
-
-    /**
-     * Provide Trust Certification Contract
-     *
-     * @param web3j
-     * @param transactionManager
-     * @return
-     */
-    @Bean
-    public TrustCertificationContract provideTrustCertificationContract(final Web3j web3j, final TransactionManager transactionManager) {
-        return TrustCertificationContract.load(properties.getCertificationAuthorityContractAddress(), web3j, transactionManager,
-                properties.gas());
     }
 }
