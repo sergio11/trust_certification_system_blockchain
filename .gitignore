@@ -4,7 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-eth_geth/data
+ethereum/eth_geth/data
 
 ### STS ###
 .apt_generated
