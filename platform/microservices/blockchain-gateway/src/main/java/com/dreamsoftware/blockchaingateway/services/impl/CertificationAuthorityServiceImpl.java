@@ -4,6 +4,7 @@ import com.dreamsoftware.blockchaingateway.config.properties.TrustCertificationS
 import com.dreamsoftware.blockchaingateway.contracts.CertificationAuthorityContract;
 import com.dreamsoftware.blockchaingateway.contracts.EtherFaucetContract;
 import com.dreamsoftware.blockchaingateway.contracts.TokenManagementContract;
+import com.dreamsoftware.blockchaingateway.model.Wallet;
 import com.dreamsoftware.blockchaingateway.services.ICertificationAuthorityService;
 import com.dreamsoftware.blockchaingateway.web.dto.request.RegisterCertificationAuthorityDTO;
 import io.reactivex.Flowable;
@@ -16,12 +17,14 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.vault.core.VaultTemplate;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.ClientTransactionManager;
 import org.web3j.tx.TransactionManager;
+import org.web3j.utils.Files;
 
 /**
  *
@@ -50,6 +53,11 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     private final TransactionManager ownerTxManager;
 
     /**
+     * Vault Template
+     */
+    private final VaultTemplate vaultTemplate;
+
+    /**
      * Register Certification Authority
      *
      * @param registerCertificationAuthorityDTO
@@ -62,10 +70,18 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
             logger.debug("registerCertificationAuthorityDTO, SECRET: " + registerCertificationAuthorityDTO.getSecret());
             logger.debug("registerCertificationAuthorityDTO, DEFAULT_COST: " + registerCertificationAuthorityDTO.getDefaultCostOfIssuingCertificate());
 
-            final String directory = "file:///C:/certificationAuthorityCredentials/";
-            final String fileName = WalletUtils.generateNewWalletFile(registerCertificationAuthorityDTO.getSecret(), new File(directory));
+            final String directory = System.getProperty("java.io.tmpdir");
 
-            final Credentials credentials = WalletUtils.loadCredentials(registerCertificationAuthorityDTO.getSecret(), new File(directory, fileName));
+            // Generate new wallet file
+            final String fileName = WalletUtils.generateNewWalletFile(registerCertificationAuthorityDTO.getSecret(), new File(directory));
+            final File walletFile = new File(directory, fileName);
+
+            vaultTemplate.write("/vault/file", new Wallet("Test", "Contenido de la wallet"));
+
+            // Save File content into Vault System
+            //vaultTemplate.write("secret/tcs/wallets" + fileName, Files.readString(walletFile));
+            // Load Credentials
+            final Credentials credentials = WalletUtils.loadCredentials(registerCertificationAuthorityDTO.getSecret(), walletFile);
 
             createCertificationAuthorityAccount(credentials, registerCertificationAuthorityDTO.getName(), registerCertificationAuthorityDTO.getDefaultCostOfIssuingCertificate()).subscribe(new Subscriber<TransactionReceipt>() {
                 @Override
