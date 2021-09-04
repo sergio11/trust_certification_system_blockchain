@@ -18,3 +18,32 @@ services:
     cap_add:
       - IPC_LOCK
     command: vault server -config=/vault/config/vault.json
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: on-failure
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=devroot
+      - MONGO_INITDB_ROOT_PASSWORD=devroot
+      - MONGO_INITDB_DATABASE=trustcertificationsystem
+
+
+  # Web-based MongoDB admin interface, written with Node.js and express
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: on-failure
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=devroot
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=devroot
+      - ME_CONFIG_BASICAUTH_USERNAME=dev
+      - ME_CONFIG_BASICAUTH_PASSWORD=dev
+    depends_on:
+      - mongo
+    ports:
+      - "8083:8081"

@@ -21,7 +21,7 @@ desc "Check Private Ethereum Network Deployment File"
 task :check_ethereum_network_deployment_file_task do
 	puts "Check Private Ethereum Network Deployment File ..."
     raise "Deployment file not found, please check availability" unless File.file?("./ethereum/docker-compose.yml")
-    puts "Private Ethereum Network Deployment File"
+    puts "Private Ethereum Network Deployment File OK!"
 end
 
 
@@ -35,7 +35,7 @@ desc "Check Platform Deployment File"
 task :check_platform_deployment_file_task do
 	puts "Check Platform Deployment File ..."
     raise "Deployment file not found, please check availability" unless File.file?("./platform/docker-compose.yml")
-    puts "Platform Deployment File OK"
+    puts "Platform Deployment File OK!"
 end
 
 desc "UnDeploy Trust certification System Blockchain"
