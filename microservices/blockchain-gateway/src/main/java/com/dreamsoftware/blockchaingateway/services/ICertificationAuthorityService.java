@@ -5,6 +5,8 @@
  */
 package com.dreamsoftware.blockchaingateway.services;
 
+import com.dreamsoftware.blockchaingateway.web.dto.request.RegisterCertificationAuthorityDTO;
+
 /**
  *
  * @author ssanchez
@@ -12,12 +14,10 @@ package com.dreamsoftware.blockchaingateway.services;
 public interface ICertificationAuthorityService {
 
     /**
-     * Add Certification Authority
+     * Register Certification Authority
      *
-     * @param name
-     * @param secret
-     * @param defaultCostOfIssuingCertificate
+     * @param registerCertificationAuthorityDTO
      */
-    void addCertificationAuthority(final String name, final String secret, final Long defaultCostOfIssuingCertificate);
+    void register(final RegisterCertificationAuthorityDTO registerCertificationAuthorityDTO);
 
 }

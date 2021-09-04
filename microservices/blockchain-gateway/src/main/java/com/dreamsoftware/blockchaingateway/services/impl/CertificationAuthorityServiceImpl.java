@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.dreamsoftware.blockchaingateway.services.impl;
 
 import com.dreamsoftware.blockchaingateway.config.properties.TrustCertificationSystemProperties;
@@ -10,8 +5,8 @@ import com.dreamsoftware.blockchaingateway.contracts.CertificationAuthorityContr
 import com.dreamsoftware.blockchaingateway.contracts.EtherFaucetContract;
 import com.dreamsoftware.blockchaingateway.contracts.TokenManagementContract;
 import com.dreamsoftware.blockchaingateway.services.ICertificationAuthorityService;
+import com.dreamsoftware.blockchaingateway.web.dto.request.RegisterCertificationAuthorityDTO;
 import io.reactivex.Flowable;
-import io.reactivex.disposables.Disposable;
 import java.io.File;
 import java.math.BigInteger;
 import lombok.RequiredArgsConstructor;
@@ -55,22 +50,24 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     private final TransactionManager ownerTxManager;
 
     /**
-     * Add Certification Authority
+     * Register Certification Authority
      *
-     * @param name
-     * @param secret
-     * @param defaultCostOfIssuingCertificate
+     * @param registerCertificationAuthorityDTO
      */
     @Override
-    public void addCertificationAuthority(final String name, final String secret, final Long defaultCostOfIssuingCertificate) {
+    public void register(final RegisterCertificationAuthorityDTO registerCertificationAuthorityDTO) {
         try {
 
+            logger.debug("registerCertificationAuthorityDTO, NAME: " + registerCertificationAuthorityDTO.getName());
+            logger.debug("registerCertificationAuthorityDTO, SECRET: " + registerCertificationAuthorityDTO.getSecret());
+            logger.debug("registerCertificationAuthorityDTO, DEFAULT_COST: " + registerCertificationAuthorityDTO.getDefaultCostOfIssuingCertificate());
+
             final String directory = "file:///C:/certificationAuthorityCredentials/";
-            final String fileName = WalletUtils.generateNewWalletFile(secret, new File(directory));
+            final String fileName = WalletUtils.generateNewWalletFile(registerCertificationAuthorityDTO.getSecret(), new File(directory));
 
-            final Credentials credentials = WalletUtils.loadCredentials(secret, new File(directory, fileName));
+            final Credentials credentials = WalletUtils.loadCredentials(registerCertificationAuthorityDTO.getSecret(), new File(directory, fileName));
 
-            createCertificationAuthorityAccount(credentials, name, defaultCostOfIssuingCertificate).subscribe(new Subscriber<TransactionReceipt>() {
+            createCertificationAuthorityAccount(credentials, registerCertificationAuthorityDTO.getName(), registerCertificationAuthorityDTO.getDefaultCostOfIssuingCertificate()).subscribe(new Subscriber<TransactionReceipt>() {
                 @Override
                 public void onSubscribe(Subscription s) {
                 }
@@ -93,7 +90,8 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
             });
 
         } catch (Exception ex) {
-
+            ex.printStackTrace();
+            logger.debug("exception ocurred " + ex.getMessage() + " CALLED");
         }
     }
 

@@ -7,7 +7,8 @@ import com.dreamsoftware.blockchaingateway.web.core.IResponseCodeTypes;
  * @author ssanchez
  */
 public enum CertificationAuthorityResponseCodeEnum implements IResponseCodeTypes {
-
+    CERTIFICATION_AUTHORITY_REGISTRATION_REQUESTED(101L),
+    CERTIFICATION_AUTHORITY_REGISTRATION_FAILED(102L),
     VALIDATION_ERROR(104L);
 
     private final Long code;
