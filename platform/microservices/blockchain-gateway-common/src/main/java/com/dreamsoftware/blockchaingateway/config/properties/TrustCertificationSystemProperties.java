@@ -6,16 +6,21 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.web3j.tx.gas.StaticGasProvider;
 import java.math.BigInteger;
+import javax.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author ssanchez
  */
 @Configuration
-@ConfigurationProperties(prefix = "trust.certification.system.contracts")
+@ConfigurationProperties(prefix = "trust.certification.system")
 @Getter
 @Setter
 public class TrustCertificationSystemProperties {
+
+    private Logger logger = LoggerFactory.getLogger(TrustCertificationSystemProperties.class);
 
     private String ownerAddress;
     private String clientAddress;
@@ -29,5 +34,18 @@ public class TrustCertificationSystemProperties {
 
     public StaticGasProvider gas() {
         return new StaticGasProvider(gasPrice, gasLimit);
+    }
+
+    @PostConstruct
+    public void onPostConstruct() {
+        logger.debug("Owner Address: " + ownerAddress);
+        logger.debug("Client Address: " + clientAddress);
+        logger.debug("GAS Price: " + gasPrice);
+        logger.debug("GAS Limit: " + gasLimit);
+        logger.debug("Token Management Contract Address: " + tokenManagementContractAddress);
+        logger.debug("Certification Authority Contract Address: " + certificationAuthorityContractAddress);
+        logger.debug("Certification Course Contract Address: " + certificationCourseContractAddress);
+        logger.debug("Trust Certification Contract Address: " + trustCertificationContractAddress);
+        logger.debug("Trust Ether Faucet Contract Address: " + trustEtherFaucetContractAddress);
     }
 }

@@ -3,6 +3,7 @@ package com.dreamsoftware.blockchaingateway.web.controller;
 import com.dreamsoftware.blockchaingateway.web.core.IResponseCodeTypes;
 
 /**
+ * Certification Authority Response Code Enum
  *
  * @author ssanchez
  */
@@ -20,7 +21,7 @@ public enum CertificationAuthorityResponseCodeEnum implements IResponseCodeTypes
 
     @Override
     public Long getResponseCode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return code;
     }
 
     @Override
