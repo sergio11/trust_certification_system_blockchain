@@ -16,5 +16,6 @@ import lombok.NoArgsConstructor;
 public class Wallet {
 
     private String name;
+    private String secret;
     private String content;
 }

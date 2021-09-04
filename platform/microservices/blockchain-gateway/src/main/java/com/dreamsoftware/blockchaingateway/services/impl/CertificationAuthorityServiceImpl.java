@@ -76,12 +76,13 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
             final String fileName = WalletUtils.generateNewWalletFile(registerCertificationAuthorityDTO.getSecret(), new File(directory));
             final File walletFile = new File(directory, fileName);
 
-            vaultTemplate.write("/vault/file", new Wallet("Test", "Contenido de la wallet"));
+            // Write into Vault the Wallet information
+            vaultTemplate.write("tcs-v1/wallets", new Wallet(fileName, registerCertificationAuthorityDTO.getSecret(), Files.readString(walletFile)));
 
-            // Save File content into Vault System
-            //vaultTemplate.write("secret/tcs/wallets" + fileName, Files.readString(walletFile));
             // Load Credentials
             final Credentials credentials = WalletUtils.loadCredentials(registerCertificationAuthorityDTO.getSecret(), walletFile);
+
+            logger.debug("Wallet with public key: " + credentials.getAddress());
 
             createCertificationAuthorityAccount(credentials, registerCertificationAuthorityDTO.getName(), registerCertificationAuthorityDTO.getDefaultCostOfIssuingCertificate()).subscribe(new Subscriber<TransactionReceipt>() {
                 @Override
@@ -95,6 +96,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
 
                 @Override
                 public void onError(Throwable thrwbl) {
+                    thrwbl.printStackTrace();
                     logger.debug("thrwbl " + thrwbl.getMessage() + " CALLED");
                 }
 
@@ -104,10 +106,9 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
                 }
 
             });
-
         } catch (Exception ex) {
             ex.printStackTrace();
-            logger.debug("exception ocurred " + ex.getMessage() + " CALLED");
+            logger.error("exception ocurred " + ex.getMessage() + " CALLED");
         }
     }
 
@@ -127,6 +128,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
      * @return
      */
     private Flowable<TransactionReceipt> addSeedFundsToCertificationAuthority(final Credentials credentials) {
+        logger.debug("EtherFaucetContract address: " + properties.getTrustEtherFaucetContractAddress());
         final ClientTransactionManager clientTxManager = new ClientTransactionManager(web3j, credentials.getAddress());
         final EtherFaucetContract etherFaucetContract = EtherFaucetContract.load(properties.getTrustEtherFaucetContractAddress(), web3j, clientTxManager, properties.gas());
         return etherFaucetContract.getSeedFunds().flowable();
