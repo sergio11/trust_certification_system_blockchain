@@ -23,6 +23,8 @@ services:
     image: mongo
     container_name: mongo
     restart: on-failure
+    ports:
+      - "27017:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=devroot
       - MONGO_INITDB_ROOT_PASSWORD=devroot
