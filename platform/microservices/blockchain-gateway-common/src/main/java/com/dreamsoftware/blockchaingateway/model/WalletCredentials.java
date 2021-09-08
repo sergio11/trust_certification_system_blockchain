@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Wallet {
+public class WalletCredentials {
 
     private String name;
     private String secret;
-    private String content;
+    private String mnemonic;
 }

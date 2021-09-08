@@ -23,10 +23,10 @@ public class RegisterCertificationAuthorityDTO {
     private String name;
 
     /**
-     * Secret
+     * Password
      */
-    @JsonProperty("secret")
-    private String secret;
+    @JsonProperty("password")
+    private String password;
 
     /**
      * Default Cost Of Issuing Certificate

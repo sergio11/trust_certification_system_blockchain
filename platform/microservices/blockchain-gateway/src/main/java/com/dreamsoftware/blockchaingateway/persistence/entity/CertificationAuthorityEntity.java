@@ -35,10 +35,10 @@ public class CertificationAuthorityEntity {
     private String name;
 
     /**
-     * Secret Hash
+     * Password
      */
-    @Field("secret_hash")
-    private String secretHash;
+    @Field("password")
+    private String passwordHash;
 
     /**
      * Wallet Hash

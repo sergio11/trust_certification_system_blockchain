@@ -24,6 +24,7 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.ClientTransactionManager;
 import org.web3j.tx.TransactionManager;
 import com.dreamsoftware.blockchaingateway.service.IPasswordHashingService;
+import com.dreamsoftware.blockchaingateway.web.controller.error.exception.RegisterCertificationAuthorityException;
 
 /**
  *
@@ -61,10 +62,10 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     private final Web3j web3j;
 
     /**
-     * Owner Tx Manager
+     * Root Tx Manager
      */
-    @Qualifier("ownerTxManager")
-    private final TransactionManager ownerTxManager;
+    @Qualifier("rootTxManager")
+    private final TransactionManager rootTxManager;
 
     /**
      * Register Certification Authority
@@ -75,16 +76,21 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     public void register(final RegisterCertificationAuthorityDTO registerCertificationAuthorityDTO) {
         try {
 
+            logger.info("Connected to Ethereum client version: " + web3j.web3ClientVersion().send().getWeb3ClientVersion());
+
             // Generate Wallet
-            final String walletHash = walletService.generateWallet(registerCertificationAuthorityDTO.getSecret());
+            final String walletHash = walletService.generateWallet(registerCertificationAuthorityDTO.getPassword());
             logger.debug("Wallet created with hash: " + walletHash);
-            final String secretHash = hashService.hash(registerCertificationAuthorityDTO.getSecret());
+            final String secretHash = hashService.hash(registerCertificationAuthorityDTO.getPassword());
             final CertificationAuthorityEntity certificationAuthority = new CertificationAuthorityEntity();
             certificationAuthority.setName(registerCertificationAuthorityDTO.getName());
-            certificationAuthority.setSecretHash(secretHash);
+            certificationAuthority.setPasswordHash(secretHash);
             certificationAuthority.setWalletHash(walletHash);
+
             final CertificationAuthorityEntity certificationAuthoritySaved = certificationAuthorityRepository.save(certificationAuthority);
             final Credentials credentials = walletService.loadCredentials(walletHash);
+
+            logger.debug("Wallet public key: " + credentials.getAddress());
             createCertificationAuthorityAccount(credentials, certificationAuthoritySaved.getName(), registerCertificationAuthorityDTO.getDefaultCostOfIssuingCertificate()).subscribe(new Subscriber<TransactionReceipt>() {
                 @Override
                 public void onSubscribe(Subscription s) {
@@ -109,6 +115,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
         } catch (Exception ex) {
             ex.printStackTrace();
             logger.error("exception ocurred " + ex.getMessage() + " CALLED");
+            throw new RegisterCertificationAuthorityException(ex.getMessage(), ex);
         }
     }
 
@@ -129,9 +136,8 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
      */
     private Flowable<TransactionReceipt> addSeedFundsToCertificationAuthority(final Credentials credentials) {
         logger.debug("EtherFaucetContract address: " + properties.getTrustEtherFaucetContractAddress());
-        final ClientTransactionManager clientTxManager = new ClientTransactionManager(web3j, credentials.getAddress());
-        final EtherFaucetContract etherFaucetContract = EtherFaucetContract.load(properties.getTrustEtherFaucetContractAddress(), web3j, clientTxManager, properties.gas());
-        return etherFaucetContract.getSeedFunds().flowable();
+        final EtherFaucetContract etherFaucetContract = EtherFaucetContract.load(properties.getTrustEtherFaucetContractAddress(), web3j, rootTxManager, properties.gas());
+        return etherFaucetContract.sendSeedFundsTo(credentials.getAddress()).flowable();
     }
 
     /**
@@ -154,7 +160,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
      * @return
      */
     private Flowable<TransactionReceipt> registerCertificationAuthority(final String name, final Long defaultCostOfIssuingCertificate) {
-        final CertificationAuthorityContract certificationAuthorityContract = CertificationAuthorityContract.load(properties.getCertificationAuthorityContractAddress(), web3j, ownerTxManager, properties.gas());
+        final CertificationAuthorityContract certificationAuthorityContract = CertificationAuthorityContract.load(properties.getCertificationAuthorityContractAddress(), web3j, rootTxManager, properties.gas());
         return certificationAuthorityContract.addCertificationAuthority(name, BigInteger.valueOf(defaultCostOfIssuingCertificate)).flowable();
     }
 
