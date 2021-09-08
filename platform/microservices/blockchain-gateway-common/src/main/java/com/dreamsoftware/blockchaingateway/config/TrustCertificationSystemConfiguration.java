@@ -1,15 +1,20 @@
 package com.dreamsoftware.blockchaingateway.config;
 
 import com.dreamsoftware.blockchaingateway.config.properties.TrustCertificationSystemProperties;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
+import org.web3j.crypto.Credentials;
+import org.web3j.crypto.ECKeyPair;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
-import org.web3j.tx.ClientTransactionManager;
+import org.web3j.tx.FastRawTransactionManager;
 import org.web3j.tx.TransactionManager;
 
 /**
@@ -20,7 +25,7 @@ import org.web3j.tx.TransactionManager;
 @RequiredArgsConstructor
 public class TrustCertificationSystemConfiguration {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TrustCertificationSystemConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(TrustCertificationSystemConfiguration.class);
 
     private final TrustCertificationSystemProperties properties;
 
@@ -35,13 +40,27 @@ public class TrustCertificationSystemConfiguration {
     }
 
     /**
-     * Provide Owner Tx Manager
+     * Provide Root Tx Manager
      *
      * @param web3j
      * @return
      */
-    @Bean("ownerTxManager")
-    public TransactionManager provideOwnerTxManager(final Web3j web3j) {
-        return new ClientTransactionManager(web3j, properties.getOwnerAddress());
+    @Bean("rootTxManager")
+    public TransactionManager provideRootTxManager(final Web3j web3j) {
+        /*final Credentials rootCredentials = Credentials.create(properties.getRootPrivateKey(),
+                properties.getRootPublicKey());*/
+        BigInteger privateKeyInBT = new BigInteger(properties.getRootPrivateKey(), 16);
+        final ECKeyPair aPair = ECKeyPair.create(privateKeyInBT);
+        final Credentials rootCredentials = Credentials.create(aPair);
+        BigInteger publicKeyInBT = aPair.getPublicKey();
+        String sPublickeyInHex = publicKeyInBT.toString(16);
+        logger.debug("Root Public Key: " + sPublickeyInHex);
+        return new FastRawTransactionManager(web3j, rootCredentials, properties.getChainId());
     }
+
+    @PostConstruct
+    public void onPostConstruct() {
+
+    }
+
 }

@@ -38,6 +38,11 @@ task :check_platform_deployment_file_task do
     puts "Platform Deployment File OK!"
 end
 
+desc "Start Trust certification System Blockchain"
+task :start => [ :start_ethereum_network, :start_platform ] do 
+	puts "Start Trust certification System Blockchain"
+end 
+
 desc "UnDeploy Trust certification System Blockchain"
 task :undeploy => [:status] do 
 	puts "Undeploy Services"

@@ -14,8 +14,11 @@ spring:
 trust:
     certification:
         system:
+            chain-id: 85
+            wallet-directory: C:\\Users\\ssanchez\\Documents\\trustCertificationSystemBlockchain\\shared\\keystore
             client-address: http://localhost:8545
-            owner-address: "0xE545f3b554175BABcBeF152D4516Ff90455095EE"
+            root-public-key: "0xE545f3b554175BABcBeF152D4516Ff90455095EE"
+            root-private-key: change-me
             gas-price: 1
             gas-limit: 2000000
             token-management-contract-address: "0x4e690116b461DB7E23f78E991F94dB8Eb1E26B55"

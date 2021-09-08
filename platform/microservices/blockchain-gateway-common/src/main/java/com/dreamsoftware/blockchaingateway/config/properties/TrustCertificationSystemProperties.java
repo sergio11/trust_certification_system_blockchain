@@ -22,7 +22,10 @@ public class TrustCertificationSystemProperties {
 
     private Logger logger = LoggerFactory.getLogger(TrustCertificationSystemProperties.class);
 
-    private String ownerAddress;
+    private Long chainId;
+    private String walletDirectory;
+    private String rootPublicKey;
+    private String rootPrivateKey;
     private String clientAddress;
     private BigInteger gasPrice;
     private BigInteger gasLimit;
@@ -38,7 +41,9 @@ public class TrustCertificationSystemProperties {
 
     @PostConstruct
     public void onPostConstruct() {
-        logger.debug("Owner Address: " + ownerAddress);
+        logger.debug("Wallet Directory: " + walletDirectory);
+        logger.debug("Root Public Key: " + rootPublicKey);
+        logger.debug("Root Private Key: " + rootPrivateKey);
         logger.debug("Client Address: " + clientAddress);
         logger.debug("GAS Price: " + gasPrice);
         logger.debug("GAS Limit: " + gasLimit);

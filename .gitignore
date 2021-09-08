@@ -5,7 +5,7 @@ target/
 !**/src/test/**/target/
 
 ethereum/eth_geth/data
-
+shared
 ### STS ###
 .apt_generated
 .classpath
