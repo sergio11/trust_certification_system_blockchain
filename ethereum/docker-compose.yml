@@ -25,7 +25,7 @@ services:
     links:
       - eth_netstats
     entrypoint: /root/start.sh
-    command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc --nodekeyhex=091bd6067cb4612df85d9c1ff85cc47f259ced4d4cd99816b14f35650f59c322 --rpcapi "db,personal,eth,net,web3,txpool,personal" --rpccorsdomain="*" --networkid=85 --rpc --rpcaddr="0.0.0.0" --txpool.globalslots=250000 --txpool.globalqueue=50000'
+    command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc --nodekeyhex=091bd6067cb4612df85d9c1ff85cc47f259ced4d4cd99816b14f35650f59c322 --http --http.api "db,personal,eth,net,web3,txpool,personal" --http.addr="0.0.0.0"  --http.corsdomain="*" --networkid=85 --txpool.globalslots=250000 --txpool.globalqueue=50000'
     volumes:
       - ../shared/keystore:/root/.ethereum/keystore:rw
       - ./eth_geth/data/node_bootstrap:/root/.ethereum/devchain/geth:rw
@@ -45,7 +45,7 @@ services:
     volumes:
       - ../shared/keystore:/root/.ethereum/keystore:rw
       - ./eth_geth/data/node_1:/root/.ethereum/devchain/geth:rw
-    command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc --rpccorsdomain="*" --networkid=85 --rpc --bootnodes="enode://288b97262895b1c7ec61cf314c2e2004407d0a5dc77566877aad1f2a36659c8b698f4b56fd06c4a0c0bf007b4cfb3e7122d907da3b005fa90e724441902eb19e@XXX:30303" --mine --miner.threads=2 --miner.etherbase=0xE545f3b554175BABcBeF152D4516Ff90455095EE'
+    command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc --networkid=85 --http  --bootnodes="enode://288b97262895b1c7ec61cf314c2e2004407d0a5dc77566877aad1f2a36659c8b698f4b56fd06c4a0c0bf007b4cfb3e7122d907da3b005fa90e724441902eb19e@XXX:30303" --mine --miner.threads=2 --miner.gasprice 0 --syncmode full --miner.etherbase=0xE545f3b554175BABcBeF152D4516Ff90455095EE'
   eth_node_2:
     build: eth_geth
     restart: on-failure
@@ -58,7 +58,7 @@ services:
     volumes:
       - ../shared/keystore:/root/.ethereum/keystore:rw
       - ./eth_geth/data/node_2:/root/.ethereum/devchain/geth:rw
-    command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc --rpccorsdomain="*" --networkid=85 --rpc --bootnodes="enode://288b97262895b1c7ec61cf314c2e2004407d0a5dc77566877aad1f2a36659c8b698f4b56fd06c4a0c0bf007b4cfb3e7122d907da3b005fa90e724441902eb19e@XXX:30303" --mine --miner.threads=2 --miner.etherbase=0xE545f3b554175BABcBeF152D4516Ff90455095EE'
+    command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc  --networkid=85 --http  --bootnodes="enode://288b97262895b1c7ec61cf314c2e2004407d0a5dc77566877aad1f2a36659c8b698f4b56fd06c4a0c0bf007b4cfb3e7122d907da3b005fa90e724441902eb19e@XXX:30303"'
   eth_node_3:
     build: eth_geth
     restart: on-failure
@@ -71,7 +71,7 @@ services:
     volumes:
       - ../shared/keystore:/root/.ethereum/keystore:rw
       - ./eth_geth/data/node_3:/root/.ethereum/devchain/geth:rw
-    command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc --rpccorsdomain="*" --networkid=85 --rpc --bootnodes="enode://288b97262895b1c7ec61cf314c2e2004407d0a5dc77566877aad1f2a36659c8b698f4b56fd06c4a0c0bf007b4cfb3e7122d907da3b005fa90e724441902eb19e@XXX:30303"'
+    command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc --networkid=85 --http --bootnodes="enode://288b97262895b1c7ec61cf314c2e2004407d0a5dc77566877aad1f2a36659c8b698f4b56fd06c4a0c0bf007b4cfb3e7122d907da3b005fa90e724441902eb19e@XXX:30303"'
   eth_node_4:
     build: eth_geth
     restart: on-failure
@@ -84,4 +84,17 @@ services:
     volumes:
       - ../shared/keystore:/root/.ethereum/keystore:rw
       - ./eth_geth/data/node_4:/root/.ethereum/devchain/geth:rw
-    command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc --rpccorsdomain="*" --networkid=85 --rpc --bootnodes="enode://288b97262895b1c7ec61cf314c2e2004407d0a5dc77566877aad1f2a36659c8b698f4b56fd06c4a0c0bf007b4cfb3e7122d907da3b005fa90e724441902eb19e@XXX:30303"'
+    command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc --networkid=85 --http --bootnodes="enode://288b97262895b1c7ec61cf314c2e2004407d0a5dc77566877aad1f2a36659c8b698f4b56fd06c4a0c0bf007b4cfb3e7122d907da3b005fa90e724441902eb19e@XXX:30303"'
+  eth_node_5:
+    build: eth_geth
+    restart: on-failure
+    container_name: eth_geth_5
+    hostname: eth_geth_5
+    links:
+      - eth_bootstrap
+      - eth_netstats
+    entrypoint: /root/start.sh
+    volumes:
+      - ../shared/keystore:/root/.ethereum/keystore:rw
+      - ./eth_geth/data/node_5:/root/.ethereum/devchain/geth:rw
+    command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc --networkid=85 --http  --bootnodes="enode://288b97262895b1c7ec61cf314c2e2004407d0a5dc77566877aad1f2a36659c8b698f4b56fd06c4a0c0bf007b4cfb3e7122d907da3b005fa90e724441902eb19e@XXX:30303" --mine --miner.threads=2 --miner.gasprice 0 --syncmode full --miner.etherbase=0xE545f3b554175BABcBeF152D4516Ff90455095EE'

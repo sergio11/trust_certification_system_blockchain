@@ -19,8 +19,8 @@ trust:
             client-address: http://localhost:8545
             root-public-key: "0xE545f3b554175BABcBeF152D4516Ff90455095EE"
             root-private-key: change-me
-            gas-price: 1
-            gas-limit: 2000000
+            gas-price: 1000000000
+            gas-limit: 993613
             token-management-contract-address: "0x4e690116b461DB7E23f78E991F94dB8Eb1E26B55"
             certification-authority-contract-address: "0x801db69e6D2dC0ED1A7Dac9B0be5D0921Dd4395C"
             certification-course-contract-address: "0x6dF5B51DA5587611eAFd0AA7727f0a8CAf9B6B7C"
@@ -31,6 +31,6 @@ logging.level:
   org.springframework.cloud.gateway: DEBUG
   org.springframework.security: DEBUG
   com.dreamsoftware.blockchaingateway: DEBUG
-  logging.level.org.web3j: DEBUG
+  logging.level.org.web3j.protocol.http: TRACE
 
 server.port: 8080

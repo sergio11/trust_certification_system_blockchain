@@ -2,8 +2,6 @@ package com.dreamsoftware.blockchaingateway.config;
 
 import com.dreamsoftware.blockchaingateway.config.properties.TrustCertificationSystemProperties;
 import java.math.BigInteger;
-import java.security.KeyPair;
-import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Configuration;
@@ -47,8 +45,6 @@ public class TrustCertificationSystemConfiguration {
      */
     @Bean("rootTxManager")
     public TransactionManager provideRootTxManager(final Web3j web3j) {
-        /*final Credentials rootCredentials = Credentials.create(properties.getRootPrivateKey(),
-                properties.getRootPublicKey());*/
         BigInteger privateKeyInBT = new BigInteger(properties.getRootPrivateKey(), 16);
         final ECKeyPair aPair = ECKeyPair.create(privateKeyInBT);
         final Credentials rootCredentials = Credentials.create(aPair);
@@ -57,10 +53,4 @@ public class TrustCertificationSystemConfiguration {
         logger.debug("Root Public Key: " + sPublickeyInHex);
         return new FastRawTransactionManager(web3j, rootCredentials, properties.getChainId());
     }
-
-    @PostConstruct
-    public void onPostConstruct() {
-
-    }
-
 }
