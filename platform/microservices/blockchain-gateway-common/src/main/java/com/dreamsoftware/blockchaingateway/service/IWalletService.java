@@ -13,12 +13,11 @@ public interface IWalletService {
     /**
      * Generate Wallet
      *
-     * @param secret
      * @return
      * @throws
      * com.dreamsoftware.blockchaingateway.exception.GenerateWalletException
      */
-    String generateWallet(final String secret) throws GenerateWalletException;
+    String generateWallet() throws GenerateWalletException;
 
     /**
      * Load Credentials
