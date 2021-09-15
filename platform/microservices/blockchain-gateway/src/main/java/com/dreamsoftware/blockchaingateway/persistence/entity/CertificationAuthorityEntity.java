@@ -46,4 +46,10 @@ public class CertificationAuthorityEntity {
     @Field("wallet_hash")
     private String walletHash;
 
+    /**
+     * Is Activated
+     */
+    @Field("is_activated")
+    private Boolean isActivated = false;
+
 }

@@ -10,7 +10,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -41,15 +45,22 @@ public class WalletServiceImpl implements IWalletService {
      */
     private final TrustCertificationSystemProperties trustCertificationSystemProperties;
 
+    /**
+     * Generate Wallet
+     *
+     * @return
+     * @throws GenerateWalletException
+     */
     @Override
-    public String generateWallet(String secret) throws GenerateWalletException {
+    public String generateWallet() throws GenerateWalletException {
         try {
-            final Bip39Wallet bip39Wallet = WalletUtils.generateBip39Wallet(secret, new File(trustCertificationSystemProperties.getWalletDirectory()));
+            final String walletSecret = generateWalletSecret();
+            final Bip39Wallet bip39Wallet = WalletUtils.generateBip39Wallet(walletSecret, new File(trustCertificationSystemProperties.getWalletDirectory()));
             final File walletFile = new File(trustCertificationSystemProperties.getWalletDirectory(),
                     bip39Wallet.getFilename());
             final String walletHash = getFileHash(walletFile);
             // Write into Vault the WalletCredentials information
-            vaultTemplate.write("tcs-v1/wallets/" + walletHash, new WalletCredentials(bip39Wallet.getFilename(), secret, bip39Wallet.getMnemonic()));
+            vaultTemplate.write("tcs-v1/wallets/" + walletHash, new WalletCredentials(bip39Wallet.getFilename(), walletSecret, bip39Wallet.getMnemonic()));
             // Return file SHA Hash
             return walletHash;
         } catch (final Exception ex) {
@@ -80,6 +91,34 @@ public class WalletServiceImpl implements IWalletService {
 
     /**
      * Private Methods
+     */
+    private String generateWalletSecret() {
+        String upperCaseLetters = RandomStringUtils.random(2, 65, 90, true, true);
+        String lowerCaseLetters = RandomStringUtils.random(2, 97, 122, true, true);
+        String numbers = RandomStringUtils.randomNumeric(2);
+        String specialChar = RandomStringUtils.random(2, 33, 47, false, false);
+        String totalChars = RandomStringUtils.randomAlphanumeric(2);
+        String combinedChars = upperCaseLetters.concat(lowerCaseLetters)
+                .concat(numbers)
+                .concat(specialChar)
+                .concat(totalChars);
+        List<Character> pwdChars = combinedChars.chars()
+                .mapToObj(c -> (char) c)
+                .collect(Collectors.toList());
+        Collections.shuffle(pwdChars);
+        String password = pwdChars.stream()
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                .toString();
+        return password;
+    }
+
+    /**
+     * Generate File Hash
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
      */
     private String getFileHash(File file) throws IOException, NoSuchAlgorithmException {
         //Use SHA-1 algorithm

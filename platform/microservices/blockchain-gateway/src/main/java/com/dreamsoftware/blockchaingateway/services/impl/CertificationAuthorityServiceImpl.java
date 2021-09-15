@@ -3,7 +3,6 @@ package com.dreamsoftware.blockchaingateway.services.impl;
 import com.dreamsoftware.blockchaingateway.config.properties.TrustCertificationSystemProperties;
 import com.dreamsoftware.blockchaingateway.contracts.CertificationAuthorityContract;
 import com.dreamsoftware.blockchaingateway.contracts.EtherFaucetContract;
-import com.dreamsoftware.blockchaingateway.contracts.TokenManagementContract;
 import com.dreamsoftware.blockchaingateway.contracts.TokenManagementContractExt;
 import com.dreamsoftware.blockchaingateway.persistence.entity.CertificationAuthorityEntity;
 import com.dreamsoftware.blockchaingateway.persistence.repository.CertificationAuthorityRepository;
@@ -40,7 +39,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     /**
      * Constants
      */
-    private final static Long DEFAULT_CERTIFICATION_AUTHORITY_TOKENS = 30L;
+    private final static Long DEFAULT_CERTIFICATION_AUTHORITY_TOKENS = 20L;
 
     /**
      * Wallet Service
@@ -86,7 +85,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
             logger.info("Network Gas Price: " + web3j.ethGasPrice().send().getGasPrice());
 
             // Generate Wallet
-            final String walletHash = walletService.generateWallet(registerCertificationAuthorityDTO.getPassword());
+            final String walletHash = walletService.generateWallet();
             logger.debug("Wallet created with hash: " + walletHash);
             final String secretHash = hashService.hash(registerCertificationAuthorityDTO.getPassword());
             final CertificationAuthorityEntity certificationAuthority = new CertificationAuthorityEntity();
@@ -134,7 +133,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     private Flowable<TransactionReceipt> createCertificationAuthorityAccount(final Credentials credentials, final String name, final Long defaultCostOfIssuingCertificate) {
         return addSeedFundsToCertificationAuthority(credentials)
                 .flatMap(txr -> buyTokensToCertificationAuthority(credentials))
-                .flatMap(txr -> registerCertificationAuthority(name, defaultCostOfIssuingCertificate));
+                .flatMap(txr -> registerCertificationAuthority(credentials, name, defaultCostOfIssuingCertificate));
     }
 
     /**
@@ -159,19 +158,22 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
         logger.debug("buyTokensToCertificationAuthority address: " + properties.getTokenManagementContractAddress());
         final FastRawTransactionManager txManager = new FastRawTransactionManager(web3j, credentials, properties.getChainId());
         final TokenManagementContractExt tokenManagementContract = TokenManagementContractExt.load(properties.getTokenManagementContractAddress(), web3j, txManager, properties.gas());
-        return tokenManagementContract.buyTokens(BigInteger.valueOf(DEFAULT_CERTIFICATION_AUTHORITY_TOKENS), BigInteger.valueOf(750L)).flowable();
+        return tokenManagementContract.getTokenPriceInWeis(BigInteger.valueOf(DEFAULT_CERTIFICATION_AUTHORITY_TOKENS)).flowable()
+                .flatMap((BigInteger tokensPriceInWeis) -> tokenManagementContract.buyTokens(BigInteger.valueOf(DEFAULT_CERTIFICATION_AUTHORITY_TOKENS), tokensPriceInWeis).flowable());
     }
 
     /**
      * Register Certification Authority
      *
+     * @param credentials
      * @param name
      * @param defaultCostOfIssuingCertificate
      * @return
      */
-    private Flowable<TransactionReceipt> registerCertificationAuthority(final String name, final Long defaultCostOfIssuingCertificate) {
+    private Flowable<TransactionReceipt> registerCertificationAuthority(final Credentials credentials, final String name, final Long defaultCostOfIssuingCertificate) {
         logger.debug("registerCertificationAuthority address: " + properties.getCertificationAuthorityContractAddress());
-        final CertificationAuthorityContract certificationAuthorityContract = CertificationAuthorityContract.load(properties.getCertificationAuthorityContractAddress(), web3j, rootTxManager, properties.gas());
+        final FastRawTransactionManager txManager = new FastRawTransactionManager(web3j, credentials, properties.getChainId());
+        final CertificationAuthorityContract certificationAuthorityContract = CertificationAuthorityContract.load(properties.getCertificationAuthorityContractAddress(), web3j, txManager, properties.gas());
         return certificationAuthorityContract.addCertificationAuthority(name, BigInteger.valueOf(defaultCostOfIssuingCertificate)).flowable();
     }
 
