@@ -1,14 +1,22 @@
 spring:
   application:
-    name: blockchain_gateway_service
-  data:
-    mongodb:
-        authentication-database: admin
-        database: trustcertificationsystem
-        host: localhost
-        port: 27017
-        username: devroot
-        password: devroot
+    name: blockchain_gateway_processor
+  cloud:
+    stream:
+        kafka:
+            binder:
+                brokers: kafka:9092
+                auto-create-topics: false
+                configuration.auto.offset.reset: latest
+        bindings:
+            certificationAuthorityInitialFunds-in-0:
+                destination: CE-initial-funds-topic
+                group: bc-gateway-processor
+                consumer:
+                    concurrency: 10
+                    max-attempts: 3
+            certificationAuthorityInitialFunds-out-0:
+                destination: CE-registration-request-topic
 
 ## Trust Certification System Props
 trust:
@@ -18,7 +26,7 @@ trust:
             wallet-directory: C:\\Users\\ssanchez\\Documents\\trustCertificationSystemBlockchain\\shared\\keystore
             client-address: http://localhost:8545
             root-public-key: "0xE545f3b554175BABcBeF152D4516Ff90455095EE"
-            root-private-key: change-me
+            root-private-key: 8de26ec8adbbf873a9e4c64d6d2228bd4f7f2e61aebffa07e9769bd029fa7ad7
             gas-price: 1000000000
             gas-limit: 993613
             token-management-contract-address: "0x4e690116b461DB7E23f78E991F94dB8Eb1E26B55"
@@ -27,10 +35,9 @@ trust:
             trust-certification-contract-address: "0xc9F57EA9418190f14bbF2d00E776462105ffe677"
             trust-ether-faucet-contract-address: "0x8F3FD73CbF7081D4E764b4ff7708cBB62950D301"
 
+
 logging.level:
   org.springframework.cloud.gateway: DEBUG
   org.springframework.security: DEBUG
   com.dreamsoftware.blockchaingateway: DEBUG
   logging.level.org.web3j.protocol.http: TRACE
-
-server.port: 8080

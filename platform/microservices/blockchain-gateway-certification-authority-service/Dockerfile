@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk-alpine
 # Add Maintainer Info
-LABEL description="Blockchain Gateway Service"
+LABEL description="Blockchain Certification Authority Service"
 # Args for image
 ARG PORT=8080
 
@@ -11,7 +11,7 @@ WORKDIR /usr/src/app
 
 
 COPY resources/wait-for-it.sh  wait-for-it.sh
-COPY target/blockchain_gateway_service.jar app.jar
+COPY target/blockchain_certification_authority_service.jar app.jar
 
 RUN dos2unix wait-for-it.sh
 RUN chmod +x wait-for-it.sh

@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dreamsoftware</groupId>
-    <artifactId>blockchain-gateway</artifactId>
+    <artifactId>blockchain-certification-authority-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>blockchain_gateway_service</name>
-    <description>Blockchain Gateway Service</description>
+    <name>blockchain_certification_authority_service</name>
+    <description>Blockchain Certification Authority Service</description>
     <packaging>jar</packaging>
 
     <properties>
@@ -43,7 +43,7 @@
                 </configuration>
             </plugin>
 
-            <!--<plugin>
+            <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>dockerfile-maven-plugin</artifactId>
                 <version>1.4.13</version>
@@ -59,15 +59,15 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>ssanchez11/blockchain_gateway_service</repository>
+                    <repository>ssanchez11/blockchain_certification_authority_service</repository>
                     <tag>${project.version}</tag>
                     <buildArgs>
-                        <JAR_FILE>blockchain_gateway_service</JAR_FILE>
+                        <JAR_FILE>blockchain_certification_authority_service</JAR_FILE>
                     </buildArgs>
                     <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
                     <forceTags>true</forceTags>
                 </configuration>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
 
