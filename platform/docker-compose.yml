@@ -1,6 +1,61 @@
 version: '3.6'
 
+# Volumes
+volumes:
+  zookeeper-data:
+    driver: local
+  zookeeper-log:
+    driver: local
+  kafka-data:
+    driver: local
+
+
 services:
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    container_name: zookeeper
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-log:/var/lib/zookeeper/log
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka
+    container_name: kafka
+    volumes:
+      - kafka-data:/var/lib/kafka
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_NUM_PARTITIONS: 12
+      KAFKA_COMPRESSION_TYPE: gzip
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
+      KAFKA_JMX_PORT: 9091
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    links:
+      - zookeeper
+
+  akhq:
+    image: tchiotludo/akhq
+    container_name: akhq
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "kafka:9092"
+    ports:
+      - 8088:8080
+    links:
+      - kafka
+
+
   vault:
     image: vault:latest
     restart: on-failure
@@ -49,3 +104,15 @@ services:
       - mongo
     ports:
       - "8083:8081"
+
+  # Blockchain Certification Authority Service
+  bc_certification_authority_service:
+    image: ssanchez11/blockchain_certification_authority_service:0.0.1-SNAPSHOT
+    container_name: blockchain_certification_authority_service
+    ports:
+      - "8080:8080"
+
+  # Blockchain Gateway Processor
+  bc_gateway_processor:
+    image: ssanchez11/blockchain_gateway_processor:0.0.1-SNAPSHOT
+    container_name: blockchain_gateway_processor
