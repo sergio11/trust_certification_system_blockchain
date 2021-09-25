@@ -1,6 +1,5 @@
 package com.dreamsoftware.blockchaingateway.web.security.userdetails;
 
-import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.AuthorityEnum;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**

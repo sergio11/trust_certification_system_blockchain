@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.bson.types.ObjectId;
 import org.springframework.util.Assert;
 
 /**
@@ -47,15 +48,9 @@ public class JwtTokenHelper {
      * @param token
      * @return
      */
-    public Long getSubFromToken(String token) {
-        Long sub;
-        try {
-            final Claims claims = getClaimsFromToken(token);
-            sub = Long.valueOf(claims.getSubject());
-        } catch (final NumberFormatException e) {
-            sub = null;
-        }
-        return sub;
+    public String getSubFromToken(String token) {
+        final Claims claims = getClaimsFromToken(token);
+        return String.valueOf(claims.getSubject());
     }
 
     /**
@@ -78,7 +73,7 @@ public class JwtTokenHelper {
                 .createdAt(createdAt)
                 .expirationAt(expirationAt)
                 .token(refreshedToken)
-                .sub(Long.valueOf((Integer) claims.get(CLAIM_KEY_SUB)))
+                .sub((String) claims.get(CLAIM_KEY_SUB))
                 .build();
     }
 
@@ -89,7 +84,7 @@ public class JwtTokenHelper {
      * @param device
      * @return
      */
-    public AccessTokenDTO generateToken(ICommonUserDetailsAware<Long> userDetails, Device device) {
+    public AccessTokenDTO generateToken(ICommonUserDetailsAware<ObjectId> userDetails, Device device) {
 
         final Date createdAt = new Date();
         final Date expirationAt = new Date(createdAt.getTime() + expiration * 1000);
@@ -107,7 +102,7 @@ public class JwtTokenHelper {
                 .createdAt(createdAt)
                 .expirationAt(expirationAt)
                 .token(token)
-                .sub(userDetails.getUserId())
+                .sub(userDetails.getUserId().toString())
                 .build();
 
     }
