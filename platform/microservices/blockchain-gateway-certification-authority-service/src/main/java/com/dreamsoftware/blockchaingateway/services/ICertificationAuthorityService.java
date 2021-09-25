@@ -1,6 +1,6 @@
 package com.dreamsoftware.blockchaingateway.services;
 
-import com.dreamsoftware.blockchaingateway.web.dto.request.RegisterCertificationAuthorityDTO;
+import com.dreamsoftware.blockchaingateway.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificationAuthorityDetailDTO;
 
 /**
@@ -22,6 +22,6 @@ public interface ICertificationAuthorityService {
      *
      * @param registerCertificationAuthorityDTO
      */
-    void register(final RegisterCertificationAuthorityDTO registerCertificationAuthorityDTO);
+    void register(final SignUpUserDTO registerCertificationAuthorityDTO);
 
 }

@@ -20,6 +20,10 @@ import org.springframework.stereotype.Component;
 public class CARegistrationRequestProcessor implements Function<CertificationAuthorityRegistrationRequestEvent, CertificationAuthorityRegisteredEvent> {
 
     private Logger logger = LoggerFactory.getLogger(CARegistrationRequestProcessor.class);
+    /**
+     * Certification Authority Default cost of issuing certificate
+     */
+    private final Long DEFAULT_COST_OF_ISSUING_CERTIFICATE = 8L;
 
     /**
      * Certification Authority Blockchain Repository
@@ -31,7 +35,7 @@ public class CARegistrationRequestProcessor implements Function<CertificationAut
         logger.debug("CARegistrationRequestProcessor CALLED!");
         CertificationAuthorityRegisteredEvent registeredEvent = null;
         try {
-            certificationAuthorityBlockchainRepository.register(event.getName(), event.getDefaultCostOfIssuingCertificate(),
+            certificationAuthorityBlockchainRepository.register(event.getName(), DEFAULT_COST_OF_ISSUING_CERTIFICATE,
                     event.getWalletHash());
             registeredEvent = new CertificationAuthorityRegisteredEvent(event.getWalletHash());
         } catch (final RepositoryException ex) {

@@ -22,11 +22,6 @@ public class CertificationAuthorityRegistrationRequestEvent {
     private String name;
 
     /**
-     * Certification Authority Default cost of issuing certificate
-     */
-    private Long defaultCostOfIssuingCertificate;
-
-    /**
      * Wallet Hash
      */
     private String walletHash;

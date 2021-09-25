@@ -48,7 +48,7 @@ public class CAInitialFundsRequestProcessor implements Function<CertificationAut
             tokenManagementBlockchainRepository.addTokens(event.getWalletHash(), DEFAULT_CERTIFICATION_AUTHORITY_TOKENS);
 
             registrationRequest = new CertificationAuthorityRegistrationRequestEvent(
-                    event.getName(), event.getDefaultCostOfIssuingCertificate(), event.getWalletHash());
+                    event.getName(), event.getWalletHash());
         } catch (final RepositoryException ex) {
             logger.debug("Ex Message -> " + ex.getMessage());
         }

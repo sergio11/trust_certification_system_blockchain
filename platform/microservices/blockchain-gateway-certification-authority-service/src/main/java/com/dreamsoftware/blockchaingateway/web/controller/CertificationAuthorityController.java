@@ -5,8 +5,9 @@ import com.dreamsoftware.blockchaingateway.web.controller.error.exception.Regist
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
 import com.dreamsoftware.blockchaingateway.web.core.ErrorResponseDTO;
 import com.dreamsoftware.blockchaingateway.web.core.SupportController;
-import com.dreamsoftware.blockchaingateway.web.dto.request.RegisterCertificationAuthorityDTO;
+import com.dreamsoftware.blockchaingateway.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificationAuthorityDetailDTO;
+import com.dreamsoftware.blockchaingateway.web.validation.constraints.ICommonSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -80,7 +81,7 @@ public class CertificationAuthorityController extends SupportController {
     @RequestMapping(value = "/", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<String>> registerCertificationAuthority(
             @Parameter(name = "certificationAuthority", description = "Certification Authority Data", required = true)
-            @Validated RegisterCertificationAuthorityDTO registerCertificationAuthority) throws Throwable {
+            @Validated(ICommonSequence.class) SignUpUserDTO registerCertificationAuthority) throws Throwable {
         try {
             certificationAuthorityService.register(registerCertificationAuthority);
             // Create And Send Response

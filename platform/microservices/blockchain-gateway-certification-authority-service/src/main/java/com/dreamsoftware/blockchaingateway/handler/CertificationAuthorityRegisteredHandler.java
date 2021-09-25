@@ -1,13 +1,13 @@
 package com.dreamsoftware.blockchaingateway.handler;
 
 import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityRegisteredEvent;
-import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.CertificationAuthorityRepository;
 import io.reactivex.functions.Consumer;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
 
 /**
  *
@@ -22,7 +22,7 @@ public class CertificationAuthorityRegisteredHandler {
     /**
      * Certification Authority Repository
      */
-    private final CertificationAuthorityRepository certificationAuthorityRepository;
+    private final UserRepository certificationAuthorityRepository;
 
     @Bean
     protected Consumer<CertificationAuthorityRegisteredEvent> certificationAuthorityyRegisteredEventChannel() {

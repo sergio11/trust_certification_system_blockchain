@@ -20,6 +20,23 @@ spring:
             eventsChannel-out-0:
                 destination: CA-initial-funds-v1
 
+# JWT
+jwt:
+    token:
+        header: Authorization
+        secret: sssshhhh!
+        expiration: 604800
+    route:
+        authentication:
+            path: /auth
+            refresh: refresh
+
+# REST
+api:
+    base:
+        path: /api/
+    version: v1
+
 ## Trust Certification System Props
 trust:
     certification:

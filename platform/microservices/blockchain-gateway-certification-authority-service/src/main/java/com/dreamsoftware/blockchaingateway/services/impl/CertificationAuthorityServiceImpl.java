@@ -1,12 +1,11 @@
 package com.dreamsoftware.blockchaingateway.services.impl;
 
 import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityInitialFundsRequestEvent;
-import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.CertificationAuthorityEntity;
-import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.CertificationAuthorityRepository;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.blockchaingateway.service.IEventPublisher;
 import com.dreamsoftware.blockchaingateway.service.IWalletService;
 import com.dreamsoftware.blockchaingateway.services.ICertificationAuthorityService;
-import com.dreamsoftware.blockchaingateway.web.dto.request.RegisterCertificationAuthorityDTO;
+import com.dreamsoftware.blockchaingateway.web.dto.request.SignUpUserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
@@ -17,6 +16,7 @@ import com.dreamsoftware.blockchaingateway.web.controller.error.exception.Regist
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificationAuthorityDetailDTO;
 import javax.annotation.PostConstruct;
 import org.springframework.util.Assert;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
 
 /**
  *
@@ -41,7 +41,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     /**
      * Certification Authority Repository
      */
-    private final CertificationAuthorityRepository certificationAuthorityRepository;
+    private final UserRepository certificationAuthorityRepository;
 
     /**
      * Event Publisher
@@ -58,7 +58,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     public CertificationAuthorityDetailDTO getDetail(String id) {
         Assert.notNull(id, "Id can not be null");
         try {
-            //final CertificationAuthorityEntity certificationAuthority = certificationAuthorityRepository.findById(new ObjectId(id));
+            //final UserEntity certificationAuthority = certificationAuthorityRepository.findById(new ObjectId(id));
             return null;
         } catch (final Exception ex) {
             logger.error("exception ocurred " + ex.getMessage() + " CALLED");
@@ -72,19 +72,18 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
      * @param registerCertificationAuthorityDTO
      */
     @Override
-    public void register(final RegisterCertificationAuthorityDTO registerCertificationAuthorityDTO) {
+    public void register(final SignUpUserDTO registerCertificationAuthorityDTO) {
         try {
             // Generate Wallet
             final String walletHash = walletService.generateWallet();
             logger.debug("Wallet created with hash: " + walletHash);
-            final String secretHash = hashService.hash(registerCertificationAuthorityDTO.getPassword());
-            final CertificationAuthorityEntity certificationAuthority = new CertificationAuthorityEntity();
+            final String secretHash = hashService.hash(registerCertificationAuthorityDTO.getPasswordClear());
+            final UserEntity certificationAuthority = new UserEntity();
             certificationAuthority.setName(registerCertificationAuthorityDTO.getName());
             certificationAuthority.setPasswordHash(secretHash);
             certificationAuthority.setWalletHash(walletHash);
-            final CertificationAuthorityEntity certificationAuthoritySaved = certificationAuthorityRepository.save(certificationAuthority);
-            eventPublisher.publish(new CertificationAuthorityInitialFundsRequestEvent(certificationAuthoritySaved.getName(),
-                    registerCertificationAuthorityDTO.getDefaultCostOfIssuingCertificate(), walletHash));
+            final UserEntity certificationAuthoritySaved = certificationAuthorityRepository.save(certificationAuthority);
+            eventPublisher.publish(new CertificationAuthorityInitialFundsRequestEvent(certificationAuthoritySaved.getName(), walletHash));
         } catch (final Exception ex) {
             ex.printStackTrace();
             logger.error("exception ocurred " + ex.getMessage() + " CALLED");
