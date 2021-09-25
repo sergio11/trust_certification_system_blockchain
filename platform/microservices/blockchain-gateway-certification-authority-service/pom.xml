@@ -26,11 +26,6 @@
             <artifactId>blockchain-gateway-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Persistence -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -39,7 +34,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <finalName>blockchain_gateway_service</finalName>
+                    <finalName>blockchain_certification_authority_service</finalName>
                 </configuration>
             </plugin>
 

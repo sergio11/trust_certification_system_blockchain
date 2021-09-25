@@ -1,4 +1,4 @@
-package com.dreamsoftware.blockchaingateway.persistence.entity;
+package com.dreamsoftware.blockchaingateway.persistence.nosql.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

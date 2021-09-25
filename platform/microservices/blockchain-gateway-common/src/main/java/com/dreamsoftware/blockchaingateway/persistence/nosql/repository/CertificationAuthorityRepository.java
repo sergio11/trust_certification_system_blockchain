@@ -1,6 +1,6 @@
-package com.dreamsoftware.blockchaingateway.persistence.repository;
+package com.dreamsoftware.blockchaingateway.persistence.nosql.repository;
 
-import com.dreamsoftware.blockchaingateway.persistence.entity.CertificationAuthorityEntity;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.CertificationAuthorityEntity;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

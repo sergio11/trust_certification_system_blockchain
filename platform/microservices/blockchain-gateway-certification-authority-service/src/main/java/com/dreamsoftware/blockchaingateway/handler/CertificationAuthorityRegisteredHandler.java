@@ -1,7 +1,7 @@
 package com.dreamsoftware.blockchaingateway.handler;
 
 import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityRegisteredEvent;
-import com.dreamsoftware.blockchaingateway.persistence.repository.CertificationAuthorityRepository;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.CertificationAuthorityRepository;
 import io.reactivex.functions.Consumer;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
