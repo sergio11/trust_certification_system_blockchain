@@ -3,14 +3,14 @@ package com.dreamsoftware.blockchaingateway.service;
 /**
  *
  * @author ssanchez
- * @param <T>
  */
-public interface IEventPublisher<T> {
+public interface IEventPublisher {
 
     /**
      * Publish Event
      *
+     * @param <T>
      * @param event
      */
-    void publish(final T event);
+    <T> void publish(final T event);
 }

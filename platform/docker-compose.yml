@@ -9,6 +9,12 @@ volumes:
   kafka-data:
     driver: local
 
+# Networks
+networks:
+  external_tcs_network:
+    external:
+      name: tcs_network
+
 
 services:
 
@@ -20,6 +26,8 @@ services:
       - zookeeper-log:/var/lib/zookeeper/log
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - external_tcs_network
 
   kafka:
     image: confluentinc/cp-kafka
@@ -39,6 +47,8 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
     links:
       - zookeeper
+    networks:
+      - external_tcs_network
 
   akhq:
     image: tchiotludo/akhq
@@ -54,6 +64,8 @@ services:
       - 8088:8080
     links:
       - kafka
+    networks:
+      - external_tcs_network
 
 
   vault:
@@ -73,6 +85,8 @@ services:
     cap_add:
       - IPC_LOCK
     command: vault server -config=/vault/config/vault.json
+    networks:
+      - external_tcs_network
 
   mongo:
     image: mongo
@@ -84,6 +98,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=devroot
       - MONGO_INITDB_ROOT_PASSWORD=devroot
       - MONGO_INITDB_DATABASE=trustcertificationsystem
+    networks:
+      - external_tcs_network
 
 
   # Web-based MongoDB admin interface, written with Node.js and express
@@ -104,15 +120,25 @@ services:
       - mongo
     ports:
       - "8083:8081"
+    networks:
+      - external_tcs_network
 
   # Blockchain Certification Authority Service
   bc_certification_authority_service:
     image: ssanchez11/blockchain_certification_authority_service:0.0.1-SNAPSHOT
     container_name: blockchain_certification_authority_service
+    volumes:
+      - ../shared/keystore:/opt/wallets
     ports:
       - "8080:8080"
+    networks:
+      - external_tcs_network
 
   # Blockchain Gateway Processor
   bc_gateway_processor:
     image: ssanchez11/blockchain_gateway_processor:0.0.1-SNAPSHOT
     container_name: blockchain_gateway_processor
+    volumes:
+      - ../shared/keystore:/opt/wallets
+    networks:
+      - external_tcs_network

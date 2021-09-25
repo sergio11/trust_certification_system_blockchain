@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.dreamsoftware.blockchaingateway.service.IPasswordHashingService;
 
 /**
+ * Password Hashing Service
  *
  * @author ssanchez
  */

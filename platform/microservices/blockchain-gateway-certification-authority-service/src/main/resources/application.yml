@@ -5,7 +5,7 @@ spring:
     mongodb:
         authentication-database: admin
         database: trustcertificationsystem
-        host: localhost
+        host: mongo
         port: 27017
         username: devroot
         password: devroot
@@ -14,16 +14,19 @@ spring:
         kafka:
             binder:
                 brokers: kafka:9092
-                auto-create-topics: false
+                auto-create-topics: true
                 configuration.auto.offset.reset: latest
+        bindings:
+            eventsChannel-out-0:
+                destination: CE-initial-funds-topic
 
 ## Trust Certification System Props
 trust:
     certification:
         system:
             chain-id: 85
-            wallet-directory: C:\\Users\\ssanchez\\Documents\\trustCertificationSystemBlockchain\\shared\\keystore
-            client-address: http://localhost:8545
+            wallet-directory: /opt/wallets
+            client-address: http://bootstrap:8545
             root-public-key: "0xE545f3b554175BABcBeF152D4516Ff90455095EE"
             root-private-key: 8de26ec8adbbf873a9e4c64d6d2228bd4f7f2e61aebffa07e9769bd029fa7ad7
             gas-price: 1000000000
@@ -35,7 +38,7 @@ trust:
             trust-ether-faucet-contract-address: "0x8F3FD73CbF7081D4E764b4ff7708cBB62950D301"
 
 logging.level:
-  org.springframework.cloud.gateway: DEBUG
+  org.springframework.cloud: DEBUG
   org.springframework.security: DEBUG
   com.dreamsoftware.blockchaingateway: DEBUG
   logging.level.org.web3j.protocol.http: TRACE

@@ -1,8 +1,8 @@
 package com.dreamsoftware.blockchaingateway.services.impl;
 
 import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityInitialFundsRequestEvent;
-import com.dreamsoftware.blockchaingateway.persistence.entity.CertificationAuthorityEntity;
-import com.dreamsoftware.blockchaingateway.persistence.repository.CertificationAuthorityRepository;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.CertificationAuthorityEntity;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.CertificationAuthorityRepository;
 import com.dreamsoftware.blockchaingateway.service.IEventPublisher;
 import com.dreamsoftware.blockchaingateway.service.IWalletService;
 import com.dreamsoftware.blockchaingateway.services.ICertificationAuthorityService;
@@ -12,7 +12,11 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.dreamsoftware.blockchaingateway.service.IPasswordHashingService;
+import com.dreamsoftware.blockchaingateway.web.controller.error.exception.GetCertificationAuthorityException;
 import com.dreamsoftware.blockchaingateway.web.controller.error.exception.RegisterCertificationAuthorityException;
+import com.dreamsoftware.blockchaingateway.web.dto.response.CertificationAuthorityDetailDTO;
+import javax.annotation.PostConstruct;
+import org.springframework.util.Assert;
 
 /**
  *
@@ -22,7 +26,7 @@ import com.dreamsoftware.blockchaingateway.web.controller.error.exception.Regist
 @RequiredArgsConstructor
 public class CertificationAuthorityServiceImpl implements ICertificationAuthorityService {
 
-    private Logger logger = LoggerFactory.getLogger(CertificationAuthorityServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(CertificationAuthorityServiceImpl.class);
 
     /**
      * Wallet Service
@@ -42,7 +46,25 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     /**
      * Event Publisher
      */
-    private IEventPublisher<CertificationAuthorityInitialFundsRequestEvent> eventPublisher;
+    private final IEventPublisher eventPublisher;
+
+    /**
+     * Get Detail
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public CertificationAuthorityDetailDTO getDetail(String id) {
+        Assert.notNull(id, "Id can not be null");
+        try {
+            //final CertificationAuthorityEntity certificationAuthority = certificationAuthorityRepository.findById(new ObjectId(id));
+            return null;
+        } catch (final Exception ex) {
+            logger.error("exception ocurred " + ex.getMessage() + " CALLED");
+            throw new GetCertificationAuthorityException(ex.getMessage(), ex);
+        }
+    }
 
     /**
      * Register Certification Authority
@@ -63,11 +85,19 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
             final CertificationAuthorityEntity certificationAuthoritySaved = certificationAuthorityRepository.save(certificationAuthority);
             eventPublisher.publish(new CertificationAuthorityInitialFundsRequestEvent(certificationAuthoritySaved.getName(),
                     registerCertificationAuthorityDTO.getDefaultCostOfIssuingCertificate(), walletHash));
-
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             ex.printStackTrace();
             logger.error("exception ocurred " + ex.getMessage() + " CALLED");
             throw new RegisterCertificationAuthorityException(ex.getMessage(), ex);
         }
     }
+
+    @PostConstruct
+    private void onPostConstruct() {
+        Assert.notNull(walletService, "Wallet Service can not be null");
+        Assert.notNull(hashService, "Hash Service can not be null");
+        Assert.notNull(certificationAuthorityRepository, "Certification Authority Repository can not be null");
+        Assert.notNull(eventPublisher, "Event Publisher can not be null");
+    }
+
 }
