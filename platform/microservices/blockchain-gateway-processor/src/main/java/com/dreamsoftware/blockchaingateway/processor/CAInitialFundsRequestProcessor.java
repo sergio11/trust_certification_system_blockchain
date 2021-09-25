@@ -1,4 +1,4 @@
-package com.dreamsoftware.blockchaingateway.handler;
+package com.dreamsoftware.blockchaingateway.processor;
 
 import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityInitialFundsRequestEvent;
 import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityRegistrationRequestEvent;
@@ -9,19 +9,18 @@ import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
- * Certification Authority Initial Funds Request Handler
+ * CA Initial Funds Request Processor
  *
  * @author ssanchez
  */
-@Service
+@Component("caInitialFundsRequestProcessor")
 @RequiredArgsConstructor
-public class CertificationAuthorityInitialFundsRequestHandler {
+public class CAInitialFundsRequestProcessor implements Function<CertificationAuthorityInitialFundsRequestEvent, CertificationAuthorityRegistrationRequestEvent> {
 
-    private final Logger logger = LoggerFactory.getLogger(CertificationAuthorityInitialFundsRequestHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(CAInitialFundsRequestProcessor.class);
 
     /**
      * Constants
@@ -38,26 +37,9 @@ public class CertificationAuthorityInitialFundsRequestHandler {
      */
     private final ITokenManagementBlockchainRepository tokenManagementBlockchainRepository;
 
-    /**
-     * Certification Authority Initial Funds Request Channel
-     *
-     * @return
-     */
-    @Bean
-    public Function<CertificationAuthorityInitialFundsRequestEvent, CertificationAuthorityRegistrationRequestEvent> certificationAuthorityInitialFunds() {
-        return (CertificationAuthorityInitialFundsRequestEvent event) -> onCertificationAuthorityInitialFundsRequested(event);
-    }
-
-    /**
-     * Private Methods
-     */
-    /**
-     * On Certification Authority Initial Funds Requested
-     *
-     * @param event
-     */
-    private CertificationAuthorityRegistrationRequestEvent onCertificationAuthorityInitialFundsRequested(final CertificationAuthorityInitialFundsRequestEvent event) {
-        logger.debug("onCertificationAuthorityRegistered CALLED!");
+    @Override
+    public CertificationAuthorityRegistrationRequestEvent apply(CertificationAuthorityInitialFundsRequestEvent event) {
+        logger.debug("CAInitialFundsRequestProcessor CALLED!");
         CertificationAuthorityRegistrationRequestEvent registrationRequest = null;
         try {
             // Add Seed Funds
@@ -72,5 +54,4 @@ public class CertificationAuthorityInitialFundsRequestHandler {
         }
         return registrationRequest;
     }
-
 }

@@ -18,7 +18,7 @@ spring:
                 configuration.auto.offset.reset: latest
         bindings:
             eventsChannel-out-0:
-                destination: CE-initial-funds-topic
+                destination: CA-initial-funds-v1
 
 ## Trust Certification System Props
 trust:

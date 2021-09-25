@@ -1,4 +1,4 @@
-package com.dreamsoftware.blockchaingateway.handler;
+package com.dreamsoftware.blockchaingateway.processor;
 
 import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityRegisteredEvent;
 import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityRegistrationRequestEvent;
@@ -8,45 +8,27 @@ import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
- * Certification Authority Registration Request Handler
+ * Certification Authority Registration Request Processor
  *
  * @author ssanchez
  */
-@Service
+@Component("caRegistrationRequestProcessor")
 @RequiredArgsConstructor
-public class CertificationAuthorityRegistrationRequestHandler {
+public class CARegistrationRequestProcessor implements Function<CertificationAuthorityRegistrationRequestEvent, CertificationAuthorityRegisteredEvent> {
 
-    private Logger logger = LoggerFactory.getLogger(CertificationAuthorityRegistrationRequestHandler.class);
+    private Logger logger = LoggerFactory.getLogger(CARegistrationRequestProcessor.class);
 
     /**
      * Certification Authority Blockchain Repository
      */
     private final ICertificationAuthorityBlockchainRepository certificationAuthorityBlockchainRepository;
 
-    /**
-     * Certification Authority Registered Channel
-     *
-     * @return
-     */
-    @Bean
-    public Function<CertificationAuthorityRegistrationRequestEvent, CertificationAuthorityRegisteredEvent> certificationAuthorityRegistrationRequestedChannel() {
-        return (CertificationAuthorityRegistrationRequestEvent event) -> onCertificationAuthorityRegistrationRequested(event);
-    }
-
-    /**
-     * Private Methods
-     */
-    /**
-     * On Certification Authority Registration Requested
-     *
-     * @param event
-     */
-    private CertificationAuthorityRegisteredEvent onCertificationAuthorityRegistrationRequested(final CertificationAuthorityRegistrationRequestEvent event) {
-        logger.debug("onCertificationAuthorityRegistrationRequested CALLED!");
+    @Override
+    public CertificationAuthorityRegisteredEvent apply(CertificationAuthorityRegistrationRequestEvent event) {
+        logger.debug("CARegistrationRequestProcessor CALLED!");
         CertificationAuthorityRegisteredEvent registeredEvent = null;
         try {
             certificationAuthorityBlockchainRepository.register(event.getName(), event.getDefaultCostOfIssuingCertificate(),
