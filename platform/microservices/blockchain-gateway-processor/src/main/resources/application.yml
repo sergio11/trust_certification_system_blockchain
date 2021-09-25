@@ -11,20 +11,31 @@ spring:
         password: devroot
   cloud:
     stream:
+        function:
+            definition: caInitialFundsRequestProcessor;caRegistrationRequestProcessor
         kafka:
             binder:
                 brokers: kafka:9092
                 auto-create-topics: true
                 configuration.auto.offset.reset: latest
         bindings:
-            certificationAuthorityInitialFunds-in-0:
-                destination: CE-initial-funds-topic
+            caInitialFundsRequestProcessor-in-0:
+                destination: CA-initial-funds-v1
                 group: bc-gateway-processor
                 consumer:
                     concurrency: 10
                     max-attempts: 3
-            certificationAuthorityInitialFunds-out-0:
-                destination: CE-registration-request-topic
+            caInitialFundsRequestProcessor-out-0:
+                destination: CA-registration-request-v1
+            caRegistrationRequestProcessor-in-0:
+                destination: CA-registration-request-v1
+                group: bc-gateway-processor
+                consumer:
+                    concurrency: 10
+                    max-attempts: 3
+            caRegistrationRequestProcessor-out-0:
+                destination: CA-registered-v1
+
 
 ## Trust Certification System Props
 trust:
