@@ -29,7 +29,7 @@ public class AccessTokenDTO {
      * sub
      */
     @JsonProperty("sub")
-    private Long sub;
+    private String sub;
 
     /**
      * Audience

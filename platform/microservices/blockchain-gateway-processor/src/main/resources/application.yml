@@ -12,7 +12,7 @@ spring:
   cloud:
     stream:
         function:
-            definition: caInitialFundsRequestProcessor;caRegistrationRequestProcessor
+            definition: caInitialFundsRequestProcessor;caRegistrationRequestProcessor;caRegisteredProcessor
         kafka:
             binder:
                 brokers: kafka:9092
@@ -35,6 +35,12 @@ spring:
                     max-attempts: 3
             caRegistrationRequestProcessor-out-0:
                 destination: CA-registered-v1
+            caRegisteredProcessor-in-0:
+                destination: CA-registered-v1
+                group: bc-gateway-processor
+                consumer:
+                    concurrency: 10
+                    max-attempts: 3
 
 
 ## Trust Certification System Props
