@@ -1,11 +1,11 @@
 package com.dreamsoftware.blockchaingateway.web.controller.error;
 
-import com.dreamsoftware.blockchaingateway.web.controller.CertificationAuthorityResponseCodeEnum;
+import com.dreamsoftware.blockchaingateway.web.controller.ca.CertificationAuthorityResponseCodeEnum;
 import com.dreamsoftware.blockchaingateway.web.controller.error.exception.RegisterCertificationAuthorityException;
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
 import com.dreamsoftware.blockchaingateway.web.core.ErrorResponseDTO;
 import com.dreamsoftware.blockchaingateway.web.core.FieldErrorDTO;
-import com.dreamsoftware.blockchaingateway.web.core.SupportController;
+import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;

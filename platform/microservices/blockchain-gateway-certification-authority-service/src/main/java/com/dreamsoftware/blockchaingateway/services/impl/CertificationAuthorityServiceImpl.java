@@ -80,7 +80,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
             final String secretHash = hashService.hash(registerCertificationAuthorityDTO.getPasswordClear());
             final UserEntity certificationAuthority = new UserEntity();
             certificationAuthority.setName(registerCertificationAuthorityDTO.getName());
-            certificationAuthority.setPasswordHash(secretHash);
+            certificationAuthority.setPassword(secretHash);
             certificationAuthority.setWalletHash(walletHash);
             final UserEntity certificationAuthoritySaved = certificationAuthorityRepository.save(certificationAuthority);
             eventPublisher.publish(new CertificationAuthorityInitialFundsRequestEvent(certificationAuthoritySaved.getName(), walletHash));

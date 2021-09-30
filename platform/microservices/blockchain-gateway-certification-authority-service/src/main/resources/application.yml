@@ -19,6 +19,22 @@ spring:
         bindings:
             eventsChannel-out-0:
                 destination: CA-initial-funds-v1
+    # Mail
+    # output of emails
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: test@gmail.com
+    password: changeme
+    properties:
+        mail:
+            smtp:
+                auth: true
+                starttls.enable: true
+                ssl.trust: smtp.gmail.com
+                connectiontimeout: 5000
+                timeout: 5000
+                writetimeout: 5000
 
 # JWT
 jwt:
@@ -36,6 +52,17 @@ api:
     base:
         path: /api/
     version: v1
+
+
+# Mail Properties
+mail:
+    templates:
+        base.dir: mail/templates/
+    resources:
+        base.dir: mail/resources/
+    registration.success.template.name: mail_template_registration_success
+    confirm.account.activation.template.name: mail_template_confirm_account_activation
+    from: test@gmail.com
 
 ## Trust Certification System Props
 trust:

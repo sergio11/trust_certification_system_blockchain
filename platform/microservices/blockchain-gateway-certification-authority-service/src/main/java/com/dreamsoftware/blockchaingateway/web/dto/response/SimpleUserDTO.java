@@ -1,8 +1,6 @@
 package com.dreamsoftware.blockchaingateway.web.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.util.Date;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +24,7 @@ public class SimpleUserDTO {
      * User Identity
      */
     @JsonProperty("identity")
-    private Long identity;
+    private String identity;
 
     /**
      * User name
@@ -45,6 +43,12 @@ public class SimpleUserDTO {
      */
     @JsonProperty("email")
     private String email;
+
+    /**
+     * Wallet Hash
+     */
+    @JsonProperty("wallet_hash")
+    private String walletHash;
 
     /**
      * User State

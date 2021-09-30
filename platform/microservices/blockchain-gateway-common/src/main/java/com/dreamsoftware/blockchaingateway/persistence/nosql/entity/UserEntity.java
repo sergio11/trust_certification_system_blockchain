@@ -52,7 +52,7 @@ public class UserEntity {
      * Password
      */
     @Field("password")
-    private String passwordHash;
+    private String password;
 
     /**
      * Wallet Hash
@@ -67,10 +67,28 @@ public class UserEntity {
     private UserStateEnum state;
 
     /**
+     * User Agent
+     */
+    @Field("user_agent")
+    private String userAgent;
+
+    /**
      * Last Login Access
      */
     @Field("last_login_access")
     private Date lastLoginAccess;
+
+    /**
+     * Language
+     */
+    @Field("language")
+    private String language;
+
+    /**
+     * Confirmation Token
+     */
+    @Field("confirmation_token")
+    private String confirmationToken;
 
     /**
      * Authority
