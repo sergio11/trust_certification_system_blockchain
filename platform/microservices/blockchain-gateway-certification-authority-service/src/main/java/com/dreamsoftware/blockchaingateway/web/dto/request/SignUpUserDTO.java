@@ -65,4 +65,15 @@ public class SignUpUserDTO {
     @ValidUserType(message = "{user_type_invalid}", groups = {IExtended.class})
     private String type;
 
+    /**
+     * User Agent
+     */
+    private String userAgent;
+
+    /**
+     * User Language
+     */
+    @JsonProperty("language")
+    private String language;
+
 }

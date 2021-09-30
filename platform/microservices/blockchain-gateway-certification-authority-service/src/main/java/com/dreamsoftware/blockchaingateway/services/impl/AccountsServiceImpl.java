@@ -1,10 +1,14 @@
 package com.dreamsoftware.blockchaingateway.services.impl;
 
+import com.dreamsoftware.blockchaingateway.mapper.SignUpUserMapper;
+import com.dreamsoftware.blockchaingateway.mapper.SimpleUserMapper;
 import com.dreamsoftware.blockchaingateway.mapper.UserDetailsMapper;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.blockchaingateway.services.IAccountsService;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SignInUserDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SignUpUserDTO;
+import com.dreamsoftware.blockchaingateway.web.dto.response.AccessTokenDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.AuthenticationDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.SimpleUserDTO;
 import com.dreamsoftware.blockchaingateway.web.security.userdetails.ICommonUserDetailsAware;
@@ -38,7 +42,15 @@ public class AccountsServiceImpl implements IAccountsService {
     private final JwtTokenHelper jwtTokenHelper;
     private final UserRepository userRepository;
     private final UserDetailsMapper userDetailsMapper;
+    private final SignUpUserMapper signUpUserMapper;
+    private final SimpleUserMapper simpleUserMapper;
 
+    /**
+     *
+     * @param dto
+     * @param device
+     * @return
+     */
     @Override
     public AuthenticationDTO signin(SignInUserDTO dto, Device device) {
         Assert.notNull(dto, "Auth Request DTO can not be null");
@@ -46,7 +58,17 @@ public class AccountsServiceImpl implements IAccountsService {
 
         final Authentication authRequest = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
 
-        return null;
+        // Get User details for authentication request
+        final ICommonUserDetailsAware<ObjectId> userDetails = getUserDetails(authRequest);
+
+        // Generate Access Token
+        final AccessTokenDTO accessTokenDTO = jwtTokenHelper.generateToken(userDetails, device);
+
+        // Generate and return Authentication Response
+        return AuthenticationDTO.builder()
+                .accessToken(accessTokenDTO)
+                .type(AUTH_TYPE)
+                .build();
     }
 
     @Override
@@ -88,7 +110,10 @@ public class AccountsServiceImpl implements IAccountsService {
      */
     @Override
     public SimpleUserDTO signup(SignUpUserDTO user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Assert.notNull(user, "user can not be null");
+        final UserEntity userEntitySaved = userRepository.save(
+                signUpUserMapper.signUpUserDTOToUserEntity(user));
+        return simpleUserMapper.entityToDTO(userEntitySaved);
     }
 
     /**
@@ -97,11 +122,11 @@ public class AccountsServiceImpl implements IAccountsService {
      * @param authRequest
      * @return
      */
-    private ICommonUserDetailsAware<Long> getUserDetails(final Authentication authRequest) {
+    private ICommonUserDetailsAware<ObjectId> getUserDetails(final Authentication authRequest) {
         Assert.notNull(authRequest, "Auth Request can not be null");
         final Authentication authentication = authenticationManager.authenticate(authRequest);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return (ICommonUserDetailsAware<Long>) authentication.getPrincipal();
+        return (ICommonUserDetailsAware<ObjectId>) authentication.getPrincipal();
     }
 
 }

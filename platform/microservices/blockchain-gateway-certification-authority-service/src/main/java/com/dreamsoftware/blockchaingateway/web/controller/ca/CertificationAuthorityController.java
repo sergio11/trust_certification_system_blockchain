@@ -1,10 +1,10 @@
-package com.dreamsoftware.blockchaingateway.web.controller;
+package com.dreamsoftware.blockchaingateway.web.controller.ca;
 
 import com.dreamsoftware.blockchaingateway.services.ICertificationAuthorityService;
 import com.dreamsoftware.blockchaingateway.web.controller.error.exception.RegisterCertificationAuthorityException;
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
 import com.dreamsoftware.blockchaingateway.web.core.ErrorResponseDTO;
-import com.dreamsoftware.blockchaingateway.web.core.SupportController;
+import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificationAuthorityDetailDTO;
 import com.dreamsoftware.blockchaingateway.web.validation.constraints.ICommonSequence;

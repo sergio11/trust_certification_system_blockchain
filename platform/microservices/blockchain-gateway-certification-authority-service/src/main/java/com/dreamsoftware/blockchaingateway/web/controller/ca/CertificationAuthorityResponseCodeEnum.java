@@ -1,4 +1,4 @@
-package com.dreamsoftware.blockchaingateway.web.controller;
+package com.dreamsoftware.blockchaingateway.web.controller.ca;
 
 import com.dreamsoftware.blockchaingateway.web.core.IResponseCodeTypes;
 
