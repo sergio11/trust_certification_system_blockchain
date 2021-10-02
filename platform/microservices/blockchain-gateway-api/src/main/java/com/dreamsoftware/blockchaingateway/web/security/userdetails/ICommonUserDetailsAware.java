@@ -1,6 +1,7 @@
 package com.dreamsoftware.blockchaingateway.web.security.userdetails;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserStateEnum;
 
 /**
  *
@@ -14,6 +15,8 @@ public interface ICommonUserDetailsAware<T> extends UserDetails {
     String NAME = "NAME";
     String SURNAME = "SURNAME";
     String EMAIL = "EMAIL";
+    String LANGUAGE = "LANGUAGE";
+    String STATE = "STATE";
 
     T getUserId();
 
@@ -22,6 +25,10 @@ public interface ICommonUserDetailsAware<T> extends UserDetails {
     String getName();
 
     String getSurname();
+
+    String getLanguage();
+
+    UserStateEnum getState();
 
     String getEmail();
 

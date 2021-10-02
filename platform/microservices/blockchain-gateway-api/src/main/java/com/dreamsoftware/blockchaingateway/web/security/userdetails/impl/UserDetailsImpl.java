@@ -1,5 +1,6 @@
 package com.dreamsoftware.blockchaingateway.web.security.userdetails.impl;
 
+import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.blockchaingateway.web.security.userdetails.ICommonUserDetailsAware;
 import java.util.Collection;
 import java.util.Set;
@@ -27,6 +28,8 @@ public class UserDetailsImpl<T> implements ICommonUserDetailsAware<T> {
     private String name;
     private String surname;
     private String email;
+    private String language;
+    private UserStateEnum state;
     private Set<GrantedAuthority> grantedAuthorities;
 
     @Override
@@ -36,12 +39,12 @@ public class UserDetailsImpl<T> implements ICommonUserDetailsAware<T> {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return state != UserStateEnum.EXPIRED;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return state != UserStateEnum.LOCKED;
     }
 
     @Override
@@ -51,7 +54,7 @@ public class UserDetailsImpl<T> implements ICommonUserDetailsAware<T> {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return state == UserStateEnum.ACTIVATE;
     }
 
     @Override

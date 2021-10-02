@@ -27,8 +27,7 @@ public class SignInUserDTO {
     /**
      * User Email
      */
-    @Schema(description = "User Email.",
-            example = "user_example@gmail.com", required = true)
+    @Schema(description = "User Email.", example = "user_example@gmail.com", required = true)
     @NotEmpty(message = "{user_email_not_empty}")
     @Pattern(regexp = "\\S+@\\S+\\.\\S+", message = "{user_email_invalid}", groups = {IExtended.class})
     @JsonProperty("email")
