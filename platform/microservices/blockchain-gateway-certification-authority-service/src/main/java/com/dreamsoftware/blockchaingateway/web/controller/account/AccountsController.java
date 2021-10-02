@@ -1,5 +1,6 @@
 package com.dreamsoftware.blockchaingateway.web.controller.account;
 
+import com.dreamsoftware.blockchaingateway.scheduling.events.account.UserActivatedEvent;
 import com.dreamsoftware.blockchaingateway.scheduling.events.account.UserPendingValidationEvent;
 import com.dreamsoftware.blockchaingateway.services.IAccountsService;
 import com.dreamsoftware.blockchaingateway.web.controller.error.exception.RefreshTokenException;
@@ -7,6 +8,7 @@ import com.dreamsoftware.blockchaingateway.web.controller.error.exception.SignUp
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
 import com.dreamsoftware.blockchaingateway.web.core.ErrorResponseDTO;
 import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
+import com.dreamsoftware.blockchaingateway.web.controller.error.exception.ActivateAccountException;
 import com.dreamsoftware.blockchaingateway.web.dto.request.RefreshTokenDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SignInUserDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SignUpUserDTO;
@@ -38,6 +40,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.thymeleaf.util.StringUtils;
 
 /**
@@ -129,7 +132,7 @@ public class AccountsController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "SIGN_UP - Create Guest user into platform", description = "Create Guest user into platform, It is necessary to verify the account through the email sent.", tags = {"accounts"})
+    @Operation(summary = "SIGN_UP - Create user into platform", description = "Create user into platform, It is necessary to verify the account through the email sent.", tags = {"accounts"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Sign Up Success",
                 content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
@@ -165,7 +168,32 @@ public class AccountsController extends SupportController {
         } catch (final Exception ex) {
             throw new SignUpException(ex.getMessage(), ex.getCause());
         }
+    }
 
+    /**
+     * Activate Account
+     *
+     * @param token
+     * @return
+     */
+    @Operation(summary = "ACTIVATE - Activate user into platform", description = "Activate user into platform, It is necessary to verify the account through the email sent.", tags = {"accounts"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Activate Success",
+                content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
+        @ApiResponse(responseCode = "500", description = "Activate fail",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @SecurityRequirements
+    @RequestMapping(value = "/activate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<SimpleUserDTO>> activate(
+            @RequestParam(name = "token") final String token) {
+        try {
+            final SimpleUserDTO userActivated = authenticationService.activate(token);
+            applicationEventPublisher.publishEvent(new UserActivatedEvent(this, userActivated.getIdentity()));
+            return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.ACTIVATE_SUCCESS, HttpStatus.OK, userActivated);
+        } catch (final Exception ex) {
+            throw new ActivateAccountException(ex.getMessage(), ex.getCause());
+        }
     }
 
 }

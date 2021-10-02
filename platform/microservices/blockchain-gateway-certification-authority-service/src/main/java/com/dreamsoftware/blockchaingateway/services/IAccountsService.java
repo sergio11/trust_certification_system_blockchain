@@ -1,5 +1,6 @@
 package com.dreamsoftware.blockchaingateway.services;
 
+import com.dreamsoftware.blockchaingateway.exception.GenerateWalletException;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SignInUserDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.AuthenticationDTO;
@@ -43,4 +44,13 @@ public interface IAccountsService {
      * @return
      */
     SimpleUserDTO signup(final SignUpUserDTO user);
+
+    /**
+     * Activate Account
+     *
+     * @param confirmationToken
+     * @throws
+     * com.dreamsoftware.blockchaingateway.exception.GenerateWalletException
+     */
+    SimpleUserDTO activate(final String confirmationToken) throws GenerateWalletException;
 }

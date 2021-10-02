@@ -1,10 +1,13 @@
 package com.dreamsoftware.blockchaingateway.services.impl;
 
+import com.dreamsoftware.blockchaingateway.exception.GenerateWalletException;
 import com.dreamsoftware.blockchaingateway.mapper.SignUpUserMapper;
 import com.dreamsoftware.blockchaingateway.mapper.SimpleUserMapper;
 import com.dreamsoftware.blockchaingateway.mapper.UserDetailsMapper;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.blockchaingateway.service.IWalletService;
 import com.dreamsoftware.blockchaingateway.services.IAccountsService;
 import com.dreamsoftware.blockchaingateway.services.ITokenGeneratorService;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SignInUserDTO;
@@ -24,7 +27,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 /**
@@ -46,6 +48,7 @@ public class AccountsServiceImpl implements IAccountsService {
     private final SignUpUserMapper signUpUserMapper;
     private final SimpleUserMapper simpleUserMapper;
     private final ITokenGeneratorService tokenGeneratorService;
+    private final IWalletService walletService;
 
     /**
      *
@@ -85,7 +88,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     @Override
-    @Transactional
     public void restoreSecurityContextFor(String token) {
         Assert.notNull(token, "Token can not be null");
         try {
@@ -120,6 +122,29 @@ public class AccountsServiceImpl implements IAccountsService {
         userToSave.setConfirmationToken(confirmationToken);
         final UserEntity userEntitySaved = userRepository.save(userToSave);
         return simpleUserMapper.entityToDTO(userEntitySaved);
+    }
+
+    /**
+     * Activate Account
+     *
+     * @param confirmationToken
+     * @return
+     */
+    @Override
+    public SimpleUserDTO activate(String confirmationToken) throws GenerateWalletException {
+        Assert.notNull(confirmationToken, "confirmation Token can not be null");
+        Assert.hasLength(confirmationToken, "confirmation token can not be empty");
+        final UserEntity userToActivate = userRepository.findOneByConfirmationToken(confirmationToken).orElseThrow(() -> {
+            throw new IllegalStateException("User can not be found");
+        });
+        // Generate Wallet
+        final String walletHash = walletService.generateWallet();
+        logger.debug("Wallet created with hash: " + walletHash);
+        userToActivate.setState(UserStateEnum.ACTIVATE);
+        userToActivate.setConfirmationToken(null);
+        userToActivate.setWalletHash(walletHash);
+        final UserEntity userActivated = userRepository.save(userToActivate);
+        return simpleUserMapper.entityToDTO(userActivated);
     }
 
     /**
