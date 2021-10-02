@@ -1,6 +1,5 @@
 package com.dreamsoftware.blockchaingateway.services.impl;
 
-import com.dreamsoftware.blockchaingateway.exception.GenerateWalletException;
 import com.dreamsoftware.blockchaingateway.mapper.SignUpUserMapper;
 import com.dreamsoftware.blockchaingateway.mapper.SimpleUserMapper;
 import com.dreamsoftware.blockchaingateway.mapper.UserDetailsMapper;
@@ -131,7 +130,7 @@ public class AccountsServiceImpl implements IAccountsService {
      * @return
      */
     @Override
-    public SimpleUserDTO activate(String confirmationToken) throws GenerateWalletException {
+    public SimpleUserDTO activate(String confirmationToken) throws Throwable {
         Assert.notNull(confirmationToken, "confirmation Token can not be null");
         Assert.hasLength(confirmationToken, "confirmation token can not be empty");
         final UserEntity userToActivate = userRepository.findOneByConfirmationToken(confirmationToken).orElseThrow(() -> {
@@ -145,6 +144,15 @@ public class AccountsServiceImpl implements IAccountsService {
         userToActivate.setWalletHash(walletHash);
         final UserEntity userActivated = userRepository.save(userToActivate);
         return simpleUserMapper.entityToDTO(userActivated);
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public long deleteUnactivatedAccounts() {
+        return userRepository.deleteByState(UserStateEnum.PENDING_ACTIVATE);
     }
 
     /**

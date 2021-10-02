@@ -86,6 +86,25 @@ trust:
             trust-certification-contract-address: "0xc9F57EA9418190f14bbF2d00E776462105ffe677"
             trust-ether-faucet-contract-address: "0x8F3FD73CbF7081D4E764b4ff7708cBB62950D301"
 
+
+##### Configuration for account management ####
+task:
+    account:
+        delete:
+             ## Task to remove expired password reset token
+            expired.tokens: 15 10 * * * ?
+            ## Task to remove inactive accounts
+            ## At second :15 of minute :10 of every hour
+            unactivated.accounts: 15 10 * * * ?
+        ## Task to cancel account removal processes
+        ## At second :15 of minute :20 of every hour
+        cancel.account.deletion.proccess: 15 20 * * * ?
+        ## Task for forwarding failed emails
+        ## At second :00, every 5 minutes starting at minute :00, of every hour
+        unsuccessful.mail.forwarding: 0 0/5 * * * ?
+        ## Number of emails to be forwarded
+        unsuccessful.mail.forwarding.number.of.emails.to.forward: 10
+
 logging.level:
   org.springframework.cloud: DEBUG
   org.springframework.security: DEBUG
