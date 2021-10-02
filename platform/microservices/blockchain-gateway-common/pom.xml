@@ -11,7 +11,7 @@
 
     <properties>
         <web3j.version>4.8.4</web3j.version>
-        <jbcrypt.version>0.4</jbcrypt.version>
+        <jasypt.spring.boot.version>2.1.1</jasypt.spring.boot.version>
     </properties>
 
     <parent>
@@ -54,6 +54,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.ulisesbocchio</groupId>
+            <artifactId>jasypt-spring-boot</artifactId>
+            <version>${jasypt.spring.boot.version}</version>
         </dependency>
 
     </dependencies>
