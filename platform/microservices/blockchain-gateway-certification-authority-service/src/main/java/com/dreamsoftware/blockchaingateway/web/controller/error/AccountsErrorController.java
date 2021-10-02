@@ -6,6 +6,7 @@ import com.dreamsoftware.blockchaingateway.web.controller.error.exception.SignUp
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
 import com.dreamsoftware.blockchaingateway.web.core.ErrorResponseDTO;
 import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
+import com.dreamsoftware.blockchaingateway.web.controller.error.exception.ActivateAccountException;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,20 @@ public class AccountsErrorController extends SupportController {
         logger.error("Handler for RefreshTokenException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.REFRESH_TOKEN_FAIL,
                 HttpStatus.INTERNAL_SERVER_ERROR, "User Refresh Token Fail");
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(ActivateAccountException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleActivateAccountException(ActivateAccountException ex, HttpServletRequest request) {
+        logger.error("Handler for ActivateAccountException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.ACTIVATE_FAIL,
+                HttpStatus.INTERNAL_SERVER_ERROR, "User activation Fail");
     }
 
 }

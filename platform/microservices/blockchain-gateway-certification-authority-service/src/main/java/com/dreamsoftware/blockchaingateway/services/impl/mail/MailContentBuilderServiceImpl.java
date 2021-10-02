@@ -15,6 +15,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -38,7 +40,20 @@ public class MailContentBuilderServiceImpl implements IMailContentBuilderService
 
     @Override
     public MimeMessage buildContent(SendMailForActivateAccountDTO request) throws MessagingException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Assert.notNull(mailContentProperties.getConfirmAccountActivationTemplate(), "Account Activation Success Template can not be null");
+        Assert.hasLength(mailContentProperties.getConfirmAccountActivationTemplate(), "Account Activation Success Template can not be empty");
+
+        // Generate Email Subject
+        String subject = "mail_registration_success_subject_title";
+
+        final Context context = new Context(request.getLocale());
+        context.setVariable("firstname", request.getFirstname());
+        context.setVariable("lastname", request.getLastname());
+        context.setVariable("activateUrl",
+                ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/accounts/activate?token={token}")
+                        .buildAndExpand(request.getConfirmationToken()));
+
+        return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getConfirmAccountActivationTemplate(), null);
     }
 
     /**
@@ -58,9 +73,11 @@ public class MailContentBuilderServiceImpl implements IMailContentBuilderService
         messageHelper.setFrom(mailContentProperties.getMailFrom());
         messageHelper.setTo(target);
         messageHelper.setText(templateEngine.process(templateName, context), true);
-        for (final Entry<String, String> inlineResource : inlineResourcePathMap.entrySet()) {
-            messageHelper.addInline(inlineResource.getKey(),
-                    new ClassPathResource(inlineResource.getValue()));
+        if (inlineResourcePathMap != null) {
+            for (final Entry<String, String> inlineResource : inlineResourcePathMap.entrySet()) {
+                messageHelper.addInline(inlineResource.getKey(),
+                        new ClassPathResource(inlineResource.getValue()));
+            }
         }
         return messageHelper.getMimeMessage();
 

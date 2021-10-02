@@ -10,16 +10,17 @@ import com.dreamsoftware.blockchaingateway.web.dto.internal.SendMailForConfirmAc
 public interface IMailClientService {
 
     /**
-     * Send Mail
+     * Send Mail for activate account
      *
-     * @param request
+     * @param id
      */
-    void sendMail(final SendMailForActivateAccountDTO request);
+    void sendMailForActivateAccount(final String id);
 
     /**
-     * Send Mail
+     * Send Mail For confirm activation
      *
-     * @param request
+     * @param id
      */
-    void sendMail(final SendMailForConfirmActivationDTO request);
+    void sendMailForConfirmActivation(final String id);
+
 }

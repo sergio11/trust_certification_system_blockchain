@@ -24,7 +24,7 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: test@gmail.com
+    username: dreamsoftware92@gmail.com
     password: changeme
     properties:
         mail:
@@ -67,7 +67,7 @@ mail:
         base.dir: mail/resources/
     registration.success.template.name: mail_template_registration_success
     confirm.account.activation.template.name: mail_template_confirm_account_activation
-    from: test@gmail.com
+    from: dreamsoftware92@gmail.com
 
 ## Trust Certification System Props
 trust:

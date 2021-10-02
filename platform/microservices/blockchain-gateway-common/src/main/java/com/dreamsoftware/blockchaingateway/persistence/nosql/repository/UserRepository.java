@@ -13,9 +13,32 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends MongoRepository<UserEntity, ObjectId> {
 
+    /**
+     *
+     * @param email
+     * @return
+     */
     Optional<UserEntity> findOneByEmail(String email);
 
+    /**
+     *
+     * @param email
+     * @param userName
+     * @return
+     */
     Optional<UserEntity> findOneByEmailOrUserName(String email, String userName);
 
+    /**
+     *
+     * @param email
+     * @return
+     */
     Long countByEmail(final String email);
+
+    /**
+     *
+     * @param confirmationToken
+     * @return
+     */
+    Optional<UserEntity> findOneByConfirmationToken(String confirmationToken);
 }
