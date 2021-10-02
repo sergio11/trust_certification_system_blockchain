@@ -1,6 +1,7 @@
 package com.dreamsoftware.blockchaingateway.persistence.nosql.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Document(collection = AuthorityEntity.COLLECTION_NAME)
 public class AuthorityEntity {
 
