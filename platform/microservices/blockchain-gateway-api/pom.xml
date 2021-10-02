@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dreamsoftware</groupId>
-    <artifactId>blockchain-certification-authority-service</artifactId>
+    <artifactId>blockchain-gateway-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>blockchain_certification_authority_service</name>
-    <description>Blockchain Certification Authority Service</description>
+    <name>blockchain_gateway_api</name>
+    <description>Blockchain Gateway API</description>
     <packaging>jar</packaging>
 
     <properties>
@@ -92,7 +92,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <finalName>blockchain_certification_authority_service</finalName>
+                    <finalName>blockchain_gateway_api</finalName>
                 </configuration>
             </plugin>
 
@@ -112,10 +112,10 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>ssanchez11/blockchain_certification_authority_service</repository>
+                    <repository>ssanchez11/blockchain_gateway_api</repository>
                     <tag>${project.version}</tag>
                     <buildArgs>
-                        <JAR_FILE>blockchain_certification_authority_service</JAR_FILE>
+                        <JAR_FILE>blockchain_gateway_api</JAR_FILE>
                     </buildArgs>
                     <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
                     <forceTags>true</forceTags>
