@@ -38,6 +38,15 @@ public class MailClientServiceImpl implements IMailClientService {
     private final UserRepository userRepository;
     private final I18NService i18nService;
 
+    /**
+     *
+     * @param numberOfEmailsToForwarding
+     */
+    @Override
+    public void forwardEmails(int numberOfEmailsToForwarding) {
+        Assert.isTrue(numberOfEmailsToForwarding > 0, "Number of mails should be greater than 0");
+    }
+
     @Override
     public void sendMailForActivateAccount(String id) {
         Assert.notNull(id, "Id can not be null");
@@ -59,7 +68,7 @@ public class MailClientServiceImpl implements IMailClientService {
 
             final MimeMessage message = mailContentBuilderService.buildContent(request);
             sendMail(message, request.getEmail(), EmailTypeEnum.CONFIRM_ACCOUNT_ACTIVATION);
-        } catch (MessagingException ex) {
+        } catch (Throwable ex) {
             logger.debug("MessagingException: " + ex.getMessage());
         }
     }

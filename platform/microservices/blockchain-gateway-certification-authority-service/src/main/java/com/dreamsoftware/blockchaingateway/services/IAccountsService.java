@@ -1,6 +1,5 @@
 package com.dreamsoftware.blockchaingateway.services;
 
-import com.dreamsoftware.blockchaingateway.exception.GenerateWalletException;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SignInUserDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.AuthenticationDTO;
@@ -49,8 +48,14 @@ public interface IAccountsService {
      * Activate Account
      *
      * @param confirmationToken
-     * @throws
-     * com.dreamsoftware.blockchaingateway.exception.GenerateWalletException
+     * @return
+     * @throws java.lang.Throwable
      */
-    SimpleUserDTO activate(final String confirmationToken) throws GenerateWalletException;
+    SimpleUserDTO activate(final String confirmationToken) throws Throwable;
+
+    /**
+     *
+     * @return
+     */
+    long deleteUnactivatedAccounts();
 }

@@ -1,13 +1,17 @@
 package com.dreamsoftware.blockchaingateway.services.mail;
 
-import com.dreamsoftware.blockchaingateway.web.dto.internal.SendMailForActivateAccountDTO;
-import com.dreamsoftware.blockchaingateway.web.dto.internal.SendMailForConfirmActivationDTO;
-
 /**
  *
  * @author ssanchez
  */
 public interface IMailClientService {
+
+    /**
+     * Forwards Emails
+     *
+     * @param numberOfEmailsToForwarding
+     */
+    void forwardEmails(int numberOfEmailsToForwarding);
 
     /**
      * Send Mail for activate account

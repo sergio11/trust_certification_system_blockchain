@@ -191,7 +191,7 @@ public class AccountsController extends SupportController {
             final SimpleUserDTO userActivated = authenticationService.activate(token);
             applicationEventPublisher.publishEvent(new UserActivatedEvent(this, userActivated.getIdentity()));
             return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.ACTIVATE_SUCCESS, HttpStatus.OK, userActivated);
-        } catch (final Exception ex) {
+        } catch (final Throwable ex) {
             throw new ActivateAccountException(ex.getMessage(), ex.getCause());
         }
     }

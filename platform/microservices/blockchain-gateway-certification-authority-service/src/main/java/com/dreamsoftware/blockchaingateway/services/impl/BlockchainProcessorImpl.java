@@ -32,12 +32,16 @@ public class BlockchainProcessorImpl implements IBlockchainProcessor {
         Assert.hasLength(id, "Id can not be empty");
         Assert.isTrue(ObjectId.isValid(id), "Id is invalid");
 
-        final UserEntity userEntity = userRepository.findById(new ObjectId(id)).orElseThrow(() -> {
-            throw new IllegalStateException("User not found");
-        });
+        try {
+            final UserEntity userEntity = userRepository.findById(new ObjectId(id)).orElseThrow(() -> {
+                throw new IllegalStateException("User not found");
+            });
 
-        if (userEntity.getType().equals(UserTypeEnum.CA)) {
-            publish(new CertificationAuthorityInitialFundsRequestEvent(userEntity.getName(), userEntity.getWalletHash()));
+            if (userEntity.getType().equals(UserTypeEnum.CA)) {
+                publish(new CertificationAuthorityInitialFundsRequestEvent(userEntity.getName(), userEntity.getWalletHash()));
+            }
+        } catch (final Throwable ex) {
+            logger.debug("onUserActivated FAILED! " + ex.getMessage());
         }
 
     }
