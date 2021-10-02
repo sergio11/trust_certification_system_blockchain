@@ -1,6 +1,6 @@
 package com.dreamsoftware.blockchaingateway.services.impl.mail;
 
-import com.dreamsoftware.blockchaingateway.mail.properties.MailProperties;
+import com.dreamsoftware.blockchaingateway.config.mail.properties.MailProperties;
 import com.dreamsoftware.blockchaingateway.services.mail.IMailContentBuilderService;
 import com.dreamsoftware.blockchaingateway.web.dto.internal.SendMailForActivateAccountDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.internal.SendMailForConfirmActivationDTO;

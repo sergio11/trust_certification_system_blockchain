@@ -1,4 +1,4 @@
-package com.dreamsoftware.blockchaingateway.mail.properties;
+package com.dreamsoftware.blockchaingateway.config.mail.properties;
 
 import java.io.Serializable;
 import lombok.Data;

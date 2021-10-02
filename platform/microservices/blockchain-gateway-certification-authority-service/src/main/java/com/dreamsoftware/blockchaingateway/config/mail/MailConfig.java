@@ -1,6 +1,6 @@
-package com.dreamsoftware.blockchaingateway.mail.config;
+package com.dreamsoftware.blockchaingateway.config.mail;
 
-import com.dreamsoftware.blockchaingateway.mail.properties.MailProperties;
+import com.dreamsoftware.blockchaingateway.config.mail.properties.MailProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
