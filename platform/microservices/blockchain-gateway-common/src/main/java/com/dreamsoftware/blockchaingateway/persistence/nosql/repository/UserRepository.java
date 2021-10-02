@@ -24,14 +24,6 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId> {
     /**
      *
      * @param email
-     * @param userName
-     * @return
-     */
-    Optional<UserEntity> findOneByEmailOrUserName(String email, String userName);
-
-    /**
-     *
-     * @param email
      * @return
      */
     Long countByEmail(final String email);

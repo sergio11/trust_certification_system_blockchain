@@ -7,8 +7,8 @@ spring:
         database: trustcertificationsystem
         host: mongo
         port: 27017
-        username: devroot
-        password: devroot
+        username: ENC(vb0mlnK7rEnJyAw459NoSg==)
+        password: ENC(dT+5AMBOTacnNnBTqxt12g==)
   cloud:
     stream:
         kafka:
@@ -24,8 +24,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: dreamsoftware92@gmail.com
-    password: changeme
+    username: ENC(iWAhNuq66KM19C9NnrN5sE3t2Y6cxGVuFh4Ouyj6Xh3NBXA7V4NN1Q==)
+    password: ENC(+clt1ygZG1HTJuancbLk9DGr9P0JHhOa+VEFBjAi4lo=)
     properties:
         mail:
             smtp:
@@ -40,7 +40,7 @@ spring:
 jwt:
     token:
         header: Authorization
-        secret: sssshhhh!
+        secret: ENC(jE/+2/YpjTKkFpHbFlNzIVgpzHvwPhWo1+12ZaD3WLHGx5Ew+X2kvocuxV0qXp7Q)
         expiration: 604800
     route:
         authentication:
@@ -67,7 +67,7 @@ mail:
         base.dir: mail/resources/
     registration.success.template.name: mail_template_registration_success
     confirm.account.activation.template.name: mail_template_confirm_account_activation
-    from: dreamsoftware92@gmail.com
+    from: ENC(2fhT/KBRBQbae36mvdNRWizBRsmWPfNtHKGVkiUDphs7DDGJz7EPcA==)
 
 ## Trust Certification System Props
 trust:
@@ -77,7 +77,7 @@ trust:
             wallet-directory: /opt/wallets
             client-address: http://bootstrap:8545
             root-public-key: "0xE545f3b554175BABcBeF152D4516Ff90455095EE"
-            root-private-key: 8de26ec8adbbf873a9e4c64d6d2228bd4f7f2e61aebffa07e9769bd029fa7ad7
+            root-private-key: ENC(7k5dAObOTy1arUeaWbSG1mldiWDR/3mIJHqqRnXivkXaTpjYkYMNTfy8Ivktio6I2qnT+QK6DetaWpIw3AZqVRhBoPRORiCcNGYwJZE5ly0=)
             gas-price: 1000000000
             gas-limit: 993613
             token-management-contract-address: "0x4e690116b461DB7E23f78E991F94dB8Eb1E26B55"
