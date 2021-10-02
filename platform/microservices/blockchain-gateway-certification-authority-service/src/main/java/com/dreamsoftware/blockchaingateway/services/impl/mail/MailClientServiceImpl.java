@@ -1,7 +1,7 @@
-package com.dreamsoftware.blockchaingateway.mail.service.impl;
+package com.dreamsoftware.blockchaingateway.services.impl.mail;
 
-import com.dreamsoftware.blockchaingateway.mail.service.IMailClientService;
-import com.dreamsoftware.blockchaingateway.mail.service.IMailContentBuilderService;
+import com.dreamsoftware.blockchaingateway.services.mail.IMailClientService;
+import com.dreamsoftware.blockchaingateway.services.mail.IMailContentBuilderService;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.EmailEntity;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.EmailTypeEnum;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.EmailRepository;

@@ -1,6 +1,8 @@
 package com.dreamsoftware.blockchaingateway.scheduling.events.account.handler;
 
+import com.dreamsoftware.blockchaingateway.services.mail.IMailClientService;
 import com.dreamsoftware.blockchaingateway.scheduling.events.account.UserPendingValidationEvent;
+import com.dreamsoftware.blockchaingateway.services.I18NService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
@@ -19,6 +21,9 @@ public class AccountsEventHandlers {
 
     private static Logger logger = LoggerFactory.getLogger(AccountsEventHandlers.class);
 
+    private final IMailClientService mailClientService;
+    private final I18NService i18nService;
+
     /**
      *
      * @param signUpUserDTO
@@ -26,6 +31,7 @@ public class AccountsEventHandlers {
     @Async
     @EventListener
     void handle(final UserPendingValidationEvent event) {
-        Assert.notNull(event.getUserDTO(), "Simple User DTO can not be null");
+        Assert.notNull(event.getUserId(), "User Id can not be null");
+
     }
 }

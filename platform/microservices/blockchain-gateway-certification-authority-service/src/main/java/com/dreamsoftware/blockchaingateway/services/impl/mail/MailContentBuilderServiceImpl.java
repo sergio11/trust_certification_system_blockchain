@@ -1,7 +1,7 @@
-package com.dreamsoftware.blockchaingateway.mail.service.impl;
+package com.dreamsoftware.blockchaingateway.services.impl.mail;
 
 import com.dreamsoftware.blockchaingateway.mail.properties.MailProperties;
-import com.dreamsoftware.blockchaingateway.mail.service.IMailContentBuilderService;
+import com.dreamsoftware.blockchaingateway.services.mail.IMailContentBuilderService;
 import com.dreamsoftware.blockchaingateway.web.dto.internal.SendMailForActivateAccountDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.internal.SendMailForConfirmActivationDTO;
 import javax.mail.MessagingException;

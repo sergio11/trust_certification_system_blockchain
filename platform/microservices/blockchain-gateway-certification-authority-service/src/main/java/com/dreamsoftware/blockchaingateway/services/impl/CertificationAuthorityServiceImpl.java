@@ -1,18 +1,14 @@
 package com.dreamsoftware.blockchaingateway.services.impl;
 
-import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityInitialFundsRequestEvent;
-import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.blockchaingateway.service.IEventPublisher;
 import com.dreamsoftware.blockchaingateway.service.IWalletService;
 import com.dreamsoftware.blockchaingateway.services.ICertificationAuthorityService;
-import com.dreamsoftware.blockchaingateway.web.dto.request.SignUpUserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.dreamsoftware.blockchaingateway.service.IPasswordHashingService;
 import com.dreamsoftware.blockchaingateway.web.controller.error.exception.GetCertificationAuthorityException;
-import com.dreamsoftware.blockchaingateway.web.controller.error.exception.RegisterCertificationAuthorityException;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificationAuthorityDetailDTO;
 import javax.annotation.PostConstruct;
 import org.springframework.util.Assert;
@@ -71,7 +67,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
      *
      * @param registerCertificationAuthorityDTO
      */
-    @Override
+    /* @Override
     public void register(final SignUpUserDTO registerCertificationAuthorityDTO) {
         try {
             // Generate Wallet
@@ -89,8 +85,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
             logger.error("exception ocurred " + ex.getMessage() + " CALLED");
             throw new RegisterCertificationAuthorityException(ex.getMessage(), ex);
         }
-    }
-
+    }*/
     @PostConstruct
     private void onPostConstruct() {
         Assert.notNull(walletService, "Wallet Service can not be null");

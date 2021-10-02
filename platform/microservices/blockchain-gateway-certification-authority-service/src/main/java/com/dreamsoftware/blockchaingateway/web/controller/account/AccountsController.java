@@ -159,11 +159,9 @@ public class AccountsController extends SupportController {
             final SimpleUserDTO userSaved = authenticationService.signup(user);
 
             if (userSaved.getState().equals(SimpleUserDTO.PENDING_ACTIVATE_STATE)) {
-                applicationEventPublisher.publishEvent(new UserPendingValidationEvent(this, userSaved));
+                applicationEventPublisher.publishEvent(new UserPendingValidationEvent(this, userSaved.getIdentity()));
             }
-
             return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_SUCCESS, HttpStatus.OK, userSaved);
-
         } catch (final Exception ex) {
             throw new SignUpException(ex.getMessage(), ex.getCause());
         }

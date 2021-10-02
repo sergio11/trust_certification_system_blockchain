@@ -6,6 +6,7 @@ import com.dreamsoftware.blockchaingateway.mapper.UserDetailsMapper;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.blockchaingateway.services.IAccountsService;
+import com.dreamsoftware.blockchaingateway.services.ITokenGeneratorService;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SignInUserDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.AccessTokenDTO;
@@ -44,6 +45,7 @@ public class AccountsServiceImpl implements IAccountsService {
     private final UserDetailsMapper userDetailsMapper;
     private final SignUpUserMapper signUpUserMapper;
     private final SimpleUserMapper simpleUserMapper;
+    private final ITokenGeneratorService tokenGeneratorService;
 
     /**
      *
@@ -111,8 +113,12 @@ public class AccountsServiceImpl implements IAccountsService {
     @Override
     public SimpleUserDTO signup(SignUpUserDTO user) {
         Assert.notNull(user, "user can not be null");
-        final UserEntity userEntitySaved = userRepository.save(
-                signUpUserMapper.signUpUserDTOToUserEntity(user));
+        // Map to user entity
+        final UserEntity userToSave = signUpUserMapper.signUpUserDTOToUserEntity(user);
+        // Configure confirmation token
+        final String confirmationToken = tokenGeneratorService.generateToken(userToSave.getId().toString());
+        userToSave.setConfirmationToken(confirmationToken);
+        final UserEntity userEntitySaved = userRepository.save(userToSave);
         return simpleUserMapper.entityToDTO(userEntitySaved);
     }
 

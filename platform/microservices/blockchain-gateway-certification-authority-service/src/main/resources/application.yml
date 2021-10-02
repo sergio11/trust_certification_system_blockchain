@@ -19,8 +19,8 @@ spring:
         bindings:
             eventsChannel-out-0:
                 destination: CA-initial-funds-v1
-    # Mail
-    # output of emails
+  # Mail
+  # output of emails
   mail:
     host: smtp.gmail.com
     port: 587
@@ -53,6 +53,11 @@ api:
         path: /api/
     version: v1
 
+# i18n Config
+i18n:
+    paramname: lang
+    default.locale: en_GB
+    locale.supported: es_ES,en_GB
 
 # Mail Properties
 mail:

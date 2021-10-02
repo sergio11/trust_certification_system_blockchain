@@ -1,4 +1,4 @@
-package com.dreamsoftware.blockchaingateway.web.controller.error;
+package com.dreamsoftware.blockchaingateway.web.controller.core;
 
 import com.dreamsoftware.blockchaingateway.web.controller.core.CommonErrorResponseCodeEnum;
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
