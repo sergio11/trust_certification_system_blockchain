@@ -1,6 +1,5 @@
 package com.dreamsoftware.blockchaingateway.scheduling.events.account;
 
-import com.dreamsoftware.blockchaingateway.web.dto.response.SimpleUserDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.context.ApplicationEvent;
@@ -14,11 +13,10 @@ import org.springframework.context.ApplicationEvent;
 @EqualsAndHashCode(callSuper = false)
 public class UserPendingValidationEvent extends ApplicationEvent {
 
-    private final SimpleUserDTO userDTO;
+    private final String userId;
 
-    public UserPendingValidationEvent(Object source, final SimpleUserDTO userDTO) {
+    public UserPendingValidationEvent(Object source, final String userId) {
         super(source);
-        this.userDTO = userDTO;
+        this.userId = userId;
     }
-
 }

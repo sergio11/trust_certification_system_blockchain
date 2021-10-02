@@ -3,6 +3,7 @@ package com.dreamsoftware.blockchaingateway.web.dto.request;
 import com.dreamsoftware.blockchaingateway.web.validation.constraints.EmailShouldBeUnique;
 import com.dreamsoftware.blockchaingateway.web.validation.constraints.FieldMatch;
 import com.dreamsoftware.blockchaingateway.web.validation.constraints.IExtended;
+import com.dreamsoftware.blockchaingateway.web.validation.constraints.ShouldBeValidISOLanguage;
 import com.dreamsoftware.blockchaingateway.web.validation.constraints.ValidUserType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.Email;
@@ -74,6 +75,7 @@ public class SignUpUserDTO {
      * User Language
      */
     @JsonProperty("language")
+    @ShouldBeValidISOLanguage(message = "{user_language_invalid}")
     private String language;
 
 }

@@ -1,6 +1,5 @@
 package com.dreamsoftware.blockchaingateway.persistence.nosql.entity;
 
-import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -64,19 +63,13 @@ public class UserEntity {
      * State
      */
     @Field("state")
-    private UserStateEnum state;
+    private UserStateEnum state = UserStateEnum.PENDING_ACTIVATE;
 
     /**
      * User Agent
      */
     @Field("user_agent")
     private String userAgent;
-
-    /**
-     * Last Login Access
-     */
-    @Field("last_login_access")
-    private Date lastLoginAccess;
 
     /**
      * Language
