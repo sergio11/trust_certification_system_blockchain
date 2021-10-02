@@ -123,10 +123,10 @@ services:
     networks:
       - external_tcs_network
 
-  # Blockchain Certification Authority Service
-  bc_certification_authority_service:
-    image: ssanchez11/blockchain_certification_authority_service:0.0.1-SNAPSHOT
-    container_name: blockchain_certification_authority_service
+  # Blockchain Gateway API
+  bc_gateway_api:
+    image: ssanchez11/blockchain_gateway_api:0.0.1-SNAPSHOT
+    container_name: blockchain_gateway_api
     volumes:
       - ../shared/keystore:/opt/wallets
     ports:

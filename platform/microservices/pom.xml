@@ -25,8 +25,8 @@
 
     <modules>
         <module>blockchain-gateway-common</module>
-        <module>blockchain-gateway-certification-authority-service</module>
         <module>blockchain-gateway-processor</module>
+        <module>blockchain-gateway-api</module>
     </modules>
 
     <dependencies>
