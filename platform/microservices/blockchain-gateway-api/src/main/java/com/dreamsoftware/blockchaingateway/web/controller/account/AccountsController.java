@@ -166,7 +166,9 @@ public class AccountsController extends SupportController {
             }
             return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_SUCCESS, HttpStatus.OK, userSaved);
         } catch (final Exception ex) {
-            throw new SignUpException(ex.getMessage(), ex.getCause());
+            ex.printStackTrace();
+            logger.debug("signup exception: " + ex);
+            throw new SignUpException(ex.getMessage(), ex);
         }
     }
 

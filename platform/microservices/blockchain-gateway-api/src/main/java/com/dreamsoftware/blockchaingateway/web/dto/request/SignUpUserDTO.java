@@ -5,6 +5,7 @@ import com.dreamsoftware.blockchaingateway.web.validation.constraints.FieldMatch
 import com.dreamsoftware.blockchaingateway.web.validation.constraints.IExtended;
 import com.dreamsoftware.blockchaingateway.web.validation.constraints.ShouldBeValidISOLanguage;
 import com.dreamsoftware.blockchaingateway.web.validation.constraints.ValidUserType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -29,33 +30,33 @@ public class SignUpUserDTO {
     /**
      * Name
      */
+    @JsonProperty("name")
     @NotBlank(message = "{user_name_not_null}")
     @Size(min = 2, max = 45, message = "{user_name_size}")
-    @JsonProperty("name")
     private String name;
 
     /**
      * Email
      */
+    @JsonProperty("email")
     @NotBlank(message = "{user_email_not_null}")
     @Email(message = "{user_email_invalid}")
     @EmailShouldBeUnique(message = "{user_email_unique}")
-    @JsonProperty("email")
     private String email;
 
     /**
      * Password Clear
      */
+    @JsonProperty("passwordClear")
     @NotBlank(message = "{user_password_not_null}")
     @Size(min = 8, max = 25, message = "{user_password_size}")
-    @JsonProperty("password_clear")
     protected String passwordClear;
 
     /**
      * Confirm Password
      */
+    @JsonProperty("confirmPassword")
     @NotBlank(message = "{user_confirm_password_not_null}")
-    @JsonProperty("confirm_password")
     protected String confirmPassword;
 
     /**
@@ -69,6 +70,7 @@ public class SignUpUserDTO {
     /**
      * User Agent
      */
+    @JsonIgnore
     private String userAgent;
 
     /**

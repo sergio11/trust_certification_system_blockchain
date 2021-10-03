@@ -67,7 +67,7 @@ public class MailClientServiceImpl implements IMailClientService {
                     .build();
 
             final MimeMessage message = mailContentBuilderService.buildContent(request);
-            sendMail(message, request.getEmail(), EmailTypeEnum.CONFIRM_ACCOUNT_ACTIVATION);
+            sendMail(message, request.getId(), EmailTypeEnum.CONFIRM_ACCOUNT_ACTIVATION);
         } catch (Throwable ex) {
             logger.debug("MessagingException: " + ex.getMessage());
         }
@@ -83,24 +83,24 @@ public class MailClientServiceImpl implements IMailClientService {
      * Send Mail
      *
      * @param message
-     * @param targetEmail
+     * @param userId
      * @param type
      */
     private void sendMail(final MimeMessage message,
-            final String targetEmail,
+            final String userId,
             final EmailTypeEnum type) {
         try {
             mailSender.send(message);
         } catch (final MailException ex) {
             final EmailEntity emailEntity = Optional.ofNullable(
-                    emailRepository.findByUserEmailAndType(targetEmail, type))
+                    emailRepository.findByUserIdAndType(new ObjectId(userId), type))
                     .map((emailEntitySaved) -> {
                         emailEntitySaved.setLastChance(new Date());
                         emailEntitySaved.setError(ex.getMessage());
                         return emailEntitySaved;
                     }).orElseGet(() -> {
                 final EmailEntity newEmailEntity = new EmailEntity();
-                newEmailEntity.setUser(userRepository.findOneByEmail(targetEmail).orElse(null));
+                newEmailEntity.setUser(userRepository.findById(new ObjectId(userId)).orElse(null));
                 newEmailEntity.setType(type);
                 newEmailEntity.setLastChance(new Date());
                 newEmailEntity.setError(ex.getMessage());
