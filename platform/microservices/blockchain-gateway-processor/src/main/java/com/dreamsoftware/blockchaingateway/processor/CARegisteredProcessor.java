@@ -1,12 +1,10 @@
 package com.dreamsoftware.blockchaingateway.processor;
 
 import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityRegisteredEvent;
-import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityRegistrationRequestEvent;
-import com.dreamsoftware.blockchaingateway.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
-import com.dreamsoftware.blockchaingateway.persistence.exception.RepositoryException;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
+import java.util.Date;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +21,15 @@ public class CARegisteredProcessor implements Consumer<CertificationAuthorityReg
 
     private Logger logger = LoggerFactory.getLogger(CARegisteredProcessor.class);
 
-    /**
-     * Certification Authority Repository
-     */
-    private final UserRepository certificationAuthorityRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void accept(CertificationAuthorityRegisteredEvent event) {
         logger.debug("CARegisteredProcessor CALLED!");
+        userRepository.findOneByWalletHash(event.getWalletHash()).ifPresent((userEntity) -> {
+            userEntity.setActivationDate(new Date());
+            userEntity.setState(UserStateEnum.VALIDATED);
+            userRepository.save(userEntity);
+        });
     }
 }

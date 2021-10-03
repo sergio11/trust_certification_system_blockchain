@@ -139,7 +139,7 @@ public class AccountsServiceImpl implements IAccountsService {
         // Generate Wallet
         final String walletHash = walletService.generateWallet();
         logger.debug("Wallet created with hash: " + walletHash);
-        userToActivate.setState(UserStateEnum.ACTIVATE);
+        userToActivate.setState(UserStateEnum.PENDING_VALIDATE);
         userToActivate.setConfirmationToken(null);
         userToActivate.setWalletHash(walletHash);
         final UserEntity userActivated = userRepository.save(userToActivate);

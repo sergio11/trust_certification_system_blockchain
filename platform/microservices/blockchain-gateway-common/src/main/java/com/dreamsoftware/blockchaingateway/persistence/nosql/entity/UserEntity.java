@@ -6,9 +6,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import java.util.Date;
 
 /**
  *
@@ -39,6 +41,7 @@ public class UserEntity {
      * Email
      */
     @Field("email")
+    @Indexed(unique = true)
     private String email;
 
     /**
@@ -57,6 +60,7 @@ public class UserEntity {
      * Wallet Hash
      */
     @Field("wallet_hash")
+    @Indexed(unique = true)
     private String walletHash;
 
     /**
@@ -82,6 +86,12 @@ public class UserEntity {
      */
     @Field("confirmation_token")
     private String confirmationToken;
+
+    /**
+     * Activation Date
+     */
+    @Field("activation_date")
+    private Date activationDate;
 
     /**
      * Authority

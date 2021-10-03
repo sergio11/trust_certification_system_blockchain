@@ -54,7 +54,7 @@ public class UserDetailsImpl<T> implements ICommonUserDetailsAware<T> {
 
     @Override
     public boolean isEnabled() {
-        return state == UserStateEnum.ACTIVATE;
+        return state == UserStateEnum.VALIDATED;
     }
 
     @Override

@@ -23,6 +23,13 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId> {
 
     /**
      *
+     * @param walletHash
+     * @return
+     */
+    Optional<UserEntity> findOneByWalletHash(final String walletHash);
+
+    /**
+     *
      * @param email
      * @return
      */
