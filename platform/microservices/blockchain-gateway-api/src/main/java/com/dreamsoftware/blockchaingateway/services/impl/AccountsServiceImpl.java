@@ -117,7 +117,7 @@ public class AccountsServiceImpl implements IAccountsService {
         // Map to user entity
         final UserEntity userToSave = signUpUserMapper.signUpUserDTOToUserEntity(user);
         // Configure confirmation token
-        final String confirmationToken = tokenGeneratorService.generateToken(userToSave.getId().toString());
+        final String confirmationToken = tokenGeneratorService.generateToken(userToSave.getName());
         userToSave.setConfirmationToken(confirmationToken);
         final UserEntity userEntitySaved = userRepository.save(userToSave);
         return simpleUserMapper.entityToDTO(userEntitySaved);

@@ -1,7 +1,10 @@
 package com.dreamsoftware.blockchaingateway.config.mail.properties;
 
 import java.io.Serializable;
+import javax.annotation.PostConstruct;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +16,8 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 public class MailProperties implements Serializable {
+
+    private Logger logger = LoggerFactory.getLogger(MailProperties.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -30,4 +35,13 @@ public class MailProperties implements Serializable {
 
     @Value("${mail.confirm.account.activation.template.name}")
     private String confirmAccountActivationTemplate;
+
+    @PostConstruct
+    protected void onPostConstruct() {
+        logger.debug("mailFrom: " + mailFrom);
+        logger.debug("mailTemplatesBaseDir: " + mailTemplatesBaseDir);
+        logger.debug("mailResourcesBaseDir: " + mailResourcesBaseDir);
+        logger.debug("registrationSuccessTemplate: " + registrationSuccessTemplate);
+        logger.debug("confirmAccountActivationTemplate: " + confirmAccountActivationTemplate);
+    }
 }
