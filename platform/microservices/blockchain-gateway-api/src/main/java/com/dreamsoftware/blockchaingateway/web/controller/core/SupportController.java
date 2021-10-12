@@ -1,5 +1,6 @@
 package com.dreamsoftware.blockchaingateway.web.controller.core;
 
+import com.dreamsoftware.blockchaingateway.i18n.service.IMessageSourceResolverService;
 import com.dreamsoftware.blockchaingateway.web.core.ResponseHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -10,6 +11,12 @@ import org.springframework.web.servlet.LocaleResolver;
  * @author ssanchez
  */
 public class SupportController {
+
+    /**
+     * Message Source Resolver
+     */
+    @Autowired
+    protected IMessageSourceResolverService messageSourceResolver;
 
     /**
      * Response Helper
