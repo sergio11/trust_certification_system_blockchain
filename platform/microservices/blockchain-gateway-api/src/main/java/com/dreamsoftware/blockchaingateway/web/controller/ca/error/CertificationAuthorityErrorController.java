@@ -1,6 +1,8 @@
 package com.dreamsoftware.blockchaingateway.web.controller.ca.error;
 
 import com.dreamsoftware.blockchaingateway.web.controller.ca.CertificationAuthorityResponseCodeEnum;
+import com.dreamsoftware.blockchaingateway.web.controller.ca.error.exception.DisableCertificationAuthorityException;
+import com.dreamsoftware.blockchaingateway.web.controller.ca.error.exception.EnableCertificationAuthorityException;
 import com.dreamsoftware.blockchaingateway.web.controller.ca.error.exception.GetCertificationAuthorityException;
 import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
@@ -38,5 +40,21 @@ public class CertificationAuthorityErrorController extends SupportController {
         logger.error("Handler for GetCertificationAuthorityException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_FAIL,
                 HttpStatus.INTERNAL_SERVER_ERROR, "Certification Authority Fail");
+    }
+
+    @ExceptionHandler(EnableCertificationAuthorityException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleEnableCertificationAuthorityException(EnableCertificationAuthorityException ex, HttpServletRequest request) {
+        logger.error("Handler for EnableCertificationAuthorityException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationAuthorityResponseCodeEnum.ENABLE_CERTIFICATION_AUTHORITY_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, "Enable Certification Authority Failed");
+    }
+
+    @ExceptionHandler(DisableCertificationAuthorityException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleEnableCertificationAuthorityException(DisableCertificationAuthorityException ex, HttpServletRequest request) {
+        logger.error("Handler for DisableCertificationAuthorityException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationAuthorityResponseCodeEnum.DISABLE_CERTIFICATION_AUTHORITY_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, "Disable Certification Authority Failed");
     }
 }
