@@ -1,6 +1,8 @@
 package com.dreamsoftware.blockchaingateway.web.controller.ca;
 
 import com.dreamsoftware.blockchaingateway.services.ICertificationAuthorityService;
+import com.dreamsoftware.blockchaingateway.web.controller.ca.error.exception.DisableCertificationAuthorityException;
+import com.dreamsoftware.blockchaingateway.web.controller.ca.error.exception.EnableCertificationAuthorityException;
 import com.dreamsoftware.blockchaingateway.web.controller.ca.error.exception.GetCertificationAuthorityException;
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
 import com.dreamsoftware.blockchaingateway.web.core.ErrorResponseDTO;
@@ -106,6 +108,49 @@ public class CertificationAuthorityController extends SupportController {
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
             throw new GetCertificationAuthorityException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param id
+     * @return
+     * @throws java.lang.Throwable
+     */
+    @Operation(summary = "ENABLE_CA - Enable Certification Authority", description = "Enable Certification Authority Detail", tags = {"CA"})
+    @RequestMapping(value = "/{id}/enable", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdmin
+    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> enable(
+            @Parameter(name = "id", description = "CA Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "user.id.not.valid") @PathVariable("id") String id
+    ) throws Throwable {
+        try {
+
+            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.enable(id);
+            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+                    CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_ENABLED,
+                    HttpStatus.OK, caDetailDTO);
+        } catch (final Exception ex) {
+            throw new EnableCertificationAuthorityException(ex.getMessage(), ex);
+        }
+    }
+
+    @Operation(summary = "DISABLE_CA - Disable Certification Authority", description = "Disable Certification Authority Detail", tags = {"CA"})
+    @RequestMapping(value = "/{id}/disable", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdmin
+    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> disable(
+            @Parameter(name = "id", description = "CA Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "user.id.not.valid") @PathVariable("id") String id
+    ) throws Throwable {
+        try {
+            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.disable(id);
+            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+                    CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_DISABLED,
+                    HttpStatus.OK, caDetailDTO);
+        } catch (final Exception ex) {
+            throw new DisableCertificationAuthorityException(ex.getMessage(), ex);
         }
     }
 }

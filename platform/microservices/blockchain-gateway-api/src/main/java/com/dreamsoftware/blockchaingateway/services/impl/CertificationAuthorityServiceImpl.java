@@ -1,16 +1,15 @@
 package com.dreamsoftware.blockchaingateway.services.impl;
 
+import com.dreamsoftware.blockchaingateway.config.properties.TrustCertificationSystemProperties;
 import com.dreamsoftware.blockchaingateway.mapper.CertificationAuthorityDetailMapper;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationAuthorityEntity;
-import com.dreamsoftware.blockchaingateway.persistence.exception.RepositoryException;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.blockchaingateway.services.ICertificationAuthorityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.dreamsoftware.blockchaingateway.web.controller.ca.error.exception.GetCertificationAuthorityException;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificationAuthorityDetailDTO;
 import javax.annotation.PostConstruct;
 import org.springframework.util.Assert;
@@ -33,6 +32,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     private final UserRepository certificationAuthorityRepository;
     private final ICertificationAuthorityBlockchainRepository caBlockchainRepository;
     private final CertificationAuthorityDetailMapper certificationAuthorityDetailMapper;
+    private final TrustCertificationSystemProperties trustCertificationSystemProperties;
 
     /**
      * Get Detail
@@ -43,17 +43,53 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     @Override
     public CertificationAuthorityDetailDTO getDetail(String id) throws Throwable {
         Assert.notNull(id, "Id can not be null");
-        try {
-            final UserEntity caUserEntity = certificationAuthorityRepository.findById(new ObjectId(id))
-                    .orElseThrow(() -> {
-                        throw new IllegalStateException("User Not Found");
-                    });
-            final CertificationAuthorityEntity caEntity = caBlockchainRepository.getDetail(caUserEntity.getWalletHash());
-            return certificationAuthorityDetailMapper.caEntityToCaDetail(caEntity, caUserEntity);
-        } catch (final RepositoryException ex) {
-            logger.error("exception ocurred " + ex.getMessage() + " CALLED");
-            throw new GetCertificationAuthorityException(ex.getMessage(), ex);
-        }
+        logger.debug("Get Certification Authority Detail, id: " + id);
+        final UserEntity caUserEntity = certificationAuthorityRepository.findById(new ObjectId(id))
+                .orElseThrow(() -> {
+                    throw new IllegalStateException("User Not Found");
+                });
+        final CertificationAuthorityEntity caEntity = caBlockchainRepository.getDetail(caUserEntity.getWalletHash());
+        return certificationAuthorityDetailMapper.caEntityToCaDetail(caEntity, caUserEntity);
+    }
+
+    /**
+     * Enable Certification Authority
+     *
+     * @param id
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public CertificationAuthorityDetailDTO enable(final String id) throws Throwable {
+        Assert.notNull(id, "Id can not be null");
+        logger.debug("Enable Certification Authority, id: " + id);
+        final UserEntity caUserEntity = certificationAuthorityRepository.findById(new ObjectId(id))
+                .orElseThrow(() -> {
+                    throw new IllegalStateException("User Not Found");
+                });
+        final CertificationAuthorityEntity caEntity = caBlockchainRepository.enable(trustCertificationSystemProperties.getRootPublicKey(),
+                caUserEntity.getWalletHash());
+        return certificationAuthorityDetailMapper.caEntityToCaDetail(caEntity, caUserEntity);
+    }
+
+    /**
+     * Disable Certification Authority
+     *
+     * @param id
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public CertificationAuthorityDetailDTO disable(String id) throws Throwable {
+        Assert.notNull(id, "Id can not be null");
+        logger.debug("Disable Certification Authority, id: " + id);
+        final UserEntity caUserEntity = certificationAuthorityRepository.findById(new ObjectId(id))
+                .orElseThrow(() -> {
+                    throw new IllegalStateException("User Not Found");
+                });
+        final CertificationAuthorityEntity caEntity = caBlockchainRepository.disable(trustCertificationSystemProperties.getRootPublicKey(),
+                caUserEntity.getWalletHash());
+        return certificationAuthorityDetailMapper.caEntityToCaDetail(caEntity, caUserEntity);
     }
 
     @PostConstruct

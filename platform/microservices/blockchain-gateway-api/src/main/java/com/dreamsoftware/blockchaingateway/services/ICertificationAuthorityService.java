@@ -17,4 +17,22 @@ public interface ICertificationAuthorityService {
      */
     CertificationAuthorityDetailDTO getDetail(final String id) throws Throwable;
 
+    /**
+     * Enable Certification Authority
+     *
+     * @param id
+     * @return
+     * @throws Throwable
+     */
+    CertificationAuthorityDetailDTO enable(final String id) throws Throwable;
+
+    /**
+     * Disable Certification Authority
+     *
+     * @param id
+     * @return
+     * @throws Throwable
+     */
+    CertificationAuthorityDetailDTO disable(final String id) throws Throwable;
+
 }

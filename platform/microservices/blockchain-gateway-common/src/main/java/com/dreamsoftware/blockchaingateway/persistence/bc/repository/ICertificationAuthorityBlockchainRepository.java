@@ -28,4 +28,24 @@ public interface ICertificationAuthorityBlockchainRepository {
      * @throws RepositoryException
      */
     CertificationAuthorityEntity getDetail(final String walletHash) throws RepositoryException;
+
+    /**
+     * Enable Certification Authority
+     *
+     * @param rootWallet
+     * @param caWallet
+     * @return
+     * @throws RepositoryException
+     */
+    CertificationAuthorityEntity enable(final String rootWallet, final String caWallet) throws RepositoryException;
+
+    /**
+     * Disable Certification Authority
+     *
+     * @param rootWallet
+     * @param caWallet
+     * @return
+     * @throws RepositoryException
+     */
+    CertificationAuthorityEntity disable(final String rootWallet, final String caWallet) throws RepositoryException;
 }

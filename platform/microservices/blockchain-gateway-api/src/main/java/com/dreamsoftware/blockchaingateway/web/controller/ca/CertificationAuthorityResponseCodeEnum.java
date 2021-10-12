@@ -9,7 +9,11 @@ import com.dreamsoftware.blockchaingateway.web.core.IResponseCodeTypes;
  */
 public enum CertificationAuthorityResponseCodeEnum implements IResponseCodeTypes {
     CERTIFICATION_AUTHORITY_DETAIL(200L),
-    CERTIFICATION_AUTHORITY_FAIL(201L);
+    CERTIFICATION_AUTHORITY_FAIL(201L),
+    CERTIFICATION_AUTHORITY_ENABLED(202L),
+    ENABLE_CERTIFICATION_AUTHORITY_FAILED(203L),
+    CERTIFICATION_AUTHORITY_DISABLED(204L),
+    DISABLE_CERTIFICATION_AUTHORITY_FAILED(205L);
 
     private final Long code;
     public static final String CATEGORY_NAME = "CERTIFICATION_AUTHORITY";

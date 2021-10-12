@@ -67,6 +67,48 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
     }
 
     /**
+     *
+     * @param rootWallet
+     * @param caWallet
+     * @return
+     * @throws RepositoryException
+     */
+    @Override
+    public CertificationAuthorityEntity enable(final String rootWallet, final String caWallet) throws RepositoryException {
+        Assert.notNull(rootWallet, "Root Wallet can not be null");
+        Assert.notNull(caWallet, "Ca Wallet can not be null");
+        try {
+            final CertificationAuthorityContract caContract = loadCAContract(rootWallet);
+            caContract.enableCertificationAuthority(caWallet).send();
+            final CertificationAuthorityRecord caRecord = caContract.getCertificateAuthorityDetail(caWallet).send();
+            return certificationAuthorityEntityMapper.caRecordToCaEntity(caRecord);
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param rootWallet
+     * @param caWallet
+     * @return
+     * @throws RepositoryException
+     */
+    @Override
+    public CertificationAuthorityEntity disable(final String rootWallet, final String caWallet) throws RepositoryException {
+        Assert.notNull(rootWallet, "Root Wallet can not be null");
+        Assert.notNull(caWallet, "Ca Wallet can not be null");
+        try {
+            final CertificationAuthorityContract caContract = loadCAContract(rootWallet);
+            caContract.disableCertificationAuthority(caWallet).send();
+            final CertificationAuthorityRecord caRecord = caContract.getCertificateAuthorityDetail(caWallet).send();
+            return certificationAuthorityEntityMapper.caRecordToCaEntity(caRecord);
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Private Methods
      */
     /**
