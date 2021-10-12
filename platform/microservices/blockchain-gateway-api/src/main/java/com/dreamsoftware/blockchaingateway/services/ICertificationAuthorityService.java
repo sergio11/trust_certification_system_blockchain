@@ -13,7 +13,8 @@ public interface ICertificationAuthorityService {
      *
      * @param id
      * @return
+     * @throws java.lang.Throwable
      */
-    CertificationAuthorityDetailDTO getDetail(final String id);
+    CertificationAuthorityDetailDTO getDetail(final String id) throws Throwable;
 
 }

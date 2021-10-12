@@ -1,4 +1,4 @@
-package com.dreamsoftware.blockchaingateway.web.controller.error.exception;
+package com.dreamsoftware.blockchaingateway.web.controller.ca.error.exception;
 
 /**
  *

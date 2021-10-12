@@ -1,4 +1,4 @@
-package com.dreamsoftware.blockchaingateway.web.controller.error;
+package com.dreamsoftware.blockchaingateway.web.controller.account.error;
 
 import com.dreamsoftware.blockchaingateway.web.controller.account.AccountsResponseCodeEnum;
 import com.dreamsoftware.blockchaingateway.web.controller.error.exception.RefreshTokenException;
