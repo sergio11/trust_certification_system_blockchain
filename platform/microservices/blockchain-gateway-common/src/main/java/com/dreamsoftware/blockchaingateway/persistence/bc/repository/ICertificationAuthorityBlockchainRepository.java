@@ -1,5 +1,6 @@
 package com.dreamsoftware.blockchaingateway.persistence.bc.repository;
 
+import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationAuthorityEntity;
 import com.dreamsoftware.blockchaingateway.persistence.exception.RepositoryException;
 
 /**
@@ -19,4 +20,12 @@ public interface ICertificationAuthorityBlockchainRepository {
      */
     void register(final String name, final Long defaultCostOfIssuingCertificate, final String walletHash) throws RepositoryException;
 
+    /**
+     * Get Detail
+     *
+     * @param walletHash
+     * @return
+     * @throws RepositoryException
+     */
+    CertificationAuthorityEntity getDetail(final String walletHash) throws RepositoryException;
 }

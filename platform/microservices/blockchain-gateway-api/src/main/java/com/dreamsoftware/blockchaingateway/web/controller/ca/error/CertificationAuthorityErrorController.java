@@ -1,0 +1,42 @@
+package com.dreamsoftware.blockchaingateway.web.controller.ca.error;
+
+import com.dreamsoftware.blockchaingateway.web.controller.ca.CertificationAuthorityResponseCodeEnum;
+import com.dreamsoftware.blockchaingateway.web.controller.ca.error.exception.GetCertificationAuthorityException;
+import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
+import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
+import com.dreamsoftware.blockchaingateway.web.core.ErrorResponseDTO;
+import javax.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+/**
+ *
+ * @author ssanchez
+ */
+@ControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
+public class CertificationAuthorityErrorController extends SupportController {
+
+    private static Logger logger = LoggerFactory.getLogger(CertificationAuthorityErrorController.class);
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(GetCertificationAuthorityException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetCertificationAuthorityException(GetCertificationAuthorityException ex, HttpServletRequest request) {
+        logger.error("Handler for GetCertificationAuthorityException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_FAIL,
+                HttpStatus.INTERNAL_SERVER_ERROR, "Certification Authority Fail");
+    }
+}
