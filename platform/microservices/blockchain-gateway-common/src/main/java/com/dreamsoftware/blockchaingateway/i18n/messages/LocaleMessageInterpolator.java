@@ -1,7 +1,7 @@
 package com.dreamsoftware.blockchaingateway.i18n.messages;
 
+import com.dreamsoftware.blockchaingateway.i18n.service.I18NService;
 import com.dreamsoftware.blockchaingateway.i18n.service.IMessageSourceResolverService;
-import com.dreamsoftware.blockchaingateway.services.I18NService;
 import java.util.Locale;
 import java.util.Map;
 import javax.validation.MessageInterpolator;

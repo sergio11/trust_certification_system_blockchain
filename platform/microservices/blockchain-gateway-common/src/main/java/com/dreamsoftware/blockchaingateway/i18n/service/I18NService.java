@@ -1,4 +1,4 @@
-package com.dreamsoftware.blockchaingateway.services;
+package com.dreamsoftware.blockchaingateway.i18n.service;
 
 import java.util.Locale;
 

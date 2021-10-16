@@ -12,6 +12,9 @@
     <properties>
         <web3j.version>4.8.4</web3j.version>
         <springdoc.open.api>1.3.9</springdoc.open.api>
+        <prettytime.version>4.0.1.Final</prettytime.version>
+        <guava.version>31.0.1-jre</guava.version>
+        <poi.version>4.1.2</poi.version>
     </properties>
 
     <parent>
@@ -84,6 +87,33 @@
             <version>0.7.0</version>
         </dependency>
 
+        <!-- PrettyTime is an OpenSource time formatting library -->
+        <dependency>
+            <groupId>org.ocpsoft.prettytime</groupId>
+            <artifactId>prettytime</artifactId>
+            <version>${prettytime.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
+        <!-- Apache POI -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -96,7 +126,7 @@
                 </configuration>
             </plugin>
 
-            <plugin>
+            <!--<plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>dockerfile-maven-plugin</artifactId>
                 <version>1.4.13</version>
@@ -120,7 +150,7 @@
                     <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
                     <forceTags>true</forceTags>
                 </configuration>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 

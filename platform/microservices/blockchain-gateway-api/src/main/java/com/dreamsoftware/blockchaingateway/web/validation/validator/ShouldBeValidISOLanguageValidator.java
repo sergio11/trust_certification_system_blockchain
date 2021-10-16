@@ -1,6 +1,6 @@
 package com.dreamsoftware.blockchaingateway.web.validation.validator;
 
-import com.dreamsoftware.blockchaingateway.services.I18NService;
+import com.dreamsoftware.blockchaingateway.i18n.service.I18NService;
 import com.dreamsoftware.blockchaingateway.web.validation.constraints.ShouldBeValidISOLanguage;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

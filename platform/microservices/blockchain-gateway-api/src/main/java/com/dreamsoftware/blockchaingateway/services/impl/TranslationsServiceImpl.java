@@ -93,8 +93,7 @@ public class TranslationsServiceImpl implements ITranslationsService {
                     }
                 } else {
 
-                    if (!columnIdxMap.containsKey(TranslationXlsFieldNamesEnum.NAME.name())
-                            || !columnIdxMap.containsKey(TranslationXlsFieldNamesEnum.TARGET.name())) {
+                    if (!columnIdxMap.containsKey(TranslationXlsFieldNamesEnum.NAME.name())) {
                         continue;
                     }
 
@@ -105,30 +104,19 @@ public class TranslationsServiceImpl implements ITranslationsService {
 
                     final String translationName = nameCell.getStringCellValue();
 
-                    final Cell targetCell = row.getCell(columnIdxMap.get(TranslationXlsFieldNamesEnum.TARGET.name()));
-                    if (targetCell.getCellType() != CellType.STRING) {
-                        continue;
-                    }
-
-                    final String translationTarget = targetCell.getStringCellValue();
-
                     for (final TranslationXlsFieldNamesEnum field : TranslationXlsFieldNamesEnum.values()) {
-                        if (field != TranslationXlsFieldNamesEnum.NAME
-                                && field != TranslationXlsFieldNamesEnum.TARGET) {
+                        if (field != TranslationXlsFieldNamesEnum.NAME) {
 
                             final Cell cell = row.getCell(columnIdxMap.get(field.name()));
                             if (cell != null) {
-                                if (targetCell.getCellType() == CellType.STRING) {
-                                    final String value = cell.getStringCellValue();
-                                    if (!StringUtils.isEmptyOrWhitespace(value)) {
-                                        saveTranslationDTOList.add(SaveTranslationDTO.builder()
-                                                .name(translationName)
-                                                .language(field.name())
-                                                .value(value)
-                                                .build());
-                                    }
+                                final String value = cell.getStringCellValue();
+                                if (!StringUtils.isEmptyOrWhitespace(value)) {
+                                    saveTranslationDTOList.add(SaveTranslationDTO.builder()
+                                            .name(translationName)
+                                            .language(field.name())
+                                            .value(value)
+                                            .build());
                                 }
-
                             }
 
                         }
@@ -198,6 +186,6 @@ public class TranslationsServiceImpl implements ITranslationsService {
     }
 
     private enum TranslationXlsFieldNamesEnum {
-        TARGET, NAME, es_ES, en_GB, de_DE, fr_FR, pt_PT, it_IT;
+        NAME, es_ES, en_GB, de_DE, fr_FR, pt_PT, it_IT;
     }
 }

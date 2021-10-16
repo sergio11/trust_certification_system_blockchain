@@ -1,6 +1,6 @@
-package com.dreamsoftware.blockchaingateway.services.impl;
+package com.dreamsoftware.blockchaingateway.i18n.service.impl;
 
-import com.dreamsoftware.blockchaingateway.services.I18NService;
+import com.dreamsoftware.blockchaingateway.i18n.service.I18NService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;

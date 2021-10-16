@@ -2,6 +2,7 @@ package com.dreamsoftware.blockchaingateway.service;
 
 import com.dreamsoftware.blockchaingateway.exception.GenerateWalletException;
 import com.dreamsoftware.blockchaingateway.exception.LoadWalletException;
+import com.dreamsoftware.blockchaingateway.exception.SaveWalletException;
 import org.web3j.crypto.Credentials;
 
 /**
@@ -9,6 +10,17 @@ import org.web3j.crypto.Credentials;
  * @author ssanchez
  */
 public interface IWalletService {
+
+    /**
+     * Save Wallet
+     *
+     * @param fileName
+     * @param secret
+     * @param mnemonic
+     * @return
+     * @throws com.dreamsoftware.blockchaingateway.exception.SaveWalletException
+     */
+    String saveWallet(final String fileName, final String secret, final String mnemonic) throws SaveWalletException;
 
     /**
      * Generate Wallet
