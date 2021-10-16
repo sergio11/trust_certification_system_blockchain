@@ -74,6 +74,7 @@ public class TranslationsController extends SupportController {
     })
     @SecurityRequirements
     @RequestMapping(value = "/{language}", method = RequestMethod.GET)
+    @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<Iterable<TranslationDTO>>> getTranslations(
             @ValidTranslationLanguage(message = "{translation_language_invalid}")
             @PathVariable String language

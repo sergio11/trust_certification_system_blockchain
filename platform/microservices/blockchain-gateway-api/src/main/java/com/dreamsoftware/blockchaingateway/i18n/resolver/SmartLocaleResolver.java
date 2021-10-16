@@ -1,6 +1,6 @@
 package com.dreamsoftware.blockchaingateway.i18n.resolver;
 
-import com.dreamsoftware.blockchaingateway.services.I18NService;
+import com.dreamsoftware.blockchaingateway.i18n.service.I18NService;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;

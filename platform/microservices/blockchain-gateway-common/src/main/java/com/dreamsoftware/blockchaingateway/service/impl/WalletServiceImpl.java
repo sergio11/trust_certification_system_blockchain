@@ -3,6 +3,7 @@ package com.dreamsoftware.blockchaingateway.service.impl;
 import com.dreamsoftware.blockchaingateway.config.properties.TrustCertificationSystemProperties;
 import com.dreamsoftware.blockchaingateway.exception.GenerateWalletException;
 import com.dreamsoftware.blockchaingateway.exception.LoadWalletException;
+import com.dreamsoftware.blockchaingateway.exception.SaveWalletException;
 import com.dreamsoftware.blockchaingateway.model.WalletCredentials;
 import com.dreamsoftware.blockchaingateway.service.IWalletService;
 import java.io.File;
@@ -46,6 +47,24 @@ public class WalletServiceImpl implements IWalletService {
     private final TrustCertificationSystemProperties trustCertificationSystemProperties;
 
     /**
+     * Save Wallet
+     *
+     * @param fileName
+     * @param secret
+     * @param mnemonic
+     * @return
+     * @throws SaveWalletException
+     */
+    @Override
+    public String saveWallet(final String fileName, final String secret, final String mnemonic) throws SaveWalletException {
+        try {
+            return saveWalletFile(fileName, secret, mnemonic);
+        } catch (final Exception ex) {
+            throw new SaveWalletException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Generate Wallet
      *
      * @return
@@ -56,13 +75,8 @@ public class WalletServiceImpl implements IWalletService {
         try {
             final String walletSecret = generateWalletSecret();
             final Bip39Wallet bip39Wallet = WalletUtils.generateBip39Wallet(walletSecret, new File(trustCertificationSystemProperties.getWalletDirectory()));
-            final File walletFile = new File(trustCertificationSystemProperties.getWalletDirectory(),
-                    bip39Wallet.getFilename());
-            final String walletHash = getFileHash(walletFile);
-            // Write into Vault the WalletCredentials information
-            vaultTemplate.write("tcs-v1/wallets/" + walletHash, new WalletCredentials(bip39Wallet.getFilename(), walletSecret, bip39Wallet.getMnemonic()));
             // Return file SHA Hash
-            return walletHash;
+            return saveWalletFile(bip39Wallet.getFilename(), walletSecret, bip39Wallet.getMnemonic());
         } catch (final Exception ex) {
             throw new GenerateWalletException(ex.getMessage(), ex);
         }
@@ -92,6 +106,22 @@ public class WalletServiceImpl implements IWalletService {
     /**
      * Private Methods
      */
+    /**
+     * Save Wallet File
+     *
+     * @param walletFile
+     * @return
+     */
+    private String saveWalletFile(final String walletFileName, final String walletSecret, final String walletMnemonic) throws IOException, NoSuchAlgorithmException {
+        final File walletFile = new File(trustCertificationSystemProperties.getWalletDirectory(),
+                walletFileName);
+        final String walletHash = getFileHash(walletFile);
+        // Write into Vault the WalletCredentials information
+        vaultTemplate.write("tcs-v1/wallets/" + walletHash, new WalletCredentials(walletFileName, walletSecret, walletMnemonic));
+        // Return file SHA Hash
+        return walletHash;
+    }
+
     private String generateWalletSecret() {
         String upperCaseLetters = RandomStringUtils.random(2, 65, 90, true, true);
         String lowerCaseLetters = RandomStringUtils.random(2, 97, 122, true, true);
@@ -147,4 +177,5 @@ public class WalletServiceImpl implements IWalletService {
         //return complete hash
         return sb.toString();
     }
+
 }

@@ -7,7 +7,7 @@ import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.EmailTypeEnu
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.EmailRepository;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
-import com.dreamsoftware.blockchaingateway.services.I18NService;
+import com.dreamsoftware.blockchaingateway.i18n.service.I18NService;
 import com.dreamsoftware.blockchaingateway.web.dto.internal.SendMailForActivateAccountDTO;
 import java.util.Date;
 import java.util.Optional;
