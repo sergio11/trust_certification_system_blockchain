@@ -67,7 +67,7 @@ public class CertificationAuthorityController extends SupportController {
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> getDetailById(
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "user.id.not.valid") @PathVariable("id") String id
+            @Valid @ShouldBeAValidObjectId(message = "user_id_not_valid") @PathVariable("id") String id
     ) throws Throwable {
 
         try {
@@ -112,6 +112,7 @@ public class CertificationAuthorityController extends SupportController {
     }
 
     /**
+     * Enable Certification Authority
      *
      * @param id
      * @return
@@ -123,7 +124,7 @@ public class CertificationAuthorityController extends SupportController {
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> enable(
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "user.id.not.valid") @PathVariable("id") String id
+            @Valid @ShouldBeAValidObjectId(message = "user_id_not_valid") @PathVariable("id") String id
     ) throws Throwable {
         try {
 
@@ -136,13 +137,20 @@ public class CertificationAuthorityController extends SupportController {
         }
     }
 
+    /**
+     * Disable Certification Authority
+     *
+     * @param id
+     * @return
+     * @throws Throwable
+     */
     @Operation(summary = "DISABLE_CA - Disable Certification Authority", description = "Disable Certification Authority Detail", tags = {"CA"})
     @RequestMapping(value = "/{id}/disable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> disable(
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "user.id.not.valid") @PathVariable("id") String id
+            @Valid @ShouldBeAValidObjectId(message = "user_id_not_valid") @PathVariable("id") String id
     ) throws Throwable {
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.disable(id);
