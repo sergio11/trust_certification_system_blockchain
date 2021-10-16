@@ -6,6 +6,7 @@ target/
 
 ethereum/eth_geth/data
 shared
+ipfs_cluster/data
 ### STS ###
 .apt_generated
 .classpath

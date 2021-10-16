@@ -6,10 +6,13 @@ task :deploy => [
 	:cleaning_environment_task,
 	:start_ethereum_network,
 	:start_platform,
+	:start_ipfs_cluster,
 	:status] do
     puts "Deploying services..."
 end
 
+
+## Deploy Ethereum Network
 
 desc "Start Private Ethereum Network"
 task :start_ethereum_network => [ :check_docker_task, :login, :check_ethereum_network_deployment_file_task ] do 
@@ -24,6 +27,7 @@ task :check_ethereum_network_deployment_file_task do
     puts "Private Ethereum Network Deployment File OK!"
 end
 
+## Deploy Platform
 
 desc "Start Platform"
 task :start_platform => [ :check_docker_task, :login, :check_platform_deployment_file_task ] do 
@@ -38,8 +42,25 @@ task :check_platform_deployment_file_task do
     puts "Platform Deployment File OK!"
 end
 
+
+## Deploy IPFS Cluster
+
+desc "Start IPFS Cluster"
+task :start_ipfs_cluster => [ :check_docker_task, :login, :check_ipfs_cluster_deployment_file_task ] do 
+	puts "Start IPFS Cluster Containers"
+	puts `docker-compose -f ./ipfs_cluster/docker-compose.yml up -d`
+end 
+
+desc "Check IPFS Cluster Deployment File"
+task :check_ipfs_cluster_deployment_file_task do
+	puts "Check IPFS Cluster Deployment File ..."
+    raise "Deployment file not found, please check availability" unless File.file?("./ipfs_cluster/docker-compose.yml")
+    puts "Platform Deployment File OK!"
+end
+
+
 desc "Start Trust certification System Blockchain"
-task :start => [ :start_ethereum_network, :start_platform ] do 
+task :start => [ :start_ethereum_network, :start_platform, :start_ipfs_cluster ] do 
 	puts "Start Trust certification System Blockchain"
 end 
 
