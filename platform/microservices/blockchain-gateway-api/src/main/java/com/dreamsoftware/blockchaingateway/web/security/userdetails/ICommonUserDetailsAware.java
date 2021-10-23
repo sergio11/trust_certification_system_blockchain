@@ -17,6 +17,7 @@ public interface ICommonUserDetailsAware<T> extends UserDetails {
     String EMAIL = "EMAIL";
     String LANGUAGE = "LANGUAGE";
     String STATE = "STATE";
+    String WALLET = "WALLET";
 
     T getUserId();
 
@@ -31,5 +32,7 @@ public interface ICommonUserDetailsAware<T> extends UserDetails {
     UserStateEnum getState();
 
     String getEmail();
+
+    String getWallet();
 
 }

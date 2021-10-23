@@ -1,6 +1,7 @@
 package com.dreamsoftware.blockchaingateway.services.impl;
 
 import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityInitialFundsRequestEvent;
+import com.dreamsoftware.blockchaingateway.model.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserTypeEnum;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import com.dreamsoftware.blockchaingateway.services.IBlockchainProcessor;
+import com.dreamsoftware.blockchaingateway.web.dto.request.SaveCertificationCourseDTO;
 import org.bson.types.ObjectId;
 import org.springframework.util.Assert;
 
@@ -38,12 +40,33 @@ public class BlockchainProcessorImpl implements IBlockchainProcessor {
             });
 
             if (userEntity.getType().equals(UserTypeEnum.CA)) {
-                publish(new CertificationAuthorityInitialFundsRequestEvent(userEntity.getName(), userEntity.getWalletHash()));
+                publish(new CertificationAuthorityInitialFundsRequestEvent(userEntity.getName(), userEntity.getWalletHash()),
+                        "caInitialFunds-out-0");
             }
         } catch (final Throwable ex) {
             logger.debug("onUserActivated FAILED! " + ex.getMessage());
         }
 
+    }
+
+    /**
+     * On Register Certification Course
+     *
+     * @param certificationCourseDTO
+     */
+    @Override
+    public void onRegisterCertificationCourse(final SaveCertificationCourseDTO certificationCourseDTO) {
+        Assert.notNull(certificationCourseDTO, "Certification Course DTO can not be null");
+        try {
+            final CourseCertificateRegistrationRequestEvent event = new CourseCertificateRegistrationRequestEvent(
+                    certificationCourseDTO.getName(), certificationCourseDTO.getCostOfIssuingCertificate(),
+                    certificationCourseDTO.getDurationInHours(), certificationCourseDTO.getExpirationInDays(),
+                    certificationCourseDTO.getCanBeRenewed(), certificationCourseDTO.getCostOfRenewingCertificate(),
+                    certificationCourseDTO.getCaWallet());
+            publish(event, "certificationCourseRegistration-out-0");
+        } catch (final Throwable ex) {
+            logger.debug("onRegisterCertificationCourse FAILED! " + ex.getMessage());
+        }
     }
 
     /**
@@ -54,8 +77,9 @@ public class BlockchainProcessorImpl implements IBlockchainProcessor {
      * @param <T>
      * @param event
      */
-    private <T> void publish(T event) {
+    private <T> void publish(T event, final String channelName) {
         logger.debug("publish CALLED!");
-        streamBridge.send("eventsChannel-out-0", event);
+        streamBridge.send(channelName, event);
     }
+
 }
