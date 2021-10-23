@@ -30,6 +30,7 @@ public class UserDetailsImpl<T> implements ICommonUserDetailsAware<T> {
     private String email;
     private String language;
     private UserStateEnum state;
+    private String wallet;
     private Set<GrantedAuthority> grantedAuthorities;
 
     @Override
@@ -85,6 +86,11 @@ public class UserDetailsImpl<T> implements ICommonUserDetailsAware<T> {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    @Override
+    public String getWallet() {
+        return wallet;
     }
 
 }

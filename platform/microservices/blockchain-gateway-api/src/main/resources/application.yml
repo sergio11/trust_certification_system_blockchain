@@ -17,8 +17,10 @@ spring:
                 auto-create-topics: true
                 configuration.auto.offset.reset: latest
         bindings:
-            eventsChannel-out-0:
+            caInitialFunds-out-0:
                 destination: CA-initial-funds-v1
+            certificationCourseRegistration-out-0:
+                destination: CC-registration-v1
         function:
             autodetect: false
   # Mail

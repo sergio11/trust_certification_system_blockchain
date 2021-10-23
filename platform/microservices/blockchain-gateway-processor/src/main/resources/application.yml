@@ -41,6 +41,20 @@ spring:
                 consumer:
                     concurrency: 10
                     max-attempts: 3
+            courseRegistrationRequestProcessor-in-0:
+                destination: CC-registration-v1
+                group: bc-gateway-processor
+                consumer:
+                    concurrency: 10
+                    max-attempts: 3
+            courseRegistrationRequestProcessor-out-0:
+                destination: CC-registered-v1
+            courseRegisteredProcessor-in-0:
+                destination: CC-registered-v1
+                group: bc-gateway-processor
+                consumer:
+                    concurrency: 10
+                    max-attempts: 3
 
 
 ## Trust Certification System Props
