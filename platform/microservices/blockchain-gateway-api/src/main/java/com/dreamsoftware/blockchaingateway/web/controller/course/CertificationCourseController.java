@@ -51,6 +51,7 @@ public class CertificationCourseController extends SupportController {
      * Save Certification Course
      *
      * @param certificationCourse
+     * @param selfUser
      * @return
      * @throws Throwable
      */
@@ -67,8 +68,10 @@ public class CertificationCourseController extends SupportController {
     public ResponseEntity<APIResponse<String>> save(
             @Parameter(name = "certification_course", description = "Certification Course Data. Cannot null or empty.",
                     required = true, schema = @Schema(implementation = SaveCertificationCourseDTO.class))
-            @Validated(ICommonSequence.class) SaveCertificationCourseDTO certificationCourse) throws Throwable {
+            @Validated(ICommonSequence.class) SaveCertificationCourseDTO certificationCourse,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser) throws Throwable {
         try {
+            certificationCourse.setCaWallet(selfUser.getWallet());
             certificationCourseService.save(certificationCourse);
             return responseHelper.createAndSendResponse(
                     CertificationCourseResponseCodeEnum.SAVE_CERTIFICATION_COURSE, HttpStatus.OK,
