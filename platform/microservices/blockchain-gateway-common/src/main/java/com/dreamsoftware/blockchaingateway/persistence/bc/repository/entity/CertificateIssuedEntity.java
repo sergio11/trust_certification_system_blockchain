@@ -13,16 +13,17 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CertificationCourseEntity {
+public class CertificateIssuedEntity {
 
     private String id;
-    private String name;
-    private Long costOfIssuingCertificate;
-    private Long costOfRenewingCertificate;
-    private String certificationAuthority;
+    private String issuerAddress;
+    private String recipientAddress;
+    private String course;
+    private Long expirationDate;
+    private Long qualification;
     private Long durationInHours;
-    private Long expirationInDays;
-    private Boolean canBeRenewed;
+    private Long expeditionDate;
+    private Boolean isVisible;
     private Boolean isEnabled;
     private Boolean isExist;
 }
