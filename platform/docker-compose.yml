@@ -133,6 +133,8 @@ services:
       - "8080:8080"
     networks:
       - external_tcs_network
+    environment:
+      - jasypt.encryptor.password=a{uL#t#jkp,Kd[9{
 
   # Blockchain Gateway Processor
   bc_gateway_processor:
