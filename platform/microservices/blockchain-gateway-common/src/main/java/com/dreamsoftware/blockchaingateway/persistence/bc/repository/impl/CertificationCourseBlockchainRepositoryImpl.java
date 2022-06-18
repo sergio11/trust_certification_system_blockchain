@@ -95,6 +95,89 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
     }
 
     /**
+     * Get Certification Course detail
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws RepositoryException
+     */
+    @Override
+    public CertificationCourseEntity get(String caWallet, String courseId) throws RepositoryException {
+        Assert.notNull(caWallet, "Ca Wallet can not be null");
+        Assert.notNull(courseId, "Course Id can not be null");
+        try {
+            final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(caWallet);
+            final CertificationCourseRecord certificationCourseRecord = certificationCourseContract.getCertificateCourseDetail(courseId).send();
+            return certificationCourseEntityMapper.courseRecordToCertificationCourseEntity(certificationCourseRecord);
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Can be issued
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws RepositoryException
+     */
+    @Override
+    public Boolean canBeIssued(String caWallet, String courseId) throws RepositoryException {
+        Assert.notNull(caWallet, "Ca Wallet can not be null");
+        Assert.notNull(courseId, "Course Id can not be null");
+        try {
+            final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(caWallet);
+            return certificationCourseContract.canBeIssued(courseId).send();
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Can Be renewed
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws RepositoryException
+     */
+    @Override
+    public Boolean canBeRenewed(String caWallet, String courseId) throws RepositoryException {
+        Assert.notNull(caWallet, "Ca Wallet can not be null");
+        Assert.notNull(courseId, "Course Id can not be null");
+        try {
+            final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(caWallet);
+            return certificationCourseContract.canBeRenewed(courseId).send();
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws RepositoryException
+     */
+    @Override
+    public CertificationCourseEntity remove(String caWallet, String courseId) throws RepositoryException {
+        Assert.notNull(caWallet, "Ca Wallet can not be null");
+        Assert.notNull(courseId, "Course Id can not be null");
+        try {
+            final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(caWallet);
+            final CertificationCourseRecord certificationCourseRecord = certificationCourseContract.getCertificateCourseDetail(courseId).send();
+            certificationCourseContract.removeCertificationCourse(courseId).send();
+            return certificationCourseEntityMapper.courseRecordToCertificationCourseEntity(certificationCourseRecord);
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+
+    }
+
+    /**
      * Private Methods
      */
     /**

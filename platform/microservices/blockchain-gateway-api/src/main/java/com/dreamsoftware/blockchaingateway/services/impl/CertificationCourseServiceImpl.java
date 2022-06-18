@@ -70,4 +70,60 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         Assert.notNull(model, "model can not be null");
         blockchainProcessor.onRegisterCertificationCourse(model);
     }
+
+    /**
+     *
+     * @param caWallet
+     * @param courseId
+     */
+    @Override
+    public CertificationCourseDetailDTO remove(String caWallet, String courseId) throws Throwable {
+        Assert.notNull(caWallet, "CA wallet can not be null");
+        Assert.notNull(courseId, "Course ID can not be null");
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.remove(caWallet, courseId);
+        return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
+    }
+
+    /**
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Boolean canBeIssued(String caWallet, String courseId) throws Throwable {
+        Assert.notNull(caWallet, "CA wallet can not be null");
+        Assert.notNull(courseId, "Course ID can not be null");
+        return certificationCourseBlockchainRepository.canBeIssued(caWallet, courseId);
+    }
+
+    /**
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Boolean canBeRenewed(String caWallet, String courseId) throws Throwable {
+        Assert.notNull(caWallet, "CA wallet can not be null");
+        Assert.notNull(courseId, "Course ID can not be null");
+        return certificationCourseBlockchainRepository.canBeRenewed(caWallet, courseId);
+    }
+
+    /**
+     * Get Detail
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     */
+    @Override
+    public CertificationCourseDetailDTO getDetail(String caWallet, String courseId) throws Throwable {
+        Assert.notNull(caWallet, "CA wallet can not be null");
+        Assert.notNull(courseId, "Course ID can not be null");
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.get(caWallet, courseId);
+        return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
+    }
 }

@@ -4,6 +4,7 @@ import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController
 import com.dreamsoftware.blockchaingateway.web.controller.course.CertificationCourseResponseCodeEnum;
 import com.dreamsoftware.blockchaingateway.web.controller.course.error.exception.DisableCertificationCourseException;
 import com.dreamsoftware.blockchaingateway.web.controller.course.error.exception.EnableCertificationCourseException;
+import com.dreamsoftware.blockchaingateway.web.controller.course.error.exception.GetCertificationCourseDetailException;
 import com.dreamsoftware.blockchaingateway.web.controller.course.error.exception.SaveCertificationCourseException;
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
 import com.dreamsoftware.blockchaingateway.web.core.ErrorResponseDTO;
@@ -70,4 +71,17 @@ public class CertificationCourseErrorController extends SupportController {
                 HttpStatus.INTERNAL_SERVER_ERROR, "Save Certification Course Failed");
     }
 
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(GetCertificationCourseDetailException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetCertificationCourseDetailException(GetCertificationCourseDetailException ex, HttpServletRequest request) {
+        logger.error("Handler for GetCertificationCourseDetailException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.GET_CERTIFICATION_COURSE_DETAIL_FAIL,
+                HttpStatus.INTERNAL_SERVER_ERROR, "Get Certification Course Detail Failed");
+    }
 }

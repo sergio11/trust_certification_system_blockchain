@@ -35,4 +35,43 @@ public interface ICertificationCourseService {
      * @param model
      */
     void save(final SaveCertificationCourseDTO model);
+
+    /**
+     * Remove Certificacion course
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws java.lang.Throwable
+     */
+    CertificationCourseDetailDTO remove(final String caWallet, final String courseId) throws Throwable;
+
+    /**
+     * Check if can be issued
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws java.lang.Throwable
+     */
+    Boolean canBeIssued(final String caWallet, final String courseId) throws Throwable;
+
+    /**
+     * Check if can be renewed
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws java.lang.Throwable
+     */
+    Boolean canBeRenewed(final String caWallet, final String courseId) throws Throwable;
+
+    /**
+     * Get Detail
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     */
+    CertificationCourseDetailDTO getDetail(final String caWallet, final String courseId) throws Throwable;
 }
