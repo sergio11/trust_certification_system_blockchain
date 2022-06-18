@@ -5,14 +5,17 @@ import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
 import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
 import com.dreamsoftware.blockchaingateway.web.controller.course.error.exception.DisableCertificationCourseException;
 import com.dreamsoftware.blockchaingateway.web.controller.course.error.exception.EnableCertificationCourseException;
+import com.dreamsoftware.blockchaingateway.web.controller.course.error.exception.GetCertificationCourseDetailException;
 import com.dreamsoftware.blockchaingateway.web.controller.course.error.exception.SaveCertificationCourseException;
 import com.dreamsoftware.blockchaingateway.web.core.ErrorResponseDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificationCourseDetailDTO;
 import com.dreamsoftware.blockchaingateway.web.security.directives.CurrentUser;
+import com.dreamsoftware.blockchaingateway.web.security.directives.OnlyAccessForAdmin;
 import com.dreamsoftware.blockchaingateway.web.security.directives.OnlyAccessForCA;
 import com.dreamsoftware.blockchaingateway.web.security.userdetails.ICommonUserDetailsAware;
 import com.dreamsoftware.blockchaingateway.web.validation.constraints.ICommonSequence;
+import com.dreamsoftware.blockchaingateway.web.validation.constraints.ShouldBeAValidObjectId;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.validation.Valid;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -131,6 +135,108 @@ public class CertificationCourseController extends SupportController {
                     HttpStatus.OK, certificationCourseDetailDTO);
         } catch (final Exception ex) {
             throw new DisableCertificationCourseException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Get Certification Course Detail
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "GET_COURSE_DETAIL - Get Course Detail", description = "Get Certification Course Detail", tags = {"COURSE"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Course Detail",
+                content = @Content(schema = @Schema(implementation = CertificationCourseDetailDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Course Not Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCA
+    public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> getDetailById(
+            @Parameter(name = "id", description = "Course Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "course_id_valid") @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final CertificationCourseDetailDTO courseDetailDTO = certificationCourseService.getDetail(selfUser.getWallet(), id);
+            return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(
+                    CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DETAIL,
+                    HttpStatus.OK, courseDetailDTO);
+        } catch (final Exception ex) {
+            throw new GetCertificationCourseDetailException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Certificate Course can be issued
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "CERTIFICATE_COURSE_CAN_BE_ISSUED - Certificate Course Can be issued", description = "Certificate Course Can be issued", tags = {"COURSE"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Course Detail",
+                content = @Content(schema = @Schema(implementation = CertificationCourseDetailDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Course Not Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/{id}/canBeIssued"}, method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCA
+    public ResponseEntity<APIResponse<Boolean>> canBeIssued(
+            @Parameter(name = "id", description = "Course Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "course_id_valid") @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final Boolean canBeIssued = certificationCourseService.canBeIssued(selfUser.getWallet(), id);
+            return responseHelper.<Boolean>createAndSendResponse(
+                    canBeIssued ? CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CAN_BE_ISSUED
+                            : CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CANNOT_BE_ISSUED,
+                    HttpStatus.OK, canBeIssued);
+        } catch (final Exception ex) {
+            throw new GetCertificationCourseDetailException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Certificate Course can be renewed
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "CERTIFICATE_COURSE_CAN_BE_RENEWED - Certificate Course Can be renewed", description = "Certificate Course Can be issued", tags = {"COURSE"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Course Detail",
+                content = @Content(schema = @Schema(implementation = CertificationCourseDetailDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Course Not Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/{id}/canBeRenewed"}, method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCA
+    public ResponseEntity<APIResponse<Boolean>> canBeRenewed(
+            @Parameter(name = "id", description = "Course Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "course_id_valid") @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final Boolean canBeRenewed = certificationCourseService.canBeRenewed(selfUser.getWallet(), id);
+            return responseHelper.<Boolean>createAndSendResponse(
+                    canBeRenewed
+                            ? CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CAN_BE_RENEWED
+                            : CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CANNOT_BE_RENEWED,
+                    HttpStatus.OK, canBeRenewed);
+        } catch (final Exception ex) {
+            throw new GetCertificationCourseDetailException(ex.getMessage(), ex);
         }
     }
 }

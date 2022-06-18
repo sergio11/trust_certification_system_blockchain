@@ -42,4 +42,44 @@ public interface ICertificationCourseBlockchainRepository {
      * @throws RepositoryException
      */
     CertificationCourseEntity disable(final String caWallet, final String courseId) throws RepositoryException;
+
+    /**
+     * Remove Certification Course
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws RepositoryException
+     */
+    CertificationCourseEntity remove(final String caWallet, final String courseId) throws RepositoryException;
+
+    /**
+     * Get Certification Course
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws RepositoryException
+     */
+    CertificationCourseEntity get(final String caWallet, final String courseId) throws RepositoryException;
+
+    /**
+     * Can be issued
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws RepositoryException
+     */
+    Boolean canBeIssued(final String caWallet, final String courseId) throws RepositoryException;
+
+    /**
+     * Can be renewed
+     *
+     * @param caWallet
+     * @param courseId
+     * @return
+     * @throws RepositoryException
+     */
+    Boolean canBeRenewed(final String caWallet, final String courseId) throws RepositoryException;
 }

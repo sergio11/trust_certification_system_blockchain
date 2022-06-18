@@ -87,7 +87,7 @@ public class CertificationAuthorityController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_CA_DETAIL - Get Curretn Certification Authority Detail", description = "Get Certification Authority Detail", tags = {"CA"})
+    @Operation(summary = "GET_CA_DETAIL - Get Current Certification Authority Detail", description = "Get Certification Authority Detail", tags = {"CA"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Simple Profile Detail",
                 content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
