@@ -4,6 +4,7 @@ import com.dreamsoftware.blockchaingateway.services.ITrustCertificationService;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.DisableCertificateException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.EnableCertificateException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.GetCertificateIssuedDetailException;
+import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.GetCertificatesException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.UpdateCertificateVisibilityException;
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
 import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
@@ -174,6 +175,64 @@ public class TrustCertificationController extends SupportController {
                     HttpStatus.OK, certificateIssuedDTO);
         } catch (final Exception ex) {
             throw new GetCertificateIssuedDetailException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Get My Certificates As Recipient
+     *
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "GET_MY_CERTIFICATES_AS_RECIPIENT - Get My Certificates As Recipient", description = "Get My Certificates As Recipient", tags = {"CERTIFICATE_ISSUED"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Certificates As Recipient",
+                content = @Content(schema = @Schema(implementation = CertificateIssuedDTO.class))),
+        @ApiResponse(responseCode = "404", description = "No Certificates Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/certificates/recipient"}, method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<Iterable<CertificateIssuedDTO>>> getMyCertificatesAsRecipient(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final Iterable<CertificateIssuedDTO> certificateIssuedDTOList = trustCertificationService.getMyCertificatesAsRecipient(selfUser.getWallet());
+            return responseHelper.<Iterable<CertificateIssuedDTO>>createAndSendResponse(
+                    TrustCertificationResponseCodeEnum.GET_MY_CERTIFICATES_AS_RECIPIENT,
+                    HttpStatus.OK, certificateIssuedDTOList);
+        } catch (final Exception ex) {
+            throw new GetCertificatesException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Get My Certificates As Recipient
+     *
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "GET_MY_CERTIFICATES_AS_ISSUER - Get My Certificates As Issuer", description = "Get My Certificates As Issuer", tags = {"CERTIFICATE_ISSUED"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Certificates As Issuer",
+                content = @Content(schema = @Schema(implementation = CertificateIssuedDTO.class))),
+        @ApiResponse(responseCode = "404", description = "No Certificates Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/certificates/issuer"}, method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<Iterable<CertificateIssuedDTO>>> getMyCertificatesAsIssuer(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final Iterable<CertificateIssuedDTO> certificateIssuedDTOList = trustCertificationService.getMyCertificatesAsIssuer(selfUser.getWallet());
+            return responseHelper.<Iterable<CertificateIssuedDTO>>createAndSendResponse(
+                    TrustCertificationResponseCodeEnum.GET_MY_CERTIFICATES_AS_ISSUER,
+                    HttpStatus.OK, certificateIssuedDTOList);
+        } catch (final Exception ex) {
+            throw new GetCertificatesException(ex.getMessage(), ex);
         }
     }
 }

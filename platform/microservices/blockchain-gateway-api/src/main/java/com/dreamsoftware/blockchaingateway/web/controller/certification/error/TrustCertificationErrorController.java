@@ -4,6 +4,7 @@ import com.dreamsoftware.blockchaingateway.web.controller.certification.TrustCer
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.DisableCertificateException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.EnableCertificateException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.GetCertificateIssuedDetailException;
+import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.GetCertificatesException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.UpdateCertificateVisibilityException;
 import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
@@ -83,5 +84,19 @@ public class TrustCertificationErrorController extends SupportController {
         logger.error("Handler for UpdateCertificateVisibilityException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.UPDATE_CERTIFICATE_ISSUED_VISIBILITY_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, "Update Certificate Issued Visibility Failed");
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(GetCertificatesException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetCertificatesException(GetCertificatesException ex, HttpServletRequest request) {
+        logger.error("Handler for GetCertificatesException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.GET_CERTIFICATES_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, "Get certificates Failed");
     }
 }
