@@ -4,6 +4,7 @@ import com.dreamsoftware.blockchaingateway.services.ITrustCertificationService;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.DisableCertificateException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.EnableCertificateException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.GetCertificateIssuedDetailException;
+import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.UpdateCertificateVisibilityException;
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
 import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
 import com.dreamsoftware.blockchaingateway.web.core.ErrorResponseDTO;
@@ -91,6 +92,56 @@ public class TrustCertificationController extends SupportController {
                     HttpStatus.OK, certificateIssuedDTO);
         } catch (final Exception ex) {
             throw new DisableCertificateException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Enable Certificate Visibility
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     * @throws java.lang.Throwable
+     */
+    @Operation(summary = "ENABLE_CERTIFICATE_VISIBILITY - Enable Certificate Visibility", description = "Enable Certificate Visibility", tags = {"CERTIFICATE_ISSUED"})
+    @RequestMapping(value = "/{id}/visible", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<CertificateIssuedDTO>> visible(
+            @Parameter(name = "id", description = "Certificate Id", required = true)
+            @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.updateVisibility(selfUser.getWallet(), id, true);
+            return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_VISIBILITY_UPDATED,
+                    HttpStatus.OK, certificateIssuedDTO);
+        } catch (final Exception ex) {
+            throw new UpdateCertificateVisibilityException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Disable Certificate Visibility
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     * @throws java.lang.Throwable
+     */
+    @Operation(summary = "DISABLE_CERTIFICATE_VISIBILITY - Disable Certificate Visibility", description = "Disable Certificate Visibility", tags = {"CERTIFICATE_ISSUED"})
+    @RequestMapping(value = "/{id}/invisible", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<CertificateIssuedDTO>> invisible(
+            @Parameter(name = "id", description = "Certificate Id", required = true)
+            @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.updateVisibility(selfUser.getWallet(), id, false);
+            return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_VISIBILITY_UPDATED,
+                    HttpStatus.OK, certificateIssuedDTO);
+        } catch (final Exception ex) {
+            throw new UpdateCertificateVisibilityException(ex.getMessage(), ex);
         }
     }
 
