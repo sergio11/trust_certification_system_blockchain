@@ -11,7 +11,8 @@ public enum TrustCertificationResponseCodeEnum implements IResponseCodeTypes {
     CERTIFICATE_ISSUED_ENABLED(400L),
     ENABLE_CERTIFICATE_FAILED(401L),
     CERTIFICATE_ISSUED_DISABLED(402L),
-    DISABLE_CERTIFICATE_FAILED(403L);
+    DISABLE_CERTIFICATE_FAILED(403L),
+    CERTIFICATE_ISSUED_DETAIL(404L);
 
     private final Long code;
     public static final String CATEGORY_NAME = "CERTIFICATE_ISSUED";
