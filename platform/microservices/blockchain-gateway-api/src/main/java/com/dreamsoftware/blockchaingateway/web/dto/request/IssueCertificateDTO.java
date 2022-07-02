@@ -1,8 +1,10 @@
 package com.dreamsoftware.blockchaingateway.web.dto.request;
 
+import com.dreamsoftware.blockchaingateway.web.validation.constraints.ShouldBeAValidObjectId;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,8 +37,18 @@ public class IssueCertificateDTO {
     private Long qualification;
 
     /**
-     * Recipient Wallet
+     * Recipient User
+     */
+    @Schema(description = "Recipient User", required = true)
+    @JsonProperty("recipientUserId")
+    @Valid
+    @ShouldBeAValidObjectId(message = "user_id_not_valid")
+    private String recipientUserId;
+
+    /**
+     *
      */
     @JsonIgnore
-    private String recipientWallet;
+    private String issuerWallet;
+
 }

@@ -5,13 +5,18 @@ import com.dreamsoftware.blockchaingateway.web.controller.certification.error.ex
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.EnableCertificateException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.GetCertificateIssuedDetailException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.GetCertificatesException;
+import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.IssueCertificateException;
+import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.RenewCertificateException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.UpdateCertificateVisibilityException;
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
 import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
 import com.dreamsoftware.blockchaingateway.web.core.ErrorResponseDTO;
+import com.dreamsoftware.blockchaingateway.web.dto.request.IssueCertificateDTO;
+import com.dreamsoftware.blockchaingateway.web.dto.request.SaveTranslationDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificateIssuedDTO;
 import com.dreamsoftware.blockchaingateway.web.security.directives.CurrentUser;
 import com.dreamsoftware.blockchaingateway.web.security.userdetails.ICommonUserDetailsAware;
+import com.dreamsoftware.blockchaingateway.web.validation.constraints.ICommonSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -233,6 +238,56 @@ public class TrustCertificationController extends SupportController {
                     HttpStatus.OK, certificateIssuedDTOList);
         } catch (final Exception ex) {
             throw new GetCertificatesException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Issue Certificate
+     *
+     * @param issueCertificate
+     * @param selfUser
+     * @return
+     * @throws java.lang.Throwable
+     */
+    @Operation(summary = "ISSUE_CERTIFICATE - Issue Certificate", description = "Issue Certificate", tags = {"CERTIFICATE_ISSUED"})
+    @RequestMapping(value = "/issue", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<String>> issueCertificate(
+            @Validated(ICommonSequence.class) IssueCertificateDTO issueCertificate,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            trustCertificationService.issueCertificate(issueCertificate);
+            return responseHelper.<String>createAndSendResponse(TrustCertificationResponseCodeEnum.NEW_CERTIFICATE_ISSUED,
+                    HttpStatus.OK, "New Certificate Issued");
+        } catch (final Exception ex) {
+            throw new IssueCertificateException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Renew Certificate
+     *
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     * @throws java.lang.Throwable
+     */
+    @Operation(summary = "RENEW_CERTIFICATE - Renew Certificate", description = "Issue Certificate", tags = {"CERTIFICATE_ISSUED"})
+    @RequestMapping(value = "/{id}/renew", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<CertificateIssuedDTO>> renewCertificate(
+            @Parameter(name = "id", description = "Certificate Id", required = true)
+            @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final CertificateIssuedDTO certificateIssued = trustCertificationService.renewCertificate(selfUser.getWallet(), id);
+            return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.RENEW_CERTIFICATE_FAILED,
+                    HttpStatus.OK, certificateIssued);
+        } catch (final Exception ex) {
+            throw new RenewCertificateException(ex.getMessage(), ex);
         }
     }
 }

@@ -3,10 +3,14 @@ package com.dreamsoftware.blockchaingateway.services.impl;
 import com.dreamsoftware.blockchaingateway.mapper.CertificateIssuedMapper;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.ITrustCertificationBlockchainRepository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificateIssuedEntity;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.blockchaingateway.services.ITrustCertificationService;
+import com.dreamsoftware.blockchaingateway.web.dto.request.IssueCertificateDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificateIssuedDTO;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     private static final Logger logger = LoggerFactory.getLogger(TrustCertificationServiceImpl.class);
 
     private final CertificateIssuedMapper certificateIssuedMapper;
+    private final UserRepository userRepository;
     private final ITrustCertificationBlockchainRepository trustCertificationRepository;
 
     /**
@@ -128,19 +133,18 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
 
     /**
      *
-     * @param issuerWallet
-     * @param recipientAddress
-     * @param certificateCourseId
-     * @param qualification
+     * @param issueCertificate
      * @throws Throwable
      */
     @Override
-    public void issueCertificate(String issuerWallet, String recipientAddress, String certificateCourseId, Long qualification) throws Throwable {
-        Assert.notNull(issuerWallet, "issuerWallet can not be null");
-        Assert.notNull(recipientAddress, "recipientAddress can not be null");
-        Assert.notNull(certificateCourseId, "certificateCourseId can not be null");
-        Assert.notNull(qualification, "qualification can not be null");
-        trustCertificationRepository.issueCertificate(issuerWallet, recipientAddress, certificateCourseId, qualification);
+    public void issueCertificate(IssueCertificateDTO issueCertificate) throws Throwable {
+        Assert.notNull(issueCertificate.getIssuerWallet(), "issuerWallet can not be null");
+        Assert.notNull(issueCertificate.getRecipientUserId(), "recipientAddress can not be null");
+        Assert.notNull(issueCertificate.getCertificateCourseId(), "certificateCourseId can not be null");
+        Assert.notNull(issueCertificate.getQualification(), "qualification can not be null");
+        final UserEntity recipientUser = userRepository.findById(new ObjectId(issueCertificate.getRecipientUserId())).orElseThrow(() -> new Exception("Recipient Wallet not found!"));
+        trustCertificationRepository.issueCertificate(
+                issueCertificate.getIssuerWallet(), recipientUser.getWalletHash(), issueCertificate.getCertificateCourseId(), issueCertificate.getQualification());
     }
 
     /**
