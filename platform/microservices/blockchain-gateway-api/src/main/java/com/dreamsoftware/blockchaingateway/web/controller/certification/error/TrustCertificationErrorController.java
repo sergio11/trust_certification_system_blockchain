@@ -5,6 +5,8 @@ import com.dreamsoftware.blockchaingateway.web.controller.certification.error.ex
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.EnableCertificateException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.GetCertificateIssuedDetailException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.GetCertificatesException;
+import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.IssueCertificateException;
+import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.RenewCertificateException;
 import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.UpdateCertificateVisibilityException;
 import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
@@ -98,5 +100,33 @@ public class TrustCertificationErrorController extends SupportController {
         logger.error("Handler for GetCertificatesException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.GET_CERTIFICATES_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, "Get certificates Failed");
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(IssueCertificateException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleIssueCertificateException(IssueCertificateException ex, HttpServletRequest request) {
+        logger.error("Handler for IssueCertificateException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.ISSUE_NEW_CERTIFICATE_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, "Issue new certificate Failed");
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(RenewCertificateException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleRenewCertificateException(RenewCertificateException ex, HttpServletRequest request) {
+        logger.error("Handler for RenewCertificateException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.RENEW_CERTIFICATE_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, "Renew certificate Failed");
     }
 }

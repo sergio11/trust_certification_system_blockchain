@@ -1,5 +1,6 @@
 package com.dreamsoftware.blockchaingateway.services;
 
+import com.dreamsoftware.blockchaingateway.web.dto.request.IssueCertificateDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificateIssuedDTO;
 
 /**
@@ -74,14 +75,10 @@ public interface ITrustCertificationService {
     /**
      * Issue Certificate
      *
-     * @param issuerWallet
-     * @param recipientAddress
-     * @param certificateCourseId
-     * @param qualification
+     * @param issueCertificate
      * @throws Throwable
      */
-    void issueCertificate(final String issuerWallet,
-            final String recipientAddress, final String certificateCourseId, final Long qualification) throws Throwable;
+    void issueCertificate(final IssueCertificateDTO issueCertificate) throws Throwable;
 
     /**
      * Renew Certificate
