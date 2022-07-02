@@ -1,9 +1,10 @@
 package com.dreamsoftware.blockchaingateway.web.controller.certification;
 
 import com.dreamsoftware.blockchaingateway.services.ITrustCertificationService;
+import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.DisableCertificateException;
+import com.dreamsoftware.blockchaingateway.web.controller.certification.error.exception.EnableCertificateException;
 import com.dreamsoftware.blockchaingateway.web.core.APIResponse;
 import com.dreamsoftware.blockchaingateway.web.controller.core.SupportController;
-import com.dreamsoftware.blockchaingateway.web.controller.course.error.exception.EnableCertificationCourseException;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificateIssuedDTO;
 import com.dreamsoftware.blockchaingateway.web.security.directives.CurrentUser;
 import com.dreamsoftware.blockchaingateway.web.security.userdetails.ICommonUserDetailsAware;
@@ -38,18 +39,18 @@ public class TrustCertificationController extends SupportController {
     private final ITrustCertificationService trustCertificationService;
 
     /**
-     * Enable Certification
+     * Enable Certificate
      *
      * @param id
      * @param selfUser
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "ENABLE_CERTIFICATION - Enable Certification", description = "Enable Certification", tags = {"CERTIFICATION"})
+    @Operation(summary = "ENABLE_CERTIFICATE - Enable Certificate", description = "Enable Certificate", tags = {"CERTIFICATE_ISSUED"})
     @RequestMapping(value = "/{id}/enable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<CertificateIssuedDTO>> enable(
-            @Parameter(name = "id", description = "Certification Id", required = true)
+            @Parameter(name = "id", description = "Certificate Id", required = true)
             @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
@@ -58,7 +59,32 @@ public class TrustCertificationController extends SupportController {
             return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_ENABLED,
                     HttpStatus.OK, certificateIssuedDTO);
         } catch (final Exception ex) {
-            throw new EnableCertificationCourseException(ex.getMessage(), ex);
+            throw new EnableCertificateException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Disable Certificate
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     * @throws java.lang.Throwable
+     */
+    @Operation(summary = "DISABLE_CERTIFICATE - Disable Certificate", description = "Disable Certificate", tags = {"CERTIFICATE_ISSUED"})
+    @RequestMapping(value = "/{id}/disable", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<CertificateIssuedDTO>> disable(
+            @Parameter(name = "id", description = "Certificate Id", required = true)
+            @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.disable(selfUser.getWallet(), id);
+            return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_DISABLED,
+                    HttpStatus.OK, certificateIssuedDTO);
+        } catch (final Exception ex) {
+            throw new DisableCertificateException(ex.getMessage(), ex);
         }
     }
 }
