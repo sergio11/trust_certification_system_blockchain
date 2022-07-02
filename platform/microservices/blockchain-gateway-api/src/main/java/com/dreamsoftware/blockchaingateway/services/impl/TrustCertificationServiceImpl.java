@@ -125,4 +125,36 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
         final List<CertificateIssuedEntity> myCertificates = trustCertificationRepository.getMyCertificatesAsIssuer(ownerWallet);
         return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(myCertificates);
     }
+
+    /**
+     *
+     * @param issuerWallet
+     * @param recipientAddress
+     * @param certificateCourseId
+     * @param qualification
+     * @throws Throwable
+     */
+    @Override
+    public void issueCertificate(String issuerWallet, String recipientAddress, String certificateCourseId, Long qualification) throws Throwable {
+        Assert.notNull(issuerWallet, "issuerWallet can not be null");
+        Assert.notNull(recipientAddress, "recipientAddress can not be null");
+        Assert.notNull(certificateCourseId, "certificateCourseId can not be null");
+        Assert.notNull(qualification, "qualification can not be null");
+        trustCertificationRepository.issueCertificate(issuerWallet, recipientAddress, certificateCourseId, qualification);
+    }
+
+    /**
+     *
+     * @param ownerWallet
+     * @param certificationId
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public CertificateIssuedDTO renewCertificate(String ownerWallet, String certificationId) throws Throwable {
+        Assert.notNull(ownerWallet, "ownerWallet can not be null");
+        Assert.notNull(certificationId, "certificationId can not be null");
+        final CertificateIssuedEntity certificate = trustCertificationRepository.renewCertificate(ownerWallet, certificationId);
+        return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(certificate);
+    }
 }

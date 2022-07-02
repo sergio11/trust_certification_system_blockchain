@@ -70,4 +70,26 @@ public interface ITrustCertificationService {
      * @throws Throwable
      */
     Iterable<CertificateIssuedDTO> getMyCertificatesAsIssuer(final String ownerWallet) throws Throwable;
+
+    /**
+     * Issue Certificate
+     *
+     * @param issuerWallet
+     * @param recipientAddress
+     * @param certificateCourseId
+     * @param qualification
+     * @throws Throwable
+     */
+    void issueCertificate(final String issuerWallet,
+            final String recipientAddress, final String certificateCourseId, final Long qualification) throws Throwable;
+
+    /**
+     * Renew Certificate
+     *
+     * @param ownerWallet
+     * @param certificationId
+     * @return
+     * @throws Throwable
+     */
+    CertificateIssuedDTO renewCertificate(final String ownerWallet, final String certificationId) throws Throwable;
 }
