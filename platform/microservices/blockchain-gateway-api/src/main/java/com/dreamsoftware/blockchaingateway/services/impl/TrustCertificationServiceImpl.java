@@ -5,6 +5,7 @@ import com.dreamsoftware.blockchaingateway.persistence.bc.repository.ITrustCerti
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificateIssuedEntity;
 import com.dreamsoftware.blockchaingateway.services.ITrustCertificationService;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificateIssuedDTO;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,4 +55,74 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
         return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(certificate);
     }
 
+    /**
+     *
+     * @param ownerWallet
+     * @param certificationId
+     * @param isVisible
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public CertificateIssuedDTO updateVisibility(String ownerWallet, String certificationId, Boolean isVisible) throws Throwable {
+        Assert.notNull(ownerWallet, "ownerWallet can not be null");
+        Assert.notNull(certificationId, "certificationId can not be null");
+        final CertificateIssuedEntity certificate = trustCertificationRepository.updateCertificateVisibility(ownerWallet, certificationId, isVisible);
+        return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(certificate);
+    }
+
+    /**
+     *
+     * @param ownerWallet
+     * @param certificationId
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public CertificateIssuedDTO getDetail(String ownerWallet, String certificationId) throws Throwable {
+        Assert.notNull(ownerWallet, "ownerWallet can not be null");
+        Assert.notNull(certificationId, "certificationId can not be null");
+        final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(ownerWallet, certificationId);
+        return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(certificate);
+    }
+
+    /**
+     *
+     * @param ownerWallet
+     * @param certificationId
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Boolean isCertificateValid(String ownerWallet, String certificationId) throws Throwable {
+        Assert.notNull(ownerWallet, "ownerWallet can not be null");
+        Assert.notNull(certificationId, "certificationId can not be null");
+        return trustCertificationRepository.isCertificateValid(ownerWallet, certificationId);
+    }
+
+    /**
+     *
+     * @param ownerWallet
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Iterable<CertificateIssuedDTO> getMyCertificatesAsRecipient(String ownerWallet) throws Throwable {
+        Assert.notNull(ownerWallet, "ownerWallet can not be null");
+        final List<CertificateIssuedEntity> myCertificates = trustCertificationRepository.getMyCertificatesAsRecipient(ownerWallet);
+        return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(myCertificates);
+    }
+
+    /**
+     *
+     * @param ownerWallet
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Iterable<CertificateIssuedDTO> getMyCertificatesAsIssuer(String ownerWallet) throws Throwable {
+        Assert.notNull(ownerWallet, "ownerWallet can not be null");
+        final List<CertificateIssuedEntity> myCertificates = trustCertificationRepository.getMyCertificatesAsIssuer(ownerWallet);
+        return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(myCertificates);
+    }
 }
