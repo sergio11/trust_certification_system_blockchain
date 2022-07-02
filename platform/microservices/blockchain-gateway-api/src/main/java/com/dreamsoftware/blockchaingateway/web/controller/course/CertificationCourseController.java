@@ -11,7 +11,6 @@ import com.dreamsoftware.blockchaingateway.web.core.ErrorResponseDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificationCourseDetailDTO;
 import com.dreamsoftware.blockchaingateway.web.security.directives.CurrentUser;
-import com.dreamsoftware.blockchaingateway.web.security.directives.OnlyAccessForAdmin;
 import com.dreamsoftware.blockchaingateway.web.security.directives.OnlyAccessForCA;
 import com.dreamsoftware.blockchaingateway.web.security.userdetails.ICommonUserDetailsAware;
 import com.dreamsoftware.blockchaingateway.web.validation.constraints.ICommonSequence;
