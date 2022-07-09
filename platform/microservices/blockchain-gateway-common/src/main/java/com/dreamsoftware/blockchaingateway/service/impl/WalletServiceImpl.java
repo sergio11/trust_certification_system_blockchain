@@ -5,6 +5,7 @@ import com.dreamsoftware.blockchaingateway.exception.GenerateWalletException;
 import com.dreamsoftware.blockchaingateway.exception.LoadWalletException;
 import com.dreamsoftware.blockchaingateway.exception.SaveWalletException;
 import com.dreamsoftware.blockchaingateway.model.WalletCredentials;
+import com.dreamsoftware.blockchaingateway.service.ISftpGateway;
 import com.dreamsoftware.blockchaingateway.service.IWalletService;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,6 +41,11 @@ public class WalletServiceImpl implements IWalletService {
      * Vault Template
      */
     private final VaultTemplate vaultTemplate;
+
+    /**
+     * SFTP Gateway
+     */
+    private final ISftpGateway sftpGateway;
 
     /**
      * Trust Certification System Properties
@@ -115,6 +121,9 @@ public class WalletServiceImpl implements IWalletService {
     private String saveWalletFile(final String walletFileName, final String walletSecret, final String walletMnemonic) throws IOException, NoSuchAlgorithmException {
         final File walletFile = new File(trustCertificationSystemProperties.getWalletDirectory(),
                 walletFileName);
+
+        sftpGateway.sendFile(walletFile);
+
         final String walletHash = getFileHash(walletFile);
         // Write into Vault the WalletCredentials information
         vaultTemplate.write("tcs-v1/wallets/" + walletHash, new WalletCredentials(walletFileName, walletSecret, walletMnemonic));

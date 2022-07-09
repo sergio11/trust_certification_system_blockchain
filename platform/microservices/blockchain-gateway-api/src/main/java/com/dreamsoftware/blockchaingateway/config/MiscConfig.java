@@ -2,6 +2,7 @@ package com.dreamsoftware.blockchaingateway.config;
 
 import com.dreamsoftware.blockchaingateway.i18n.resolver.SmartLocaleResolver;
 import com.dreamsoftware.blockchaingateway.i18n.service.I18NService;
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.ocpsoft.prettytime.PrettyTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
  * @author ssanchez
  */
 @Configuration
+@EnableEncryptableProperties
 public class MiscConfig {
 
     /**

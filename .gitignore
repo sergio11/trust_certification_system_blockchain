@@ -6,6 +6,7 @@ target/
 
 ethereum/eth_geth/data
 ethereum/sftp/keystore
+platform/wallets
 ipfs_cluster/data
 ### STS ###
 .apt_generated

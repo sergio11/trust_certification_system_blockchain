@@ -90,6 +90,13 @@ trust:
             trust-certification-contract-address: "0xc9F57EA9418190f14bbF2d00E776462105ffe677"
             trust-ether-faucet-contract-address: "0x8F3FD73CbF7081D4E764b4ff7708cBB62950D301"
 
+## SFTP Config
+sftp:
+    hostname: 192.168.1.39
+    port: 2222
+    username: ethsftp
+    password: ethsftp00
+    remoteFolder: keystore/
 
 ##### Configuration for account management ####
 task:
@@ -108,6 +115,12 @@ task:
         unsuccessful.mail.forwarding: 0 0/5 * * * ?
         ## Number of emails to be forwarded
         unsuccessful.mail.forwarding.number.of.emails.to.forward: 10
+
+
+######## Encryption Configuration #####
+jasypt:
+    encryptor:
+        password: a{uL#t#jkp,Kd[9{
 
 logging.level:
   org.springframework.cloud: DEBUG
