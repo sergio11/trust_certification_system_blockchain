@@ -5,7 +5,7 @@ target/
 !**/src/test/**/target/
 
 ethereum/eth_geth/data
-shared
+ethereum/sftp/keystore
 ipfs_cluster/data
 ### STS ###
 .apt_generated
