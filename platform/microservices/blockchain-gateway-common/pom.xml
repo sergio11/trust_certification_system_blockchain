@@ -12,6 +12,7 @@
     <properties>
         <web3j.version>4.8.4</web3j.version>
         <jasypt.spring.boot.version>2.1.1</jasypt.spring.boot.version>
+        <sshj.version>0.27.0</sshj.version>
     </properties>
 
     <parent>
@@ -60,6 +61,12 @@
             <groupId>com.github.ulisesbocchio</groupId>
             <artifactId>jasypt-spring-boot</artifactId>
             <version>${jasypt.spring.boot.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hierynomus</groupId>
+            <artifactId>sshj</artifactId>
+            <version>${sshj.version}</version>
         </dependency>
 
     </dependencies>

@@ -1,4 +1,4 @@
-package com.dreamsoftware.blockchaingateway.config.cmd;
+package com.dreamsoftware.blockchaingateway.runners;
 
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.AuthorityEntity;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.AuthorityEnum;
@@ -17,9 +17,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class LoadInitialDataCommandLineRunner implements CommandLineRunner {
+public class LoadInitialDataRunner implements CommandLineRunner {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoadInitialDataCommandLineRunner.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoadInitialDataRunner.class);
 
     private final AuthorityRepository authorityRepository;
 

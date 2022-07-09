@@ -74,7 +74,14 @@ trust:
             trust-certification-contract-address: "0xc9F57EA9418190f14bbF2d00E776462105ffe677"
             trust-ether-faucet-contract-address: "0x8F3FD73CbF7081D4E764b4ff7708cBB62950D301"
 
-
+## SFTP Config
+sftp:
+    hostname: 192.168.1.39
+    port: 2222
+    username: ethsftp
+    password: ethsftp00
+    remoteFolder: keystore/
+    
 logging.level:
   org.springframework.cloud: DEBUG
   org.springframework.security: DEBUG
