@@ -27,6 +27,7 @@
         <module>blockchain-gateway-common</module>
         <module>blockchain-gateway-processor</module>
         <module>blockchain-gateway-api</module>
+        <module>blockchain-gateway-config-server</module>
     </modules>
 
     <dependencies>

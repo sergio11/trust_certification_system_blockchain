@@ -1,0 +1,11 @@
+server:
+  port: ${CONFIG_SERVICE_PORT:8888}
+spring:
+    application:
+        name: blockchain_gateway_config_server
+    cloud:
+        config:
+            server:
+                git:
+                    uri: https://github.com/sergio11/trust_certification_system_blockchain_config.git
+                    default-label: main
