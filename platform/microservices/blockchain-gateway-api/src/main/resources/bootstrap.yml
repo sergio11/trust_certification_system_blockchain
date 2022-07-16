@@ -1,10 +1,19 @@
 spring:
   application:
-    name: blockchain_gateway_service
+    name: blockchain-gateway-api
+  profiles:
+    active: dev
   cloud:
-      config:
-          server:
-              git:
-                  uri: https://github.com/sergio11/trust_certification_system_blockchain_config
+    config:
+        discovery:
+            enabled: true
+            serviceId: blockchain-config-server
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
 
 

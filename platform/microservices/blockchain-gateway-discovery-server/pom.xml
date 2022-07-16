@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dreamsoftware</groupId>
-    <artifactId>blockchain-gateway-config-server</artifactId>
+    <artifactId>blockchain-gateway-discovery-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>blockchain_gateway_config_server</name>
-    <description>Blockchain Gateway Config Server</description>
+    <name>blockchain_gateway_discovery_server</name>
+    <description>Blockchain Gateway Discovery Server</description>
     <packaging>jar</packaging>
 
     <properties>
@@ -23,7 +23,7 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-config-server</artifactId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
         </dependency>
     </dependencies>
 
@@ -53,10 +53,10 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <repository>ssanchez11/blockchain_gateway_config_server</repository>
+                    <repository>ssanchez11/blockchain_gateway_discovery_server</repository>
                     <tag>${project.version}</tag>
                     <buildArgs>
-                        <JAR_FILE>blockchain_gateway_config_server</JAR_FILE>
+                        <JAR_FILE>blockchain_gateway_discovery_server</JAR_FILE>
                     </buildArgs>
                     <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
                     <forceTags>true</forceTags>
