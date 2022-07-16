@@ -10,7 +10,6 @@ services:
   # Easy to use SFTP (SSH File Transfer Protocol) server with OpenSSH.
   eth_sftp:
     image: atmoz/sftp
-    restart: on-failure
     container_name: eth_sftp
     volumes:
       - ./sftp/users.conf:/etc/sftp/users.conf:ro
@@ -22,7 +21,6 @@ services:
 
   ethereum_lite_explorer:
     image: alethio/ethereum-lite-explorer
-    restart: on-failure
     container_name: ethereum_lite_explorer
     environment:
       - APP_NODE_URL=http://localhost:8545
@@ -33,7 +31,6 @@ services:
 
   eth_netstats:
     image: kamael/eth-netstats
-    restart: on-failure
     container_name: netstats
     environment:
       - WS_SECRET=eth-net-stats-secret
@@ -44,7 +41,6 @@ services:
 
   eth_bootstrap:
     build: eth_geth
-    restart: on-failure
     container_name: bootstrap
     hostname: bootstrap
     links:
@@ -63,7 +59,6 @@ services:
 
   eth_node_1:
     build: eth_geth
-    restart: on-failure
     container_name: eth_geth_1
     hostname: eth_geth_1
     links:
@@ -79,7 +74,6 @@ services:
 
   eth_node_2:
     build: eth_geth
-    restart: on-failure
     container_name: eth_geth_2
     hostname: eth_geth_2
     links:
@@ -95,7 +89,6 @@ services:
 
   eth_node_3:
     build: eth_geth
-    restart: on-failure
     container_name: eth_geth_3
     hostname: eth_geth_3
     links:
@@ -111,7 +104,6 @@ services:
 
   eth_node_4:
     build: eth_geth
-    restart: on-failure
     container_name: eth_geth_4
     hostname: eth_geth_4
     links:
@@ -127,7 +119,6 @@ services:
 
   eth_node_5:
     build: eth_geth
-    restart: on-failure
     container_name: eth_geth_5
     hostname: eth_geth_5
     links:

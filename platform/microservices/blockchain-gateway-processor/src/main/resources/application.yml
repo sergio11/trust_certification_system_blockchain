@@ -3,15 +3,21 @@ spring:
     name: blockchain-processor
   profiles:
     active: dev
+  config:
+    import: "optional:configserver:"
   cloud:
     config:
+        import-check:
+            enabled: false
         discovery:
             enabled: true
             serviceId: blockchain-config-server
 
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: true
     serviceUrl:
-      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+      defaultZone: http://${SERVICE_REGISTRY_HOST:localhost}:${SERVICE_REGISTRY_PORT:8761}/eureka/
   instance:
     preferIpAddress: true

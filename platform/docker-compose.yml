@@ -11,9 +11,8 @@ volumes:
 
 # Networks
 networks:
-  external_tcs_network:
-    external:
-      name: tcs_network
+  tcs_network:
+    name: tcs_network
 
 
 services:
@@ -27,7 +26,7 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
     networks:
-      - external_tcs_network
+      - tcs_network
 
   kafka:
     image: confluentinc/cp-kafka
@@ -48,7 +47,7 @@ services:
     links:
       - zookeeper
     networks:
-      - external_tcs_network
+      - tcs_network
 
   akhq:
     image: tchiotludo/akhq
@@ -65,7 +64,7 @@ services:
     links:
       - kafka
     networks:
-      - external_tcs_network
+      - tcs_network
 
 
   vault:
@@ -86,7 +85,7 @@ services:
       - IPC_LOCK
     command: vault server -config=/vault/config/vault.json
     networks:
-      - external_tcs_network
+      - tcs_network
 
   mongo:
     image: mongo
@@ -99,7 +98,7 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=devroot
       - MONGO_INITDB_DATABASE=trustcertificationsystem
     networks:
-      - external_tcs_network
+      - tcs_network
 
 
   # Web-based MongoDB admin interface, written with Node.js and express
@@ -121,26 +120,48 @@ services:
     ports:
       - "8083:8081"
     networks:
-      - external_tcs_network
+      - tcs_network
+
+  # Blockchain Gateway Discovery Server
+  bc_gateway_discovery_server:
+    image: ssanchez11/blockchain_gateway_discovery_server:0.0.1-SNAPSHOT
+    container_name: bc-discovery-server
+    ports:
+      - "8761:8761"
+    networks:
+      - tcs_network
+
+  # Blockchain Gateway Config Server
+  bc_gateway_config_server:
+    image: ssanchez11/blockchain_gateway_config_server:0.0.1-SNAPSHOT
+    container_name: bc-config-server
+    networks:
+      - tcs_network
+    ports:
+      - "8081:8080"
+    environment:
+      - SERVICE_REGISTRY_HOST=bc-discovery-server
 
   # Blockchain Gateway API
   bc_gateway_api:
     image: ssanchez11/blockchain_gateway_api:0.0.1-SNAPSHOT
-    container_name: blockchain_gateway_api
+    container_name: bc-gateway-api
     volumes:
       - ./wallets:/opt/wallets
     ports:
       - "8080:8080"
     networks:
-      - external_tcs_network
+      - tcs_network
     environment:
-      - jasypt.encryptor.password=a{uL#t#jkp,Kd[9{
+      - SERVICE_REGISTRY_HOST=bc-discovery-server
 
   # Blockchain Gateway Processor
-  bc_gateway_processor:
+  bc_gateway_processor_1:
     image: ssanchez11/blockchain_gateway_processor:0.0.1-SNAPSHOT
-    container_name: blockchain_gateway_processor
+    container_name: bc-gateway-processor-1
     volumes:
       - ./wallets:/opt/wallets
     networks:
-      - external_tcs_network
+      - tcs_network
+    environment:
+      - SERVICE_REGISTRY_HOST=bc-discovery-server

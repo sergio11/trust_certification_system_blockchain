@@ -33,7 +33,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <finalName>blockchain_gateway_config_server</finalName>
+                    <finalName>blockchain_gateway_discovery_server</finalName>
                 </configuration>
             </plugin>
 

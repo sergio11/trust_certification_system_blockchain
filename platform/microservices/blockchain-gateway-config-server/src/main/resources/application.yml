@@ -1,5 +1,15 @@
 server:
   port: ${CONFIG_SERVICE_PORT:8888}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://${SERVICE_REGISTRY_HOST:localhost}:${SERVICE_REGISTRY_PORT:8761}/eureka/
+  instance:
+    preferIpAddress: true
+
 spring:
     application:
         name: blockchain-config-server
@@ -9,10 +19,3 @@ spring:
                 git:
                     uri: https://github.com/sergio11/trust_certification_system_blockchain_config.git
                     default-label: main
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
-  instance:
-    preferIpAddress: true
