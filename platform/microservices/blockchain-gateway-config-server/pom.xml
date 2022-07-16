@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dreamsoftware</groupId>
-    <artifactId>blockchain-gateway-processor</artifactId>
+    <artifactId>blockchain-gateway-config-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>blockchain_gateway_processor</name>
-    <description>Blockchain Gateway Processor</description>
+    <name>blockchain_gateway_config_server</name>
+    <description>Blockchain Gateway Config Server</description>
     <packaging>jar</packaging>
 
     <properties>
@@ -22,9 +22,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>blockchain-gateway-common</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-server</artifactId>
         </dependency>
     </dependencies>
 
@@ -34,7 +33,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <finalName>blockchain_gateway_processor</finalName>
+                    <finalName>blockchain_gateway_config_server</finalName>
                 </configuration>
             </plugin>
 
