@@ -2,14 +2,14 @@ package com.dreamsoftware.blockchaingateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
-@EnableEurekaClient
+@EnableEurekaServer
 @SpringBootApplication
-public class BlockchainGatewayProcessorApplication {
+public class BlockchainGatewayDiscoveryServerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BlockchainGatewayProcessorApplication.class, args);
+        SpringApplication.run(BlockchainGatewayDiscoveryServerApplication.class, args);
     }
 
 }

@@ -28,6 +28,7 @@
         <module>blockchain-gateway-processor</module>
         <module>blockchain-gateway-api</module>
         <module>blockchain-gateway-config-server</module>
+        <module>blockchain-gateway-discovery-server</module>
     </modules>
 
     <dependencies>
