@@ -154,6 +154,7 @@ services:
       - tcs_network
     environment:
       - SERVICE_REGISTRY_HOST=bc-discovery-server
+      - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
 
   # Blockchain Gateway Processor
   bc_gateway_processor_1:
@@ -165,3 +166,16 @@ services:
       - tcs_network
     environment:
       - SERVICE_REGISTRY_HOST=bc-discovery-server
+      - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
+
+  # Blockchain Gateway Processor
+  bc_gateway_processor_2:
+    image: ssanchez11/blockchain_gateway_processor:0.0.1-SNAPSHOT
+    container_name: bc-gateway-processor-2
+    volumes:
+      - ./wallets:/opt/wallets
+    networks:
+      - tcs_network
+    environment:
+      - SERVICE_REGISTRY_HOST=bc-discovery-server
+      - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
