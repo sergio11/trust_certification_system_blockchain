@@ -3,6 +3,8 @@ FROM openjdk:8-jdk-alpine
 LABEL description="Blockchain Gateway API"
 # Args for image
 ARG PORT=8080
+ARG SERVICE_REGISTRY_HOST=localhost
+ARG SERVICE_REGISTRY_PORT=8761
 
 RUN apk update && apk upgrade
 RUN ln -s /bin/bash /usr/bin
@@ -21,4 +23,4 @@ RUN ls -al
 
 EXPOSE ${PORT}
 
-CMD ["sh", "-c", "echo 'waiting for 300 seconds for kafka to be accessable before starting application' && ./wait-for-it.sh -t 300 kafka:9092 -- java -jar app.jar"]
+CMD ["sh", "-c", "echo 'waiting for 300 seconds for kafka to be accessable before starting application' && ./wait-for-it.sh -t 300 kafka:9092 && ./wait-for-it.sh -t 300 ${SERVICE_REGISTRY_HOST}:${SERVICE_REGISTRY_PORT} -- java -jar app.jar"]

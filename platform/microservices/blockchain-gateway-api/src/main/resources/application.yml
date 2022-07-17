@@ -3,6 +3,8 @@ spring:
     name: blockchain-gateway-api
   profiles:
     active: dev
+  bus:
+    enabled: true
   config:
     import: "optional:configserver:"
   cloud:

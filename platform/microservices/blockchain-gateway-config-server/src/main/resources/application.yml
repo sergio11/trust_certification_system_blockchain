@@ -13,6 +13,8 @@ eureka:
 spring:
     application:
         name: blockchain-config-server
+    bus:
+      enabled: true
     cloud:
         config:
             server:
