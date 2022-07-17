@@ -1,38 +1,94 @@
 package com.dreamsoftware.blockchaingateway.config.properties;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.web3j.tx.gas.StaticGasProvider;
 import java.math.BigInteger;
 import javax.annotation.PostConstruct;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
  * @author ssanchez
  */
 @Configuration
-@ConfigurationProperties(prefix = "trust.certification.system")
-@Getter
-@Setter
+@Data
 public class TrustCertificationSystemProperties {
 
     private Logger logger = LoggerFactory.getLogger(TrustCertificationSystemProperties.class);
 
+    /**
+     * Chain Id
+     */
+    @Value("${trust.certification.system.chain-id}")
     private Long chainId;
+
+    /**
+     * Wallet Directory
+     */
+    @Value("${trust.certification.system.wallet-directory}")
     private String walletDirectory;
+
+    /**
+     * Root Public Key
+     */
+    @Value("${trust.certification.system.root-public-key}")
     private String rootPublicKey;
+
+    /**
+     * Root Private Key
+     */
+    @Value("${trust.certification.system.root-private-key}")
     private String rootPrivateKey;
+
+    /**
+     * Client Address
+     */
+    @Value("${trust.certification.system.client-address}")
     private String clientAddress;
+
+    /**
+     * Gas Price
+     */
+    @Value("${trust.certification.system.gas-price}")
     private BigInteger gasPrice;
+
+    /**
+     * Gas Limit
+     */
+    @Value("${trust.certification.system.gas-limit}")
     private BigInteger gasLimit;
+
+    /**
+     * Token Management Contract Address
+     */
+    @Value("${trust.certification.system.token-management-contract-address}")
     private String tokenManagementContractAddress;
+
+    /**
+     * Certification Authority Contract Address
+     */
+    @Value("${trust.certification.system.certification-authority-contract-address}")
     private String certificationAuthorityContractAddress;
+
+    /**
+     * Certification Course Contract Address
+     */
+    @Value("${trust.certification.system.certification-course-contract-address}")
     private String certificationCourseContractAddress;
+
+    /**
+     * Trust Certification Contract Address
+     */
+    @Value("${trust.certification.system.trust-certification-contract-address}")
     private String trustCertificationContractAddress;
+
+    /**
+     * Trust Ether Faucet Contract Address
+     */
+    @Value("${trust.certification.system.trust-ether-faucet-contract-address}")
     private String trustEtherFaucetContractAddress;
 
     public StaticGasProvider gas() {
