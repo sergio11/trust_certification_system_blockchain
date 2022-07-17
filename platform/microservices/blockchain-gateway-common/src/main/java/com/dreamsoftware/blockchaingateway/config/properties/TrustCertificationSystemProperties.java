@@ -8,6 +8,7 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 /**
  *
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 @Configuration
 @Data
+@RefreshScope
 public class TrustCertificationSystemProperties {
 
     private Logger logger = LoggerFactory.getLogger(TrustCertificationSystemProperties.class);

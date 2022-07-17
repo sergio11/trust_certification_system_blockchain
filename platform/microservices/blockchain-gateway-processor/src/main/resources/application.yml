@@ -3,6 +3,8 @@ spring:
     name: blockchain-processor
   profiles:
     active: dev
+  bus:
+    enabled: true
   config:
     import: "optional:configserver:"
   cloud:
