@@ -21,4 +21,4 @@ RUN ls -al
 
 EXPOSE ${PORT}
 
-CMD ["sh", "-c", "echo 'waiting for 300 seconds for kafka to be accessable before starting application' && ./wait-for-it.sh -t 300 kafka:9092 -- java -jar app.jar"]
+CMD ["sh", "-c", "echo 'waiting for 300 seconds for kafka to be accessable before starting application' && ./wait-for-it.sh -t 300 kafka:9092 && echo 'waiting for 300 seconds for bc-discovery-server to be accessable before starting application' && ./wait-for-it.sh -t 300 bc-discovery-server:8761 -- java -jar app.jar"]

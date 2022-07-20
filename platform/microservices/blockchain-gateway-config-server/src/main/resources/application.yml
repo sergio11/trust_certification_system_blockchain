@@ -16,8 +16,15 @@ spring:
     bus:
       enabled: true
     cloud:
-        config:
-            server:
-                git:
-                    uri: https://github.com/sergio11/trust_certification_system_blockchain_config.git
-                    default-label: main
+      stream:
+        kafka:
+          binder:
+            brokers: kafka:9092
+              auto-create-topics: true
+              configuration.auto.offset.reset: latest
+      config:
+        server:
+          git:
+            uri: https://github.com/sergio11/trust_certification_system_blockchain_config.git
+            default-label: main
+        
