@@ -1,6 +1,6 @@
 package com.dreamsoftware.blockchaingateway.processor;
 
-import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityRegisteredEvent;
+import com.dreamsoftware.blockchaingateway.model.OnUserRegisteredEvent;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
 import java.util.Date;
@@ -11,21 +11,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Certification Authority Registered Processor
+ * User Registered Processor
  *
  * @author ssanchez
  */
-@Component("caRegisteredProcessor")
+@Component("userRegisteredProcessor")
 @RequiredArgsConstructor
-public class CARegisteredProcessor implements Consumer<CertificationAuthorityRegisteredEvent> {
+public class UserRegisteredProcessor implements Consumer<OnUserRegisteredEvent> {
 
-    private Logger logger = LoggerFactory.getLogger(CARegisteredProcessor.class);
+    private final Logger logger = LoggerFactory.getLogger(UserRegisteredProcessor.class);
 
+    /**
+     * User Repository
+     */
     private final UserRepository userRepository;
 
     @Override
-    public void accept(CertificationAuthorityRegisteredEvent event) {
-        logger.debug("CARegisteredProcessor CALLED!");
+    public void accept(OnUserRegisteredEvent event) {
+        logger.debug("UserRegisteredProcessor CALLED!");
         userRepository.findOneByWalletHash(event.getWalletHash()).ifPresent((userEntity) -> {
             userEntity.setActivationDate(new Date());
             userEntity.setState(UserStateEnum.VALIDATED);

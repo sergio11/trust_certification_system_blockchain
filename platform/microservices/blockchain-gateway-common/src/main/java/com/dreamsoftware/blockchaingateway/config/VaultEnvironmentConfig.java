@@ -1,8 +1,9 @@
 package com.dreamsoftware.blockchaingateway.config;
 
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.vault.config.EnvironmentVaultConfiguration;
 
 /**
@@ -10,8 +11,11 @@ import org.springframework.vault.config.EnvironmentVaultConfiguration;
  * @author ssanchez
  */
 @Configuration
-@PropertySource(value = {"vault-config.properties"})
+@Data
 @Import(value = EnvironmentVaultConfiguration.class)
 public class VaultEnvironmentConfig {
 
+    // Vault Wallet Path
+    @Value("${vault.wallet-path}")
+    private String walletPath;
 }
