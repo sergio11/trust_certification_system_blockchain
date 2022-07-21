@@ -3,6 +3,7 @@ package com.dreamsoftware.blockchaingateway.processor;
 import com.dreamsoftware.blockchaingateway.model.CertificationCourseRegisteredEvent;
 import com.dreamsoftware.blockchaingateway.model.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.ICertificationCourseBlockchainRepository;
+import com.dreamsoftware.blockchaingateway.persistence.exception.RepositoryException;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -28,6 +29,12 @@ public class CertificationCourseRegistrationRequestProcessor implements Function
     @Override
     public CertificationCourseRegisteredEvent apply(CourseCertificateRegistrationRequestEvent event) {
         logger.debug("CertificationCourseRegistrationRequestProcessor CALLED!");
+        try {
+            certificationCourseBlockchainRepository.register(event.getCaWallet(), event.getName(),
+                    event.getCostOfIssuingCertificate(), event.getDurationInHours(), event.getExpirationInDays(), event.getCanBeRenewed(), event.getCostOfRenewingCertificate());
+        } catch (final RepositoryException ex) {
+            logger.debug("Ex Message -> " + ex.getMessage());
+        }
         return null;
     }
 }

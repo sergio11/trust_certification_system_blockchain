@@ -55,6 +55,7 @@ public class BlockchainProcessorImpl implements IBlockchainProcessor {
     @Override
     public void onRegisterCertificationCourse(final SaveCertificationCourseDTO certificationCourseDTO) {
         Assert.notNull(certificationCourseDTO, "Certification Course DTO can not be null");
+        logger.debug("onRegisterCertificationCourse CALLED!");
         try {
             final CourseCertificateRegistrationRequestEvent event = new CourseCertificateRegistrationRequestEvent(
                     certificationCourseDTO.getName(), certificationCourseDTO.getCostOfIssuingCertificate(),
