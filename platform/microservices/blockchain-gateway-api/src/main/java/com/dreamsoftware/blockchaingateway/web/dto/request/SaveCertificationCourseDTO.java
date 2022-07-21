@@ -53,7 +53,7 @@ public class SaveCertificationCourseDTO {
      */
     @Schema(description = "Can Be Renewed", required = false)
     @JsonProperty("canBeRenewed")
-    private Long canBeRenewed;
+    private Boolean canBeRenewed;
 
     /**
      * Cost of renewing certificate

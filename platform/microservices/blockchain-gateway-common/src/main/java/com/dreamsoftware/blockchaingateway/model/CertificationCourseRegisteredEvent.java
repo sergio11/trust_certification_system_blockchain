@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificationCourseRegisteredEvent {
 
+    private String name;
     private String walletHash;
 
 }

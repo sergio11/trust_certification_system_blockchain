@@ -20,7 +20,7 @@ public class CourseCertificateRegistrationRequestEvent {
     private Long costOfIssuingCertificate;
     private Long durationInHours;
     private Long expirationInDays;
-    private Long canBeRenewed;
+    private Boolean canBeRenewed;
     private Long costOfRenewingCertificate;
     private String caWallet;
 }

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.dreamsoftware</groupId>
+    <artifactId>blockchain-gateway-broadcaster</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>blockchain_gateway_broadcaster</name>
+    <description>Blockchain Gateway Broadcaster</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <web3j.version>4.8.4</web3j.version>
+    </properties>
+
+    <parent>
+        <groupId>com.dreamsoftware</groupId>
+        <artifactId>trust_certification_system_blockchain</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
+
+    <distributionManagement>
+        <repository>
+            <id>artifactory</id>
+            <name>artifactory</name>
+            <url>https://eventeum.jfrog.io/artifactory/eventeum</url>
+        </repository>
+        <snapshotRepository>
+            <id>artifactory</id>
+            <name>artifactory</name>
+            <url>https://eventeum.jfrog.io/artifactory/eventeum</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>artifactory</id>
+            <url>https://eventeum.jfrog.io/artifactory/eventeum</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.eventeum</groupId>
+            <artifactId>eventeum-core</artifactId>
+            <version>0.9.0-RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>kotlin-stdlib</artifactId>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-kafka</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <finalName>blockchain_gateway_broadcaster</finalName>
+                </configuration>
+            </plugin>
+
+            <!--<plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.13</version>
+                <executions>
+                    <execution>
+                        <id>build-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <configuration>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <repository>ssanchez11/blockchain_gateway_discovery_server</repository>
+                    <tag>${project.version}</tag>
+                    <buildArgs>
+                        <JAR_FILE>blockchain_gateway_discovery_server</JAR_FILE>
+                    </buildArgs>
+                    <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
+                    <forceTags>true</forceTags>
+                </configuration>
+            </plugin>-->
+        </plugins>
+    </build>
+
+</project>

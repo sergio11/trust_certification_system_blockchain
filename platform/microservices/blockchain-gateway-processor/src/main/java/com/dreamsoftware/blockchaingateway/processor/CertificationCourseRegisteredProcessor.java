@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CertificationCourseRegisteredProcessor implements Consumer<CertificationCourseRegisteredEvent> {
 
-    private Logger logger = LoggerFactory.getLogger(CertificationCourseRegisteredProcessor.class);
+    private final Logger logger = LoggerFactory.getLogger(CertificationCourseRegisteredProcessor.class);
 
     @Override
     public void accept(CertificationCourseRegisteredEvent event) {

@@ -131,6 +131,20 @@ services:
     networks:
       - tcs_network
 
+  # Blockchain Gateway Broadcaster
+  bc_gateway_broadcaster:
+    image: ssanchez11/blockchain_gateway_broadcaster:0.0.1-SNAPSHOT
+    container_name: bc-broadcaster
+    ports:
+      - "8060:8060"
+    environment:
+      - SPRING_DATA_MONGODB_HOST=mongo
+      - ETHEREUM_NODE_URL=http://192.168.1.39:8545
+      - ZOOKEEPER_ADDRESS=zookeeper:2181
+      - KAFKA_ADDRESSES=kafka:9092
+    networks:
+      - tcs_network
+
   # Blockchain Gateway Config Server
   bc_gateway_config_server:
     image: ssanchez11/blockchain_gateway_config_server:0.0.1-SNAPSHOT
