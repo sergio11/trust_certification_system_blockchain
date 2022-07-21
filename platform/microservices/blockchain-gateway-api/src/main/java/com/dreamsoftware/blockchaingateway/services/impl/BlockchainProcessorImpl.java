@@ -1,9 +1,9 @@
 package com.dreamsoftware.blockchaingateway.services.impl;
 
-import com.dreamsoftware.blockchaingateway.model.CertificationAuthorityInitialFundsRequestEvent;
+import com.dreamsoftware.blockchaingateway.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.blockchaingateway.model.CourseCertificateRegistrationRequestEvent;
+import com.dreamsoftware.blockchaingateway.model.OnNewUserRegistrationEvent;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserEntity;
-import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserTypeEnum;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,6 +27,7 @@ public class BlockchainProcessorImpl implements IBlockchainProcessor {
 
     private final UserRepository userRepository;
     private final StreamBridge streamBridge;
+    private final StreamChannelsProperties streamChannelsProperties;
 
     @Override
     public void onUserActivated(String id) {
@@ -38,11 +39,8 @@ public class BlockchainProcessorImpl implements IBlockchainProcessor {
             final UserEntity userEntity = userRepository.findById(new ObjectId(id)).orElseThrow(() -> {
                 throw new IllegalStateException("User not found");
             });
-
-            if (userEntity.getType().equals(UserTypeEnum.CA)) {
-                publish(new CertificationAuthorityInitialFundsRequestEvent(userEntity.getName(), userEntity.getWalletHash()),
-                        "caInitialFunds-out-0");
-            }
+            publish(new OnNewUserRegistrationEvent(userEntity.getName(), userEntity.getWalletHash(), userEntity.getType()),
+                    streamChannelsProperties.getNewUserRegistration());
         } catch (final Throwable ex) {
             logger.debug("onUserActivated FAILED! " + ex.getMessage());
         }
@@ -63,7 +61,7 @@ public class BlockchainProcessorImpl implements IBlockchainProcessor {
                     certificationCourseDTO.getDurationInHours(), certificationCourseDTO.getExpirationInDays(),
                     certificationCourseDTO.getCanBeRenewed(), certificationCourseDTO.getCostOfRenewingCertificate(),
                     certificationCourseDTO.getCaWallet());
-            publish(event, "certificationCourseRegistration-out-0");
+            publish(event, streamChannelsProperties.getCertificationCourseRegistration());
         } catch (final Throwable ex) {
             logger.debug("onRegisterCertificationCourse FAILED! " + ex.getMessage());
         }

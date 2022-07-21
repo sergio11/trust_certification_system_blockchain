@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CertificationCourseRegistrationRequestProcessor implements Function<CourseCertificateRegistrationRequestEvent, CertificationCourseRegisteredEvent> {
 
-    private Logger logger = LoggerFactory.getLogger(CertificationCourseRegistrationRequestProcessor.class);
+    private final Logger logger = LoggerFactory.getLogger(CertificationCourseRegistrationRequestProcessor.class);
 
     /**
      * Certification Course Blockchain Repository
@@ -27,7 +27,7 @@ public class CertificationCourseRegistrationRequestProcessor implements Function
 
     @Override
     public CertificationCourseRegisteredEvent apply(CourseCertificateRegistrationRequestEvent event) {
-        logger.debug("CARegistrationRequestProcessor CALLED!");
+        logger.debug("CertificationCourseRegistrationRequestProcessor CALLED!");
         return null;
     }
 }

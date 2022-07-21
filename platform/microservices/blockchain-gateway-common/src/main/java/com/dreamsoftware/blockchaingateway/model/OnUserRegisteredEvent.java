@@ -14,15 +14,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CertificationAuthorityInitialFundsRequestEvent {
-
-    /**
-     * Certification Authority Name
-     */
-    private String name;
+public class OnUserRegisteredEvent {
 
     /**
      * Wallet Hash
      */
     private String walletHash;
+
 }
