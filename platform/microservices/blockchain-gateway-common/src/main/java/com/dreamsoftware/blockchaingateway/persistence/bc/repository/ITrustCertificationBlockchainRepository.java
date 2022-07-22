@@ -1,7 +1,9 @@
 package com.dreamsoftware.blockchaingateway.persistence.bc.repository;
 
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificateIssuedEntity;
+import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.TrustCertificationEventEntity;
 import com.dreamsoftware.blockchaingateway.persistence.exception.RepositoryException;
+import io.reactivex.Flowable;
 import java.util.List;
 
 /**
@@ -100,5 +102,13 @@ public interface ITrustCertificationBlockchainRepository {
      * @throws RepositoryException
      */
     List<CertificateIssuedEntity> getMyCertificatesAsIssuer(final String ownerWallet) throws RepositoryException;
+
+    /**
+     * Get Events
+     *
+     * @return
+     * @throws RepositoryException
+     */
+    Flowable<TrustCertificationEventEntity> getEvents() throws RepositoryException;
 
 }
