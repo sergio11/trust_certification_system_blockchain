@@ -1,7 +1,9 @@
 package com.dreamsoftware.blockchaingateway.persistence.bc.repository;
 
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationCourseEntity;
+import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationCourseEventEntity;
 import com.dreamsoftware.blockchaingateway.persistence.exception.RepositoryException;
+import io.reactivex.Flowable;
 
 /**
  *
@@ -18,9 +20,10 @@ public interface ICertificationCourseBlockchainRepository {
      * @param expirationInDays
      * @param canBeRenewed
      * @param costOfRenewingCertificate
+     * @return
      * @throws RepositoryException
      */
-    void register(final String walletHash, final String name, final Long costOfIssuingCertificate,
+    CertificationCourseEntity register(final String walletHash, final String name, final Long costOfIssuingCertificate,
             final Long durationInHours, final Long expirationInDays, final Boolean canBeRenewed, final Long costOfRenewingCertificate) throws RepositoryException;
 
     /**
@@ -82,4 +85,11 @@ public interface ICertificationCourseBlockchainRepository {
      * @throws RepositoryException
      */
     Boolean canBeRenewed(final String caWallet, final String courseId) throws RepositoryException;
+
+    /**
+     *
+     * @return @throws RepositoryException
+     */
+    Flowable<CertificationCourseEventEntity> getEvents() throws RepositoryException;
+
 }

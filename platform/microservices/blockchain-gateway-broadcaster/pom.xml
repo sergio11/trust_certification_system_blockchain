@@ -20,55 +20,21 @@
         <relativePath>../</relativePath>
     </parent>
 
-    <distributionManagement>
-        <repository>
-            <id>artifactory</id>
-            <name>artifactory</name>
-            <url>https://eventeum.jfrog.io/artifactory/eventeum</url>
-        </repository>
-        <snapshotRepository>
-            <id>artifactory</id>
-            <name>artifactory</name>
-            <url>https://eventeum.jfrog.io/artifactory/eventeum</url>
-        </snapshotRepository>
-    </distributionManagement>
 
-    <repositories>
-        <repository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>artifactory</id>
-            <url>https://eventeum.jfrog.io/artifactory/eventeum</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2/</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.eventeum</groupId>
-            <artifactId>eventeum-core</artifactId>
-            <version>0.9.0-RELEASE</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>kotlin-stdlib</artifactId>
-                    <groupId>org.jetbrains.kotlin</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>blockchain-gateway-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -77,10 +43,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-stream-kafka</artifactId>
         </dependency>
     </dependencies>
 
