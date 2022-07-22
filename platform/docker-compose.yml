@@ -138,10 +138,8 @@ services:
     ports:
       - "8060:8060"
     environment:
-      - SPRING_DATA_MONGODB_HOST=mongo
-      - ETHEREUM_NODE_URL=http://192.168.1.39:8545
-      - ZOOKEEPER_ADDRESS=zookeeper:2181
-      - KAFKA_ADDRESSES=kafka:9092
+      - SERVICE_REGISTRY_HOST=bc-discovery-server
+      - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
     networks:
       - tcs_network
 

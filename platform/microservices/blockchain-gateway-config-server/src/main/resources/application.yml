@@ -19,9 +19,9 @@ spring:
         stream:
             kafka:
                 binder:
-                brokers: kafka:9092
-                auto-create-topics: true
-                configuration.auto.offset.reset: latest
+                    brokers: kafka:9092
+                    auto-create-topics: true
+                    configuration.auto.offset.reset: latest
         config:
             server:
                 git:

@@ -1,5 +1,6 @@
 package com.dreamsoftware.blockchaingateway.model;
 
+import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationCourseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificationCourseRegisteredEvent {
 
-    private String name;
+    /**
+     * Certification Course
+     */
+    private CertificationCourseEntity certificationCourse;
+
+    /**
+     * Wallet Hash
+     */
     private String walletHash;
 
 }

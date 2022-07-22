@@ -1,7 +1,9 @@
 package com.dreamsoftware.blockchaingateway.persistence.bc.repository;
 
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationAuthorityEntity;
+import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationAuthorityEventEntity;
 import com.dreamsoftware.blockchaingateway.persistence.exception.RepositoryException;
+import io.reactivex.Flowable;
 
 /**
  *
@@ -48,4 +50,11 @@ public interface ICertificationAuthorityBlockchainRepository {
      * @throws RepositoryException
      */
     CertificationAuthorityEntity disable(final String rootWallet, final String caWallet) throws RepositoryException;
+
+    /**
+     *
+     * @return @throws RepositoryException
+     */
+    Flowable<CertificationAuthorityEventEntity> getEvents() throws RepositoryException;
+
 }

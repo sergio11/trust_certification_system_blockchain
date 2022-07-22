@@ -6,8 +6,12 @@ import com.dreamsoftware.blockchaingateway.exception.LoadWalletException;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.core.SupportBlockchainRepository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationAuthorityEntity;
+import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationAuthorityEventEntity;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.mapper.CertificationAuthorityEntityMapper;
+import com.dreamsoftware.blockchaingateway.persistence.bc.repository.mapper.CertificationAuthorityEventEntityMapper;
 import com.dreamsoftware.blockchaingateway.persistence.exception.RepositoryException;
+import com.google.common.collect.Lists;
+import io.reactivex.Flowable;
 import java.math.BigInteger;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -15,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.web3j.crypto.Credentials;
+import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.tx.FastRawTransactionManager;
 
 /**
@@ -28,6 +33,7 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
     private final Logger logger = LoggerFactory.getLogger(CertificationAuthorityBlockchainRepositoryImpl.class);
 
     private final CertificationAuthorityEntityMapper certificationAuthorityEntityMapper;
+    private final CertificationAuthorityEventEntityMapper certificationAuthorityEventEntityMapper;
 
     /**
      * Register Certification Authority
@@ -103,6 +109,22 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
             caContract.disableCertificationAuthority(caWallet).send();
             final CertificationAuthorityRecord caRecord = caContract.getCertificateAuthorityDetail(caWallet).send();
             return certificationAuthorityEntityMapper.caRecordToCaEntity(caRecord);
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Flowable<CertificationAuthorityEventEntity> getEvents() throws RepositoryException {
+        try {
+            final CertificationAuthorityContract caContract = CertificationAuthorityContract.load(properties.getCertificationAuthorityContractAddress(),
+                    web3j, rootTxManager, properties.gas());
+            return Flowable.merge(Lists.newArrayList(
+                    caContract.onCertificationAuthorityDisabledEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity),
+                    caContract.onCertificationAuthorityEnabledEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity),
+                    caContract.onCertificationAuthorityRemovedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity),
+                    caContract.onNewCertificationAuthorityCreatedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity)
+            ));
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }

@@ -35,7 +35,7 @@ import org.web3j.crypto.WalletUtils;
 @RequiredArgsConstructor
 public class WalletServiceImpl implements IWalletService {
 
-    private Logger logger = LoggerFactory.getLogger(WalletServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(WalletServiceImpl.class);
 
     /**
      * Vault Template
