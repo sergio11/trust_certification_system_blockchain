@@ -53,7 +53,7 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
     @Override
     public Flowable<EtherFaucetAuthorityEventEntity> getEvents() throws RepositoryException {
         try {
-            final EtherFaucetContract faucetContract = EtherFaucetContract.load(properties.getCertificationCourseContractAddress(),
+            final EtherFaucetContract faucetContract = EtherFaucetContract.load(properties.getTrustEtherFaucetContractAddress(),
                     web3j, rootTxManager, properties.gas());
             return Flowable.merge(Lists.newArrayList(
                     faucetContract.onDepositEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(etherFaucetEventEntityMapper::mapEventToEntity),

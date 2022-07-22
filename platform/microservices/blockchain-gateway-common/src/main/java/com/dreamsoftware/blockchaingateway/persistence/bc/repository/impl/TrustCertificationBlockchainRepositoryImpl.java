@@ -6,8 +6,12 @@ import com.dreamsoftware.blockchaingateway.exception.LoadWalletException;
 import com.dreamsoftware.blockchaingateway.persistence.bc.core.SupportBlockchainRepository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.ITrustCertificationBlockchainRepository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificateIssuedEntity;
+import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.TrustCertificationEventEntity;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.mapper.TrustCertificationEntityMapper;
+import com.dreamsoftware.blockchaingateway.persistence.bc.repository.mapper.TrustCertificationEventEntityMapper;
 import com.dreamsoftware.blockchaingateway.persistence.exception.RepositoryException;
+import com.google.common.collect.Lists;
+import io.reactivex.Flowable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.web3j.crypto.Credentials;
+import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.tx.FastRawTransactionManager;
 
 /**
@@ -30,6 +35,7 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
     private final Logger logger = LoggerFactory.getLogger(TrustCertificationBlockchainRepositoryImpl.class);
 
     private final TrustCertificationEntityMapper trustCertificationEntityMapper;
+    private final TrustCertificationEventEntityMapper trustCertificationEventEntityMapper;
 
     /**
      *
@@ -182,6 +188,24 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
         }
     }
 
+    @Override
+    public Flowable<TrustCertificationEventEntity> getEvents() throws RepositoryException {
+        try {
+            final TrustCertificationContract trustCertificationContract = TrustCertificationContract.load(properties.getTrustCertificationContractAddress(),
+                    web3j, rootTxManager, properties.gas());
+            return Flowable.merge(Lists.newArrayList(
+                    trustCertificationContract.onCertificateDeletedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(trustCertificationEventEntityMapper::mapEventToEntity),
+                    trustCertificationContract.onCertificateDisabledEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(trustCertificationEventEntityMapper::mapEventToEntity),
+                    trustCertificationContract.onCertificateEnabledEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(trustCertificationEventEntityMapper::mapEventToEntity),
+                    trustCertificationContract.onCertificateRenewedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(trustCertificationEventEntityMapper::mapEventToEntity),
+                    trustCertificationContract.onCertificateVisibilityUpdatedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(trustCertificationEventEntityMapper::mapEventToEntity),
+                    trustCertificationContract.onNewCertificateGeneratedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(trustCertificationEventEntityMapper::mapEventToEntity)
+            ));
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
     /**
      * Private Methods
      */
@@ -198,5 +222,4 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
         return TrustCertificationContract.load(properties.getCertificationCourseContractAddress(),
                 web3j, txManager, properties.gas());
     }
-
 }
