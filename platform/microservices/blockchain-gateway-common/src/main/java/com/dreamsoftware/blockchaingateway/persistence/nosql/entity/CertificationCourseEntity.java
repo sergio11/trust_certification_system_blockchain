@@ -3,6 +3,7 @@ package com.dreamsoftware.blockchaingateway.persistence.nosql.entity;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
@@ -20,6 +21,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Document(collection = CertificationCourseEntity.COLLECTION_NAME)
 public class CertificationCourseEntity {
 
@@ -47,7 +49,7 @@ public class CertificationCourseEntity {
      * Status
      */
     @Field("status")
-    private CertificationCourseStateEnum status = CertificationCourseStateEnum.ENABLED;
+    private CertificationCourseStateEnum status;
 
     /**
      * CA

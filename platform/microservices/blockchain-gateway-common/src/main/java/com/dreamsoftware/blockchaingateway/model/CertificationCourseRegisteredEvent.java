@@ -23,8 +23,8 @@ public class CertificationCourseRegisteredEvent {
     private CertificationCourseEntity certificationCourse;
 
     /**
-     * Wallet Hash
+     * CA Wallet Hash
      */
-    private String walletHash;
+    private String caWalletHash;
 
 }
