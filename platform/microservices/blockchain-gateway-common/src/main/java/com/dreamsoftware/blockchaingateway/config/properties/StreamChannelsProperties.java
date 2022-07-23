@@ -31,6 +31,12 @@ public class StreamChannelsProperties {
     @Value("${channels.certification-course-registration}")
     private String certificationCourseRegistration;
 
+    /**
+     * New Certification Request
+     */
+    @Value("${channels.new-certification-request}")
+    private String newCertificationRequest;
+
     @PostConstruct
     public void onPostConstruct() {
         logger.debug("newUserRegistration -> " + newUserRegistration);

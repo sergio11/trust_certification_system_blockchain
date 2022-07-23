@@ -265,6 +265,7 @@ public class TrustCertificationController extends SupportController {
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
+            issueCertificate.setStudentWalletHash(selfUser.getWalletHash());
             trustCertificationService.issueCertificate(issueCertificate);
             return responseHelper.<String>createAndSendResponse(TrustCertificationResponseCodeEnum.NEW_CERTIFICATE_ISSUED,
                     HttpStatus.OK, "New Certificate Issued");

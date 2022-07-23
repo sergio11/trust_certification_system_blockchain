@@ -79,16 +79,12 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public void save(SaveCertificationCourseDTO model) {
         Assert.notNull(model, "model can not be null");
         logger.debug("Save certification course CALLED!");
-        try {
-            final CourseCertificateRegistrationRequestEvent event = new CourseCertificateRegistrationRequestEvent(
-                    model.getName(), model.getCostOfIssuingCertificate(),
-                    model.getDurationInHours(), model.getExpirationInDays(),
-                    model.getCanBeRenewed(), model.getCostOfRenewingCertificate(),
-                    model.getCaWalletHash());
-            streamBridge.send(streamChannelsProperties.getCertificationCourseRegistration(), event);
-        } catch (final Throwable ex) {
-            logger.debug("onRegisterCertificationCourse FAILED! " + ex.getMessage());
-        }
+        final CourseCertificateRegistrationRequestEvent event = new CourseCertificateRegistrationRequestEvent(
+                model.getName(), model.getCostOfIssuingCertificate(),
+                model.getDurationInHours(), model.getExpirationInDays(),
+                model.getCanBeRenewed(), model.getCostOfRenewingCertificate(),
+                model.getCaWalletHash());
+        streamBridge.send(streamChannelsProperties.getCertificationCourseRegistration(), event);
     }
 
     /**
