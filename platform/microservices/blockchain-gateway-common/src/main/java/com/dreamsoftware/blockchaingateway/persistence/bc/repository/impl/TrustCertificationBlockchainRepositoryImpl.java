@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tx.FastRawTransactionManager;
 
 /**
@@ -39,21 +40,26 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
 
     /**
      *
-     * @param issuerWallet
-     * @param recipientAddress
+     * @param issuerWalletHash
+     * @param studentWalletHash
      * @param certificateCourseId
      * @param qualification
      * @throws RepositoryException
      */
     @Override
-    public void issueCertificate(String issuerWallet, String recipientAddress, String certificateCourseId, Long qualification) throws RepositoryException {
-        Assert.notNull(issuerWallet, "Issuer Wallet can not be null");
-        Assert.notNull(recipientAddress, "recipient Address can not be null");
+    public CertificateIssuedEntity issueCertificate(String issuerWalletHash, String studentWalletHash, String certificateCourseId, Long qualification) throws RepositoryException {
+        Assert.notNull(issuerWalletHash, "Issuer Wallet can not be null");
+        Assert.notNull(studentWalletHash, "Student Wallet Hash can not be null");
         Assert.notNull(certificateCourseId, "certificate Course Id can not be null");
         Assert.notNull(qualification, "qualification can not be null");
         try {
-            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(issuerWallet);
-            trustCertificationContract.issueCertificate(recipientAddress, certificateCourseId, BigInteger.valueOf(qualification)).send();
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(issuerWalletHash);
+            final Credentials studentCredentials = walletService.loadCredentials(studentWalletHash);
+            final TransactionReceipt transactionReceipt = trustCertificationContract.issueCertificate(studentCredentials.getAddress(), certificateCourseId, BigInteger.valueOf(qualification)).send();
+            final List<TrustCertificationContract.OnNewCertificateGeneratedEventResponse> events = trustCertificationContract.getOnNewCertificateGeneratedEvents(transactionReceipt);
+            final String certificationId = events.get(0)._id;
+            final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();
+            return trustCertificationEntityMapper.certificateRecordToCertificateIssuedEntity(certificateRecord);
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
@@ -61,17 +67,17 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
 
     /**
      *
-     * @param ownerWallet
+     * @param ownerWalletHash
      * @param certificationId
      * @return
      * @throws RepositoryException
      */
     @Override
-    public CertificateIssuedEntity renewCertificate(String ownerWallet, String certificationId) throws RepositoryException {
-        Assert.notNull(ownerWallet, "Owner Wallet can not be null");
+    public CertificateIssuedEntity renewCertificate(String ownerWalletHash, String certificationId) throws RepositoryException {
+        Assert.notNull(ownerWalletHash, "Owner Wallet can not be null");
         Assert.notNull(certificationId, "Certification Id can not be null");
         try {
-            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(ownerWallet);
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(ownerWalletHash);
             trustCertificationContract.renewCertificate(certificationId).send();
             final CertificateRecord certificateDetail = trustCertificationContract.getCertificateDetail(certificationId).send();
             return trustCertificationEntityMapper.certificateRecordToCertificateIssuedEntity(certificateDetail);
@@ -81,17 +87,17 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
     }
 
     /**
-     * @param ownerWallet
+     * @param ownerWalletHash
      * @param certificationId
      * @return
      * @throws RepositoryException
      */
     @Override
-    public CertificateIssuedEntity enable(String ownerWallet, String certificationId) throws RepositoryException {
-        Assert.notNull(ownerWallet, "Owner Wallet can not be null");
+    public CertificateIssuedEntity enable(String ownerWalletHash, String certificationId) throws RepositoryException {
+        Assert.notNull(ownerWalletHash, "Owner Wallet can not be null");
         Assert.notNull(certificationId, "Certification Id can not be null");
         try {
-            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(ownerWallet);
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(ownerWalletHash);
             trustCertificationContract.enableCertificate(certificationId).send();
             final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();
             return trustCertificationEntityMapper.certificateRecordToCertificateIssuedEntity(certificateRecord);
@@ -100,12 +106,19 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
         }
     }
 
+    /**
+     *
+     * @param ownerWalletHash
+     * @param certificationId
+     * @return
+     * @throws RepositoryException
+     */
     @Override
-    public CertificateIssuedEntity disable(String ownerWallet, String certificationId) throws RepositoryException {
-        Assert.notNull(ownerWallet, "Owner Wallet can not be null");
+    public CertificateIssuedEntity disable(String ownerWalletHash, String certificationId) throws RepositoryException {
+        Assert.notNull(ownerWalletHash, "Owner Wallet can not be null");
         Assert.notNull(certificationId, "Certification Id can not be null");
         try {
-            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(ownerWallet);
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(ownerWalletHash);
             trustCertificationContract.disableCertificate(certificationId).send();
             final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();
             return trustCertificationEntityMapper.certificateRecordToCertificateIssuedEntity(certificateRecord);
@@ -114,13 +127,21 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
         }
     }
 
+    /**
+     *
+     * @param ownerWalletHash
+     * @param certificationId
+     * @param isVisible
+     * @return
+     * @throws RepositoryException
+     */
     @Override
-    public CertificateIssuedEntity updateCertificateVisibility(String ownerWallet, String certificationId, Boolean isVisible) throws RepositoryException {
-        Assert.notNull(ownerWallet, "Owner Wallet can not be null");
+    public CertificateIssuedEntity updateCertificateVisibility(String ownerWalletHash, String certificationId, Boolean isVisible) throws RepositoryException {
+        Assert.notNull(ownerWalletHash, "Owner Wallet can not be null");
         Assert.notNull(certificationId, "Certification Id can not be null");
         Assert.notNull(isVisible, "isVisible can not be null");
         try {
-            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(ownerWallet);
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(ownerWalletHash);
             trustCertificationContract.updateCertificateVisibility(certificationId, isVisible).send();
             final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();
             return trustCertificationEntityMapper.certificateRecordToCertificateIssuedEntity(certificateRecord);
@@ -129,24 +150,38 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
         }
     }
 
+    /**
+     *
+     * @param walletHash
+     * @param certificationId
+     * @return
+     * @throws RepositoryException
+     */
     @Override
-    public Boolean isCertificateValid(String wallet, String certificationId) throws RepositoryException {
-        Assert.notNull(wallet, "Wallet can not be null");
+    public Boolean isCertificateValid(String walletHash, String certificationId) throws RepositoryException {
+        Assert.notNull(walletHash, "Wallet can not be null");
         Assert.notNull(certificationId, "Certification Id can not be null");
         try {
-            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(wallet);
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(walletHash);
             return trustCertificationContract.isCertificateValid(certificationId).send();
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
     }
 
+    /**
+     *
+     * @param walletHash
+     * @param certificationId
+     * @return
+     * @throws RepositoryException
+     */
     @Override
-    public CertificateIssuedEntity getCertificateDetail(String wallet, String certificationId) throws RepositoryException {
-        Assert.notNull(wallet, "Wallet can not be null");
+    public CertificateIssuedEntity getCertificateDetail(String walletHash, String certificationId) throws RepositoryException {
+        Assert.notNull(walletHash, "Wallet can not be null");
         Assert.notNull(certificationId, "Certification Id can not be null");
         try {
-            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(wallet);
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(walletHash);
             final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();
             return trustCertificationEntityMapper.certificateRecordToCertificateIssuedEntity(certificateRecord);
         } catch (final Exception ex) {
@@ -154,11 +189,17 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
         }
     }
 
+    /**
+     *
+     * @param ownerWalletHash
+     * @return
+     * @throws RepositoryException
+     */
     @Override
-    public List<CertificateIssuedEntity> getMyCertificatesAsRecipient(final String ownerWallet) throws RepositoryException {
-        Assert.notNull(ownerWallet, "Owner Wallet can not be null");
+    public List<CertificateIssuedEntity> getMyCertificatesAsRecipient(final String ownerWalletHash) throws RepositoryException {
+        Assert.notNull(ownerWalletHash, "Owner Wallet can not be null");
         try {
-            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(ownerWallet);
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(ownerWalletHash);
             final List<String> certificateIds = trustCertificationContract.getMyCertificatesAsRecipient().send();
             final List<CertificateIssuedEntity> certificateIssuedEntities = new ArrayList<>();
             for (final String certificateId : certificateIds) {
@@ -171,11 +212,17 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
         }
     }
 
+    /**
+     *
+     * @param ownerWalletHash
+     * @return
+     * @throws RepositoryException
+     */
     @Override
-    public List<CertificateIssuedEntity> getMyCertificatesAsIssuer(final String ownerWallet) throws RepositoryException {
-        Assert.notNull(ownerWallet, "Owner Wallet can not be null");
+    public List<CertificateIssuedEntity> getMyCertificatesAsIssuer(final String ownerWalletHash) throws RepositoryException {
+        Assert.notNull(ownerWalletHash, "Owner Wallet can not be null");
         try {
-            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(ownerWallet);
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(ownerWalletHash);
             final List<String> certificateIds = trustCertificationContract.getMyCertificatesAsIssuer().send();
             final List<CertificateIssuedEntity> certificateIssuedEntities = new ArrayList<>();
             for (final String certificateId : certificateIds) {
@@ -188,6 +235,10 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
         }
     }
 
+    /**
+     *
+     * @return @throws RepositoryException
+     */
     @Override
     public Flowable<TrustCertificationEventEntity> getEvents() throws RepositoryException {
         try {

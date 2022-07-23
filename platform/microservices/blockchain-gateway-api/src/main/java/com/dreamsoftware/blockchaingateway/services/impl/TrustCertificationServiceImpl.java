@@ -1,18 +1,19 @@
 package com.dreamsoftware.blockchaingateway.services.impl;
 
+import com.dreamsoftware.blockchaingateway.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.blockchaingateway.mapper.CertificateIssuedMapper;
+import com.dreamsoftware.blockchaingateway.model.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.ITrustCertificationBlockchainRepository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificateIssuedEntity;
-import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.blockchaingateway.services.ITrustCertificationService;
 import com.dreamsoftware.blockchaingateway.web.dto.request.IssueCertificateDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificateIssuedDTO;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -29,6 +30,8 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     private final CertificateIssuedMapper certificateIssuedMapper;
     private final UserRepository userRepository;
     private final ITrustCertificationBlockchainRepository trustCertificationRepository;
+    private final StreamBridge streamBridge;
+    private final StreamChannelsProperties streamChannelsProperties;
 
     /**
      *
@@ -138,13 +141,16 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      */
     @Override
     public void issueCertificate(IssueCertificateDTO issueCertificate) throws Throwable {
-        Assert.notNull(issueCertificate.getIssuerWalletHash(), "issuerWalletHash can not be null");
-        Assert.notNull(issueCertificate.getRecipientUserId(), "recipientAddress can not be null");
+        Assert.notNull(issueCertificate.getStudentWalletHash(), "Student Wallet Hash can not be null");
         Assert.notNull(issueCertificate.getCertificateCourseId(), "certificateCourseId can not be null");
         Assert.notNull(issueCertificate.getQualification(), "qualification can not be null");
-        final UserEntity recipientUser = userRepository.findById(new ObjectId(issueCertificate.getRecipientUserId())).orElseThrow(() -> new Exception("Recipient Wallet not found!"));
-        trustCertificationRepository.issueCertificate(
-                issueCertificate.getIssuerWalletHash(), recipientUser.getWalletHash(), issueCertificate.getCertificateCourseId(), issueCertificate.getQualification());
+        final OnNewIssueCertificateRequestEvent event = OnNewIssueCertificateRequestEvent
+                .builder()
+                .courseId(issueCertificate.getCertificateCourseId())
+                .qualification(issueCertificate.getQualification())
+                .studentWalletHash(issueCertificate.getStudentWalletHash())
+                .build();
+        streamBridge.send(streamChannelsProperties.getNewCertificationRequest(), event);
     }
 
     /**

@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CertificationAuthorityEventRepository extends MongoRepository<CertificationAuthorityEventEntity, ObjectId> {
+
 }
