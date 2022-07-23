@@ -1,8 +1,10 @@
 package com.dreamsoftware.blockchaingateway.services.impl;
 
+import com.dreamsoftware.blockchaingateway.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.blockchaingateway.mapper.SignUpUserMapper;
 import com.dreamsoftware.blockchaingateway.mapper.SimpleUserMapper;
 import com.dreamsoftware.blockchaingateway.mapper.UserDetailsMapper;
+import com.dreamsoftware.blockchaingateway.model.OnNewUserRegistrationEvent;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.mobile.device.Device;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,6 +51,8 @@ public class AccountsServiceImpl implements IAccountsService {
     private final SimpleUserMapper simpleUserMapper;
     private final ITokenGeneratorService tokenGeneratorService;
     private final IWalletService walletService;
+    private final StreamBridge streamBridge;
+    private final StreamChannelsProperties streamChannelsProperties;
 
     /**
      *
@@ -143,6 +148,7 @@ public class AccountsServiceImpl implements IAccountsService {
         userToActivate.setConfirmationToken(null);
         userToActivate.setWalletHash(walletHash);
         final UserEntity userActivated = userRepository.save(userToActivate);
+        streamBridge.send(streamChannelsProperties.getNewUserRegistration(), new OnNewUserRegistrationEvent(userActivated.getName(), userActivated.getWalletHash(), userActivated.getType()));
         return simpleUserMapper.entityToDTO(userActivated);
     }
 

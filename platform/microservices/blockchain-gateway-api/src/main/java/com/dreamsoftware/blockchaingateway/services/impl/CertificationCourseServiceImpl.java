@@ -1,17 +1,19 @@
 package com.dreamsoftware.blockchaingateway.services.impl;
 
+import com.dreamsoftware.blockchaingateway.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.blockchaingateway.mapper.CertificationCourseDetailMapper;
+import com.dreamsoftware.blockchaingateway.model.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationCourseEntity;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.CertificationCourseStateEnum;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.CertificationCourseRepository;
-import com.dreamsoftware.blockchaingateway.services.IBlockchainProcessor;
 import com.dreamsoftware.blockchaingateway.services.ICertificationCourseService;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificationCourseDetailDTO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -26,10 +28,11 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
 
     private final Logger logger = LoggerFactory.getLogger(CertificationCourseServiceImpl.class);
 
-    private final IBlockchainProcessor blockchainProcessor;
     private final CertificationCourseDetailMapper certificationCourseDetailMapper;
     private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
     private final CertificationCourseRepository certificationCourseRepository;
+    private final StreamBridge streamBridge;
+    private final StreamChannelsProperties streamChannelsProperties;
 
     /**
      * Enable Certification Course
@@ -76,7 +79,16 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public void save(SaveCertificationCourseDTO model) {
         Assert.notNull(model, "model can not be null");
         logger.debug("Save certification course CALLED!");
-        blockchainProcessor.onRegisterCertificationCourse(model);
+        try {
+            final CourseCertificateRegistrationRequestEvent event = new CourseCertificateRegistrationRequestEvent(
+                    model.getName(), model.getCostOfIssuingCertificate(),
+                    model.getDurationInHours(), model.getExpirationInDays(),
+                    model.getCanBeRenewed(), model.getCostOfRenewingCertificate(),
+                    model.getCaWalletHash());
+            streamBridge.send(streamChannelsProperties.getCertificationCourseRegistration(), event);
+        } catch (final Throwable ex) {
+            logger.debug("onRegisterCertificationCourse FAILED! " + ex.getMessage());
+        }
     }
 
     /**
