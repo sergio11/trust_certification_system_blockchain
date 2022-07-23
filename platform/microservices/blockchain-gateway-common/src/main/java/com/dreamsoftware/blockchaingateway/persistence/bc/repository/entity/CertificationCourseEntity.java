@@ -15,14 +15,53 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificationCourseEntity {
 
+    /**
+     * Course Id
+     */
     private String id;
+
+    /**
+     * Course Name
+     */
     private String name;
+
+    /**
+     * Cost of issuing certificate
+     */
     private Long costOfIssuingCertificate;
+
+    /**
+     * Cost of renewing certificate
+     */
     private Long costOfRenewingCertificate;
+
+    /**
+     * Certificate Authority
+     */
     private String certificationAuthority;
+
+    /**
+     * Duration In hours
+     */
     private Long durationInHours;
+
+    /**
+     * Expiration in days
+     */
     private Long expirationInDays;
+
+    /**
+     * can be renewed
+     */
     private Boolean canBeRenewed;
+
+    /**
+     * is Enabled
+     */
     private Boolean isEnabled;
+
+    /**
+     * Is Exists
+     */
     private Boolean isExist;
 }

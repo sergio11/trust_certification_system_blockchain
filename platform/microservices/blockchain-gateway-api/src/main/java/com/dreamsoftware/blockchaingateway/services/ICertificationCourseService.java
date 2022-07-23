@@ -12,22 +12,22 @@ public interface ICertificationCourseService {
     /**
      * Enable Certification Course
      *
-     * @param caWallet
+     * @param caWalletHash
      * @param courseId
      * @return
      * @throws Throwable
      */
-    CertificationCourseDetailDTO enable(final String caWallet, final String courseId) throws Throwable;
+    CertificationCourseDetailDTO enable(final String caWalletHash, final String courseId) throws Throwable;
 
     /**
      * Disable Certification Course
      *
-     * @param caWallet
+     * @param caWalletHash
      * @param courseId
      * @return
      * @throws Throwable
      */
-    CertificationCourseDetailDTO disable(final String caWallet, final String courseId) throws Throwable;
+    CertificationCourseDetailDTO disable(final String caWalletHash, final String courseId) throws Throwable;
 
     /**
      * Save Model
@@ -39,39 +39,39 @@ public interface ICertificationCourseService {
     /**
      * Remove Certificacion course
      *
-     * @param caWallet
+     * @param caWalletHash
      * @param courseId
      * @return
      * @throws java.lang.Throwable
      */
-    CertificationCourseDetailDTO remove(final String caWallet, final String courseId) throws Throwable;
+    CertificationCourseDetailDTO remove(final String caWalletHash, final String courseId) throws Throwable;
 
     /**
      * Check if can be issued
      *
-     * @param caWallet
+     * @param caWalletHash
      * @param courseId
      * @return
      * @throws java.lang.Throwable
      */
-    Boolean canBeIssued(final String caWallet, final String courseId) throws Throwable;
+    Boolean canBeIssued(final String caWalletHash, final String courseId) throws Throwable;
 
     /**
      * Check if can be renewed
      *
-     * @param caWallet
+     * @param caWalletHash
      * @param courseId
      * @return
      * @throws java.lang.Throwable
      */
-    Boolean canBeRenewed(final String caWallet, final String courseId) throws Throwable;
+    Boolean canBeRenewed(final String caWalletHash, final String courseId) throws Throwable;
 
     /**
      * Get Detail
      *
-     * @param caWallet
+     * @param caWalletHash
      * @param courseId
      * @return
      */
-    CertificationCourseDetailDTO getDetail(final String caWallet, final String courseId) throws Throwable;
+    CertificationCourseDetailDTO getDetail(final String caWalletHash, final String courseId) throws Throwable;
 }
