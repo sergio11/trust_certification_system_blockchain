@@ -63,8 +63,8 @@ public class SaveCertificationCourseDTO {
     private Long costOfRenewingCertificate;
 
     /**
-     * CA Wallet
+     * CA Wallet Hash
      */
     @JsonIgnore
-    private String caWallet;
+    private String caWalletHash;
 }

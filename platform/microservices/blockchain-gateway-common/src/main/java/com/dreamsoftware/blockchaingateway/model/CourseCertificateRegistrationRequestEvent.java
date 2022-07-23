@@ -16,11 +16,38 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CourseCertificateRegistrationRequestEvent {
 
+    /**
+     * Course Name
+     */
     private String name;
+
+    /**
+     * Cost of issuing certificate
+     */
     private Long costOfIssuingCertificate;
+
+    /**
+     * Duration in hours
+     */
     private Long durationInHours;
+
+    /**
+     * Expiration in days
+     */
     private Long expirationInDays;
+
+    /**
+     * Can be renewed
+     */
     private Boolean canBeRenewed;
+
+    /**
+     * Cost of Renewing Certificate
+     */
     private Long costOfRenewingCertificate;
-    private String caWallet;
+
+    /**
+     * Ca Wallet
+     */
+    private String caWalletHash;
 }

@@ -46,9 +46,9 @@ public class IssueCertificateDTO {
     private String recipientUserId;
 
     /**
-     *
+     * Issuer Wallet Hash
      */
     @JsonIgnore
-    private String issuerWallet;
+    private String issuerWalletHash;
 
 }

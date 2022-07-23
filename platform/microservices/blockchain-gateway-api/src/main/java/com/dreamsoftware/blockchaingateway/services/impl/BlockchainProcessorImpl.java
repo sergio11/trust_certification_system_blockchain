@@ -61,7 +61,7 @@ public class BlockchainProcessorImpl implements IBlockchainProcessor {
                     certificationCourseDTO.getName(), certificationCourseDTO.getCostOfIssuingCertificate(),
                     certificationCourseDTO.getDurationInHours(), certificationCourseDTO.getExpirationInDays(),
                     certificationCourseDTO.getCanBeRenewed(), certificationCourseDTO.getCostOfRenewingCertificate(),
-                    certificationCourseDTO.getCaWallet());
+                    certificationCourseDTO.getCaWalletHash());
             publish(event, streamChannelsProperties.getCertificationCourseRegistration());
         } catch (final Throwable ex) {
             logger.debug("onRegisterCertificationCourse FAILED! " + ex.getMessage());

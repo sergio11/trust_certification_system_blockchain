@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
+ * Certification Course Controller
  *
  * @author ssanchez
  */
@@ -74,7 +75,7 @@ public class CertificationCourseController extends SupportController {
             @Validated(ICommonSequence.class) SaveCertificationCourseDTO certificationCourse,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser) throws Throwable {
         try {
-            certificationCourse.setCaWallet(selfUser.getWallet());
+            certificationCourse.setCaWalletHash(selfUser.getWalletHash());
             certificationCourseService.save(certificationCourse);
             return responseHelper.createAndSendResponse(
                     CertificationCourseResponseCodeEnum.SAVE_CERTIFICATION_COURSE, HttpStatus.OK,
@@ -102,7 +103,7 @@ public class CertificationCourseController extends SupportController {
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
-            final CertificationCourseDetailDTO certificationCourseDTO = certificationCourseService.enable(selfUser.getWallet(), id);
+            final CertificationCourseDetailDTO certificationCourseDTO = certificationCourseService.enable(selfUser.getWalletHash(), id);
             return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_ENABLED,
                     HttpStatus.OK, certificationCourseDTO);
         } catch (final Exception ex) {
@@ -128,7 +129,7 @@ public class CertificationCourseController extends SupportController {
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
-            final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseService.disable(selfUser.getWallet(), id);
+            final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseService.disable(selfUser.getWalletHash(), id);
             return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(
                     CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DISABLED,
                     HttpStatus.OK, certificationCourseDetailDTO);
@@ -161,7 +162,7 @@ public class CertificationCourseController extends SupportController {
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
-            final CertificationCourseDetailDTO courseDetailDTO = certificationCourseService.getDetail(selfUser.getWallet(), id);
+            final CertificationCourseDetailDTO courseDetailDTO = certificationCourseService.getDetail(selfUser.getWalletHash(), id);
             return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(
                     CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DETAIL,
                     HttpStatus.OK, courseDetailDTO);
@@ -194,7 +195,7 @@ public class CertificationCourseController extends SupportController {
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
-            final Boolean canBeIssued = certificationCourseService.canBeIssued(selfUser.getWallet(), id);
+            final Boolean canBeIssued = certificationCourseService.canBeIssued(selfUser.getWalletHash(), id);
             return responseHelper.<Boolean>createAndSendResponse(
                     canBeIssued ? CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CAN_BE_ISSUED
                             : CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CANNOT_BE_ISSUED,
@@ -228,7 +229,7 @@ public class CertificationCourseController extends SupportController {
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
-            final Boolean canBeRenewed = certificationCourseService.canBeRenewed(selfUser.getWallet(), id);
+            final Boolean canBeRenewed = certificationCourseService.canBeRenewed(selfUser.getWalletHash(), id);
             return responseHelper.<Boolean>createAndSendResponse(
                     canBeRenewed
                             ? CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CAN_BE_RENEWED
