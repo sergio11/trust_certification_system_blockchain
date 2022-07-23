@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
-import com.dreamsoftware.blockchaingateway.services.IBlockchainProcessor;
 
 /**
  *
@@ -23,7 +22,6 @@ public class AccountsEventHandlers {
     private static final Logger logger = LoggerFactory.getLogger(AccountsEventHandlers.class);
 
     private final IMailClientService mailClientService;
-    private final IBlockchainProcessor blockchainProcessor;
 
     /**
      *
@@ -46,6 +44,5 @@ public class AccountsEventHandlers {
     void handle(final UserActivatedEvent event) {
         Assert.notNull(event.getUserId(), "User Id can not be null");
         logger.debug("UserActivatedEvent handled!");
-        blockchainProcessor.onUserActivated(event.getUserId());
     }
 }
