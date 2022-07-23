@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  * @author ssanchez
  */
 @Repository
-public interface CertificationCourseRepository extends MongoRepository<CertificationCourseEntity, ObjectId> {
+public interface CertificationCourseRepository extends MongoRepository<CertificationCourseEntity, ObjectId>, CertificationCourseRepositoryCustom {
 }

@@ -3,6 +3,8 @@ package com.dreamsoftware.blockchaingateway.services.impl;
 import com.dreamsoftware.blockchaingateway.mapper.CertificationCourseDetailMapper;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationCourseEntity;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.CertificationCourseStateEnum;
+import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.blockchaingateway.services.IBlockchainProcessor;
 import com.dreamsoftware.blockchaingateway.services.ICertificationCourseService;
 import com.dreamsoftware.blockchaingateway.web.dto.request.SaveCertificationCourseDTO;
@@ -27,38 +29,41 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     private final IBlockchainProcessor blockchainProcessor;
     private final CertificationCourseDetailMapper certificationCourseDetailMapper;
     private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
+    private final CertificationCourseRepository certificationCourseRepository;
 
     /**
      * Enable Certification Course
      *
-     * @param caWallet
+     * @param caWalletHash
      * @param courseId
      * @return
      * @throws Throwable
      */
     @Override
-    public CertificationCourseDetailDTO enable(final String caWallet, final String courseId) throws Throwable {
-        Assert.notNull(caWallet, "CA wallet can not be null");
+    public CertificationCourseDetailDTO enable(final String caWalletHash, final String courseId) throws Throwable {
+        Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         logger.debug("Enable course -> " + courseId + " CALLED!");
-        final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.enable(caWallet, courseId);
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.enable(caWalletHash, courseId);
+        certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.ENABLED);
         return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
     }
 
     /**
      * Disable Certification Course
      *
-     * @param caWallet
+     * @param caWalletHash
      * @param courseId
      * @return
      * @throws Throwable
      */
     @Override
-    public CertificationCourseDetailDTO disable(final String caWallet, final String courseId) throws Throwable {
-        Assert.notNull(caWallet, "CA wallet can not be null");
+    public CertificationCourseDetailDTO disable(final String caWalletHash, final String courseId) throws Throwable {
+        Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         logger.debug("Disable course -> " + courseId + " CALLED!");
-        final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.disable(caWallet, courseId);
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.disable(caWalletHash, courseId);
+        certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.DISABLED);
         return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
     }
 
@@ -76,61 +81,62 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
 
     /**
      *
-     * @param caWallet
+     * @param caWalletHash
      * @param courseId
      */
     @Override
-    public CertificationCourseDetailDTO remove(String caWallet, String courseId) throws Throwable {
-        Assert.notNull(caWallet, "CA wallet can not be null");
+    public CertificationCourseDetailDTO remove(String caWalletHash, String courseId) throws Throwable {
+        Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         logger.debug("remove certification course " + courseId + " CALLED!");
-        final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.remove(caWallet, courseId);
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.remove(caWalletHash, courseId);
+        certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.REMOVED);
         return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
     }
 
     /**
      *
-     * @param caWallet
+     * @param caWalletHash
      * @param courseId
      * @return
      * @throws Throwable
      */
     @Override
-    public Boolean canBeIssued(String caWallet, String courseId) throws Throwable {
-        Assert.notNull(caWallet, "CA wallet can not be null");
+    public Boolean canBeIssued(String caWalletHash, String courseId) throws Throwable {
+        Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         logger.debug("check certification course " + courseId + " can be issued CALLED!");
-        return certificationCourseBlockchainRepository.canBeIssued(caWallet, courseId);
+        return certificationCourseBlockchainRepository.canBeIssued(caWalletHash, courseId);
     }
 
     /**
      *
-     * @param caWallet
+     * @param caWalletHash
      * @param courseId
      * @return
      * @throws Throwable
      */
     @Override
-    public Boolean canBeRenewed(String caWallet, String courseId) throws Throwable {
-        Assert.notNull(caWallet, "CA wallet can not be null");
+    public Boolean canBeRenewed(String caWalletHash, String courseId) throws Throwable {
+        Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         logger.debug("check certification course " + courseId + " can be renewed CALLED!");
-        return certificationCourseBlockchainRepository.canBeRenewed(caWallet, courseId);
+        return certificationCourseBlockchainRepository.canBeRenewed(caWalletHash, courseId);
     }
 
     /**
      * Get Detail
      *
-     * @param caWallet
+     * @param caWalletHash
      * @param courseId
      * @return
      */
     @Override
-    public CertificationCourseDetailDTO getDetail(String caWallet, String courseId) throws Throwable {
-        Assert.notNull(caWallet, "CA wallet can not be null");
+    public CertificationCourseDetailDTO getDetail(String caWalletHash, String courseId) throws Throwable {
+        Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         logger.debug("get certification course " + courseId + " detail CALLED!");
-        final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.get(caWallet, courseId);
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.get(caWalletHash, courseId);
         return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
     }
 }
