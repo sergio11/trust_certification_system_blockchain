@@ -40,6 +40,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public CertificationCourseDetailDTO enable(final String caWallet, final String courseId) throws Throwable {
         Assert.notNull(caWallet, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
+        logger.debug("Enable course -> " + courseId + " CALLED!");
         final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.enable(caWallet, courseId);
         return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
     }
@@ -56,6 +57,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public CertificationCourseDetailDTO disable(final String caWallet, final String courseId) throws Throwable {
         Assert.notNull(caWallet, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
+        logger.debug("Disable course -> " + courseId + " CALLED!");
         final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.disable(caWallet, courseId);
         return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
     }
@@ -68,6 +70,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     @Override
     public void save(SaveCertificationCourseDTO model) {
         Assert.notNull(model, "model can not be null");
+        logger.debug("Save certification course CALLED!");
         blockchainProcessor.onRegisterCertificationCourse(model);
     }
 
@@ -80,6 +83,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public CertificationCourseDetailDTO remove(String caWallet, String courseId) throws Throwable {
         Assert.notNull(caWallet, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
+        logger.debug("remove certification course " + courseId + " CALLED!");
         final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.remove(caWallet, courseId);
         return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
     }
@@ -95,6 +99,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public Boolean canBeIssued(String caWallet, String courseId) throws Throwable {
         Assert.notNull(caWallet, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
+        logger.debug("check certification course " + courseId + " can be issued CALLED!");
         return certificationCourseBlockchainRepository.canBeIssued(caWallet, courseId);
     }
 
@@ -109,6 +114,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public Boolean canBeRenewed(String caWallet, String courseId) throws Throwable {
         Assert.notNull(caWallet, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
+        logger.debug("check certification course " + courseId + " can be renewed CALLED!");
         return certificationCourseBlockchainRepository.canBeRenewed(caWallet, courseId);
     }
 
@@ -123,6 +129,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public CertificationCourseDetailDTO getDetail(String caWallet, String courseId) throws Throwable {
         Assert.notNull(caWallet, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
+        logger.debug("get certification course " + courseId + " detail CALLED!");
         final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.get(caWallet, courseId);
         return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
     }

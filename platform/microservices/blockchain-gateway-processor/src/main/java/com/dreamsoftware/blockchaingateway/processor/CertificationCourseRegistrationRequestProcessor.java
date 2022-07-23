@@ -32,9 +32,9 @@ public class CertificationCourseRegistrationRequestProcessor implements Function
         logger.debug("CertificationCourseRegistrationRequestProcessor CALLED!");
         CertificationCourseRegisteredEvent nextEvent = null;
         try {
-            final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.register(event.getCaWallet(), event.getName(),
+            final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.register(event.getCaWalletHash(), event.getName(),
                     event.getCostOfIssuingCertificate(), event.getDurationInHours(), event.getExpirationInDays(), event.getCanBeRenewed(), event.getCostOfRenewingCertificate());
-            nextEvent = new CertificationCourseRegisteredEvent(certificationCourseEntity, event.getCaWallet());
+            nextEvent = new CertificationCourseRegisteredEvent(certificationCourseEntity, event.getCaWalletHash());
         } catch (final RepositoryException ex) {
             logger.debug("Ex Message -> " + ex.getMessage());
         }

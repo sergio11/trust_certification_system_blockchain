@@ -17,7 +17,7 @@ public interface ICommonUserDetailsAware<T> extends UserDetails {
     String EMAIL = "EMAIL";
     String LANGUAGE = "LANGUAGE";
     String STATE = "STATE";
-    String WALLET = "WALLET";
+    String WALLET_HASH = "WALLET_HASH";
 
     T getUserId();
 
@@ -33,6 +33,6 @@ public interface ICommonUserDetailsAware<T> extends UserDetails {
 
     String getEmail();
 
-    String getWallet();
+    String getWalletHash();
 
 }

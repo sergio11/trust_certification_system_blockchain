@@ -138,13 +138,13 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      */
     @Override
     public void issueCertificate(IssueCertificateDTO issueCertificate) throws Throwable {
-        Assert.notNull(issueCertificate.getIssuerWallet(), "issuerWallet can not be null");
+        Assert.notNull(issueCertificate.getIssuerWalletHash(), "issuerWalletHash can not be null");
         Assert.notNull(issueCertificate.getRecipientUserId(), "recipientAddress can not be null");
         Assert.notNull(issueCertificate.getCertificateCourseId(), "certificateCourseId can not be null");
         Assert.notNull(issueCertificate.getQualification(), "qualification can not be null");
         final UserEntity recipientUser = userRepository.findById(new ObjectId(issueCertificate.getRecipientUserId())).orElseThrow(() -> new Exception("Recipient Wallet not found!"));
         trustCertificationRepository.issueCertificate(
-                issueCertificate.getIssuerWallet(), recipientUser.getWalletHash(), issueCertificate.getCertificateCourseId(), issueCertificate.getQualification());
+                issueCertificate.getIssuerWalletHash(), recipientUser.getWalletHash(), issueCertificate.getCertificateCourseId(), issueCertificate.getQualification());
     }
 
     /**
