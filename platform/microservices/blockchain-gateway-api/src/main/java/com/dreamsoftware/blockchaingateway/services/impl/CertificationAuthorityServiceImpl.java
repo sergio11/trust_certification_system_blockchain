@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.dreamsoftware.blockchaingateway.web.dto.response.CertificationAuthorityDetailDTO;
-import javax.annotation.PostConstruct;
 import org.springframework.util.Assert;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.repository.UserRepository;
 import org.bson.types.ObjectId;
@@ -90,10 +89,5 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
         final CertificationAuthorityEntity caEntity = caBlockchainRepository.disable(trustCertificationSystemProperties.getRootPublicKey(),
                 caUserEntity.getWalletHash());
         return certificationAuthorityDetailMapper.caEntityToCaDetail(caEntity, caUserEntity);
-    }
-
-    @PostConstruct
-    private void onPostConstruct() {
-        Assert.notNull(certificationAuthorityRepository, "Certification Authority Repository can not be null");
     }
 }

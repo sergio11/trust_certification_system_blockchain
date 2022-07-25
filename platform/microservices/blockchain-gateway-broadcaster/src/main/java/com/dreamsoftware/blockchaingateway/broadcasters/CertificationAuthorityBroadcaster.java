@@ -1,6 +1,5 @@
 package com.dreamsoftware.blockchaingateway.broadcasters;
 
-import com.dreamsoftware.blockchaingateway.persistence.bc.repository.IBlockchainEventRepository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationAuthorityEventEntity;
 import com.dreamsoftware.blockchaingateway.persistence.nosql.entity.AbstractEventPayload;
