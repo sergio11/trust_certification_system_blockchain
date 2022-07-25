@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class EtherFaucetAuthorityEventEntity extends AbstractBlockchainEventEntity {
+public class EtherFaucetEventEntity extends AbstractBlockchainEventEntity {
 
     /**
      * Event Type

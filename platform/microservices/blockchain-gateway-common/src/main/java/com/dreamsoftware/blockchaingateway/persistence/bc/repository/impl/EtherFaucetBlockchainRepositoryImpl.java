@@ -3,7 +3,7 @@ package com.dreamsoftware.blockchaingateway.persistence.bc.repository.impl;
 import com.dreamsoftware.blockchaingateway.contracts.EtherFaucetContract;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.IEtherFaucetBlockchainRepository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.core.SupportBlockchainRepository;
-import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.EtherFaucetAuthorityEventEntity;
+import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.EtherFaucetEventEntity;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.mapper.EtherFaucetEventEntityMapper;
 import com.dreamsoftware.blockchaingateway.persistence.exception.RepositoryException;
 import com.google.common.collect.Lists;
@@ -51,7 +51,7 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
      * @return
      */
     @Override
-    public Flowable<EtherFaucetAuthorityEventEntity> getEvents() throws RepositoryException {
+    public Flowable<EtherFaucetEventEntity> getEvents() throws RepositoryException {
         try {
             final EtherFaucetContract faucetContract = EtherFaucetContract.load(properties.getTrustEtherFaucetContractAddress(),
                     web3j, rootTxManager, properties.gas());

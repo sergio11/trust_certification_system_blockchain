@@ -3,13 +3,12 @@ package com.dreamsoftware.blockchaingateway.persistence.bc.repository;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationCourseEntity;
 import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.CertificationCourseEventEntity;
 import com.dreamsoftware.blockchaingateway.persistence.exception.RepositoryException;
-import io.reactivex.Flowable;
 
 /**
  *
  * @author ssanchez
  */
-public interface ICertificationCourseBlockchainRepository {
+public interface ICertificationCourseBlockchainRepository extends IBlockchainEventRepository<CertificationCourseEventEntity> {
 
     /**
      *
@@ -85,11 +84,5 @@ public interface ICertificationCourseBlockchainRepository {
      * @throws RepositoryException
      */
     Boolean canBeRenewed(final String caWallet, final String courseId) throws RepositoryException;
-
-    /**
-     *
-     * @return @throws RepositoryException
-     */
-    Flowable<CertificationCourseEventEntity> getEvents() throws RepositoryException;
 
 }

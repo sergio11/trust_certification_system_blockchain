@@ -1,7 +1,7 @@
 package com.dreamsoftware.blockchaingateway.persistence.bc.repository.mapper;
 
 import com.dreamsoftware.blockchaingateway.contracts.EtherFaucetContract;
-import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.EtherFaucetAuthorityEventEntity;
+import com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.EtherFaucetEventEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -33,7 +33,7 @@ public abstract class EtherFaucetEventEntityMapper {
         @Mapping(expression = "java(com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.EtherFaucetEventTypeEnum.DEPOSIT)", target = "type")
     })
     @Named("mapEventToEntity")
-    public abstract EtherFaucetAuthorityEventEntity mapEventToEntity(EtherFaucetContract.OnDepositEventResponse event);
+    public abstract EtherFaucetEventEntity mapEventToEntity(EtherFaucetContract.OnDepositEventResponse event);
 
     /**
      *
@@ -54,6 +54,6 @@ public abstract class EtherFaucetEventEntityMapper {
         @Mapping(expression = "java(com.dreamsoftware.blockchaingateway.persistence.bc.repository.entity.EtherFaucetEventTypeEnum.GET_SEED_FUNDS)", target = "type")
     })
     @Named("mapEventToEntity")
-    public abstract EtherFaucetAuthorityEventEntity mapEventToEntity(EtherFaucetContract.OnGetSeedFundsEventResponse event);
+    public abstract EtherFaucetEventEntity mapEventToEntity(EtherFaucetContract.OnGetSeedFundsEventResponse event);
 
 }
