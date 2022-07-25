@@ -2,15 +2,17 @@ package com.dreamsoftware.blockchaingateway.persistence.nosql.entity;
 
 import java.math.BigInteger;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
- * Blockchain Log Entity
+ * Blockchain Event Log Entity
  *
  * @author ssanchez
  */
@@ -18,7 +20,11 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class AbstractBlockchainEventEntity {
+@Builder
+@Document(collection = BlockchainEventLogEntity.COLLECTION_NAME)
+public class BlockchainEventLogEntity {
+
+    public final static String COLLECTION_NAME = "bc_event_logs";
 
     /**
      * ID
@@ -51,12 +57,6 @@ public abstract class AbstractBlockchainEventEntity {
     private String blockNumberRaw;
 
     /**
-     * Data
-     */
-    @Field("data")
-    private String data;
-
-    /**
      * Log Index
      */
     @Field("log_index")
@@ -86,4 +86,15 @@ public abstract class AbstractBlockchainEventEntity {
     @Field("transaction_index_raw")
     private String transactionIndexRaw;
 
+    /**
+     * Data
+     */
+    @Field("data")
+    private String data;
+
+    /**
+     * Event Payload
+     */
+    @Field("payload")
+    private AbstractEventPayload payload;
 }
