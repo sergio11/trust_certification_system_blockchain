@@ -1,47 +1,29 @@
-version: '3.6'
+version: '3.4'
 
-# It runs 3 cluster peers (cluster0, cluster1...) attached to go-ipfs daemons
-# (ipfs0, ipfs1...) using the CRDT consensus component. Cluster peers
-# autodiscover themselves using mDNS on the docker internal network.
-#
-# For persistance, a "data" folder is created and used to store configurations
-# and states. This can be used to edit configurations in subsequent runs. It looks
-# as follows:
-#
-# data/
-# |-- cluster0
-# |-- cluster1
-# |-- ...
-# |-- ipfs0
-# |-- ipfs1
-# |-- ...
-#
-# During the first start, default configurations are created for all peers.
-
-# Netwoks
+# Networks
 networks:
-  ipfsbr:
-    driver: bridge
-    ipam:
-     config:
-       - subnet: 10.5.0.0/16
+  ipfs_network:
+    name: ipfs_network
 
 services:
-
-  # cluster peer0
+  
+##################################################################################
+## Cluster PEER 0 ################################################################
+##################################################################################
 
   ipfs0:
+    build: 
+      context: ./private-ipfs-node
     container_name: ipfs0
-    image: ipfs/go-ipfs:release
     ports:
-      - "4001:4001" # ipfs swarm - expose if needed/wanted
-      - "5001:5001" # ipfs api - expose if needed/wanted
-      - "8080:8080" # ipfs gateway - expose if needed/wanted
+      - "4001:4001" # ipfs swarm
+      - "5001:5001" # ipfs api
+      - "8080:8080" # ipfs gateway
     volumes:
       - ./data/ipfs0:/data/ipfs
+      - ./config:/etc/config
     networks:
-      ipfsbr:
-        ipv4_address: 10.5.0.5
+      - ipfs_network
 
   cluster0:
     container_name: cluster0
@@ -56,29 +38,26 @@ services:
       CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS: /ip4/0.0.0.0/tcp/9094 # Expose API
       CLUSTER_MONITORPINGINTERVAL: 2s # Speed up peer discovery
     ports:
-          # Open API port (allows ipfs-cluster-ctl usage on host)
-          - "9094:9094"
-          # The cluster swarm port would need  to be exposed if this container
-          # was to connect to cluster peers on other hosts.
-          # But this is just a testing cluster.
-          # - "9096:9096" # Cluster IPFS Proxy endpoint
+        - "9095:9095" # Cluster IPFS Proxy endpoint
+        - "9096:9096" # Cluster swarm endpoint
     volumes:
       - ./data/cluster0:/data/ipfs-cluster
     networks:
-      ipfsbr:
-        ipv4_address: 10.5.0.6
+      - ipfs_network
 
-
-  # cluster peer1
+##################################################################################
+## Cluster PEER 1 ################################################################
+##################################################################################
 
   ipfs1:
+    build: 
+      context: ./private-ipfs-node
     container_name: ipfs1
-    image: ipfs/go-ipfs:release
     volumes:
       - ./data/ipfs1:/data/ipfs
+      - ./config:/etc/config
     networks:
-      ipfsbr:
-        ipv4_address: 10.5.0.7
+      - ipfs_network
 
   cluster1:
     container_name: cluster1
@@ -89,25 +68,28 @@ services:
       CLUSTER_PEERNAME: cluster1
       CLUSTER_SECRET: bcf90be3d031bfcbe8ee988da23d2b4b28d1e7e591627059d5328654e9c7ed5f
       CLUSTER_IPFSHTTP_NODEMULTIADDRESS: /dns4/ipfs1/tcp/5001
-      CLUSTER_CRDT_TRUSTEDPEERS: '*' # Trust all peers in Cluster
+      CLUSTER_RESTAPI_HTTPLISTENMULTIADDRESS: /ip4/0.0.0.0/tcp/9094 # Expose API
+      CLUSTER_CRDT_TRUSTEDPEERS: '*'
       CLUSTER_MONITORPINGINTERVAL: 2s # Speed up peer discovery
+      IPFS_BOOTSTRAP_RM_ALL: "true"
     volumes:
       - ./data/cluster1:/data/ipfs-cluster
     networks:
-      ipfsbr:
-        ipv4_address: 10.5.0.8
+      - ipfs_network
 
-
-  # cluster peer2
+##################################################################################
+## Cluster PEER 2 ################################################################
+##################################################################################
 
   ipfs2:
+    build: 
+      context: ./private-ipfs-node
     container_name: ipfs2
-    image: ipfs/go-ipfs:release
     volumes:
       - ./data/ipfs2:/data/ipfs
+      - ./config:/etc/config
     networks:
-      ipfsbr:
-        ipv4_address: 10.5.0.9
+      - ipfs_network
 
   cluster2:
     container_name: cluster2
@@ -120,8 +102,40 @@ services:
       CLUSTER_IPFSHTTP_NODEMULTIADDRESS: /dns4/ipfs2/tcp/5001
       CLUSTER_CRDT_TRUSTEDPEERS: '*'
       CLUSTER_MONITORPINGINTERVAL: 2s # Speed up peer discovery
+      IPFS_BOOTSTRAP_RM_ALL: "true"
     volumes:
       - ./data/cluster2:/data/ipfs-cluster
     networks:
-      ipfsbr:
-        ipv4_address: 10.5.0.10
+      - ipfs_network
+
+
+##################################################################################
+## Cluster PEER 3 ################################################################
+##################################################################################
+
+  ipfs3:
+    build: 
+      context: ./private-ipfs-node
+    container_name: ipfs3
+    volumes:
+      - ./data/ipfs3:/data/ipfs
+      - ./config:/etc/config
+    networks:
+      - ipfs_network
+
+  cluster3:
+    container_name: cluster3
+    image: ipfs/ipfs-cluster:latest
+    depends_on:
+      - ipfs3
+    environment:
+      CLUSTER_PEERNAME: cluster3
+      CLUSTER_SECRET: bcf90be3d031bfcbe8ee988da23d2b4b28d1e7e591627059d5328654e9c7ed5f
+      CLUSTER_IPFSHTTP_NODEMULTIADDRESS: /dns4/ipfs3/tcp/5001
+      CLUSTER_CRDT_TRUSTEDPEERS: '*'
+      CLUSTER_MONITORPINGINTERVAL: 2s # Speed up peer discovery
+      IPFS_BOOTSTRAP_RM_ALL: "true"
+    volumes:
+      - ./data/cluster3:/data/ipfs-cluster
+    networks:
+      - ipfs_network
