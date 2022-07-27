@@ -13,15 +13,7 @@
         <web3j.version>4.8.4</web3j.version>
         <jasypt.spring.boot.version>2.1.1</jasypt.spring.boot.version>
         <sshj.version>0.27.0</sshj.version>
-        <ipfs.version>v1.3.3</ipfs.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
 
     <parent>
         <groupId>com.dreamsoftware</groupId>
@@ -45,12 +37,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.ipfs</groupId>
-            <artifactId>java-ipfs-http-client</artifactId>
-            <version>${ipfs.version}</version>
         </dependency>
 
         <!-- Persistence -->
