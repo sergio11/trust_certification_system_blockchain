@@ -11,6 +11,10 @@
 
     <properties>
         <web3j.version>4.8.4</web3j.version>
+        <ipfs.version>v1.3.3</ipfs.version>
+        <poi.version>5.2.2</poi.version>
+        <docx4j.version>8.3.8</docx4j.version>
+        <pdfbox.version>2.0.26</pdfbox.version>
     </properties>
 
     <parent>
@@ -20,11 +24,59 @@
         <relativePath>../</relativePath>
     </parent>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>blockchain-gateway-common</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.docx4j</groupId>
+            <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
+            <version>${docx4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.docx4j</groupId>
+            <artifactId>docx4j-JAXB-MOXy</artifactId>
+            <version>${docx4j.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.docx4j</groupId>
+            <artifactId>docx4j-export-fo</artifactId>
+            <version>${docx4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.ipfs</groupId>
+            <artifactId>java-ipfs-http-client</artifactId>
+            <version>${ipfs.version}</version>
         </dependency>
     </dependencies>
 
