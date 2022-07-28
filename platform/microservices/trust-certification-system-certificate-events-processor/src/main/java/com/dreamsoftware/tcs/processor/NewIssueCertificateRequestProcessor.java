@@ -2,11 +2,8 @@ package com.dreamsoftware.tcs.processor;
 
 import com.dreamsoftware.tcs.model.events.OnNewCertificateIssuedEvent;
 import com.dreamsoftware.tcs.model.events.OnNewIssueCertificateRequestEvent;
-import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
-import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
-import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedBcEntity;
+import com.dreamsoftware.tcs.service.ITrustCertificateService;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -24,24 +21,24 @@ public class NewIssueCertificateRequestProcessor implements Function<OnNewIssueC
 
     private final Logger logger = LoggerFactory.getLogger(NewIssueCertificateRequestProcessor.class);
 
-    private final CertificationCourseRepository certificationCourseRepository;
-    private final ITrustCertificationBlockchainRepository trustCertificationBlockchainRepository;
+    /**
+     * Trust Certification Service
+     */
+    private final ITrustCertificateService trustCertificateService;
 
     @Override
     public OnNewCertificateIssuedEvent apply(OnNewIssueCertificateRequestEvent event) {
         logger.debug("NewIssueCertificateRequestProcessor CALLED!");
         OnNewCertificateIssuedEvent nextEvent = null;
         try {
-            final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.findOneByCourseId(event.getCourseId()).orElseThrow(() -> new IllegalStateException("Certification Course not found"));
-            final String caWalletHash = certificationCourseEntity.getCa().getWalletHash();
-            final CertificateIssuedEntity certificateIssuedEntity = trustCertificationBlockchainRepository.issueCertificate(caWalletHash, event.getStudentWalletHash(), event.getCourseId(), event.getQualification());
+            final CertificateIssuedBcEntity certificateIssuedEntity = trustCertificateService.issueCertificate(event);
             nextEvent = OnNewCertificateIssuedEvent
                     .builder()
-                    .caWalletHash(caWalletHash)
+                    .caWalletHash(event.getCaWalletHash())
                     .certificateId(certificateIssuedEntity.getId())
                     .studentWalletHash(event.getStudentWalletHash())
                     .build();
-        } catch (RepositoryException ex) {
+        } catch (Exception ex) {
             logger.debug("Ex Message -> " + ex.getMessage());
         }
         return nextEvent;

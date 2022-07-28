@@ -30,11 +30,14 @@ public class IpfsGatewayImpl implements IipfsGateway {
      * @throws IOException
      */
     @Override
-    public String save(File fileToSave) throws IOException {
+    public String save(File fileToSave, Boolean deleteOnSave) throws IOException {
         Assert.notNull(fileToSave, "File can not be null");
         IPFS ipfs = new IPFS(ipfsProperties.getConnectionAddress());
         NamedStreamable.FileWrapper file = new NamedStreamable.FileWrapper(fileToSave);
         MerkleNode addResult = ipfs.add(file).get(0);
+        if (deleteOnSave) {
+            fileToSave.delete();
+        }
         return addResult.hash.toHex();
     }
 

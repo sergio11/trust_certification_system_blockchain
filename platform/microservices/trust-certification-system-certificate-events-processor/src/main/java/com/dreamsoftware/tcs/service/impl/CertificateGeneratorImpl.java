@@ -34,22 +34,22 @@ public class CertificateGeneratorImpl implements ICertificateGenerator {
      *
      * @param caName
      * @param studentName
+     * @param courseName
      * @param qualification
      * @return
      * @throws Exception
      */
     @Override
-    public File generate(String caName, String studentName, Float qualification) throws Exception {
+    public File generate(String caName, String studentName, String courseName, Float qualification) throws Exception {
         Assert.notNull(caName, "CA Name can not be null");
         Assert.notNull(studentName, "Student Name can not be null");
-        Assert.notNull(qualification, "Qualification Name can not be null");
-        Assert.notNull(caName, "CA Name can not be null");
-        Assert.notNull(studentName, "Student Name can not be null");
+        Assert.notNull(courseName, "Course Name can not be null");
         Assert.notNull(qualification, "Qualification Name can not be null");
         final File certificateTemplate = getFileForClasspathResource(CERTIFICATE_TEMPLATE_FILE);
         final WordReplacer wordReplacer = new WordReplacer(certificateTemplate);
         wordReplacer.replaceWordsInText("[[CA_NAME]]", caName);
         wordReplacer.replaceWordsInText("[[STUDE_NAME]]", studentName);
+        wordReplacer.replaceWordsInText("[[COURSE_NAME]]", courseName);
         wordReplacer.replaceWordsInText("[[STUDE_QUALIFICATION]]", qualification.toString());
         final File tempFile = File.createTempFile("tcs--", ".tmp");
         final File tempPdfDestFile = File.createTempFile("tcs--", ".tmp");
