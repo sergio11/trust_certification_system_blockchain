@@ -122,42 +122,42 @@ services:
     networks:
       - tcs_network
 
-  # Blockchain Gateway Discovery Server
-  bc_gateway_discovery_server:
-    image: ssanchez11/blockchain_gateway_discovery_server:0.0.1-SNAPSHOT
-    container_name: bc-discovery-server
+  # Trust Certification System Discovery Server
+  tcs_discovery_server:
+    image: ssanchez11/trust_certification_system_discovery_server:0.0.1-SNAPSHOT
+    container_name: tcs-discovery-server
     ports:
       - "8761:8761"
     networks:
       - tcs_network
 
-  # Blockchain Gateway Broadcaster
-  bc_gateway_broadcaster:
-    image: ssanchez11/blockchain_gateway_broadcaster:0.0.1-SNAPSHOT
-    container_name: bc-broadcaster
+  # Trust Certification System Monitor Server
+  tcs_monitor_server:
+    image: ssanchez11/trust_certification_system_monitor_server:0.0.1-SNAPSHOT
+    container_name: bc-monitor-server
     ports:
       - "8060:8060"
     environment:
-      - SERVICE_REGISTRY_HOST=bc-discovery-server
+      - SERVICE_REGISTRY_HOST=tcs-discovery-server
       - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
     networks:
       - tcs_network
 
-  # Blockchain Gateway Config Server
-  bc_gateway_config_server:
-    image: ssanchez11/blockchain_gateway_config_server:0.0.1-SNAPSHOT
-    container_name: bc-config-server
+  # Trust Certification System Config Server
+  tcs_config_server:
+    image: ssanchez11/trust_certification_system_config_server:0.0.1-SNAPSHOT
+    container_name: tcs-config-server
     networks:
       - tcs_network
     ports:
       - "8081:8080"
     environment:
-      - SERVICE_REGISTRY_HOST=bc-discovery-server
+      - SERVICE_REGISTRY_HOST=tcs-discovery-server
 
-  # Blockchain Gateway API
-  bc_gateway_api:
-    image: ssanchez11/blockchain_gateway_api:0.0.1-SNAPSHOT
-    container_name: bc-gateway-api
+  # Trust Certification System Gateway API
+  tcs_gateway_api:
+    image: ssanchez11/trust_certification_system_gateway_api:0.0.1-SNAPSHOT
+    container_name: tcs-gateway-api
     volumes:
       - ./wallets:/opt/wallets
     ports:
@@ -165,29 +165,29 @@ services:
     networks:
       - tcs_network
     environment:
-      - SERVICE_REGISTRY_HOST=bc-discovery-server
+      - SERVICE_REGISTRY_HOST=tcs-discovery-server
       - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
 
-  # Blockchain Gateway Processor
-  bc_gateway_processor_1:
-    image: ssanchez11/blockchain_gateway_processor:0.0.1-SNAPSHOT
-    container_name: bc-gateway-processor-1
+  # Trust Certification System Processor
+  tcs_processor_1:
+    image: ssanchez11/trust_certification_system_processor:0.0.1-SNAPSHOT
+    container_name: tcs-processor-1
     volumes:
       - ./wallets:/opt/wallets
     networks:
       - tcs_network
     environment:
-      - SERVICE_REGISTRY_HOST=bc-discovery-server
+      - SERVICE_REGISTRY_HOST=tcs-discovery-server
       - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
 
-  # Blockchain Gateway Processor
-  bc_gateway_processor_2:
-    image: ssanchez11/blockchain_gateway_processor:0.0.1-SNAPSHOT
-    container_name: bc-gateway-processor-2
+  # Trust Certification System Processor
+  tcs_processor_2:
+    image: ssanchez11/trust_certification_system_processor:0.0.1-SNAPSHOT
+    container_name: tcs-processor-2
     volumes:
       - ./wallets:/opt/wallets
     networks:
       - tcs_network
     environment:
-      - SERVICE_REGISTRY_HOST=bc-discovery-server
+      - SERVICE_REGISTRY_HOST=tcs-discovery-server
       - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{

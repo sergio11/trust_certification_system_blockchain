@@ -23,13 +23,15 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+
     <modules>
-        <module>blockchain-gateway-common</module>
-        <module>blockchain-gateway-processor</module>
-        <module>blockchain-gateway-api</module>
-        <module>blockchain-gateway-config-server</module>
-        <module>blockchain-gateway-discovery-server</module>
-        <module>blockchain-gateway-broadcaster</module>
+        <module>trust-certification-system-core</module>
+        <module>trust-certification-system-processor</module>
+        <module>trust-certification-system-monitor-server</module>
+        <module>trust-certification-system-config-server</module>
+        <module>trust-certification-system-discovery-server</module>
+        <module>trust-certification-system-gateway-api</module>
+        <module>blockchain-gateway-config-test</module>
     </modules>
 
     <dependencies>
