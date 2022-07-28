@@ -168,10 +168,10 @@ services:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
       - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
 
-  # Trust Certification System Processor
-  tcs_processor_1:
-    image: ssanchez11/trust_certification_system_processor:0.0.1-SNAPSHOT
-    container_name: tcs-processor-1
+  # Trust Certification System Certificate Events Processor
+  tcs_certificate_events_processor:
+    image: ssanchez11/trust_certification_system_certificate_events_processor:0.0.1-SNAPSHOT
+    container_name: tcs-certificate-events-processor
     volumes:
       - ./wallets:/opt/wallets
     networks:
@@ -180,10 +180,22 @@ services:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
       - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
 
-  # Trust Certification System Processor
-  tcs_processor_2:
-    image: ssanchez11/trust_certification_system_processor:0.0.1-SNAPSHOT
-    container_name: tcs-processor-2
+  # Trust Certification System User Events Processor
+  tcs_user_events_processor:
+    image: ssanchez11/trust_certification_system_user_events_processor:0.0.1-SNAPSHOT
+    container_name: tcs-user-events-processor
+    volumes:
+      - ./wallets:/opt/wallets
+    networks:
+      - tcs_network
+    environment:
+      - SERVICE_REGISTRY_HOST=tcs-discovery-server
+      - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
+
+  # Trust Certification System Course Events Processor
+  tcs_course_events_processor:
+    image: ssanchez11/trust_certification_system_course_events_processor:0.0.1-SNAPSHOT
+    container_name: tcs-course-events-processor
     volumes:
       - ./wallets:/opt/wallets
     networks:

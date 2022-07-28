@@ -11,6 +11,7 @@
 
     <properties>
         <web3j.version>4.8.4</web3j.version>
+        <ipfs.version>v1.3.3</ipfs.version>
         <jasypt.spring.boot.version>2.1.1</jasypt.spring.boot.version>
         <sshj.version>0.27.0</sshj.version>
     </properties>
@@ -22,11 +23,24 @@
         <relativePath>../</relativePath>
     </parent>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.web3j</groupId>
             <artifactId>core</artifactId>
             <version>${web3j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.ipfs</groupId>
+            <artifactId>java-ipfs-http-client</artifactId>
+            <version>${ipfs.version}</version>
         </dependency>
 
         <dependency>
