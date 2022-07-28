@@ -14,9 +14,10 @@ public interface IipfsGateway {
      * Save File
      *
      * @param fileToSave
+     * @param deleteOnSave
      * @return
-     * @throws IOException
+     * @throws java.io.IOException
      */
-    String save(File fileToSave) throws IOException;
+    String save(File fileToSave, Boolean deleteOnSave) throws IOException;
 
 }

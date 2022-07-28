@@ -126,6 +126,23 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
     }
 
     /**
+     *
+     * @param courseId
+     * @return
+     * @throws RepositoryException
+     */
+    @Override
+    public CertificationCourseModelEntity get(String courseId) throws RepositoryException {
+        Assert.notNull(courseId, "Course Id can not be null");
+        try {
+            final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract();
+            return getCertificationCourseDetail(certificationCourseContract, courseId);
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Can be issued
      *
      * @param caWallet
@@ -195,8 +212,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
     @Override
     public Flowable<CertificationCourseEventEntity> getEvents() throws RepositoryException {
         try {
-            final CertificationCourseContract caContract = CertificationCourseContract.load(properties.getCertificationCourseContractAddress(),
-                    web3j, rootTxManager, properties.gas());
+            final CertificationCourseContract caContract = loadCertificationCourseContract();
             return Flowable.merge(Lists.newArrayList(
                     caContract.onCertificationCourseDisabledEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationCourseEventEntityMapper::mapEventToEntity),
                     caContract.onCertificationCourseEnabledEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationCourseEventEntityMapper::mapEventToEntity),
@@ -235,5 +251,14 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
         final FastRawTransactionManager txManager = new FastRawTransactionManager(web3j, credentials, properties.getChainId());
         return CertificationCourseContract.load(properties.getCertificationCourseContractAddress(),
                 web3j, txManager, properties.gas());
+    }
+
+    /**
+     *
+     * @return
+     */
+    private CertificationCourseContract loadCertificationCourseContract() {
+        return CertificationCourseContract.load(properties.getCertificationCourseContractAddress(),
+                web3j, rootTxManager, properties.gas());
     }
 }

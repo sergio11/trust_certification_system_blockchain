@@ -66,6 +66,15 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
     CertificationCourseModelEntity get(final String caWallet, final String courseId) throws RepositoryException;
 
     /**
+     * Get Certification Course
+     *
+     * @param courseId
+     * @return
+     * @throws RepositoryException
+     */
+    CertificationCourseModelEntity get(final String courseId) throws RepositoryException;
+
+    /**
      * Can be issued
      *
      * @param caWallet

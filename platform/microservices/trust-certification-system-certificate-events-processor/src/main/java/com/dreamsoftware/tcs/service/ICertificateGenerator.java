@@ -8,6 +8,15 @@ import java.io.File;
  */
 public interface ICertificateGenerator {
 
-    File generate(String caName, String studentName, Float qualification) throws Exception;
+    /**
+     *
+     * @param caName
+     * @param studentName
+     * @param courseName
+     * @param qualification
+     * @return
+     * @throws Exception
+     */
+    File generate(String caName, String studentName, String courseName, Float qualification) throws Exception;
 
 }

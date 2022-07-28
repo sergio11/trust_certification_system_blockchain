@@ -22,6 +22,11 @@ public class OnNewIssueCertificateRequestEvent {
     private String studentWalletHash;
 
     /**
+     * CA Wallet Hash
+     */
+    private String caWalletHash;
+
+    /**
      * Course Id
      */
     private String courseId;
@@ -29,5 +34,5 @@ public class OnNewIssueCertificateRequestEvent {
     /**
      * Qualification
      */
-    private Long qualification;
+    private Float qualification;
 }
