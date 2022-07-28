@@ -1,3 +1,3 @@
 spring:
     application:
-        name: blockchain-broadcaster
+        name: tcs-monitor-server
