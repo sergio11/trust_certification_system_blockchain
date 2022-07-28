@@ -1,6 +1,6 @@
 spring:
   application:
-    name: blockchain-broadcaster
+    name: tcs-monitor-server
   profiles:
     active: dev
   bus:
@@ -13,7 +13,7 @@ spring:
             enabled: false
         discovery:
             enabled: true
-            serviceId: blockchain-config-server
+            serviceId: tcs-config-server
 
 eureka:
   client:

@@ -75,32 +75,6 @@
                     <finalName>trust_certification_system_certificate_events_processor</finalName>
                 </configuration>
             </plugin>
-
-            <!--<plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.4.13</version>
-                <executions>
-                    <execution>
-                        <id>build-image</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                        <configuration>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <repository>ssanchez11/blockchain_gateway_processor</repository>
-                    <tag>${project.version}</tag>
-                    <buildArgs>
-                        <JAR_FILE>blockchain_gateway_processor</JAR_FILE>
-                    </buildArgs>
-                    <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
-                    <forceTags>true</forceTags>
-                </configuration>
-            </plugin>-->
         </plugins>
     </build>
 
