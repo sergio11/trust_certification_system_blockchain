@@ -55,32 +55,6 @@
                     <finalName>trust_certification_system_monitor_server</finalName>
                 </configuration>
             </plugin>
-
-            <!--<plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.4.13</version>
-                <executions>
-                    <execution>
-                        <id>build-image</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                        <configuration>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <repository>ssanchez11/blockchain_gateway_discovery_server</repository>
-                    <tag>${project.version}</tag>
-                    <buildArgs>
-                        <JAR_FILE>blockchain_gateway_discovery_server</JAR_FILE>
-                    </buildArgs>
-                    <useMavenSettingsForAuth>false</useMavenSettingsForAuth>
-                    <forceTags>true</forceTags>
-                </configuration>
-            </plugin>-->
         </plugins>
     </build>
 
