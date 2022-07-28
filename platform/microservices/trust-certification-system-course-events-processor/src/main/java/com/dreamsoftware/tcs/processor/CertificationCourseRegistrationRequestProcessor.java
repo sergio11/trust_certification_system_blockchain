@@ -2,9 +2,9 @@ package com.dreamsoftware.tcs.processor;
 
 import com.dreamsoftware.tcs.model.events.CertificationCourseRegisteredEvent;
 import com.dreamsoftware.tcs.model.events.CourseCertificateRegistrationRequestEvent;
-import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
+import com.dreamsoftware.tcs.service.ICertificateCourseService;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -22,18 +22,14 @@ public class CertificationCourseRegistrationRequestProcessor implements Function
 
     private final Logger logger = LoggerFactory.getLogger(CertificationCourseRegistrationRequestProcessor.class);
 
-    /**
-     * Certification Course Blockchain Repository
-     */
-    private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
+    private final ICertificateCourseService certificateCourseService;
 
     @Override
     public CertificationCourseRegisteredEvent apply(CourseCertificateRegistrationRequestEvent event) {
         logger.debug("CertificationCourseRegistrationRequestProcessor CALLED!");
         CertificationCourseRegisteredEvent nextEvent = null;
         try {
-            final CertificationCourseEntity certificationCourseEntity = certificationCourseBlockchainRepository.register(event.getCaWalletHash(), event.getName(),
-                    event.getCostOfIssuingCertificate(), event.getDurationInHours(), event.getExpirationInDays(), event.getCanBeRenewed(), event.getCostOfRenewingCertificate());
+            final CertificationCourseModelEntity certificationCourseEntity = certificateCourseService.register(event);
             nextEvent = new CertificationCourseRegisteredEvent(certificationCourseEntity, event.getCaWalletHash());
         } catch (final RepositoryException ex) {
             logger.debug("Ex Message -> " + ex.getMessage());

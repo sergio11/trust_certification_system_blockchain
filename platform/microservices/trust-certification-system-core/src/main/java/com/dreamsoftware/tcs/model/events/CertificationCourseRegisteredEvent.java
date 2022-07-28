@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.model.events;
 
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +20,7 @@ public class CertificationCourseRegisteredEvent {
     /**
      * Certification Course
      */
-    private CertificationCourseEntity certificationCourse;
+    private CertificationCourseModelEntity certificationCourse;
 
     /**
      * CA Wallet Hash
