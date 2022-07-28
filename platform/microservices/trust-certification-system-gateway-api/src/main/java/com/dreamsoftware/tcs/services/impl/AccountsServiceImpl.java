@@ -4,7 +4,7 @@ import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.SignUpUserMapper;
 import com.dreamsoftware.tcs.mapper.SimpleUserMapper;
 import com.dreamsoftware.tcs.mapper.UserDetailsMapper;
-import com.dreamsoftware.tcs.model.OnNewUserRegistrationEvent;
+import com.dreamsoftware.tcs.model.events.OnNewUserRegistrationEvent;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;

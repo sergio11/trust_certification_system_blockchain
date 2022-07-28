@@ -26,12 +26,13 @@
 
     <modules>
         <module>trust-certification-system-core</module>
-        <module>trust-certification-system-processor</module>
+        <module>trust-certification-system-user-events-processor</module>
+        <module>trust-certification-system-certificate-events-processor</module>
+        <module>trust-certification-system-course-events-processor</module>
         <module>trust-certification-system-monitor-server</module>
         <module>trust-certification-system-config-server</module>
         <module>trust-certification-system-discovery-server</module>
         <module>trust-certification-system-gateway-api</module>
-        <module>blockchain-gateway-config-test</module>
     </modules>
 
     <dependencies>
