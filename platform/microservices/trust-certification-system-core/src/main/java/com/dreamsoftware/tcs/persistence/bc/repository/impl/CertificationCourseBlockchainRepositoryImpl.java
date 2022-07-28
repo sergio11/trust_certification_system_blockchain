@@ -5,7 +5,7 @@ import com.dreamsoftware.tcs.contracts.CertificationCourseContract.Certification
 import com.dreamsoftware.tcs.exception.LoadWalletException;
 import com.dreamsoftware.tcs.persistence.bc.core.SupportBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseEventEntity;
 import com.dreamsoftware.tcs.persistence.bc.repository.mapper.CertificationCourseEntityMapper;
 import com.dreamsoftware.tcs.persistence.bc.repository.mapper.CertificationCourseEventEntityMapper;
@@ -50,7 +50,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseEntity register(String walletHash, String name, Long costOfIssuingCertificate, Long durationInHours, Long expirationInDays, Boolean canBeRenewed, Long costOfRenewingCertificate) throws RepositoryException {
+    public CertificationCourseModelEntity register(String walletHash, String name, Long costOfIssuingCertificate, Long durationInHours, Long expirationInDays, Boolean canBeRenewed, Long costOfRenewingCertificate) throws RepositoryException {
         try {
             logger.debug("register new certification course CALLED!");
             final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(walletHash);
@@ -73,7 +73,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseEntity enable(final String caWallet, final String courseId) throws RepositoryException {
+    public CertificationCourseModelEntity enable(final String caWallet, final String courseId) throws RepositoryException {
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         Assert.notNull(courseId, "Course Id can not be null");
         try {
@@ -93,7 +93,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseEntity disable(final String caWallet, final String courseId) throws RepositoryException {
+    public CertificationCourseModelEntity disable(final String caWallet, final String courseId) throws RepositoryException {
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         Assert.notNull(courseId, "Course Id can not be null");
         try {
@@ -114,7 +114,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseEntity get(String caWallet, String courseId) throws RepositoryException {
+    public CertificationCourseModelEntity get(String caWallet, String courseId) throws RepositoryException {
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         Assert.notNull(courseId, "Course Id can not be null");
         try {
@@ -173,7 +173,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseEntity remove(String caWallet, String courseId) throws RepositoryException {
+    public CertificationCourseModelEntity remove(String caWallet, String courseId) throws RepositoryException {
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         Assert.notNull(courseId, "Course Id can not be null");
         try {
@@ -218,7 +218,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @return
      * @throws Exception
      */
-    private CertificationCourseEntity getCertificationCourseDetail(CertificationCourseContract certificationCourseContract, String courseId) throws Exception {
+    private CertificationCourseModelEntity getCertificationCourseDetail(CertificationCourseContract certificationCourseContract, String courseId) throws Exception {
         final CertificationCourseRecord certificationCourseDetail = certificationCourseContract.getCertificateCourseDetail(courseId).send();
         return certificationCourseEntityMapper.courseRecordToCertificationCourseEntity(certificationCourseDetail);
     }

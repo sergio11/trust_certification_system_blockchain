@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CertificationCourseEntity {
+public class CertificationCourseModelEntity {
 
     /**
      * Course Id
