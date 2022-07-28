@@ -51,7 +51,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @Validated
 @RequestMapping("/api/v1/translations/")
-@Tag(name = "translations", description = "/api/v1/translations/ (Code Response interval -> 4XX)")
+@Tag(name = "translations", description = "/api/v1/translations/ (Code Response interval -> 5XX)")
 @RequiredArgsConstructor
 public class TranslationsController extends SupportController {
 
