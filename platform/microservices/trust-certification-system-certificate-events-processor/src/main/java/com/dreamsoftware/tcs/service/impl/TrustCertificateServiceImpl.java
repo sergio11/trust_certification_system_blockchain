@@ -8,9 +8,9 @@ import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockc
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedBcEntity;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityEntity;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuedEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateStatusEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
-import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuedRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.ICertificateGenerator;
 import com.dreamsoftware.tcs.service.ITrustCertificateService;
@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
 
 /**
  *
@@ -66,7 +67,7 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
     /**
      * Certificate Issued Repository
      */
-    private final CertificateIssuedRepository certificateIssuedRepository;
+    private final CertificateIssuanceRequestRepository certificateIssuedRepository;
 
     /**
      *
@@ -98,9 +99,10 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
         Assert.notNull(event, "Event can not be null");
         final UserEntity caUserEntity = userRepository.findOneByWalletHash(event.getCaWalletHash()).orElseThrow(() -> new IllegalStateException("CA Wallet Hash not found"));
         final UserEntity studentEntity = userRepository.findOneByWalletHash(event.getStudentWalletHash()).orElseThrow(() -> new IllegalStateException("Student Wallet Hash not found"));
-        final CertificateIssuedEntity certificateIssued = CertificateIssuedEntity.builder()
+        final CertificateIssuanceRequestEntity certificateIssued = CertificateIssuanceRequestEntity.builder()
                 .ca(caUserEntity)
                 .student(studentEntity)
+                .status(CertificateStatusEnum.VALIDATED)
                 .certificateId(event.getCertificateId())
                 .createdAt(new Date())
                 .build();

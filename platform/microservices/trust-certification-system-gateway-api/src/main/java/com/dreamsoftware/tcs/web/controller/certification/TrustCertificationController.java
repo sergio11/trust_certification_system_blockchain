@@ -1,23 +1,26 @@
 package com.dreamsoftware.tcs.web.controller.certification;
 
 import com.dreamsoftware.tcs.services.ITrustCertificationService;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.AcceptCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.DisableCertificateException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.EnableCertificateException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificateIssuedDetailException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificatesException;
-import com.dreamsoftware.tcs.web.controller.certification.error.exception.IssueCertificateException;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.IssueCertificateRequestException;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.RejectCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.RenewCertificateException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.UpdateCertificateVisibilityException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
-import com.dreamsoftware.tcs.web.dto.request.IssueCertificateDTO;
+import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForStudent;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
+import com.dreamsoftware.tcs.web.validation.constraints.ShouldBeAValidObjectId;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +31,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.validation.Valid;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMethod;
+import com.dreamsoftware.tcs.web.validation.constraints.CertificateShouldBePendingReview;
 
 /**
  *
@@ -256,21 +261,73 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "ISSUE_CERTIFICATE - Issue Certificate", description = "Issue Certificate", tags = {"CERTIFICATE_ISSUED"})
-    @RequestMapping(value = "/issue", method = RequestMethod.PUT,
+    @Operation(summary = "ISSUE_CERTIFICATE_REQUEST - Issue Certificate Request", description = "Issue Certificate Request", tags = {"CERTIFICATE_ISSUED"})
+    @RequestMapping(value = "/request", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
-    public ResponseEntity<APIResponse<String>> issueCertificate(
-            @Validated(ICommonSequence.class) IssueCertificateDTO issueCertificate,
+    public ResponseEntity<APIResponse<String>> issueCertificateRequest(
+            @Validated(ICommonSequence.class) IssueCertificateRequestDTO issueCertificate,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
             issueCertificate.setStudentWalletHash(selfUser.getWalletHash());
-            trustCertificationService.issueCertificate(issueCertificate);
-            return responseHelper.<String>createAndSendResponse(TrustCertificationResponseCodeEnum.NEW_CERTIFICATE_ISSUED,
-                    HttpStatus.OK, "New Certificate Issued");
+            trustCertificationService.issueCertificateRequest(issueCertificate);
+            return responseHelper.<String>createAndSendResponse(TrustCertificationResponseCodeEnum.NEW_ISSUED_CERTIFICATE_REQUESTED,
+                    HttpStatus.OK, "Issued Certificate Request Saved");
         } catch (final Exception ex) {
-            throw new IssueCertificateException(ex.getMessage(), ex);
+            throw new IssueCertificateRequestException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Accept request for certificate issuance
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     * @throws java.lang.Throwable
+     */
+    @Operation(summary = "ACCEPT_CERTIFICATE_REQUEST - Accept request for certificate issuance", description = "Accept request for certificate issuance", tags = {"CERTIFICATE_ISSUED"})
+    @RequestMapping(value = "/accept/{id}", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCA
+    public ResponseEntity<APIResponse<String>> acceptCertificateRequest(
+            @Parameter(name = "id", description = "Certificate Id", required = true)
+            @Valid @CertificateShouldBePendingReview(message = "certificate_should_be_pending_review") @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            trustCertificationService.acceptCertificateRequest(new ObjectId(id));
+            return responseHelper.<String>createAndSendResponse(TrustCertificationResponseCodeEnum.ISSUE_CERTIFICATE_REQUEST_ACCEPTED,
+                    HttpStatus.OK, "Issue certificate request accepted");
+        } catch (final Exception ex) {
+            throw new AcceptCertificateRequestException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Issue Certificate
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     * @throws java.lang.Throwable
+     */
+    @Operation(summary = "REJECT_CERTIFICATE_REQUEST - Reject request for certificate issuance", description = "Reject request for certificate issuance", tags = {"CERTIFICATE_ISSUED"})
+    @RequestMapping(value = "/reject/{id}", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCA
+    public ResponseEntity<APIResponse<String>> rejectCertificateRequest(
+            @Parameter(name = "id", description = "Certificate Id", required = true)
+            @Valid @CertificateShouldBePendingReview(message = "certificate_should_be_pending_review") @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            trustCertificationService.rejectCertificateRequest(new ObjectId(id));
+            return responseHelper.<String>createAndSendResponse(TrustCertificationResponseCodeEnum.ISSUE_CERTIFICATE_REQUEST_REJECTED,
+                    HttpStatus.OK, "Issue certificate request rejected");
+        } catch (final Exception ex) {
+            throw new RejectCertificateRequestException(ex.getMessage(), ex);
         }
     }
 
