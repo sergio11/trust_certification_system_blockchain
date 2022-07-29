@@ -27,4 +27,26 @@ public interface INotificationService {
      * @return
      */
     Page<NotificationDTO> findPaginated(final ObjectId userId, final Pageable pageable);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    NotificationDTO findById(final ObjectId id);
+
+    /**
+     *
+     * @param id
+     */
+    void deleteById(final ObjectId id);
+
+    /**
+     *
+     * @param notificationId
+     * @param userId
+     * @return
+     */
+    Boolean isTheOwner(String notificationId, ObjectId userId);
+
 }

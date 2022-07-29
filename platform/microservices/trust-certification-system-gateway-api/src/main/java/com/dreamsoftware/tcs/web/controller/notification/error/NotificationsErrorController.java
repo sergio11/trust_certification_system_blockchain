@@ -2,6 +2,8 @@ package com.dreamsoftware.tcs.web.controller.notification.error;
 
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.notification.NotificationsResponseCodeEnum;
+import com.dreamsoftware.tcs.web.controller.notification.error.exception.DeleteNotificationException;
+import com.dreamsoftware.tcs.web.controller.notification.error.exception.GetNotificationDetailException;
 import com.dreamsoftware.tcs.web.controller.notification.error.exception.NoNotificationsFoundException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
@@ -24,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class NotificationsErrorController extends SupportController {
 
-    private static Logger logger = LoggerFactory.getLogger(NotificationsErrorController.class);
+    private static final Logger logger = LoggerFactory.getLogger(NotificationsErrorController.class);
 
     /**
      *
@@ -38,5 +40,33 @@ public class NotificationsErrorController extends SupportController {
         logger.error("Handler for NotificationsFoundException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(NotificationsResponseCodeEnum.NO_NOTIFICATIONS_FOUND,
                 HttpStatus.NOT_FOUND, "No notifications found");
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(GetNotificationDetailException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetNotificationDetailException(GetNotificationDetailException ex, HttpServletRequest request) {
+        logger.error("Handler for GetNotificationDetailException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(NotificationsResponseCodeEnum.NO_NOTIFICATION_FOUND,
+                HttpStatus.NOT_FOUND, "No notification found");
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(DeleteNotificationException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleDeleteNotificationException(DeleteNotificationException ex, HttpServletRequest request) {
+        logger.error("Handler for DeleteNotificationException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(NotificationsResponseCodeEnum.NO_NOTIFICATION_FOUND,
+                HttpStatus.NOT_FOUND, "An error occurred when requesting to delete a notification");
     }
 }
