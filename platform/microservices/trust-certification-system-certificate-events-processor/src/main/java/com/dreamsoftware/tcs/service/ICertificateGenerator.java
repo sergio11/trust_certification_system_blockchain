@@ -17,6 +17,6 @@ public interface ICertificateGenerator {
      * @return
      * @throws Exception
      */
-    File generate(String caName, String studentName, String courseName, Float qualification) throws Exception;
+    File generate(String caName, String studentName, String courseName, Long qualification) throws Exception;
 
 }

@@ -6,9 +6,12 @@ import com.dreamsoftware.tcs.web.controller.notification.error.exception.NoNotif
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.dto.response.NotificationDTO;
+import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdmin;
+import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import com.dreamsoftware.tcs.web.validation.constraints.ShouldBeAValidObjectId;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -50,12 +53,12 @@ public class NotificationsController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_ALL_USER_ALERTS - Get all Alerts for the user", description = "Get all Alerts for the user", tags = {"alerts"})
+    @Operation(summary = "GET_NOTIFICATIONS_BY_USER - Get notifications for specific user (only access for ADMIN users)", description = "Get notifications for specific user", tags = {"notifications"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "All alerts for the user",
+        @ApiResponse(responseCode = "200", description = "All notifications for the user",
                 content = @Content(
                         schema = @Schema(implementation = Page.class))),
-        @ApiResponse(responseCode = "404", description = "No Alerts found",
+        @ApiResponse(responseCode = "404", description = "No notifications found",
                 content = @Content(
                         schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
@@ -63,19 +66,60 @@ public class NotificationsController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @OnlyAccessForAdmin
-    public ResponseEntity<APIResponse<Page<NotificationDTO>>> getAllAlerts(
+    public ResponseEntity<APIResponse<Page<NotificationDTO>>> getNotificationsForUser(
             @RequestParam(name = "page", required = false, defaultValue = "0") final Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "20") final Integer size,
             @PathVariable @Valid @ShouldBeAValidObjectId(message = "Invalid Id Format") final String id) throws Throwable {
 
-        final Page<NotificationDTO> notificationsPage = notificationService.findPaginated(new ObjectId(id), page, size);
+        return getNotifications(new ObjectId(id), page, size);
+    }
+
+    /**
+     *
+     * @param page
+     * @param size
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "GET_MY_NOTIFICATIONS - Get my notifications", description = "Get my notifications", tags = {"notifications"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "All my notifications",
+                content = @Content(
+                        schema = @Schema(implementation = Page.class))),
+        @ApiResponse(responseCode = "404", description = "No notifications found",
+                content = @Content(
+                        schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<APIResponse<Page<NotificationDTO>>> getMyNotifications(
+            @RequestParam(name = "page", required = false, defaultValue = "0") final Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "20") final Integer size,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser) throws Throwable {
+
+        return getNotifications(selfUser.getUserId(), page, size);
+    }
+
+    /**
+     * Private Methods
+     */
+    /**
+     *
+     * @param userId
+     * @param page
+     * @param size
+     * @return
+     */
+    private ResponseEntity<APIResponse<Page<NotificationDTO>>> getNotifications(final ObjectId userId, final Integer page, final Integer size) {
+        final Page<NotificationDTO> notificationsPage = notificationService.findPaginated(userId, page, size);
 
         if (!notificationsPage.hasContent()) {
             throw new NoNotificationsFoundException();
         }
 
-        return responseHelper.createAndSendResponse(
-                NotificationsResponseCodeEnum.GET_ALL_USER_NOTIFICATIONS_SUCCESS,
+        return responseHelper.createAndSendResponse(NotificationsResponseCodeEnum.GET_USER_NOTIFICATIONS_SUCCESS,
                 HttpStatus.OK, notificationsPage);
     }
 

@@ -34,5 +34,5 @@ public class OnNewIssueCertificateRequestEvent {
     /**
      * Qualification
      */
-    private Float qualification;
+    private Long qualification;
 }

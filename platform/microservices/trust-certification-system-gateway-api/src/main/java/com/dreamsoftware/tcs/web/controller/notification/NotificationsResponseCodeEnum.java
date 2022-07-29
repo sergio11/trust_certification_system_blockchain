@@ -8,7 +8,7 @@ import com.dreamsoftware.tcs.web.core.IResponseCodeTypes;
  * @author ssanchez
  */
 public enum NotificationsResponseCodeEnum implements IResponseCodeTypes {
-    GET_ALL_USER_NOTIFICATIONS_SUCCESS(600L),
+    GET_USER_NOTIFICATIONS_SUCCESS(600L),
     NO_NOTIFICATIONS_FOUND(601L);
 
     private final Long code;
