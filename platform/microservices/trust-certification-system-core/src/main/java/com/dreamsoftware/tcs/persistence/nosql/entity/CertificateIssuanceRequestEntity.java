@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
- * Certificate Issued Entity
+ * Certificate issuance request Entity
  *
  * @author ssanchez
  */
@@ -22,10 +22,10 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = CertificateIssuedEntity.COLLECTION_NAME)
-public class CertificateIssuedEntity {
+@Document(collection = CertificateIssuanceRequestEntity.COLLECTION_NAME)
+public class CertificateIssuanceRequestEntity {
 
-    public final static String COLLECTION_NAME = "certificate_issued";
+    public final static String COLLECTION_NAME = "certificate_issuance_request";
 
     /**
      * Id
@@ -40,10 +40,28 @@ public class CertificateIssuedEntity {
     private String certificateId;
 
     /**
+     * Certificate Status
+     */
+    @Field("status")
+    private CertificateStatusEnum status;
+
+    /**
      * Created At
      */
     @Field("created_at")
     private Date createdAt;
+
+    /**
+     * Qualification
+     */
+    @Field("qualification")
+    private Long qualification;
+
+    /**
+     * Course
+     */
+    @DBRef
+    private CertificationCourseEntity course;
 
     /**
      * Student

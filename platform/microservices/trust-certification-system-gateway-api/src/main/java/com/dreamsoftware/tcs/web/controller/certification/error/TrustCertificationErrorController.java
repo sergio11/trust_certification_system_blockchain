@@ -1,11 +1,13 @@
 package com.dreamsoftware.tcs.web.controller.certification.error;
 
 import com.dreamsoftware.tcs.web.controller.certification.TrustCertificationResponseCodeEnum;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.AcceptCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.DisableCertificateException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.EnableCertificateException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificateIssuedDetailException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificatesException;
-import com.dreamsoftware.tcs.web.controller.certification.error.exception.IssueCertificateException;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.IssueCertificateRequestException;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.RejectCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.RenewCertificateException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.UpdateCertificateVisibilityException;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
@@ -30,7 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class TrustCertificationErrorController extends SupportController {
 
-    private static Logger logger = LoggerFactory.getLogger(TrustCertificationErrorController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TrustCertificationErrorController.class);
 
     /**
      *
@@ -108,12 +110,40 @@ public class TrustCertificationErrorController extends SupportController {
      * @param request
      * @return
      */
-    @ExceptionHandler(IssueCertificateException.class)
+    @ExceptionHandler(IssueCertificateRequestException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleIssueCertificateException(IssueCertificateException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleIssueCertificateException(IssueCertificateRequestException ex, HttpServletRequest request) {
         logger.error("Handler for IssueCertificateException -> " + ex.getMessage());
-        return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.ISSUE_NEW_CERTIFICATE_FAILED,
+        return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.NEW_ISSUE_CERTIFICATE_REQUEST_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, "Issue new certificate Failed");
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(AcceptCertificateRequestException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleAcceptCertificateRequestException(AcceptCertificateRequestException ex, HttpServletRequest request) {
+        logger.error("Handler for AcceptCertificateRequestException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.ACCEPT_CERTIFICATE_REQUEST_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, "Accept certificate request failed");
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(RejectCertificateRequestException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleRejectCertificateRequestException(RejectCertificateRequestException ex, HttpServletRequest request) {
+        logger.error("Handler for RejectCertificateRequestException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.REJECT_CERTIFICATE_REQUEST_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, "Reject Certificate Request Failed");
     }
 
     /**

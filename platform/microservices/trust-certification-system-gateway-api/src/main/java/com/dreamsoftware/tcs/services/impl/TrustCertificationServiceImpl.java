@@ -5,17 +5,25 @@ import com.dreamsoftware.tcs.mapper.CertificateIssuedMapper;
 import com.dreamsoftware.tcs.model.events.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedBcEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateStatusEnum;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.services.ITrustCertificationService;
-import com.dreamsoftware.tcs.web.dto.request.IssueCertificateDTO;
+import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
+import java.util.Date;
 
 /**
  *
@@ -29,7 +37,9 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
 
     private final CertificateIssuedMapper certificateIssuedMapper;
     private final UserRepository userRepository;
+    private final CertificateIssuanceRequestRepository certificateIssuanceRequestRepository;
     private final ITrustCertificationBlockchainRepository trustCertificationRepository;
+    private final CertificationCourseRepository certificationCourseRepository;
     private final StreamBridge streamBridge;
     private final StreamChannelsProperties streamChannelsProperties;
 
@@ -140,17 +150,54 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public void issueCertificate(IssueCertificateDTO issueCertificate) throws Throwable {
+    public void issueCertificateRequest(IssueCertificateRequestDTO issueCertificate) throws Throwable {
         Assert.notNull(issueCertificate.getStudentWalletHash(), "Student Wallet Hash can not be null");
         Assert.notNull(issueCertificate.getCertificateCourseId(), "certificateCourseId can not be null");
         Assert.notNull(issueCertificate.getQualification(), "qualification can not be null");
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.findById(new ObjectId(issueCertificate.getCertificateCourseId()))
+                .orElseThrow(() -> new IllegalStateException("Course not found"));
+        final UserEntity caEntity = certificationCourseEntity.getCa();
+        final UserEntity studentEntity = userRepository.findOneByWalletHash(issueCertificate.getStudentWalletHash())
+                .orElseThrow(() -> new IllegalStateException("Student not found"));
+        final CertificateIssuanceRequestEntity certificateRequest = CertificateIssuanceRequestEntity
+                .builder()
+                .ca(caEntity)
+                .course(certificationCourseEntity)
+                .createdAt(new Date())
+                .status(CertificateStatusEnum.PENDING_REVIEW)
+                .qualification(issueCertificate.getQualification())
+                .student(studentEntity)
+                .build();
+        certificateIssuanceRequestRepository.save(certificateRequest);
+    }
+
+    /**
+     *
+     * @param id
+     */
+    @Override
+    public void acceptCertificateRequest(ObjectId id) {
+        Assert.notNull(id, "Id can not be null");
+        final CertificateIssuanceRequestEntity certificate = certificateIssuanceRequestRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Certificate not found"));
         final OnNewIssueCertificateRequestEvent event = OnNewIssueCertificateRequestEvent
                 .builder()
-                .courseId(issueCertificate.getCertificateCourseId())
-                .qualification(issueCertificate.getQualification())
-                .studentWalletHash(issueCertificate.getStudentWalletHash())
+                .caWalletHash(certificate.getCa().getWalletHash())
+                .courseId(certificate.getCourse().getCourseId())
+                .qualification(certificate.getQualification())
+                .studentWalletHash(certificate.getStudent().getWalletHash())
                 .build();
         streamBridge.send(streamChannelsProperties.getNewCertificationRequest(), event);
+    }
+
+    /**
+     *
+     * @param id
+     */
+    @Override
+    public void rejectCertificateRequest(ObjectId id) {
+        Assert.notNull(id, "Id can not be null");
+        certificateIssuanceRequestRepository.updateStatus(id, CertificateStatusEnum.REJECTED);
     }
 
     /**
