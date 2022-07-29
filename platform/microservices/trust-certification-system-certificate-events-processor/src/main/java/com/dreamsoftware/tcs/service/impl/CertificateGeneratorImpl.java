@@ -40,7 +40,7 @@ public class CertificateGeneratorImpl implements ICertificateGenerator {
      * @throws Exception
      */
     @Override
-    public File generate(String caName, String studentName, String courseName, Float qualification) throws Exception {
+    public File generate(String caName, String studentName, String courseName, Long qualification) throws Exception {
         Assert.notNull(caName, "CA Name can not be null");
         Assert.notNull(studentName, "Student Name can not be null");
         Assert.notNull(courseName, "Course Name can not be null");
