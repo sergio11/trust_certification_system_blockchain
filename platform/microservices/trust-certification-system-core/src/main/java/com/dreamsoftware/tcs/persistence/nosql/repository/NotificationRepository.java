@@ -32,4 +32,12 @@ public interface NotificationRepository extends MongoRepository<NotificationEnti
      */
     Page<NotificationEntity> findByCreateAtGreaterThanEqualAndUserIdOrderByCreateAtDesc(final Date from, final ObjectId id, final Pageable pageable);
 
+    /**
+     *
+     * @param id
+     * @param userId
+     * @return
+     */
+    Long countByIdAndUserId(final ObjectId id, final ObjectId userId);
+
 }

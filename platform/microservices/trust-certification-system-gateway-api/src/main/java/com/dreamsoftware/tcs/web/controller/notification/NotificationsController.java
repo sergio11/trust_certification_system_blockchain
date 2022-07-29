@@ -2,12 +2,15 @@ package com.dreamsoftware.tcs.web.controller.notification;
 
 import com.dreamsoftware.tcs.services.INotificationService;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
+import com.dreamsoftware.tcs.web.controller.notification.error.exception.DeleteNotificationException;
+import com.dreamsoftware.tcs.web.controller.notification.error.exception.GetNotificationDetailException;
 import com.dreamsoftware.tcs.web.controller.notification.error.exception.NoNotificationsFoundException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.dto.response.NotificationDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdmin;
+import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdminOrNotificationOwner;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import com.dreamsoftware.tcs.web.validation.constraints.ShouldBeAValidObjectId;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,6 +46,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class NotificationsController extends SupportController {
 
+    /**
+     * Notification Service
+     */
     private final INotificationService notificationService;
 
     /**
@@ -100,6 +106,71 @@ public class NotificationsController extends SupportController {
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser) throws Throwable {
 
         return getNotifications(selfUser.getUserId(), page, size);
+    }
+
+    /**
+     * Get Notification Detail
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "GET_NOTIFICATION_DETAIL - Get Notification Detail", description = "Get Notification Detail", tags = {"notifications"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Notification Detail",
+                content = @Content(schema = @Schema(implementation = NotificationDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Notification Not Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdminOrNotificationOwner
+    public ResponseEntity<APIResponse<NotificationDTO>> getById(
+            @Parameter(name = "id", description = "Notification Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "notification_id_valid") @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final NotificationDTO notification = notificationService.findById(new ObjectId(id));
+            return responseHelper.<NotificationDTO>createAndSendResponse(
+                    NotificationsResponseCodeEnum.NOTIFICATION_DETAIL,
+                    HttpStatus.OK, notification);
+        } catch (final Exception ex) {
+            throw new GetNotificationDetailException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "DELETE_NOTIFICATION - Delete Notification", description = "Delete Notification", tags = {"notifications"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Notification Deleted",
+                content = @Content(schema = @Schema(implementation = String.class))),
+        @ApiResponse(responseCode = "404", description = "Notification Not Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/{id}"}, method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdminOrNotificationOwner
+    public ResponseEntity<APIResponse<String>> deleteById(
+            @Parameter(name = "id", description = "Notification Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "notification_id_valid") @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            notificationService.deleteById(new ObjectId(id));
+            return responseHelper.<String>createAndSendResponse(
+                    NotificationsResponseCodeEnum.NOTIFICATION_DELETED,
+                    HttpStatus.OK, "Notification Deleted");
+        } catch (final Exception ex) {
+            throw new DeleteNotificationException(ex.getMessage(), ex);
+        }
     }
 
     /**

@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
  *
  * @author ssanchez
  */
-@Service
+@Service("notificationService")
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements INotificationService {
 
@@ -62,5 +62,41 @@ public class NotificationServiceImpl implements INotificationService {
         Assert.notNull(pageable, "Pageable can not be null");
         return notificationRepository.findByUserIdOrderByCreateAtDesc(userId, pageable)
                 .map(notificationMapper::entityToDTO);
+    }
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public NotificationDTO findById(ObjectId id) {
+        Assert.notNull(id, "Id can not be null");
+        return notificationRepository.findById(id)
+                .map(notificationMapper::entityToDTO)
+                .orElseThrow(() -> new IllegalStateException("Notification not found"));
+    }
+
+    /**
+     *
+     * @param id
+     */
+    @Override
+    public void deleteById(ObjectId id) {
+        Assert.notNull(id, "Id can not be null");
+        notificationRepository.deleteById(id);
+    }
+
+    /**
+     *
+     * @param notificationId
+     * @param userId
+     * @return
+     */
+    @Override
+    public Boolean isTheOwner(String notificationId, ObjectId userId) {
+        Assert.notNull(notificationId, "Id can not be null");
+        Assert.notNull(userId, "Id can not be null");
+        return notificationRepository.countByIdAndUserId(new ObjectId(notificationId), userId) > 0;
     }
 }
