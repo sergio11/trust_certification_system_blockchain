@@ -47,7 +47,7 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
      * @throws RepositoryException
      */
     @Override
-    public CertificateIssuedBcEntity issueCertificate(String issuerWalletHash, String studentWalletHash, String certificateCourseId, Long qualification) throws RepositoryException {
+    public CertificateIssuedBcEntity issueCertificate(String issuerWalletHash, String studentWalletHash, String certificateCourseId, Long qualification, final String cid) throws RepositoryException {
         Assert.notNull(issuerWalletHash, "Issuer Wallet can not be null");
         Assert.notNull(studentWalletHash, "Student Wallet Hash can not be null");
         Assert.notNull(certificateCourseId, "certificate Course Id can not be null");
@@ -55,7 +55,7 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
         try {
             final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(issuerWalletHash);
             final Credentials studentCredentials = walletService.loadCredentials(studentWalletHash);
-            final TransactionReceipt transactionReceipt = trustCertificationContract.issueCertificate(studentCredentials.getAddress(), certificateCourseId, BigInteger.valueOf(qualification)).send();
+            final TransactionReceipt transactionReceipt = trustCertificationContract.issueCertificate(studentCredentials.getAddress(), certificateCourseId, BigInteger.valueOf(qualification), cid).send();
             final List<TrustCertificationContract.OnNewCertificateGeneratedEventResponse> events = trustCertificationContract.getOnNewCertificateGeneratedEvents(transactionReceipt);
             final String certificationId = events.get(0)._id;
             final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();

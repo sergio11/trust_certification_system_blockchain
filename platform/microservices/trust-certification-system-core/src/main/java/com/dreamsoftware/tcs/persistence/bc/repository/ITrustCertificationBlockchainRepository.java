@@ -18,11 +18,12 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
      * @param studentWalletHash
      * @param certificateCourseId
      * @param qualification
+     * @param cid
      * @return
      * @throws RepositoryException
      */
     CertificateIssuedBcEntity issueCertificate(final String issuerWalletHash,
-            final String studentWalletHash, final String certificateCourseId, final Long qualification) throws RepositoryException;
+            final String studentWalletHash, final String certificateCourseId, final Long qualification, final String cid) throws RepositoryException;
 
     /**
      * Renew Certificate

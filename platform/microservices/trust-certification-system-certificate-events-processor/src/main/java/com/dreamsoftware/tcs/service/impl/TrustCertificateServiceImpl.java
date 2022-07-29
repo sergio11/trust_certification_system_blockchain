@@ -87,7 +87,7 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
         final File certificateFile = certificateGenerator.generate(certificationAuthorityEntity.getName(), studentName, certificationCourseModelEntity.getName(), event.getQualification());
         // Save Certificate in IPFS node
         final String cid = ipfsService.save(certificateFile, true);
-        return trustCertificationBlockchainRepository.issueCertificate(event.getCaWalletHash(), event.getStudentWalletHash(), event.getCourseId(), event.getQualification().longValue());
+        return trustCertificationBlockchainRepository.issueCertificate(event.getCaWalletHash(), event.getStudentWalletHash(), event.getCourseId(), event.getQualification(), cid);
     }
 
     /**
