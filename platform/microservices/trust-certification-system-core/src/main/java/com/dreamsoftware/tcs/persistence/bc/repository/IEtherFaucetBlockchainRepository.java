@@ -13,9 +13,16 @@ public interface IEtherFaucetBlockchainRepository extends IBlockchainEventReposi
      * Add Seed Funds
      *
      * @param walletHash
-     * @throws
-     * com.dreamsoftware.tcs.persistence.exception.RepositoryException
+     * @throws com.dreamsoftware.tcs.persistence.exception.RepositoryException
      */
     void addSeedFunds(final String walletHash) throws RepositoryException;
+
+    /**
+     *
+     * @param walletHash
+     * @param weiValue
+     * @throws RepositoryException
+     */
+    void depositFunds(final String walletHash, final Long weiValue) throws RepositoryException;
 
 }
