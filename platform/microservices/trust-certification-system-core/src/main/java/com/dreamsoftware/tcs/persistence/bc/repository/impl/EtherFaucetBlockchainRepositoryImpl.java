@@ -1,6 +1,8 @@
 package com.dreamsoftware.tcs.persistence.bc.repository.impl;
 
 import com.dreamsoftware.tcs.contracts.EtherFaucetContract;
+import com.dreamsoftware.tcs.contracts.ext.EtherFaucetContractExt;
+import com.dreamsoftware.tcs.exception.LoadWalletException;
 import com.dreamsoftware.tcs.persistence.bc.repository.IEtherFaucetBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.core.SupportBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.EtherFaucetEventEntity;
@@ -8,13 +10,16 @@ import com.dreamsoftware.tcs.persistence.bc.repository.mapper.EtherFaucetEventEn
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.google.common.collect.Lists;
 import io.reactivex.Flowable;
+import java.math.BigInteger;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.tx.FastRawTransactionManager;
 
 /**
  * @author ssanchez
@@ -34,12 +39,31 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
      */
     @Override
     public void addSeedFunds(final String walletHash) throws RepositoryException {
+        Assert.notNull(walletHash, "Wallet Hash can not be null");
+        logger.debug("Add Seed Funds to -> " + walletHash);
         try {
             final Credentials credentials = walletService.loadCredentials(walletHash);
-            logger.debug("EtherFaucetContract address: " + properties.getTrustEtherFaucetContractAddress());
-            final EtherFaucetContract etherFaucetContract = EtherFaucetContract.load(properties.getTrustEtherFaucetContractAddress(), web3j, rootTxManager, properties.gas());
+            final EtherFaucetContractExt etherFaucetContract = loadEtherFaucetContract();
             final TransactionReceipt tr = etherFaucetContract.sendSeedFundsTo(credentials.getAddress()).send();
             logger.debug("TransactionReceipt -> " + tr.getBlockHash());
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param walletHash
+     * @param weiValue
+     * @throws RepositoryException
+     */
+    @Override
+    public void depositFunds(final String walletHash, final Long weiValue) throws RepositoryException {
+        Assert.notNull(walletHash, "Wallet hash can not be null");
+        logger.debug("Deposit Funds -> " + walletHash);
+        try {
+            final EtherFaucetContractExt etherFaucetContract = loadEtherFaucetContract(walletHash);
+            etherFaucetContract.deposit(BigInteger.valueOf(weiValue)).send();
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
@@ -64,4 +88,31 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
         }
     }
 
+    /**
+     * Private Methods
+     */
+    /**
+     * Load Token Management Contract
+     *
+     * @param walletHash
+     * @return
+     * @throws LoadWalletException
+     */
+    private EtherFaucetContractExt loadEtherFaucetContract(final String walletHash) throws LoadWalletException {
+        final Credentials credentials = walletService.loadCredentials(walletHash);
+        final FastRawTransactionManager txManager = new FastRawTransactionManager(web3j, credentials, properties.getChainId());
+        return EtherFaucetContractExt.load(properties.getTrustEtherFaucetContractAddress(),
+                web3j, txManager,
+                properties.gas()
+        );
+    }
+
+    /**
+     *
+     * @return
+     */
+    private EtherFaucetContractExt loadEtherFaucetContract() {
+        return EtherFaucetContractExt.load(properties.getTokenManagementContractAddress(),
+                web3j, rootTxManager, properties.gas());
+    }
 }

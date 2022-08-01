@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.persistence.bc.repository.impl;
 
-import com.dreamsoftware.tcs.contracts.TokenManagementContractExt;
+import com.dreamsoftware.tcs.contracts.ext.TokenManagementContractExt;
 import com.dreamsoftware.tcs.exception.LoadWalletException;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.core.SupportBlockchainRepository;

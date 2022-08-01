@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.contracts;
+package com.dreamsoftware.tcs.contracts.ext;
 
 import com.dreamsoftware.tcs.contracts.TokenManagementContract;
 import static com.dreamsoftware.tcs.contracts.TokenManagementContract.FUNC_BUYTOKENS;
