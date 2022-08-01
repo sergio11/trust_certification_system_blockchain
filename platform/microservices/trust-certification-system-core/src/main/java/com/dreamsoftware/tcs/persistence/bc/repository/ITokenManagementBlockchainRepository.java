@@ -13,9 +13,45 @@ public interface ITokenManagementBlockchainRepository {
      *
      * @param walletHash
      * @param tokens
-     * @throws
-     * com.dreamsoftware.tcs.persistence.exception.RepositoryException
+     * @throws com.dreamsoftware.tcs.persistence.exception.RepositoryException
      */
     void addTokens(final String walletHash, final Long tokens) throws RepositoryException;
+
+    /**
+     * Get Token Price in Weis
+     *
+     * @param tokenCount
+     * @return
+     * @throws com.dreamsoftware.tcs.persistence.exception.RepositoryException
+     */
+    Long getTokenPriceInWeis(final Long tokenCount) throws RepositoryException;
+
+    /**
+     * Get My Tokens
+     *
+     * @param walletHash
+     * @return
+     * @throws com.dreamsoftware.tcs.persistence.exception.RepositoryException
+     */
+    Long getMyTokens(final String walletHash) throws RepositoryException;
+
+    /**
+     * Get Tokens By Client
+     *
+     * @param walletHash
+     * @param clientWalletHash
+     * @return
+     * @throws com.dreamsoftware.tcs.persistence.exception.RepositoryException
+     */
+    Long getTokensByClient(final String walletHash, final String clientWalletHash) throws RepositoryException;
+
+    /**
+     * Generate Tokens
+     *
+     * @param walletHash
+     * @param tokenCount
+     * @throws RepositoryException
+     */
+    void generateTokens(final String walletHash, final Long tokenCount) throws RepositoryException;
 
 }
