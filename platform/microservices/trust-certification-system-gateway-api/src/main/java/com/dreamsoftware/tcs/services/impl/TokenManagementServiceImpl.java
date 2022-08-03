@@ -1,0 +1,115 @@
+package com.dreamsoftware.tcs.services.impl;
+
+import com.dreamsoftware.tcs.mapper.CreatedOrderMapper;
+import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchainRepository;
+import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderStateEnum;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CreatedOrderRepository;
+import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.tcs.services.ICryptoCompareService;
+import com.dreamsoftware.tcs.services.IPaymentService;
+import com.dreamsoftware.tcs.services.ITokenManagementService;
+import com.dreamsoftware.tcs.web.dto.internal.CreatedOrderDTO;
+import com.dreamsoftware.tcs.web.dto.internal.CryptoComparePricesDTO;
+import com.dreamsoftware.tcs.web.dto.request.PlaceTokensOrderRequestDTO;
+import com.dreamsoftware.tcs.web.dto.response.OrderDetailDTO;
+import java.util.Date;
+import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
+/**
+ *
+ * @author ssanchez
+ */
+@Service("tokenManagementService")
+@RequiredArgsConstructor
+public class TokenManagementServiceImpl implements ITokenManagementService {
+
+    private final Logger logger = LoggerFactory.getLogger(TokenManagementServiceImpl.class);
+
+    private final Double ONE_WEI_IN_ETH = 0.000000000000000001;
+
+    private final ITokenManagementBlockchainRepository tokenManagementBlockchainRepository;
+    private final UserRepository userRepository;
+    private final IPaymentService paymentService;
+    private final ICryptoCompareService cryptoCompareService;
+    private final CreatedOrderRepository createdOrderRepository;
+    private final CreatedOrderMapper createdOrderMapper;
+
+    /**
+     *
+     * @param walletHash
+     * @return
+     */
+    @Override
+    public Long getMyTokens(final String walletHash) throws Exception {
+        Assert.notNull(walletHash, "Wallet Hash can not be null");
+        return tokenManagementBlockchainRepository.getMyTokens(walletHash);
+    }
+
+    /**
+     *
+     * @param tokenCount
+     * @return
+     */
+    @Override
+    public Long getTokenPriceInWeis(final Long tokenCount) throws Exception {
+        Assert.notNull(tokenCount, "Token Count can not be null");
+        return tokenManagementBlockchainRepository.getTokenPriceInWeis(tokenCount);
+    }
+
+    /**
+     *
+     * @param walletHash
+     * @param clientId
+     * @return
+     */
+    @Override
+    public Long getTokensByClient(final String walletHash, final ObjectId clientId) throws Exception {
+        Assert.notNull(walletHash, "Wallet hash can not be null");
+        Assert.notNull(clientId, "Client Id can not be null");
+        final UserEntity userEntity = userRepository.findById(clientId).orElseThrow(() -> new IllegalStateException("User not found"));
+        return tokenManagementBlockchainRepository.getTokensByClient(walletHash, userEntity.getWalletHash());
+    }
+
+    /**
+     *
+     * @param orderRequest
+     * @return
+     * @throws RepositoryException
+     */
+    @Override
+    public OrderDetailDTO placeTokensOrder(final PlaceTokensOrderRequestDTO orderRequest) throws Exception {
+        Assert.notNull(orderRequest.getWalletHash(), "Wallet Hash can not be null");
+        Assert.notNull(orderRequest.getTokens(), "Token Count can not be null");
+        final UserEntity userEntity = userRepository.findOneByWalletHash(orderRequest.getWalletHash()).orElseThrow(() -> new IllegalStateException("User not found"));
+        final Long tokenPriceInWeis = tokenManagementBlockchainRepository.getTokenPriceInWeis(orderRequest.getTokens());
+        final Double tokenPriceInEth = tokenPriceInWeis * ONE_WEI_IN_ETH;
+        final CryptoComparePricesDTO prices = cryptoCompareService.getEthPrices();
+        final Double tokenPriceInEUR = prices.getEUR() * tokenPriceInEth;
+        logger.debug("tokenPriceInEUR -> " + tokenPriceInEUR);
+        logger.debug("tokenPriceInEth -> " + tokenPriceInEth);
+        final Double orderAmount = orderRequest.getTokens() * tokenPriceInEUR;
+        final CreatedOrderDTO createdOrder = paymentService.createOrder(userEntity, orderAmount, null);
+        final CreatedOrderEntity createdOrderEntity = CreatedOrderEntity
+                .builder()
+                .orderId(createdOrder.getOrderId())
+                .createdAt(new Date())
+                .tokenPriceInEu(tokenPriceInEUR)
+                .tokens(orderRequest.getTokens())
+                .user(userEntity)
+                .approvalLink(createdOrder.getApprovalLink().getPath())
+                .status(CreatedOrderStateEnum.PENDING_APPROVAL)
+                .amount(orderAmount)
+                .build();
+        final CreatedOrderEntity createdOrderEntitySaved = createdOrderRepository.save(createdOrderEntity);
+        return createdOrderMapper.entityToDTO(createdOrderEntitySaved);
+    }
+
+}
