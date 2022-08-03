@@ -33,7 +33,7 @@ public class NewUserRegistrationProcessor implements Function<OnNewUserRegistrat
         try {
             userService.register(event);
             registeredEvent = new OnUserRegisteredEvent(event.getWalletHash());
-        } catch (final RepositoryException ex) {
+        } catch (final Exception ex) {
             logger.debug("Ex Message -> " + ex.getMessage());
         }
         return registeredEvent;

@@ -34,10 +34,10 @@ public class CreatedOrderEntity {
     private ObjectId id;
 
     /**
-     * Order Id
+     * External Order Id
      */
     @Field("order_id")
-    private String orderId;
+    private String externalOrderId;
 
     /**
      * Approval Link
@@ -56,6 +56,12 @@ public class CreatedOrderEntity {
      */
     @Field("created_at")
     private Date createdAt;
+
+    /**
+     * Approved At
+     */
+    @Field("approved_at")
+    private Date approvedAt;
 
     /**
      * Tokens

@@ -3,6 +3,7 @@ package com.dreamsoftware.tcs.web.controller.tokens;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.services.ITokenManagementService;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
+import com.dreamsoftware.tcs.web.controller.tokens.error.exception.ConfirmOrderException;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.GetClientTokensException;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.GetMyTokensException;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.PlaceTokensOrderException;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Notifications Controller
@@ -102,6 +104,27 @@ public class TokenManagementController extends SupportController {
                     HttpStatus.OK, orderDetail);
         } catch (final Exception ex) {
             throw new PlaceTokensOrderException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param externalOrderId
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "CONFIRM_ORDER - Confirm Order", description = "Confirm Order", tags = {"tokens-manadgement"})
+    @RequestMapping(value = "/order/confirm", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<OrderDetailDTO>> confirmOrder(
+            @RequestParam String externalOrderId
+    ) throws Throwable {
+        try {
+            final OrderDetailDTO orderDetail = tokenManagementService.confirmOrder(externalOrderId);
+            return responseHelper.<OrderDetailDTO>createAndSendResponse(TokenManagementResponseCodeEnum.CONFIRM_ORDER_SUCCESS,
+                    HttpStatus.OK, orderDetail);
+        } catch (final Exception ex) {
+            throw new ConfirmOrderException(ex.getMessage(), ex);
         }
     }
 

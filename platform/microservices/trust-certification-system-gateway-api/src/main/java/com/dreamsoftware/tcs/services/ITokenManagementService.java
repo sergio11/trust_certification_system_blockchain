@@ -37,6 +37,14 @@ public interface ITokenManagementService {
 
     /**
      *
+     * @param externalOrderId
+     * @return
+     * @throws Exception
+     */
+    OrderDetailDTO confirmOrder(final String externalOrderId) throws Exception;
+
+    /**
+     *
      * @param walletHash
      * @param clientId
      * @return

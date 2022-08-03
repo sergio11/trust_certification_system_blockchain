@@ -1,7 +1,8 @@
 package com.dreamsoftware.tcs.service;
 
+import com.dreamsoftware.tcs.model.events.NewTokensOrderApprovedEvent;
 import com.dreamsoftware.tcs.model.events.OnNewUserRegistrationEvent;
-import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
+import com.dreamsoftware.tcs.model.events.OnTokensOrderCompletedEvent;
 
 /**
  *
@@ -12,9 +13,9 @@ public interface IUserService {
     /**
      *
      * @param event
-     * @throws com.dreamsoftware.tcs.persistence.exception.RepositoryException
+     * @throws java.lang.Exception
      */
-    void register(OnNewUserRegistrationEvent event) throws RepositoryException;
+    void register(OnNewUserRegistrationEvent event) throws Exception;
 
     /**
      * Validate User
@@ -22,5 +23,17 @@ public interface IUserService {
      * @param walletHash
      */
     void validate(String walletHash);
+
+    /**
+     *
+     * @param event
+     */
+    void addTokensToWallet(final NewTokensOrderApprovedEvent event) throws Exception;
+
+    /**
+     *
+     * @param event
+     */
+    void completeOrder(final OnTokensOrderCompletedEvent event);
 
 }

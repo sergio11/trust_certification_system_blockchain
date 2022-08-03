@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.web.controller.tokens.error;
 
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.tokens.TokenManagementResponseCodeEnum;
+import com.dreamsoftware.tcs.web.controller.tokens.error.exception.ConfirmOrderException;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.GetClientTokensException;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.GetMyTokensException;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.PlaceTokensOrderException;
@@ -66,7 +67,21 @@ public class TokenManagementErrorController extends SupportController {
     @ResponseBody
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handlePlaceTokensOrderException(PlaceTokensOrderException ex, HttpServletRequest request) {
         logger.error("Handler for PlaceTokensOrderException -> " + ex.getMessage());
-        return responseHelper.createAndSendErrorResponse(TokenManagementResponseCodeEnum.PLACE_TOKENS_ORDER_SUCCESS,
+        return responseHelper.createAndSendErrorResponse(TokenManagementResponseCodeEnum.PLACE_TOKENS_ORDER_ERROR,
                 HttpStatus.INTERNAL_SERVER_ERROR, "An error ocurred while place order");
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(ConfirmOrderException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleConfirmOrderException(ConfirmOrderException ex, HttpServletRequest request) {
+        logger.error("Handler for ConfirmOrderException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(TokenManagementResponseCodeEnum.CONFIRM_ORDER_ERROR,
+                HttpStatus.INTERNAL_SERVER_ERROR, "An error ocurred while confirm order");
     }
 }

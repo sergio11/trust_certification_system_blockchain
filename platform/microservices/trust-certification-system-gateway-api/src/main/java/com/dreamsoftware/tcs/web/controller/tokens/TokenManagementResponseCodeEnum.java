@@ -13,7 +13,9 @@ public enum TokenManagementResponseCodeEnum implements IResponseCodeTypes {
     GET_CLIENT_TOKENS_SUCCESS(702L),
     GET_CLIENT_TOKENS_ERROR(703L),
     PLACE_TOKENS_ORDER_SUCCESS(704L),
-    PLACE_TOKENS_ORDER_ERROR(705L);
+    PLACE_TOKENS_ORDER_ERROR(705L),
+    CONFIRM_ORDER_SUCCESS(706L),
+    CONFIRM_ORDER_ERROR(707L);
 
     private final Long code;
     public static final String CATEGORY_NAME = "TOKEN_MANAGEMENT";

@@ -1,6 +1,8 @@
 package com.dreamsoftware.tcs.service.impl;
 
+import com.dreamsoftware.tcs.model.events.NewTokensOrderApprovedEvent;
 import com.dreamsoftware.tcs.model.events.OnNewUserRegistrationEvent;
+import com.dreamsoftware.tcs.model.events.OnTokensOrderCompletedEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.IEtherFaucetBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchainRepository;
@@ -109,6 +111,18 @@ public class UserServiceImpl implements IUserService {
                 break;
         }
         return defaultTokens;
+    }
+
+    @Override
+    public void addTokensToWallet(final NewTokensOrderApprovedEvent event) {
+        Assert.notNull(event, "event can not be null");
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void completeOrder(OnTokensOrderCompletedEvent event) {
+        Assert.notNull(event, "event can not be null");
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
