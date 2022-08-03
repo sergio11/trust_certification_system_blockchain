@@ -37,9 +37,17 @@ public class StreamChannelsProperties {
     @Value("${channels.new-certification-request}")
     private String newCertificationRequest;
 
+    /**
+     * New Tokens Order Approved
+     */
+    @Value("${channels.noew-tokens-order-approved}")
+    private String newTokensOrderApproved;
+
     @PostConstruct
     public void onPostConstruct() {
         logger.debug("newUserRegistration -> " + newUserRegistration);
         logger.debug("certificationCourseRegistration -> " + certificationCourseRegistration);
+        logger.debug("newCertificationRequest -> " + newCertificationRequest);
+        logger.debug("newTokensOrderApproved -> " + newTokensOrderApproved);
     }
 }

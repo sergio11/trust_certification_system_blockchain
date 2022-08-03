@@ -23,10 +23,10 @@ public class OrderDetailDTO {
     private String id;
 
     /**
-     * Order Id
+     * External Order Id
      */
-    @JsonProperty("order_id")
-    private String orderId;
+    @JsonProperty("external_order_id")
+    private String externalOrderId;
 
     /**
      * Approval Link

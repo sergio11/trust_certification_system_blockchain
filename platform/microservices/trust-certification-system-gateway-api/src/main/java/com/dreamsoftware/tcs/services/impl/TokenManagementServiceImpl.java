@@ -1,6 +1,8 @@
 package com.dreamsoftware.tcs.services.impl;
 
+import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.CreatedOrderMapper;
+import com.dreamsoftware.tcs.model.events.NewTokensOrderApprovedEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderEntity;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -41,6 +44,8 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
     private final ICryptoCompareService cryptoCompareService;
     private final CreatedOrderRepository createdOrderRepository;
     private final CreatedOrderMapper createdOrderMapper;
+    private final StreamBridge streamBridge;
+    private final StreamChannelsProperties streamChannelsProperties;
 
     /**
      *
@@ -99,7 +104,7 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
         final CreatedOrderDTO createdOrder = paymentService.createOrder(userEntity, orderAmount, null);
         final CreatedOrderEntity createdOrderEntity = CreatedOrderEntity
                 .builder()
-                .orderId(createdOrder.getOrderId())
+                .externalOrderId(createdOrder.getOrderId())
                 .createdAt(new Date())
                 .tokenPriceInEu(tokenPriceInEUR)
                 .tokens(orderRequest.getTokens())
@@ -108,6 +113,23 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
                 .status(CreatedOrderStateEnum.PENDING_APPROVAL)
                 .amount(orderAmount)
                 .build();
+        final CreatedOrderEntity createdOrderEntitySaved = createdOrderRepository.save(createdOrderEntity);
+        return createdOrderMapper.entityToDTO(createdOrderEntitySaved);
+    }
+
+    /**
+     *
+     * @param externalOrderId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public OrderDetailDTO confirmOrder(final String externalOrderId) throws Exception {
+        Assert.notNull(externalOrderId, "External Order id can not be null");
+        final CreatedOrderEntity createdOrderEntity = createdOrderRepository.findByExternalOrderId(externalOrderId).orElseThrow(() -> new IllegalStateException("Order not found"));
+        createdOrderEntity.setStatus(CreatedOrderStateEnum.APPROVED);
+        createdOrderEntity.setApprovedAt(new Date());
+        streamBridge.send(streamChannelsProperties.getNewTokensOrderApproved(), new NewTokensOrderApprovedEvent(createdOrderEntity.getId()));
         final CreatedOrderEntity createdOrderEntitySaved = createdOrderRepository.save(createdOrderEntity);
         return createdOrderMapper.entityToDTO(createdOrderEntitySaved);
     }
