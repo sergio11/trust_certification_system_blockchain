@@ -70,6 +70,26 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
     }
 
     /**
+     *
+     * @param targetWalletHash
+     * @param amountInWei
+     * @throws RepositoryException
+     */
+    @Override
+    public void sendFunds(String targetWalletHash, Long amountInWei) throws RepositoryException {
+        Assert.notNull(targetWalletHash, "Target Wallet hash can not be null");
+        Assert.notNull(amountInWei, "amountInWei can not be null");
+        logger.debug("sendFunds Funds -> " + targetWalletHash);
+        try {
+            final EtherFaucetContractExt etherFaucetContract = loadEtherFaucetContract();
+            final Credentials credentials = walletService.loadCredentials(targetWalletHash);
+            etherFaucetContract.sendFunds(credentials.getAddress(), BigInteger.valueOf(amountInWei)).send();
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Get events
      *
      * @return
