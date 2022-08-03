@@ -25,4 +25,11 @@ public interface IEtherFaucetBlockchainRepository extends IBlockchainEventReposi
      */
     void depositFunds(final String walletHash, final Long weiValue) throws RepositoryException;
 
+    /**
+     *
+     * @param targetWalletHash
+     * @param amountInWei
+     * @throws RepositoryException
+     */
+    void sendFunds(final String targetWalletHash, final Long amountInWei) throws RepositoryException;
 }
