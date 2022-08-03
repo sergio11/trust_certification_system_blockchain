@@ -16,6 +16,7 @@
         <guava.version>31.0.1-jre</guava.version>
         <poi.version>4.1.2</poi.version>
         <jsonwebtoken.version>0.7.0</jsonwebtoken.version>
+        <paypel.checkout.sdk>2.0.0</paypel.checkout.sdk>
     </properties>
 
     <parent>
@@ -37,6 +38,12 @@
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>1.9.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.paypal.sdk</groupId>
+            <artifactId>checkout-sdk</artifactId>
+            <version>${paypel.checkout.sdk}</version>
         </dependency>
 
         <dependency>
