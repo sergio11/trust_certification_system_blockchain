@@ -40,7 +40,7 @@ public class StreamChannelsProperties {
     /**
      * New Tokens Order Approved
      */
-    @Value("${channels.noew-tokens-order-approved}")
+    @Value("${channels.new-tokens-order-approved}")
     private String newTokensOrderApproved;
 
     @PostConstruct

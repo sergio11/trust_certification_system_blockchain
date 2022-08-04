@@ -105,24 +105,31 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
         Assert.notNull(orderRequest.getWalletHash(), "Wallet Hash can not be null");
         Assert.notNull(orderRequest.getTokens(), "Token Count can not be null");
         final UserEntity userEntity = userRepository.findOneByWalletHash(orderRequest.getWalletHash()).orElseThrow(() -> new IllegalStateException("User not found"));
-        final Long tokenPriceInWeis = tokenManagementBlockchainRepository.getTokenPriceInWeis(orderRequest.getTokens());
+        final Long tokens = orderRequest.getTokens();
+        final Long tokenPriceInWeis = tokenManagementBlockchainRepository.getTokenPriceInWeis(tokens);
         final Double tokenPriceInEth = tokenPriceInWeis * ONE_WEI_IN_ETH;
         final CryptoComparePricesDTO prices = cryptoCompareService.getEthPrices();
         final Double tokenPriceInEUR = prices.getEUR() * tokenPriceInEth;
+        final Double tokenPriceInUSD = prices.getUSD() * tokenPriceInEth;
         logger.debug("tokenPriceInEUR -> " + tokenPriceInEUR);
         logger.debug("tokenPriceInEth -> " + tokenPriceInEth);
-        final Double orderAmount = orderRequest.getTokens() * tokenPriceInEUR;
-        final CreatedOrderDTO createdOrder = paymentService.createOrder(userEntity, orderAmount, null);
+        final Double orderAmountEUR = tokens * tokenPriceInEUR;
+        final Double orderAmountUSD = tokens * tokenPriceInUSD;
+        final Long orderAmountWEI = tokens * tokenPriceInWeis;
+        final CreatedOrderDTO createdOrder = paymentService.createOrder(userEntity, orderAmountEUR, null);
         final CreatedOrderEntity createdOrderEntity = CreatedOrderEntity
                 .builder()
                 .externalOrderId(createdOrder.getOrderId())
                 .createdAt(new Date())
-                .tokenPriceInEu(tokenPriceInEUR)
-                .tokens(orderRequest.getTokens())
+                .tokenPriceEUR(tokenPriceInEUR)
+                .tokenPriceUSD(tokenPriceInUSD)
+                .amountEUR(orderAmountEUR)
+                .amountUSD(orderAmountUSD)
+                .amountWEI(orderAmountWEI)
+                .tokens(tokens)
                 .user(userEntity)
                 .approvalLink(createdOrder.getApprovalLink().getPath())
                 .status(CreatedOrderStateEnum.PENDING_APPROVAL)
-                .amount(orderAmount)
                 .build();
         final CreatedOrderEntity createdOrderEntitySaved = createdOrderRepository.save(createdOrderEntity);
         return createdOrderMapper.entityToDTO(createdOrderEntitySaved);

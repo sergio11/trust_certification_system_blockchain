@@ -6,9 +6,11 @@ import com.dreamsoftware.tcs.model.events.OnTokensOrderCompletedEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.IEtherFaucetBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CreatedOrderRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IUserService;
 import java.util.Date;
@@ -57,11 +59,16 @@ public class UserServiceImpl implements IUserService {
     private final UserRepository userRepository;
 
     /**
+     * Created order repository
+     */
+    private final CreatedOrderRepository createdOrderRepository;
+
+    /**
      *
      * @param event
      */
     @Override
-    public void register(OnNewUserRegistrationEvent event) throws RepositoryException {
+    public void register(OnNewUserRegistrationEvent event) throws Exception {
         Assert.notNull(event, "Event can not be null");
         logger.debug("register -> " + event.getWalletHash() + " CALLED!");
         // Add Seed Funds
@@ -89,6 +96,37 @@ public class UserServiceImpl implements IUserService {
     }
 
     /**
+     *
+     * @param event
+     */
+    @Override
+    public Long addTokensToWallet(final NewTokensOrderApprovedEvent event) throws Exception {
+        Assert.notNull(event, "event can not be null");
+        logger.debug("Add tokens to wallet, order id " + event.getOrderId());
+        final CreatedOrderEntity createdOrder = createdOrderRepository.findById(event.getOrderId()).orElseThrow(() -> new IllegalStateException("Order not found"));
+        final String targetWalletHash = createdOrder.getUser().getWalletHash();
+        final Long amountWei = createdOrder.getAmountWEI();
+        etherFaucetBlockchainRepository.sendFunds(targetWalletHash, amountWei);
+        tokenManagementBlockchainRepository.addTokens(targetWalletHash, createdOrder.getTokens());
+        return tokenManagementBlockchainRepository.getMyTokens(targetWalletHash);
+    }
+
+    /**
+     *
+     * @param event
+     */
+    @Override
+    public void completeOrder(final OnTokensOrderCompletedEvent event) {
+        Assert.notNull(event, "event can not be null");
+        logger.debug("Complete Order id: " + event.getOrderId());
+        createdOrderRepository.findById(event.getOrderId()).ifPresent((orderEntity) -> {
+            orderEntity.setCompletedAt(new Date());
+            orderEntity.setStatus(CreatedOrderStateEnum.COMPLETED);
+            createdOrderRepository.save(orderEntity);
+        });
+    }
+
+    /**
      * Private Methods
      */
     /**
@@ -112,17 +150,4 @@ public class UserServiceImpl implements IUserService {
         }
         return defaultTokens;
     }
-
-    @Override
-    public void addTokensToWallet(final NewTokensOrderApprovedEvent event) {
-        Assert.notNull(event, "event can not be null");
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void completeOrder(OnTokensOrderCompletedEvent event) {
-        Assert.notNull(event, "event can not be null");
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

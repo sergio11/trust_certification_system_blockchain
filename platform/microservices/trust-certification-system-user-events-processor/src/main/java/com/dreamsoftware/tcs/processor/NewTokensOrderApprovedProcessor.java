@@ -2,7 +2,6 @@ package com.dreamsoftware.tcs.processor;
 
 import com.dreamsoftware.tcs.model.events.NewTokensOrderApprovedEvent;
 import com.dreamsoftware.tcs.model.events.OnTokensOrderCompletedEvent;
-import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.service.IUserService;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
