@@ -16,27 +16,63 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificateIssuedDTO {
 
+    /**
+     * Identity
+     */
     @JsonProperty("identity")
     private String id;
-    @JsonProperty("issuerAddress")
-    private String issuerAddress;
-    @JsonProperty("recipientAddress")
-    private String recipientAddress;
+
+    /**
+     * Course
+     */
     @JsonProperty("course")
     private String course;
-    @JsonProperty("expirationDate")
-    private Long expirationDate;
+
+    /**
+     * Expiration Date
+     */
+    @JsonProperty("expiration_date")
+    private String expirationDate;
+
+    /**
+     * Qualification
+     */
     @JsonProperty("qualification")
     private Long qualification;
-    @JsonProperty("durationInHours")
-    private Long durationInHours;
-    @JsonProperty("expeditionDate")
-    private Long expeditionDate;
-    @JsonProperty("isVisible")
+
+    /**
+     * Duration In Hours
+     */
+    @JsonProperty("duration_in_hours")
+    private String durationInHours;
+
+    /**
+     * Expedition Date
+     */
+    @JsonProperty("expedition_date")
+    private String expeditionDate;
+
+    /**
+     * Is Visible
+     */
+    @JsonProperty("is_visible")
     private Boolean isVisible;
-    @JsonProperty("isEnabled")
+
+    /**
+     * Is Enabled
+     */
+    @JsonProperty("is_enabled")
     private Boolean isEnabled;
-    @JsonProperty("isExist")
+
+    /**
+     * Is Exist
+     */
+    @JsonProperty("is_exist")
     private Boolean isExist;
 
+    /**
+     * Certifiate CID
+     */
+    @JsonProperty("cid")
+    private String cid;
 }

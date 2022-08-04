@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.persistence.bc.repository;
 
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedBcEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.TrustCertificationEventEntity;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import java.util.List;
@@ -22,7 +22,7 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
      * @return
      * @throws RepositoryException
      */
-    CertificateIssuedBcEntity issueCertificate(final String issuerWalletHash,
+    CertificateIssuedEntity issueCertificate(final String issuerWalletHash,
             final String studentWalletHash, final String certificateCourseId, final Long qualification, final String cid) throws RepositoryException;
 
     /**
@@ -33,7 +33,7 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
      * @return
      * @throws RepositoryException
      */
-    CertificateIssuedBcEntity renewCertificate(final String studentWalletHash, final String certificationId) throws RepositoryException;
+    CertificateIssuedEntity renewCertificate(final String studentWalletHash, final String certificationId) throws RepositoryException;
 
     /**
      * Enable Certification
@@ -43,7 +43,7 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
      * @return
      * @throws RepositoryException
      */
-    CertificateIssuedBcEntity enable(final String studentWalletHash, final String certificationId) throws RepositoryException;
+    CertificateIssuedEntity enable(final String studentWalletHash, final String certificationId) throws RepositoryException;
 
     /**
      * Disable Certification
@@ -53,7 +53,7 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
      * @return
      * @throws RepositoryException
      */
-    CertificateIssuedBcEntity disable(final String studentWalletHash, final String certificationId) throws RepositoryException;
+    CertificateIssuedEntity disable(final String studentWalletHash, final String certificationId) throws RepositoryException;
 
     /**
      * Update Certificate Visibility
@@ -64,7 +64,7 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
      * @return
      * @throws RepositoryException
      */
-    CertificateIssuedBcEntity updateCertificateVisibility(final String studentWalletHash, final String certificationId, final Boolean isVisible) throws RepositoryException;
+    CertificateIssuedEntity updateCertificateVisibility(final String studentWalletHash, final String certificationId, final Boolean isVisible) throws RepositoryException;
 
     /**
      * Is Certificate Valid
@@ -84,7 +84,7 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
      * @return
      * @throws RepositoryException
      */
-    CertificateIssuedBcEntity getCertificateDetail(final String walletHash, final String certificationId) throws RepositoryException;
+    CertificateIssuedEntity getCertificateDetail(final String walletHash, final String certificationId) throws RepositoryException;
 
     /**
      * Get My Certificates as Recipient
@@ -93,7 +93,7 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
      * @return
      * @throws RepositoryException
      */
-    List<CertificateIssuedBcEntity> getMyCertificatesAsRecipient(final String walletHash) throws RepositoryException;
+    List<CertificateIssuedEntity> getMyCertificatesAsRecipient(final String walletHash) throws RepositoryException;
 
     /**
      * Get My Certificates as issuer
@@ -102,6 +102,6 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
      * @return
      * @throws RepositoryException
      */
-    List<CertificateIssuedBcEntity> getMyCertificatesAsIssuer(final String walletHash) throws RepositoryException;
+    List<CertificateIssuedEntity> getMyCertificatesAsIssuer(final String walletHash) throws RepositoryException;
 
 }

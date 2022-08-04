@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CertificateIssuedBcEntity {
+public class CertificateIssuedEntity {
 
     /**
      * Certificate Id
@@ -69,4 +69,9 @@ public class CertificateIssuedBcEntity {
      * is Exists
      */
     private Boolean isExist;
+
+    /**
+     * Certificate CID
+     */
+    private String cid;
 }

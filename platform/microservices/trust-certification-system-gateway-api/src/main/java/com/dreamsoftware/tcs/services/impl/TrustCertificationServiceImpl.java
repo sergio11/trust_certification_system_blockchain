@@ -5,7 +5,7 @@ import com.dreamsoftware.tcs.mapper.CertificateIssuanceRequestMapper;
 import com.dreamsoftware.tcs.mapper.CertificateIssuedMapper;
 import com.dreamsoftware.tcs.model.events.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedBcEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateStatusEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
@@ -24,8 +24,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
+import com.dreamsoftware.tcs.service.IipfsGateway;
+import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
 import java.util.Date;
+import org.springframework.http.MediaType;
 
 /**
  *
@@ -45,6 +48,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     private final StreamBridge streamBridge;
     private final StreamChannelsProperties streamChannelsProperties;
     private final CertificateIssuanceRequestMapper certificateIssuanceRequestMapper;
+    private final IipfsGateway ipfsService;
 
     /**
      *
@@ -57,8 +61,8 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     public CertificateIssuedDTO enable(String ownerWallet, String certificationId) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
-        final CertificateIssuedBcEntity certificate = trustCertificationRepository.enable(ownerWallet, certificationId);
-        return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(certificate);
+        final CertificateIssuedEntity certificate = trustCertificationRepository.enable(ownerWallet, certificationId);
+        return certificateIssuedMapper.entityToDTO(certificate);
     }
 
     /**
@@ -72,8 +76,8 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     public CertificateIssuedDTO disable(String ownerWallet, String certificationId) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
-        final CertificateIssuedBcEntity certificate = trustCertificationRepository.disable(ownerWallet, certificationId);
-        return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(certificate);
+        final CertificateIssuedEntity certificate = trustCertificationRepository.disable(ownerWallet, certificationId);
+        return certificateIssuedMapper.entityToDTO(certificate);
     }
 
     /**
@@ -88,8 +92,8 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     public CertificateIssuedDTO updateVisibility(String ownerWallet, String certificationId, Boolean isVisible) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
-        final CertificateIssuedBcEntity certificate = trustCertificationRepository.updateCertificateVisibility(ownerWallet, certificationId, isVisible);
-        return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(certificate);
+        final CertificateIssuedEntity certificate = trustCertificationRepository.updateCertificateVisibility(ownerWallet, certificationId, isVisible);
+        return certificateIssuedMapper.entityToDTO(certificate);
     }
 
     /**
@@ -103,8 +107,8 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     public CertificateIssuedDTO getDetail(String ownerWallet, String certificationId) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
-        final CertificateIssuedBcEntity certificate = trustCertificationRepository.getCertificateDetail(ownerWallet, certificationId);
-        return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(certificate);
+        final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(ownerWallet, certificationId);
+        return certificateIssuedMapper.entityToDTO(certificate);
     }
 
     /**
@@ -130,8 +134,8 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     @Override
     public Iterable<CertificateIssuedDTO> getMyCertificatesAsRecipient(String ownerWallet) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
-        final List<CertificateIssuedBcEntity> myCertificates = trustCertificationRepository.getMyCertificatesAsRecipient(ownerWallet);
-        return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(myCertificates);
+        final List<CertificateIssuedEntity> myCertificates = trustCertificationRepository.getMyCertificatesAsRecipient(ownerWallet);
+        return certificateIssuedMapper.entityToDTO(myCertificates);
     }
 
     /**
@@ -143,8 +147,8 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     @Override
     public Iterable<CertificateIssuedDTO> getMyCertificatesAsIssuer(String ownerWallet) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
-        final List<CertificateIssuedBcEntity> myCertificates = trustCertificationRepository.getMyCertificatesAsIssuer(ownerWallet);
-        return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(myCertificates);
+        final List<CertificateIssuedEntity> myCertificates = trustCertificationRepository.getMyCertificatesAsIssuer(ownerWallet);
+        return certificateIssuedMapper.entityToDTO(myCertificates);
     }
 
     /**
@@ -218,8 +222,8 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     public CertificateIssuedDTO renewCertificate(String ownerWallet, String certificationId) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
-        final CertificateIssuedBcEntity certificate = trustCertificationRepository.renewCertificate(ownerWallet, certificationId);
-        return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(certificate);
+        final CertificateIssuedEntity certificate = trustCertificationRepository.renewCertificate(ownerWallet, certificationId);
+        return certificateIssuedMapper.entityToDTO(certificate);
     }
 
     /**
@@ -244,5 +248,25 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
         Assert.notNull(caWalletHash, "CA Wallet hash can not be null");
         Iterable<CertificateIssuanceRequestEntity> certificateRequests = certificateIssuanceRequestRepository.findByCaWalletHashOrderByUpdatedAtDesc(caWalletHash);
         return certificateIssuanceRequestMapper.entityToDTO(certificateRequests);
+    }
+
+    /**
+     *
+     * @param ownerWallet
+     * @param certificateId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public FileInfoDTO getCertificateFile(final String ownerWallet, final String certificateId) throws Exception {
+        Assert.notNull(certificateId, "Certificate Id can not be null");
+        final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(ownerWallet, certificateId);
+        final byte[] fileContents = ipfsService.get(certificate.getCid());
+        return FileInfoDTO
+                .builder()
+                .content(fileContents)
+                .contentType(MediaType.APPLICATION_PDF_VALUE)
+                .size((long) fileContents.length)
+                .build();
     }
 }

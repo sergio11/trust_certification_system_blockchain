@@ -5,7 +5,7 @@ import com.dreamsoftware.tcs.model.events.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedBcEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityEntity;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
@@ -75,7 +75,7 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
      * @return
      */
     @Override
-    public CertificateIssuedBcEntity issueCertificate(OnNewIssueCertificateRequestEvent event) throws Exception {
+    public CertificateIssuedEntity issueCertificate(OnNewIssueCertificateRequestEvent event) throws Exception {
         Assert.notNull(event, "Event can not be null");
         logger.debug("issueCertificate - CA Wallet: " + event.getCaWalletHash());
         logger.debug("issueCertificate - Student Wallet: " + event.getStudentWalletHash());

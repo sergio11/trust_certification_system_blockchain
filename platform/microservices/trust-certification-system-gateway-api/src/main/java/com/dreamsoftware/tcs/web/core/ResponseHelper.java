@@ -228,6 +228,21 @@ public class ResponseHelper {
     }
 
     /**
+     * Create And Send Media Response
+     *
+     * @param uploadFileInfo
+     * @return
+     */
+    public ResponseEntity<byte[]> createAndSendMediaResponse(final FileInfoDTO uploadFileInfo) {
+        return ResponseEntity.ok()
+                .contentLength(uploadFileInfo.getSize())
+                .contentType(uploadFileInfo.getContentType() != null
+                        ? MediaType.parseMediaType(uploadFileInfo.getContentType())
+                        : MediaType.IMAGE_PNG)
+                .body(uploadFileInfo.getContent());
+    }
+
+    /**
      * Get info url
      *
      * @param responseCode

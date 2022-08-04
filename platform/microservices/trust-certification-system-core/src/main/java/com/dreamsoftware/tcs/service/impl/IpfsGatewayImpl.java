@@ -5,6 +5,7 @@ import com.dreamsoftware.tcs.service.IipfsGateway;
 import io.ipfs.api.IPFS;
 import io.ipfs.api.MerkleNode;
 import io.ipfs.api.NamedStreamable;
+import io.ipfs.multihash.Multihash;
 import java.io.File;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,18 @@ public class IpfsGatewayImpl implements IipfsGateway {
             fileToSave.delete();
         }
         return addResult.hash.toHex();
+    }
+
+    /**
+     *
+     * @param hashHex
+     * @throws Exception
+     */
+    @Override
+    public byte[] get(final String hashHex) throws Exception {
+        Assert.notNull(hashHex, "Hash can not be null");
+        IPFS ipfs = new IPFS(ipfsProperties.getConnectionAddress());
+        return ipfs.get(Multihash.fromHex(hashHex));
     }
 
 }
