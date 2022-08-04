@@ -21,4 +21,11 @@ public interface CertificateIssuanceRequestRepository extends MongoRepository<Ce
      */
     Long countByIdAndStatus(final ObjectId id, final CertificateStatusEnum status);
 
+    /**
+     *
+     * @param studentWalletHash
+     * @return
+     */
+    Iterable<CertificateIssuanceRequestEntity> findByStudentWalletHashOrderByUpdatedAtDesc(final String studentWalletHash);
+
 }

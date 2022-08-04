@@ -6,6 +6,7 @@ import com.dreamsoftware.tcs.web.controller.certification.error.exception.Disabl
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.EnableCertificateException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificateIssuedDetailException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificatesException;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificatesIssuanceRequestsException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.IssueCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.RejectCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.RenewCertificateException;
@@ -159,4 +160,19 @@ public class TrustCertificationErrorController extends SupportController {
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.RENEW_CERTIFICATE_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, "Renew certificate Failed");
     }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(GetCertificatesIssuanceRequestsException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetCertificatesIssuanceRequestsException(GetCertificatesIssuanceRequestsException ex, HttpServletRequest request) {
+        logger.error("Handler for GetCertificatesIssuanceRequestsException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.GET_CERTIFICATES_ISSUANCE_REQUEST_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, "Get certificates Issuance requests Failed");
+    }
+
 }

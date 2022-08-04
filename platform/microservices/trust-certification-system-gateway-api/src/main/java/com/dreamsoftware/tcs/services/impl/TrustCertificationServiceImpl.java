@@ -221,4 +221,16 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
         final CertificateIssuedBcEntity certificate = trustCertificationRepository.renewCertificate(ownerWallet, certificationId);
         return certificateIssuedMapper.certificateIssuedEntityToCertificateIssued(certificate);
     }
+
+    /**
+     *
+     * @param studentWalletHash
+     * @return
+     */
+    @Override
+    public Iterable<CertificateIssuanceRequestDTO> getCertificatesIssuanceRequestsFromStudent(final String studentWalletHash) {
+        Assert.notNull(studentWalletHash, "Student Wallet hash can not be null");
+        Iterable<CertificateIssuanceRequestEntity> certificateRequests = certificateIssuanceRequestRepository.findByStudentWalletHashOrderByUpdatedAtDesc(studentWalletHash);
+        return certificateIssuanceRequestMapper.entityToDTO(certificateRequests);
+    }
 }

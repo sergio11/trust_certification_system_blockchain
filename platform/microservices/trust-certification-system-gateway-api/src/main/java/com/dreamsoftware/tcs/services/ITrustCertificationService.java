@@ -100,6 +100,13 @@ public interface ITrustCertificationService {
     CertificateIssuanceRequestDTO rejectCertificateRequest(final ObjectId id);
 
     /**
+     *
+     * @param studentWalletHash
+     * @return
+     */
+    Iterable<CertificateIssuanceRequestDTO> getCertificatesIssuanceRequestsFromStudent(final String studentWalletHash);
+
+    /**
      * Renew Certificate
      *
      * @param ownerWallet

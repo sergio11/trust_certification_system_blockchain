@@ -6,6 +6,7 @@ import com.dreamsoftware.tcs.web.controller.certification.error.exception.Disabl
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.EnableCertificateException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificateIssuedDetailException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificatesException;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificatesIssuanceRequestsException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.IssueCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.RejectCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.RenewCertificateException;
@@ -220,6 +221,36 @@ public class TrustCertificationController extends SupportController {
                     HttpStatus.OK, certificateIssuedDTOList);
         } catch (final Exception ex) {
             throw new GetCertificatesException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Get My Certificates As Recipient
+     *
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "GET_CERTIFICATES_ISSUANCE_REQUESTS_FROM_STUDENT - Get certificates issuance requests from student", description = "Get certificates issuance requests from student", tags = {"CERTIFICATE_ISSUED"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Certificates Issuance request",
+                content = @Content(schema = @Schema(implementation = CertificateIssuanceRequestDTO.class))),
+        @ApiResponse(responseCode = "404", description = "No Certificates request Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/certificates/request/student"}, method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForStudent
+    public ResponseEntity<APIResponse<Iterable<CertificateIssuanceRequestDTO>>> getCertificatesIssuanceRequestsFromStudent(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final Iterable<CertificateIssuanceRequestDTO> certificateIssuanceRequestDTOList = trustCertificationService.getCertificatesIssuanceRequestsFromStudent(selfUser.getWalletHash());
+            return responseHelper.<Iterable<CertificateIssuanceRequestDTO>>createAndSendResponse(
+                    TrustCertificationResponseCodeEnum.GET_CERTIFICATES_ISSUANCE_REQUEST_SUCCESS,
+                    HttpStatus.OK, certificateIssuanceRequestDTOList);
+        } catch (final Exception ex) {
+            throw new GetCertificatesIssuanceRequestsException(ex.getMessage(), ex);
         }
     }
 
