@@ -3,6 +3,7 @@ package com.dreamsoftware.tcs.web.controller.certification;
 import com.dreamsoftware.tcs.services.ITrustCertificationService;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.AcceptCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.DisableCertificateException;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.DownloadCertificateFileException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.EnableCertificateException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificateIssuedDetailException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificatesException;
@@ -14,6 +15,7 @@ import com.dreamsoftware.tcs.web.controller.certification.error.exception.Update
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
+import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
@@ -41,6 +43,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.dreamsoftware.tcs.web.validation.constraints.CertificateShouldBePendingReview;
+import java.io.IOException;
 
 /**
  *
@@ -177,7 +180,7 @@ public class TrustCertificationController extends SupportController {
         @ApiResponse(responseCode = "404", description = "Certificate Issued Not Found",
                 content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET,
+    @RequestMapping(value = {"/{id}/detail"}, method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<CertificateIssuedDTO>> getDetailById(
             @Parameter(name = "id", description = "Certificate Id", required = true)
@@ -349,7 +352,7 @@ public class TrustCertificationController extends SupportController {
      * @throws java.lang.Throwable
      */
     @Operation(summary = "ACCEPT_CERTIFICATE_REQUEST - Accept request for certificate issuance", description = "Accept request for certificate issuance", tags = {"CERTIFICATE_ISSUED"})
-    @RequestMapping(value = "/accept/{id}", method = RequestMethod.PUT,
+    @RequestMapping(value = "/{id}/accept", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> acceptCertificateRequest(
@@ -367,7 +370,7 @@ public class TrustCertificationController extends SupportController {
     }
 
     /**
-     * Issue Certificate
+     * Reject Certificate
      *
      * @param id
      * @param selfUser
@@ -375,7 +378,7 @@ public class TrustCertificationController extends SupportController {
      * @throws java.lang.Throwable
      */
     @Operation(summary = "REJECT_CERTIFICATE_REQUEST - Reject request for certificate issuance", description = "Reject request for certificate issuance", tags = {"CERTIFICATE_ISSUED"})
-    @RequestMapping(value = "/reject/{id}", method = RequestMethod.PUT,
+    @RequestMapping(value = "/{id}/reject", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> rejectCertificateRequest(
@@ -417,5 +420,28 @@ public class TrustCertificationController extends SupportController {
         } catch (final Exception ex) {
             throw new RenewCertificateException(ex.getMessage(), ex);
         }
+    }
+
+    /**
+     * Download Certificate File
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     */
+    @Operation(summary = "DOWNLOAD_CERTIFICATE_FILE - Download Certificate file", description = "Download certificate file", tags = {"CERTIFICATE_ISSUED"})
+    @RequestMapping(value = "/{id}/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> downloadCertificateFile(
+            @Parameter(name = "id", description = "Certificate Id", required = true)
+            @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) {
+        try {
+            final FileInfoDTO fileInfo = trustCertificationService.getCertificateFile(selfUser.getWalletHash(), id);
+            return responseHelper.createAndSendMediaResponse(fileInfo);
+        } catch (final Exception ex) {
+            throw new DownloadCertificateFileException(ex.getMessage(), ex);
+        }
+
     }
 }

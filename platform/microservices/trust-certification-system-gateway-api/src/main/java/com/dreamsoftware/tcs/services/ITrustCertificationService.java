@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.services;
 
+import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
@@ -122,4 +123,13 @@ public interface ITrustCertificationService {
      * @throws Throwable
      */
     CertificateIssuedDTO renewCertificate(final String ownerWallet, final String certificationId) throws Throwable;
+
+    /**
+     *
+     * @param ownerWallet
+     * @param certificateId
+     * @return
+     * @throws Exception
+     */
+    FileInfoDTO getCertificateFile(final String ownerWallet, final String certificateId) throws Exception;
 }

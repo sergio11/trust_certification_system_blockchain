@@ -3,6 +3,7 @@ package com.dreamsoftware.tcs.web.controller.certification.error;
 import com.dreamsoftware.tcs.web.controller.certification.TrustCertificationResponseCodeEnum;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.AcceptCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.DisableCertificateException;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.DownloadCertificateFileException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.EnableCertificateException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificateIssuedDetailException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.GetCertificatesException;
@@ -173,6 +174,20 @@ public class TrustCertificationErrorController extends SupportController {
         logger.error("Handler for GetCertificatesIssuanceRequestsException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.GET_CERTIFICATES_ISSUANCE_REQUEST_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, "Get certificates Issuance requests Failed");
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(DownloadCertificateFileException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleDownloadCertificateFileException(DownloadCertificateFileException ex, HttpServletRequest request) {
+        logger.error("Handler for DownloadCertificateFileException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.DOWNLOAD_CERTIFICATE_FILE_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, "Download Certificate File failed");
     }
 
 }

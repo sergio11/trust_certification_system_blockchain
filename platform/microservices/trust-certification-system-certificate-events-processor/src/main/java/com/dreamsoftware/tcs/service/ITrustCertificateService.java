@@ -2,7 +2,7 @@ package com.dreamsoftware.tcs.service;
 
 import com.dreamsoftware.tcs.model.events.OnNewCertificateIssuedEvent;
 import com.dreamsoftware.tcs.model.events.OnNewIssueCertificateRequestEvent;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedBcEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
 
 /**
  *
@@ -16,7 +16,7 @@ public interface ITrustCertificateService {
      * @return
      * @throws java.lang.Exception
      */
-    CertificateIssuedBcEntity issueCertificate(OnNewIssueCertificateRequestEvent event) throws Exception;
+    CertificateIssuedEntity issueCertificate(OnNewIssueCertificateRequestEvent event) throws Exception;
 
     /**
      *

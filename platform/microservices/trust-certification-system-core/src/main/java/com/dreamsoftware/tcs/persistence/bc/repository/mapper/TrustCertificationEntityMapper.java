@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.persistence.bc.repository.mapper;
 
 import com.dreamsoftware.tcs.contracts.TrustCertificationContract;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedBcEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mappings;
 import org.mapstruct.Named;
@@ -21,6 +21,6 @@ public abstract class TrustCertificationEntityMapper {
      */
     @Mappings({})
     @Named("certificateRecordToCertificateIssuedEntity")
-    public abstract CertificateIssuedBcEntity certificateRecordToCertificateIssuedEntity(TrustCertificationContract.CertificateRecord certificateRecord);
+    public abstract CertificateIssuedEntity certificateRecordToCertificateIssuedEntity(TrustCertificationContract.CertificateRecord certificateRecord);
 
 }

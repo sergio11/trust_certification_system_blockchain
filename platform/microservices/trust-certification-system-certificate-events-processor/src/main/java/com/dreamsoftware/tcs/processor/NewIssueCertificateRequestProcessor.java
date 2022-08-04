@@ -2,7 +2,7 @@ package com.dreamsoftware.tcs.processor;
 
 import com.dreamsoftware.tcs.model.events.OnNewCertificateIssuedEvent;
 import com.dreamsoftware.tcs.model.events.OnNewIssueCertificateRequestEvent;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedBcEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
 import com.dreamsoftware.tcs.service.ITrustCertificateService;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class NewIssueCertificateRequestProcessor implements Function<OnNewIssueC
         logger.debug("NewIssueCertificateRequestProcessor CALLED!");
         OnNewCertificateIssuedEvent nextEvent = null;
         try {
-            final CertificateIssuedBcEntity certificateIssuedEntity = trustCertificateService.issueCertificate(event);
+            final CertificateIssuedEntity certificateIssuedEntity = trustCertificateService.issueCertificate(event);
             nextEvent = OnNewCertificateIssuedEvent
                     .builder()
                     .caWalletHash(event.getCaWalletHash())

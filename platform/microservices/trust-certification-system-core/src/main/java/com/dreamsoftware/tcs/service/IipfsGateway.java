@@ -18,6 +18,14 @@ public interface IipfsGateway {
      * @return
      * @throws java.io.IOException
      */
-    String save(File fileToSave, Boolean deleteOnSave) throws IOException;
+    String save(final File fileToSave, final Boolean deleteOnSave) throws IOException;
+
+    /**
+     *
+     * @param hashHex
+     * @return
+     * @throws Exception
+     */
+    byte[] get(final String hashHex) throws Exception;
 
 }
