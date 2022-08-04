@@ -1,8 +1,8 @@
 package com.dreamsoftware.tcs.services;
 
-import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.web.dto.request.PlaceTokensOrderRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.OrderDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.TokenPricesDTO;
 import org.bson.types.ObjectId;
 
 /**
@@ -17,7 +17,7 @@ public interface ITokenManagementService {
      * @return
      * @throws java.lang.Exception
      */
-    Long getTokenPriceInWeis(final Long tokenCount) throws Exception;
+    TokenPricesDTO getTokenPrices(final Long tokenCount) throws Exception;
 
     /**
      *

@@ -6,10 +6,12 @@ import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.ConfirmOrderException;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.GetClientTokensException;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.GetMyTokensException;
+import com.dreamsoftware.tcs.web.controller.tokens.error.exception.GetTokenPricesException;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.PlaceTokensOrderException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.dto.request.PlaceTokensOrderRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.OrderDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.TokenPricesDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdmin;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
@@ -80,6 +82,34 @@ public class TokenManagementController extends SupportController {
                     HttpStatus.OK, myTokens);
         } catch (final RepositoryException ex) {
             throw new GetMyTokensException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param tokenCount
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "GET_TOKEN_PRICES - Get Token prices", description = "Get token prices", tags = {"tokens-manadgement"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Token prices",
+                content = @Content(
+                        schema = @Schema(implementation = TokenPricesDTO.class)))
+    })
+    @RequestMapping(value = {"/prices"}, method = RequestMethod.GET, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<APIResponse<TokenPricesDTO>> getTokenPrices(
+            @RequestParam(required = true) Long tokenCount
+    ) throws Throwable {
+        try {
+            final TokenPricesDTO tokenPrices = tokenManagementService.getTokenPrices(tokenCount);
+            return responseHelper.<TokenPricesDTO>createAndSendResponse(
+                    TokenManagementResponseCodeEnum.GET_TOKEN_PRICES_SUCCESS,
+                    HttpStatus.OK, tokenPrices);
+        } catch (final RepositoryException ex) {
+            throw new GetTokenPricesException(ex.getMessage(), ex);
         }
     }
 
