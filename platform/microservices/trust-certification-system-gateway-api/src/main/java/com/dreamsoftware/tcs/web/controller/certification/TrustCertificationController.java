@@ -261,6 +261,36 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws Throwable
      */
+    @Operation(summary = "GET_CERTIFICATES_ISSUANCE_REQUESTS_FROM_CA - Get certificates issuance requests from CA", description = "Get certificates issuance requests from CA", tags = {"CERTIFICATE_ISSUED"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Certificates Issuance request",
+                content = @Content(schema = @Schema(implementation = CertificateIssuanceRequestDTO.class))),
+        @ApiResponse(responseCode = "404", description = "No Certificates request Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/certificates/request/ca"}, method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCA
+    public ResponseEntity<APIResponse<Iterable<CertificateIssuanceRequestDTO>>> getCertificatesIssuanceRequestsFromCa(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final Iterable<CertificateIssuanceRequestDTO> certificateIssuanceRequestDTOList = trustCertificationService.getCertificatesIssuanceRequestsFromCa(selfUser.getWalletHash());
+            return responseHelper.<Iterable<CertificateIssuanceRequestDTO>>createAndSendResponse(
+                    TrustCertificationResponseCodeEnum.GET_CERTIFICATES_ISSUANCE_REQUEST_SUCCESS,
+                    HttpStatus.OK, certificateIssuanceRequestDTOList);
+        } catch (final Exception ex) {
+            throw new GetCertificatesIssuanceRequestsException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Get My Certificates As Recipient
+     *
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
     @Operation(summary = "GET_MY_CERTIFICATES_AS_ISSUER - Get My Certificates As Issuer", description = "Get My Certificates As Issuer", tags = {"CERTIFICATE_ISSUED"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Certificates As Issuer",

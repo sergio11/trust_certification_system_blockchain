@@ -28,4 +28,11 @@ public interface CertificateIssuanceRequestRepository extends MongoRepository<Ce
      */
     Iterable<CertificateIssuanceRequestEntity> findByStudentWalletHashOrderByUpdatedAtDesc(final String studentWalletHash);
 
+    /**
+     *
+     * @param caWalletHash
+     * @return
+     */
+    Iterable<CertificateIssuanceRequestEntity> findByCaWalletHashOrderByUpdatedAtDesc(final String caWalletHash);
+
 }
