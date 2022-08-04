@@ -106,6 +106,12 @@ public class CreatedOrderEntity {
     private Long amountWEI;
 
     /**
+     * Security Token
+     */
+    @Field("security_token")
+    private String securityToken;
+
+    /**
      * User
      */
     @DBRef

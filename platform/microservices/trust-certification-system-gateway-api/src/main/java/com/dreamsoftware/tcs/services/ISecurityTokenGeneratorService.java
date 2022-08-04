@@ -4,7 +4,7 @@ package com.dreamsoftware.tcs.services;
  *
  * @author ssanchez
  */
-public interface ITokenGeneratorService {
+public interface ISecurityTokenGeneratorService {
 
     /**
      * Generate Token

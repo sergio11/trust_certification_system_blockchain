@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.services.impl;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.services.IPaymentService;
+import com.dreamsoftware.tcs.services.ISecurityTokenGeneratorService;
 import com.dreamsoftware.tcs.web.dto.internal.CreatedOrderDTO;
 import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;
@@ -22,6 +23,7 @@ import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * PayPal Payment Service Implementation
@@ -35,11 +37,13 @@ public class PayPalPaymentServiceImpl implements IPaymentService {
     private final static String CHECKOUT_PAYMENT_INTENT = "CAPTURE";
     private final static String CURRENCY_CODE = "EU";
     private final static String APPROVE_LINK_REL = "approve";
+    private final static String SECURITY_TOKEN_PARAM = "st";
 
     /**
      * PayPal Http Client
      */
     private final PayPalHttpClient payPalHttpClient;
+    private final ISecurityTokenGeneratorService securityTokenGeneratorService;
 
     /**
      *
@@ -69,13 +73,17 @@ public class PayPalPaymentServiceImpl implements IPaymentService {
         payer.name(payerName);
         payer.payerId(userEntity.getId().toString());
         orderRequest.payer(payer);
-        orderRequest.applicationContext(new ApplicationContext().returnUrl(returnUrl.toString()));
+        final String securityToken = securityTokenGeneratorService.generateToken(userEntity.getId().toString());
+        orderRequest.applicationContext(new ApplicationContext().returnUrl(UriComponentsBuilder.fromUri(returnUrl)
+                .queryParam(SECURITY_TOKEN_PARAM, securityToken)
+                .build().toUriString()));
         final OrdersCreateRequest ordersCreateRequest = new OrdersCreateRequest().requestBody(orderRequest);
         final HttpResponse<Order> orderHttpResponse = payPalHttpClient.execute(ordersCreateRequest);
         final Order order = orderHttpResponse.result();
         final LinkDescription approveUri = extractApprovalLink(order);
         return CreatedOrderDTO.builder()
                 .orderId(order.id())
+                .securityToken(securityToken)
                 .approvalLink(URI.create(approveUri.href()))
                 .build();
     }

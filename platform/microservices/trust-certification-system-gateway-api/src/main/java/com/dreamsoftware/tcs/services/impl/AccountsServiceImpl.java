@@ -10,7 +10,6 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IWalletService;
 import com.dreamsoftware.tcs.services.IAccountsService;
-import com.dreamsoftware.tcs.services.ITokenGeneratorService;
 import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.AccessTokenDTO;
@@ -30,6 +29,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import com.dreamsoftware.tcs.services.ISecurityTokenGeneratorService;
 
 /**
  *
@@ -49,7 +49,7 @@ public class AccountsServiceImpl implements IAccountsService {
     private final UserDetailsMapper userDetailsMapper;
     private final SignUpUserMapper signUpUserMapper;
     private final SimpleUserMapper simpleUserMapper;
-    private final ITokenGeneratorService tokenGeneratorService;
+    private final ISecurityTokenGeneratorService tokenGeneratorService;
     private final IWalletService walletService;
     private final StreamBridge streamBridge;
     private final StreamChannelsProperties streamChannelsProperties;
