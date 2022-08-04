@@ -5,6 +5,7 @@ import com.dreamsoftware.tcs.web.controller.tokens.TokenManagementResponseCodeEn
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.ConfirmOrderException;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.GetClientTokensException;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.GetMyTokensException;
+import com.dreamsoftware.tcs.web.controller.tokens.error.exception.GetTokenPricesException;
 import com.dreamsoftware.tcs.web.controller.tokens.error.exception.PlaceTokensOrderException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
@@ -41,6 +42,20 @@ public class TokenManagementErrorController extends SupportController {
         logger.error("Handler for GetMyTokensException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TokenManagementResponseCodeEnum.GET_MY_TOKENS_ERROR,
                 HttpStatus.INTERNAL_SERVER_ERROR, "An error ocurred while getting tokens");
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(GetTokenPricesException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetTokenPricesException(GetTokenPricesException ex, HttpServletRequest request) {
+        logger.error("Handler for GetTokenPricesException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(TokenManagementResponseCodeEnum.GET_TOKEN_PRICES_ERROR,
+                HttpStatus.INTERNAL_SERVER_ERROR, "An error ocurred while getting token prices");
     }
 
     /**

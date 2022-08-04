@@ -17,6 +17,7 @@ import com.dreamsoftware.tcs.web.dto.internal.CreatedOrderDTO;
 import com.dreamsoftware.tcs.web.dto.internal.CryptoComparePricesDTO;
 import com.dreamsoftware.tcs.web.dto.request.PlaceTokensOrderRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.OrderDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.TokenPricesDTO;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
@@ -64,9 +65,19 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
      * @return
      */
     @Override
-    public Long getTokenPriceInWeis(final Long tokenCount) throws Exception {
+    public TokenPricesDTO getTokenPrices(final Long tokenCount) throws Exception {
         Assert.notNull(tokenCount, "Token Count can not be null");
-        return tokenManagementBlockchainRepository.getTokenPriceInWeis(tokenCount);
+        final Long tokenPriceInWeis = tokenManagementBlockchainRepository.getTokenPriceInWeis(tokenCount);
+        final Double tokenPriceInEth = tokenPriceInWeis * ONE_WEI_IN_ETH;
+        final CryptoComparePricesDTO prices = cryptoCompareService.getEthPrices();
+        final Double tokenPriceInEUR = prices.getEUR() * tokenPriceInEth;
+        final Double tokenPriceInUSD = prices.getUSD() * tokenPriceInEth;
+        return TokenPricesDTO
+                .builder()
+                .tokenCount(tokenCount)
+                .tokenPriceInEUR(tokenPriceInEUR)
+                .tokenPriceInUSD(tokenPriceInUSD)
+                .build();
     }
 
     /**
