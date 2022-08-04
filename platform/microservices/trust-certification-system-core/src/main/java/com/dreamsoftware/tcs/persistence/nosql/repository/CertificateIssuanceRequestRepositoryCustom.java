@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.persistence.nosql.repository;
 
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateStatusEnum;
 import org.bson.types.ObjectId;
 
@@ -13,7 +14,8 @@ public interface CertificateIssuanceRequestRepositoryCustom {
      *
      * @param id
      * @param newStatus
+     * @return
      */
-    void updateStatus(ObjectId id, CertificateStatusEnum newStatus);
+    CertificateIssuanceRequestEntity updateStatus(ObjectId id, CertificateStatusEnum newStatus);
 
 }

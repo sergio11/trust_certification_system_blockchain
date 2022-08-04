@@ -52,6 +52,12 @@ public class CertificateIssuanceRequestEntity {
     private Date createdAt;
 
     /**
+     * Updated At
+     */
+    @Field("updated_at")
+    private Date updatedAt;
+
+    /**
      * Qualification
      */
     @Field("qualification")

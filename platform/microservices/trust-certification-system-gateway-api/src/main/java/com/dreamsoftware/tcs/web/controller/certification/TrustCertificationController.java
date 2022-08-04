@@ -14,13 +14,13 @@ import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
+import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForStudent;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
-import com.dreamsoftware.tcs.web.validation.constraints.ShouldBeAValidObjectId;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -265,15 +265,15 @@ public class TrustCertificationController extends SupportController {
     @RequestMapping(value = "/request", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
-    public ResponseEntity<APIResponse<String>> issueCertificateRequest(
+    public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> issueCertificateRequest(
             @Validated(ICommonSequence.class) IssueCertificateRequestDTO issueCertificate,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
             issueCertificate.setStudentWalletHash(selfUser.getWalletHash());
-            trustCertificationService.issueCertificateRequest(issueCertificate);
-            return responseHelper.<String>createAndSendResponse(TrustCertificationResponseCodeEnum.NEW_ISSUED_CERTIFICATE_REQUESTED,
-                    HttpStatus.OK, "Issued Certificate Request Saved");
+            final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.issueCertificateRequest(issueCertificate);
+            return responseHelper.<CertificateIssuanceRequestDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.NEW_ISSUED_CERTIFICATE_REQUESTED,
+                    HttpStatus.OK, certificateIssuanceRequestDTO);
         } catch (final Exception ex) {
             throw new IssueCertificateRequestException(ex.getMessage(), ex);
         }
@@ -291,15 +291,15 @@ public class TrustCertificationController extends SupportController {
     @RequestMapping(value = "/accept/{id}", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
-    public ResponseEntity<APIResponse<String>> acceptCertificateRequest(
+    public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> acceptCertificateRequest(
             @Parameter(name = "id", description = "Certificate Id", required = true)
             @Valid @CertificateShouldBePendingReview(message = "certificate_should_be_pending_review") @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
-            trustCertificationService.acceptCertificateRequest(new ObjectId(id));
-            return responseHelper.<String>createAndSendResponse(TrustCertificationResponseCodeEnum.ISSUE_CERTIFICATE_REQUEST_ACCEPTED,
-                    HttpStatus.OK, "Issue certificate request accepted");
+            final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.acceptCertificateRequest(new ObjectId(id));
+            return responseHelper.<CertificateIssuanceRequestDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.ISSUE_CERTIFICATE_REQUEST_ACCEPTED,
+                    HttpStatus.OK, certificateIssuanceRequestDTO);
         } catch (final Exception ex) {
             throw new AcceptCertificateRequestException(ex.getMessage(), ex);
         }
@@ -317,15 +317,15 @@ public class TrustCertificationController extends SupportController {
     @RequestMapping(value = "/reject/{id}", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
-    public ResponseEntity<APIResponse<String>> rejectCertificateRequest(
+    public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> rejectCertificateRequest(
             @Parameter(name = "id", description = "Certificate Id", required = true)
             @Valid @CertificateShouldBePendingReview(message = "certificate_should_be_pending_review") @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
-            trustCertificationService.rejectCertificateRequest(new ObjectId(id));
-            return responseHelper.<String>createAndSendResponse(TrustCertificationResponseCodeEnum.ISSUE_CERTIFICATE_REQUEST_REJECTED,
-                    HttpStatus.OK, "Issue certificate request rejected");
+            final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.rejectCertificateRequest(new ObjectId(id));
+            return responseHelper.<CertificateIssuanceRequestDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.ISSUE_CERTIFICATE_REQUEST_REJECTED,
+                    HttpStatus.OK, certificateIssuanceRequestDTO);
         } catch (final Exception ex) {
             throw new RejectCertificateRequestException(ex.getMessage(), ex);
         }

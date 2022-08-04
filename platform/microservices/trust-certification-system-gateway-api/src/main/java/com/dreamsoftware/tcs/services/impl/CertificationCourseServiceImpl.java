@@ -49,7 +49,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         logger.debug("Enable course -> " + courseId + " CALLED!");
         final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.enable(caWalletHash, courseId);
         certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.ENABLED);
-        return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
+        return certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
     }
 
     /**
@@ -67,7 +67,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         logger.debug("Disable course -> " + courseId + " CALLED!");
         final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.disable(caWalletHash, courseId);
         certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.DISABLED);
-        return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
+        return certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
     }
 
     /**
@@ -99,7 +99,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         logger.debug("remove certification course " + courseId + " CALLED!");
         final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.remove(caWalletHash, courseId);
         certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.REMOVED);
-        return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
+        return certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
     }
 
     /**
@@ -145,6 +145,6 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         Assert.notNull(courseId, "Course ID can not be null");
         logger.debug("get certification course " + courseId + " detail CALLED!");
         final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.get(caWalletHash, courseId);
-        return certificationCourseDetailMapper.certificationCourseEntityToCertificationCourseDetail(certificationCourseEntity);
+        return certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
     }
 }

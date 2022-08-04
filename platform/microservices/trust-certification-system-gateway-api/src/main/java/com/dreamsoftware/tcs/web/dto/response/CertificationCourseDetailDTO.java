@@ -16,24 +16,63 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificationCourseDetailDTO {
 
+    /**
+     * Identity
+     */
     @JsonProperty("identity")
     private String id;
+
+    /**
+     * Name
+     */
     @JsonProperty("name")
     private String name;
+
+    /**
+     * Cost of Issuing Certificate
+     */
     @JsonProperty("costOfIssuingCertificate")
     private Long costOfIssuingCertificate;
+
+    /**
+     * Cost of renewing certificate
+     */
     @JsonProperty("costOfRenewingCertificate")
     private Long costOfRenewingCertificate;
+
+    /**
+     * Certificate Authority
+     */
     @JsonProperty("certificationAuthority")
     private String certificationAuthority;
+
+    /**
+     * Duration in hours
+     */
     @JsonProperty("durationInHours")
     private Long durationInHours;
+
+    /**
+     * Expiration in days
+     */
     @JsonProperty("expirationInDays")
     private Long expirationInDays;
+
+    /**
+     * Can be renewed
+     */
     @JsonProperty("canBeRenewed")
     private Boolean canBeRenewed;
+
+    /**
+     * is Enabled
+     */
     @JsonProperty("isEnabled")
     private Boolean isEnabled;
+
+    /**
+     * is Exists
+     */
     @JsonProperty("isExist")
     private Boolean isExist;
 }
