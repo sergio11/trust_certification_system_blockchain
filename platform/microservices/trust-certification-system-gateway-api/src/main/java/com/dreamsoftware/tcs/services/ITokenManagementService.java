@@ -38,10 +38,11 @@ public interface ITokenManagementService {
     /**
      *
      * @param externalOrderId
+     * @param securityToken
      * @return
      * @throws Exception
      */
-    OrderDetailDTO confirmOrder(final String externalOrderId) throws Exception;
+    OrderDetailDTO confirmOrder(final String externalOrderId, final String securityToken) throws Exception;
 
     /**
      *

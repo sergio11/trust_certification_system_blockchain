@@ -117,6 +117,7 @@ public class TokenManagementController extends SupportController {
      *
      * @param placeTokensOrderRequestDTO
      * @param selfUser
+     * @param request
      * @return
      * @throws Throwable
      */
@@ -125,10 +126,12 @@ public class TokenManagementController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<OrderDetailDTO>> placeTokensOrder(
             @Validated(ICommonSequence.class) PlaceTokensOrderRequestDTO placeTokensOrderRequestDTO,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            final HttpServletRequest request
     ) throws Throwable {
         try {
             placeTokensOrderRequestDTO.setWalletHash(selfUser.getWalletHash());
+            placeTokensOrderRequestDTO.setConfirmOrderUri(buildConfirmOrderUrl(request));
             final OrderDetailDTO orderDetail = tokenManagementService.placeTokensOrder(placeTokensOrderRequestDTO);
             return responseHelper.<OrderDetailDTO>createAndSendResponse(TokenManagementResponseCodeEnum.PLACE_TOKENS_ORDER_SUCCESS,
                     HttpStatus.OK, orderDetail);
@@ -140,6 +143,7 @@ public class TokenManagementController extends SupportController {
     /**
      *
      * @param externalOrderId
+     * @param securityToken
      * @return
      * @throws Throwable
      */
@@ -147,10 +151,11 @@ public class TokenManagementController extends SupportController {
     @RequestMapping(value = "/order/confirm", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<OrderDetailDTO>> confirmOrder(
-            @RequestParam String externalOrderId
+            @RequestParam(name = "token", required = true) String externalOrderId,
+            @RequestParam(name = "st", required = true) String securityToken
     ) throws Throwable {
         try {
-            final OrderDetailDTO orderDetail = tokenManagementService.confirmOrder(externalOrderId);
+            final OrderDetailDTO orderDetail = tokenManagementService.confirmOrder(externalOrderId, securityToken);
             return responseHelper.<OrderDetailDTO>createAndSendResponse(TokenManagementResponseCodeEnum.CONFIRM_ORDER_SUCCESS,
                     HttpStatus.OK, orderDetail);
         } catch (final Exception ex) {
@@ -193,14 +198,19 @@ public class TokenManagementController extends SupportController {
     /**
      * Private Methods
      */
-    private URI buildReturnUrl(HttpServletRequest request) {
+    /**
+     *
+     * @param request
+     * @return
+     */
+    private URI buildConfirmOrderUrl(final HttpServletRequest request) {
         try {
             URI requestUri = URI.create(request.getRequestURL().toString());
             return new URI(requestUri.getScheme(),
                     requestUri.getUserInfo(),
                     requestUri.getHost(),
                     requestUri.getPort(),
-                    "/orders/capture",
+                    "/order/confirm",
                     null, null);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);

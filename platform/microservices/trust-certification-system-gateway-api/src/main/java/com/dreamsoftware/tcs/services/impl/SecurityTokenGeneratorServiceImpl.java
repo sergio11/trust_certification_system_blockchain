@@ -1,16 +1,16 @@
 package com.dreamsoftware.tcs.services.impl;
 
-import com.dreamsoftware.tcs.services.ITokenGeneratorService;
 import java.security.SecureRandom;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import com.dreamsoftware.tcs.services.ISecurityTokenGeneratorService;
 
 /**
  *
  * @author ssanchez
  */
 @Service
-public class TokenGeneratorServiceImpl implements ITokenGeneratorService {
+public class SecurityTokenGeneratorServiceImpl implements ISecurityTokenGeneratorService {
 
     protected static SecureRandom random = new SecureRandom();
 

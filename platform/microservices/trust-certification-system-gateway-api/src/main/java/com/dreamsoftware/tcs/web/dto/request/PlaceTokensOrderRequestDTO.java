@@ -3,7 +3,7 @@ package com.dreamsoftware.tcs.web.dto.request;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotBlank;
+import java.net.URI;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,5 +31,11 @@ public class PlaceTokensOrderRequestDTO {
      */
     @JsonIgnore
     private String walletHash;
+
+    /**
+     * Confirm Order Uri
+     */
+    @JsonIgnore
+    private URI confirmOrderUri;
 
 }

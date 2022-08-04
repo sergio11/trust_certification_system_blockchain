@@ -21,4 +21,13 @@ public interface CreatedOrderRepository extends MongoRepository<CreatedOrderEnti
      */
     Optional<CreatedOrderEntity> findByExternalOrderId(final String id);
 
+    /**
+     * Find By External Order Id And Security Token
+     *
+     * @param id
+     * @param securityToken
+     * @return
+     */
+    Optional<CreatedOrderEntity> findByExternalOrderIdAndSecurityToken(final String id, final String securityToken);
+
 }

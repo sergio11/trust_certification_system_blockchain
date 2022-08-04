@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import com.dreamsoftware.tcs.services.ISecurityTokenGeneratorService;
 
 /**
  *
@@ -116,7 +117,7 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
         final Double orderAmountEUR = tokens * tokenPriceInEUR;
         final Double orderAmountUSD = tokens * tokenPriceInUSD;
         final Long orderAmountWEI = tokens * tokenPriceInWeis;
-        final CreatedOrderDTO createdOrder = paymentService.createOrder(userEntity, orderAmountEUR, null);
+        final CreatedOrderDTO createdOrder = paymentService.createOrder(userEntity, orderAmountEUR, orderRequest.getConfirmOrderUri());
         final CreatedOrderEntity createdOrderEntity = CreatedOrderEntity
                 .builder()
                 .externalOrderId(createdOrder.getOrderId())
@@ -126,6 +127,7 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
                 .amountEUR(orderAmountEUR)
                 .amountUSD(orderAmountUSD)
                 .amountWEI(orderAmountWEI)
+                .securityToken(createdOrder.getSecurityToken())
                 .tokens(tokens)
                 .user(userEntity)
                 .approvalLink(createdOrder.getApprovalLink().getPath())
@@ -138,15 +140,18 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
     /**
      *
      * @param externalOrderId
+     * @param securityToken
      * @return
      * @throws Exception
      */
     @Override
-    public OrderDetailDTO confirmOrder(final String externalOrderId) throws Exception {
+    public OrderDetailDTO confirmOrder(final String externalOrderId, final String securityToken) throws Exception {
         Assert.notNull(externalOrderId, "External Order id can not be null");
-        final CreatedOrderEntity createdOrderEntity = createdOrderRepository.findByExternalOrderId(externalOrderId).orElseThrow(() -> new IllegalStateException("Order not found"));
+        Assert.notNull(securityToken, "Security Token can not be null");
+        final CreatedOrderEntity createdOrderEntity = createdOrderRepository.findByExternalOrderIdAndSecurityToken(externalOrderId, securityToken).orElseThrow(() -> new IllegalStateException("Order not found"));
         createdOrderEntity.setStatus(CreatedOrderStateEnum.APPROVED);
         createdOrderEntity.setApprovedAt(new Date());
+        createdOrderEntity.setSecurityToken(null);
         streamBridge.send(streamChannelsProperties.getNewTokensOrderApproved(), new NewTokensOrderApprovedEvent(createdOrderEntity.getId()));
         final CreatedOrderEntity createdOrderEntitySaved = createdOrderRepository.save(createdOrderEntity);
         return createdOrderMapper.entityToDTO(createdOrderEntitySaved);

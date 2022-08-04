@@ -26,4 +26,9 @@ public class CreatedOrderDTO {
      */
     private URI approvalLink;
 
+    /**
+     * Security Token
+     */
+    private String securityToken;
+
 }
