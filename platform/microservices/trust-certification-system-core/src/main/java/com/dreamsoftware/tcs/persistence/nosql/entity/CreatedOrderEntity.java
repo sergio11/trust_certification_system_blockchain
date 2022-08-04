@@ -64,22 +64,46 @@ public class CreatedOrderEntity {
     private Date approvedAt;
 
     /**
+     * Completed At
+     */
+    @Field("completed_at")
+    private Date completedAt;
+
+    /**
      * Tokens
      */
     @Field("tokens")
     private Long tokens;
 
     /**
-     * Token Price In EU
+     * Token Price EUR
      */
-    @Field("token_price_in_eu")
-    private Double tokenPriceInEu;
+    @Field("token_price_EUR")
+    private Double tokenPriceEUR;
 
     /**
-     * Amount
+     * Token Price USD
      */
-    @Field("amount")
-    private Double amount;
+    @Field("token_price_USD")
+    private Double tokenPriceUSD;
+
+    /**
+     * Amount EUR
+     */
+    @Field("amount_EUR")
+    private Double amountEUR;
+
+    /**
+     * Amount USD
+     */
+    @Field("amount_USD")
+    private Double amountUSD;
+
+    /**
+     * Amount WEI
+     */
+    @Field("amount_WEI")
+    private Long amountWEI;
 
     /**
      * User

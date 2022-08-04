@@ -47,10 +47,34 @@ public class OrderDetailDTO {
     private Long tokens;
 
     /**
-     * Amount
+     * Token Price EUR
      */
-    @JsonProperty("amount")
-    private Double amount;
+    @JsonProperty("token_price_EUR")
+    private Double tokenPriceEUR;
+
+    /**
+     * Token Price USD
+     */
+    @JsonProperty("token_price_USD")
+    private Double tokenPriceUSD;
+
+    /**
+     * Amount EUR
+     */
+    @JsonProperty("amount_EUR")
+    private Double amountEUR;
+
+    /**
+     * Amount USD
+     */
+    @JsonProperty("amount_USD")
+    private Double amountUSD;
+
+    /**
+     * Amount WEI
+     */
+    @JsonProperty("amount_WEI")
+    private Long amountWEI;
 
     /**
      * User Id

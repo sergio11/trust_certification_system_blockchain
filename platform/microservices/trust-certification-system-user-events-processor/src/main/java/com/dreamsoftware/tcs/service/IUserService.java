@@ -27,8 +27,10 @@ public interface IUserService {
     /**
      *
      * @param event
+     * @return
+     * @throws java.lang.Exception
      */
-    void addTokensToWallet(final NewTokensOrderApprovedEvent event) throws Exception;
+    Long addTokensToWallet(final NewTokensOrderApprovedEvent event) throws Exception;
 
     /**
      *
