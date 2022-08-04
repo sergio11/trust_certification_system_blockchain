@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.services;
 
 import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
+import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
 import org.bson.types.ObjectId;
 
@@ -77,23 +78,26 @@ public interface ITrustCertificationService {
      * Issue Certificate Request
      *
      * @param issueCertificate
+     * @return
      * @throws Throwable
      */
-    void issueCertificateRequest(final IssueCertificateRequestDTO issueCertificate) throws Throwable;
+    CertificateIssuanceRequestDTO issueCertificateRequest(final IssueCertificateRequestDTO issueCertificate) throws Throwable;
 
     /**
      * Accept request for certificate issuance
      *
      * @param id
+     * @return
      */
-    void acceptCertificateRequest(final ObjectId id);
+    CertificateIssuanceRequestDTO acceptCertificateRequest(final ObjectId id);
 
     /**
      * Reject request for certificate issuance
      *
      * @param id
+     * @return
      */
-    void rejectCertificateRequest(final ObjectId id);
+    CertificateIssuanceRequestDTO rejectCertificateRequest(final ObjectId id);
 
     /**
      * Renew Certificate

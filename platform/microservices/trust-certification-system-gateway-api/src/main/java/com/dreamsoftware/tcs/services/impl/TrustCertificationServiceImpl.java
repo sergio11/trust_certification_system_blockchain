@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.services.impl;
 
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
+import com.dreamsoftware.tcs.mapper.CertificateIssuanceRequestMapper;
 import com.dreamsoftware.tcs.mapper.CertificateIssuedMapper;
 import com.dreamsoftware.tcs.model.events.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
+import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
 import java.util.Date;
 
 /**
@@ -42,6 +44,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     private final CertificationCourseRepository certificationCourseRepository;
     private final StreamBridge streamBridge;
     private final StreamChannelsProperties streamChannelsProperties;
+    private final CertificateIssuanceRequestMapper certificateIssuanceRequestMapper;
 
     /**
      *
@@ -150,7 +153,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public void issueCertificateRequest(IssueCertificateRequestDTO issueCertificate) throws Throwable {
+    public CertificateIssuanceRequestDTO issueCertificateRequest(IssueCertificateRequestDTO issueCertificate) throws Throwable {
         Assert.notNull(issueCertificate.getStudentWalletHash(), "Student Wallet Hash can not be null");
         Assert.notNull(issueCertificate.getCertificateCourseId(), "certificateCourseId can not be null");
         Assert.notNull(issueCertificate.getQualification(), "qualification can not be null");
@@ -168,7 +171,8 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
                 .qualification(issueCertificate.getQualification())
                 .student(studentEntity)
                 .build();
-        certificateIssuanceRequestRepository.save(certificateRequest);
+        final CertificateIssuanceRequestEntity certificateRequestSaved = certificateIssuanceRequestRepository.save(certificateRequest);
+        return certificateIssuanceRequestMapper.entityToDTO(certificateRequestSaved);
     }
 
     /**
@@ -176,7 +180,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @param id
      */
     @Override
-    public void acceptCertificateRequest(ObjectId id) {
+    public CertificateIssuanceRequestDTO acceptCertificateRequest(ObjectId id) {
         Assert.notNull(id, "Id can not be null");
         final CertificateIssuanceRequestEntity certificate = certificateIssuanceRequestRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Certificate not found"));
@@ -188,6 +192,8 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
                 .studentWalletHash(certificate.getStudent().getWalletHash())
                 .build();
         streamBridge.send(streamChannelsProperties.getNewCertificationRequest(), event);
+        final CertificateIssuanceRequestEntity certificateRequestUpdated = certificateIssuanceRequestRepository.updateStatus(id, CertificateStatusEnum.REVIEWED);
+        return certificateIssuanceRequestMapper.entityToDTO(certificateRequestUpdated);
     }
 
     /**
@@ -195,9 +201,10 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @param id
      */
     @Override
-    public void rejectCertificateRequest(ObjectId id) {
+    public CertificateIssuanceRequestDTO rejectCertificateRequest(ObjectId id) {
         Assert.notNull(id, "Id can not be null");
-        certificateIssuanceRequestRepository.updateStatus(id, CertificateStatusEnum.REJECTED);
+        final CertificateIssuanceRequestEntity certificateRequestUpdated = certificateIssuanceRequestRepository.updateStatus(id, CertificateStatusEnum.REJECTED);
+        return certificateIssuanceRequestMapper.entityToDTO(certificateRequestUpdated);
     }
 
     /**
