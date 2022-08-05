@@ -1,7 +1,7 @@
-package com.dreamsoftware.tcs.services.mail;
+package com.dreamsoftware.tcs.service;
 
-import com.dreamsoftware.tcs.web.dto.internal.SendMailForActivateAccountDTO;
-import com.dreamsoftware.tcs.web.dto.internal.SendMailForConfirmActivationDTO;
+import com.dreamsoftware.tcs.model.SendMailForActivateAccountDTO;
+import com.dreamsoftware.tcs.model.SendMailForConfirmActivationDTO;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 

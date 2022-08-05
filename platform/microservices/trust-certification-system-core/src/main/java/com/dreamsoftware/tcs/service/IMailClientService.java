@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.services.mail;
+package com.dreamsoftware.tcs.service;
 
 /**
  *

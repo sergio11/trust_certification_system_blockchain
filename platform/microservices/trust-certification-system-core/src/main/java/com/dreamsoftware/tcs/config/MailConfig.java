@@ -1,6 +1,6 @@
-package com.dreamsoftware.tcs.config.mail;
+package com.dreamsoftware.tcs.config;
 
-import com.dreamsoftware.tcs.config.mail.properties.MailProperties;
+import com.dreamsoftware.tcs.config.properties.MailProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

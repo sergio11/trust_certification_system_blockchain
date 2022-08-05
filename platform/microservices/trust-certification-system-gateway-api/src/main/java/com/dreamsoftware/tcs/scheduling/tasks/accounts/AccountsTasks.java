@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.scheduling.tasks.accounts;
 
 import com.dreamsoftware.tcs.services.IAccountsService;
-import com.dreamsoftware.tcs.services.mail.IMailClientService;
+import com.dreamsoftware.tcs.service.IMailClientService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;

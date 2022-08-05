@@ -1,14 +1,14 @@
-package com.dreamsoftware.tcs.services.impl.mail;
+package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.services.mail.IMailClientService;
-import com.dreamsoftware.tcs.services.mail.IMailContentBuilderService;
+import com.dreamsoftware.tcs.service.IMailClientService;
+import com.dreamsoftware.tcs.service.IMailContentBuilderService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.EmailEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.EmailTypeEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.EmailRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.i18n.service.I18NService;
-import com.dreamsoftware.tcs.web.dto.internal.SendMailForActivateAccountDTO;
+import com.dreamsoftware.tcs.model.SendMailForActivateAccountDTO;
 import java.util.Date;
 import java.util.Optional;
 import javax.mail.internet.MimeMessage;

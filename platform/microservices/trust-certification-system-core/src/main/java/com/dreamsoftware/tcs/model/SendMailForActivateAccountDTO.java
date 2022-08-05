@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.web.dto.internal;
+package com.dreamsoftware.tcs.model;
 
 import java.util.Locale;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SendMailForConfirmActivationDTO {
+public class SendMailForActivateAccountDTO {
 
     /**
      * Id
@@ -31,10 +31,19 @@ public class SendMailForConfirmActivationDTO {
     /**
      * Firname
      */
-    private String name;
+    private String firstname;
+
+    /**
+     * Last Name
+     */
+    private String lastname;
 
     /**
      * Locale
      */
     private Locale locale;
+    /**
+     * Confirmatino Token
+     */
+    private String confirmationToken;
 }
