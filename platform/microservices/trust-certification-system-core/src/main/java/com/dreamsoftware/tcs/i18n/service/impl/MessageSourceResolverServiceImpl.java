@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
 @RequiredArgsConstructor
 public class MessageSourceResolverServiceImpl implements IMessageSourceResolverService {
 
-    private Logger logger = LoggerFactory.getLogger(MessageSourceResolverServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(MessageSourceResolverServiceImpl.class);
 
     private final MessageSource messageSource;
 

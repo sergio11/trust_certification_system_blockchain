@@ -11,6 +11,7 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.ICertificateCourseService;
+import com.dreamsoftware.tcs.service.INotificationService;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -42,6 +43,11 @@ public class CertificateCourseServiceImpl implements ICertificateCourseService {
      * Certification Course Blockchain Repository
      */
     private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
+
+    /**
+     * Notification Service
+     */
+    private final INotificationService notificationService;
 
     /**
      *
@@ -76,5 +82,6 @@ public class CertificateCourseServiceImpl implements ICertificateCourseService {
                 .courseId(courseId)
                 .build();
         certificationCourseRepository.save(certificationCourseEntity);
+        notificationService.onCACertificationCourseRegistered(certificationCourseEntity);
     }
 }

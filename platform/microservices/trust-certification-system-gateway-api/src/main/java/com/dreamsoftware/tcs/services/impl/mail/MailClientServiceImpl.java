@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
 @RequiredArgsConstructor
 public class MailClientServiceImpl implements IMailClientService {
 
-    private Logger logger = LoggerFactory.getLogger(MailClientServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(MailClientServiceImpl.class);
 
     private final IMailContentBuilderService mailContentBuilderService;
     private final JavaMailSender mailSender;

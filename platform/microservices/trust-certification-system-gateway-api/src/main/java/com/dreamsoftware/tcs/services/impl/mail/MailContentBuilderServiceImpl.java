@@ -27,7 +27,7 @@ import org.thymeleaf.context.Context;
 @RequiredArgsConstructor
 public class MailContentBuilderServiceImpl implements IMailContentBuilderService {
 
-    private Logger logger = LoggerFactory.getLogger(MailContentBuilderServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(MailContentBuilderServiceImpl.class);
 
     private final MailProperties mailContentProperties;
     private final ITemplateEngine templateEngine;
@@ -38,6 +38,12 @@ public class MailContentBuilderServiceImpl implements IMailContentBuilderService
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     *
+     * @param request
+     * @return
+     * @throws MessagingException
+     */
     @Override
     public MimeMessage buildContent(SendMailForActivateAccountDTO request) throws MessagingException {
         Assert.notNull(mailContentProperties.getConfirmAccountActivationTemplate(), "Account Activation Success Template can not be null");

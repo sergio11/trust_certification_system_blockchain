@@ -12,6 +12,7 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CreatedOrderRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.tcs.service.INotificationService;
 import com.dreamsoftware.tcs.service.IUserService;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +65,11 @@ public class UserServiceImpl implements IUserService {
     private final CreatedOrderRepository createdOrderRepository;
 
     /**
+     * Notification Service
+     */
+    private final INotificationService notificationService;
+
+    /**
      *
      * @param event
      */
@@ -92,6 +98,7 @@ public class UserServiceImpl implements IUserService {
             userEntity.setActivationDate(new Date());
             userEntity.setState(UserStateEnum.VALIDATED);
             userRepository.save(userEntity);
+            notificationService.onUserAccountValidated(userEntity);
         });
     }
 
@@ -123,6 +130,7 @@ public class UserServiceImpl implements IUserService {
             orderEntity.setCompletedAt(new Date());
             orderEntity.setStatus(CreatedOrderStateEnum.COMPLETED);
             createdOrderRepository.save(orderEntity);
+            notificationService.onUserOrderCompleted(orderEntity);
         });
     }
 
