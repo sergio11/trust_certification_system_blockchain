@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class TranslationErrorController extends SupportController {
 
-    private static Logger logger = LoggerFactory.getLogger(TranslationErrorController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TranslationErrorController.class);
 
     /**
      *
@@ -38,11 +38,10 @@ public class TranslationErrorController extends SupportController {
      */
     @ExceptionHandler(SaveTranslationException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSaveTranslationException(SaveTranslationException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSaveTranslationException(final SaveTranslationException ex, final HttpServletRequest request) {
         logger.error("Handler for SaveTranslationException -> " + ex.getMessage());
-        return responseHelper.createAndSendErrorResponse(TranslationsResponseCodeEnum.SAVE_TRANSLATION_FAIL,
-                HttpStatus.INTERNAL_SERVER_ERROR, messageSourceResolver.resolver("save_translation_fail",
-                        localeResolver.resolveLocale(request)));
+        return responseHelper.createAndSendErrorResponse(TranslationsResponseCodeEnum.SAVE_TRANSLATION_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("save_translation_failed", request));
     }
 
     /**
@@ -53,11 +52,10 @@ public class TranslationErrorController extends SupportController {
      */
     @ExceptionHandler(SaveAllTranslationException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSaveAllTranslationException(SaveAllTranslationException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSaveAllTranslationException(final SaveAllTranslationException ex, final HttpServletRequest request) {
         logger.error("Handler for SaveAllTranslationException -> " + ex.getMessage());
-        return responseHelper.createAndSendErrorResponse(TranslationsResponseCodeEnum.SAVE_ALL_TRANSLATION_FAIL,
-                HttpStatus.INTERNAL_SERVER_ERROR, messageSourceResolver.resolver("save_all_translation_fail",
-                        localeResolver.resolveLocale(request)));
+        return responseHelper.createAndSendErrorResponse(TranslationsResponseCodeEnum.SAVE_ALL_TRANSLATION_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("save_all_translation_failed", request));
     }
 
     /**
@@ -68,10 +66,10 @@ public class TranslationErrorController extends SupportController {
      */
     @ExceptionHandler(NoTranslationsFoundException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleNoTranslationsFoundException(NoTranslationsFoundException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleNoTranslationsFoundException(final NoTranslationsFoundException ex, final HttpServletRequest request) {
         logger.error("Handler for NoTranslationsFoundException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TranslationsResponseCodeEnum.NO_TRANSLATIONS_FOUND,
-                HttpStatus.NOT_FOUND, messageSourceResolver.resolver("no_translations_found", localeResolver.resolveLocale(request)));
+                HttpStatus.NOT_FOUND, resolveString("no_translations_found", request));
     }
 
     /**
@@ -82,10 +80,10 @@ public class TranslationErrorController extends SupportController {
      */
     @ExceptionHandler(TranslationNotFoundException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleTranslationNotFoundException(TranslationNotFoundException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleTranslationNotFoundException(final TranslationNotFoundException ex, final HttpServletRequest request) {
         logger.error("Handler for TranslationNotFoundException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TranslationsResponseCodeEnum.TRANSLATION_NOT_FOUND,
-                HttpStatus.NOT_FOUND, messageSourceResolver.resolver("translation_not_found", localeResolver.resolveLocale(request)));
+                HttpStatus.NOT_FOUND, resolveString("translation_not_found", request));
     }
 
     /**
@@ -96,9 +94,9 @@ public class TranslationErrorController extends SupportController {
      */
     @ExceptionHandler(UploadTranslationFileException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleUploadTranslationFileException(UploadTranslationFileException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleUploadTranslationFileException(final UploadTranslationFileException ex, final HttpServletRequest request) {
         logger.error("Handler for UploadTranslationFileException -> " + ex.getMessage());
-        return responseHelper.createAndSendErrorResponse(TranslationsResponseCodeEnum.TRANSLATION_FILE_UPLOAD_FAIL,
-                HttpStatus.INTERNAL_SERVER_ERROR, messageSourceResolver.resolver("translation_file_upload_fail", localeResolver.resolveLocale(request)));
+        return responseHelper.createAndSendErrorResponse(TranslationsResponseCodeEnum.TRANSLATION_FILE_UPLOAD_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("translation_file_upload_fail", request));
     }
 }

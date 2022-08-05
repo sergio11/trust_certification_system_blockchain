@@ -44,10 +44,10 @@ public class TrustCertificationErrorController extends SupportController {
      */
     @ExceptionHandler(EnableCertificateException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleEnableCertificateCourseException(EnableCertificateException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleEnableCertificateCourseException(final EnableCertificateException ex, final HttpServletRequest request) {
         logger.error("Handler for EnableCertificateCourseException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.ENABLE_CERTIFICATE_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Enable Certificate Failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("enable_certificate_failed", request));
     }
 
     /**
@@ -58,10 +58,10 @@ public class TrustCertificationErrorController extends SupportController {
      */
     @ExceptionHandler(DisableCertificateException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleDisableCertificateCourseException(DisableCertificateException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleDisableCertificateCourseException(final DisableCertificateException ex, final HttpServletRequest request) {
         logger.error("Handler for DisableCertificateCourseException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.DISABLE_CERTIFICATE_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Disable Certification Failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("disable_certificate_failed", request));
     }
 
     /**
@@ -72,10 +72,10 @@ public class TrustCertificationErrorController extends SupportController {
      */
     @ExceptionHandler(GetCertificateIssuedDetailException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetCertificateIssuedDetailException(GetCertificateIssuedDetailException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetCertificateIssuedDetailException(final GetCertificateIssuedDetailException ex, final HttpServletRequest request) {
         logger.error("Handler for GetCertificateIssuedDetailException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.GET_CERTIFICATE_ISSUED_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Get Certificate Issued Failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_certificate_issued_failed", request));
     }
 
     /**
@@ -86,10 +86,10 @@ public class TrustCertificationErrorController extends SupportController {
      */
     @ExceptionHandler(UpdateCertificateVisibilityException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleUpdateCertificateVisibilityException(UpdateCertificateVisibilityException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleUpdateCertificateVisibilityException(final UpdateCertificateVisibilityException ex, final HttpServletRequest request) {
         logger.error("Handler for UpdateCertificateVisibilityException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.UPDATE_CERTIFICATE_ISSUED_VISIBILITY_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Update Certificate Issued Visibility Failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("update_certificate_issued_visibility_failed", request));
     }
 
     /**
@@ -100,10 +100,10 @@ public class TrustCertificationErrorController extends SupportController {
      */
     @ExceptionHandler(GetCertificatesException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetCertificatesException(GetCertificatesException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetCertificatesException(final GetCertificatesException ex, final HttpServletRequest request) {
         logger.error("Handler for GetCertificatesException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.GET_CERTIFICATES_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Get certificates Failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_certificates_failed", request));
     }
 
     /**
@@ -114,10 +114,10 @@ public class TrustCertificationErrorController extends SupportController {
      */
     @ExceptionHandler(IssueCertificateRequestException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleIssueCertificateException(IssueCertificateRequestException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleIssueCertificateException(final IssueCertificateRequestException ex, final HttpServletRequest request) {
         logger.error("Handler for IssueCertificateException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.NEW_ISSUE_CERTIFICATE_REQUEST_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Issue new certificate Failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("issue_new_certificate_failed", request));
     }
 
     /**
@@ -128,10 +128,10 @@ public class TrustCertificationErrorController extends SupportController {
      */
     @ExceptionHandler(AcceptCertificateRequestException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleAcceptCertificateRequestException(AcceptCertificateRequestException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleAcceptCertificateRequestException(final AcceptCertificateRequestException ex, final HttpServletRequest request) {
         logger.error("Handler for AcceptCertificateRequestException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.ACCEPT_CERTIFICATE_REQUEST_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Accept certificate request failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("accept_certificate_request_failed", request));
     }
 
     /**
@@ -142,10 +142,10 @@ public class TrustCertificationErrorController extends SupportController {
      */
     @ExceptionHandler(RejectCertificateRequestException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleRejectCertificateRequestException(RejectCertificateRequestException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleRejectCertificateRequestException(final RejectCertificateRequestException ex, final HttpServletRequest request) {
         logger.error("Handler for RejectCertificateRequestException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.REJECT_CERTIFICATE_REQUEST_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Reject Certificate Request Failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("reject_certificate_request_failed", request));
     }
 
     /**
@@ -159,7 +159,7 @@ public class TrustCertificationErrorController extends SupportController {
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleRenewCertificateException(RenewCertificateException ex, HttpServletRequest request) {
         logger.error("Handler for RenewCertificateException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.RENEW_CERTIFICATE_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Renew certificate Failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("renew_certificate_failed", request));
     }
 
     /**
@@ -173,7 +173,7 @@ public class TrustCertificationErrorController extends SupportController {
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetCertificatesIssuanceRequestsException(GetCertificatesIssuanceRequestsException ex, HttpServletRequest request) {
         logger.error("Handler for GetCertificatesIssuanceRequestsException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.GET_CERTIFICATES_ISSUANCE_REQUEST_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Get certificates Issuance requests Failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_certificates_issuance_requests_failed", request));
     }
 
     /**
@@ -187,7 +187,7 @@ public class TrustCertificationErrorController extends SupportController {
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleDownloadCertificateFileException(DownloadCertificateFileException ex, HttpServletRequest request) {
         logger.error("Handler for DownloadCertificateFileException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.DOWNLOAD_CERTIFICATE_FILE_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Download Certificate File failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("download_certificate_file_failed", request));
     }
 
 }

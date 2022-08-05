@@ -38,10 +38,10 @@ public class TokenManagementErrorController extends SupportController {
      */
     @ExceptionHandler(GetMyTokensException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetMyTokensException(GetMyTokensException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetMyTokensException(final GetMyTokensException ex, final HttpServletRequest request) {
         logger.error("Handler for GetMyTokensException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TokenManagementResponseCodeEnum.GET_MY_TOKENS_ERROR,
-                HttpStatus.INTERNAL_SERVER_ERROR, "An error ocurred while getting tokens");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_my_tokens_failed", request));
     }
 
     /**
@@ -52,10 +52,10 @@ public class TokenManagementErrorController extends SupportController {
      */
     @ExceptionHandler(GetTokenPricesException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetTokenPricesException(GetTokenPricesException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetTokenPricesException(final GetTokenPricesException ex, final HttpServletRequest request) {
         logger.error("Handler for GetTokenPricesException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TokenManagementResponseCodeEnum.GET_TOKEN_PRICES_ERROR,
-                HttpStatus.INTERNAL_SERVER_ERROR, "An error ocurred while getting token prices");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_token_prices_failed", request));
     }
 
     /**
@@ -66,10 +66,10 @@ public class TokenManagementErrorController extends SupportController {
      */
     @ExceptionHandler(GetClientTokensException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetClientTokensException(GetClientTokensException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetClientTokensException(final GetClientTokensException ex, final HttpServletRequest request) {
         logger.error("Handler for GetClientTokensException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TokenManagementResponseCodeEnum.GET_CLIENT_TOKENS_ERROR,
-                HttpStatus.INTERNAL_SERVER_ERROR, "An error ocurred while getting client tokens");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_client_tokens_failed", request));
     }
 
     /**
@@ -80,10 +80,10 @@ public class TokenManagementErrorController extends SupportController {
      */
     @ExceptionHandler(PlaceTokensOrderException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handlePlaceTokensOrderException(PlaceTokensOrderException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handlePlaceTokensOrderException(final PlaceTokensOrderException ex, final HttpServletRequest request) {
         logger.error("Handler for PlaceTokensOrderException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TokenManagementResponseCodeEnum.PLACE_TOKENS_ORDER_ERROR,
-                HttpStatus.INTERNAL_SERVER_ERROR, "An error ocurred while place order");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("place_tokens_order_failed", request));
     }
 
     /**
@@ -94,9 +94,9 @@ public class TokenManagementErrorController extends SupportController {
      */
     @ExceptionHandler(ConfirmOrderException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleConfirmOrderException(ConfirmOrderException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleConfirmOrderException(final ConfirmOrderException ex, final HttpServletRequest request) {
         logger.error("Handler for ConfirmOrderException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TokenManagementResponseCodeEnum.CONFIRM_ORDER_ERROR,
-                HttpStatus.INTERNAL_SERVER_ERROR, "An error ocurred while confirm order");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("confirm_order_failed", request));
     }
 }

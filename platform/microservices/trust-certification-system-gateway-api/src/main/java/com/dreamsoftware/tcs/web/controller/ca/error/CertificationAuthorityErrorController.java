@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CertificationAuthorityErrorController extends SupportController {
 
-    private static Logger logger = LoggerFactory.getLogger(CertificationAuthorityErrorController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CertificationAuthorityErrorController.class);
 
     /**
      *
@@ -36,25 +36,37 @@ public class CertificationAuthorityErrorController extends SupportController {
      */
     @ExceptionHandler(GetCertificationAuthorityException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetCertificationAuthorityException(GetCertificationAuthorityException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetCertificationAuthorityException(final GetCertificationAuthorityException ex, final HttpServletRequest request) {
         logger.error("Handler for GetCertificationAuthorityException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_FAIL,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Certification Authority Fail");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_ca_failed", request));
     }
 
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
     @ExceptionHandler(EnableCertificationAuthorityException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleEnableCertificationAuthorityException(EnableCertificationAuthorityException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleEnableCertificationAuthorityException(final EnableCertificationAuthorityException ex, final HttpServletRequest request) {
         logger.error("Handler for EnableCertificationAuthorityException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(CertificationAuthorityResponseCodeEnum.ENABLE_CERTIFICATION_AUTHORITY_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Enable Certification Authority Failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("enable_ca_failed", request));
     }
 
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
     @ExceptionHandler(DisableCertificationAuthorityException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleEnableCertificationAuthorityException(DisableCertificationAuthorityException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleDisableCertificationAuthorityException(final DisableCertificationAuthorityException ex, final HttpServletRequest request) {
         logger.error("Handler for DisableCertificationAuthorityException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(CertificationAuthorityResponseCodeEnum.DISABLE_CERTIFICATION_AUTHORITY_FAILED,
-                HttpStatus.INTERNAL_SERVER_ERROR, "Disable Certification Authority Failed");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("disable_ca_failed", request));
     }
 }

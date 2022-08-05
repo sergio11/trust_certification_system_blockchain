@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.web.controller.core;
 
 import com.dreamsoftware.tcs.i18n.service.IMessageSourceResolverService;
 import com.dreamsoftware.tcs.web.core.ResponseHelper;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.servlet.LocaleResolver;
@@ -35,4 +36,14 @@ public class SupportController {
      */
     @Autowired
     protected LocaleResolver localeResolver;
+
+    /**
+     *
+     * @param key
+     * @param request
+     * @return
+     */
+    protected String resolveString(final String key, final HttpServletRequest request) {
+        return messageSourceResolver.resolver(key, localeResolver.resolveLocale(request));
+    }
 }
