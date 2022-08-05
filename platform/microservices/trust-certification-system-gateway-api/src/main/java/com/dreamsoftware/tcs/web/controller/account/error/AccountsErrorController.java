@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class AccountsErrorController extends SupportController {
 
-    private static Logger logger = LoggerFactory.getLogger(AccountsErrorController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AccountsErrorController.class);
 
     /**
      * Handler for Bad Credentials Exception
@@ -39,23 +39,25 @@ public class AccountsErrorController extends SupportController {
      */
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleBadCredentialsException(BadCredentialsException badCredentialsException, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleBadCredentialsException(final BadCredentialsException badCredentialsException, final HttpServletRequest request) {
         logger.error("Handler for BadCredentialsException");
         return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.BAD_CREDENTIALS,
-                HttpStatus.BAD_REQUEST, "User Bad Credentials Error");
+                HttpStatus.BAD_REQUEST, resolveString("bad_credentials", request));
     }
 
     /**
      * Handler for Signup Exception
      *
      * @param ex
+     * @param request
      * @return
      */
     @ExceptionHandler(SignUpException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSignUpException(SignUpException ex) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSignUpException(final SignUpException ex, final HttpServletRequest request) {
         logger.error("Handler for SignUpException -> " + ex.getMessage());
-        return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.SIGNUP_FAIL, HttpStatus.INTERNAL_SERVER_ERROR, "User Signup Failed");
+        return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.SIGNUP_FAIL,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("signup_failed", request));
     }
 
     /**
@@ -66,10 +68,10 @@ public class AccountsErrorController extends SupportController {
      */
     @ExceptionHandler(RefreshTokenException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleRefreshTokenException(RefreshTokenException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleRefreshTokenException(final RefreshTokenException ex, final HttpServletRequest request) {
         logger.error("Handler for RefreshTokenException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.REFRESH_TOKEN_FAIL,
-                HttpStatus.INTERNAL_SERVER_ERROR, "User Refresh Token Fail");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("refresh_token_failed", request));
     }
 
     /**
@@ -80,10 +82,10 @@ public class AccountsErrorController extends SupportController {
      */
     @ExceptionHandler(ActivateAccountException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleActivateAccountException(ActivateAccountException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleActivateAccountException(final ActivateAccountException ex, final HttpServletRequest request) {
         logger.error("Handler for ActivateAccountException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.ACTIVATE_FAIL,
-                HttpStatus.INTERNAL_SERVER_ERROR, "User activation Fail");
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("user_activation_failed", request));
     }
 
 }

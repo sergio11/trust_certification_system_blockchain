@@ -36,10 +36,10 @@ public class NotificationsErrorController extends SupportController {
      */
     @ExceptionHandler(NoNotificationsFoundException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleNoNotificationsFoundException(NoNotificationsFoundException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleNoNotificationsFoundException(final NoNotificationsFoundException ex, final HttpServletRequest request) {
         logger.error("Handler for NotificationsFoundException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(NotificationsResponseCodeEnum.NO_NOTIFICATIONS_FOUND,
-                HttpStatus.NOT_FOUND, "No notifications found");
+                HttpStatus.NOT_FOUND, resolveString("no_notifications_found", request));
     }
 
     /**
@@ -50,10 +50,10 @@ public class NotificationsErrorController extends SupportController {
      */
     @ExceptionHandler(GetNotificationDetailException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetNotificationDetailException(GetNotificationDetailException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetNotificationDetailException(final GetNotificationDetailException ex, final HttpServletRequest request) {
         logger.error("Handler for GetNotificationDetailException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(NotificationsResponseCodeEnum.NO_NOTIFICATION_FOUND,
-                HttpStatus.NOT_FOUND, "No notification found");
+                HttpStatus.NOT_FOUND, resolveString("no_notification_found", request));
     }
 
     /**
@@ -64,9 +64,9 @@ public class NotificationsErrorController extends SupportController {
      */
     @ExceptionHandler(DeleteNotificationException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleDeleteNotificationException(DeleteNotificationException ex, HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleDeleteNotificationException(final DeleteNotificationException ex, final HttpServletRequest request) {
         logger.error("Handler for DeleteNotificationException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(NotificationsResponseCodeEnum.NO_NOTIFICATION_FOUND,
-                HttpStatus.NOT_FOUND, "An error occurred when requesting to delete a notification");
+                HttpStatus.NOT_FOUND, resolveString("delete_notification_failed", request));
     }
 }
