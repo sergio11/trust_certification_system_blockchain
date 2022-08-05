@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.config.mail.properties;
+package com.dreamsoftware.tcs.config.properties;
 
 import java.io.Serializable;
 import javax.annotation.PostConstruct;

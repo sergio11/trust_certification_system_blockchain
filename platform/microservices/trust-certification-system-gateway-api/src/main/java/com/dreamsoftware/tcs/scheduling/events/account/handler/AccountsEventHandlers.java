@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.scheduling.events.account.handler;
 
 import com.dreamsoftware.tcs.scheduling.events.account.UserActivatedEvent;
-import com.dreamsoftware.tcs.services.mail.IMailClientService;
+import com.dreamsoftware.tcs.service.IMailClientService;
 import com.dreamsoftware.tcs.scheduling.events.account.UserPendingValidationEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

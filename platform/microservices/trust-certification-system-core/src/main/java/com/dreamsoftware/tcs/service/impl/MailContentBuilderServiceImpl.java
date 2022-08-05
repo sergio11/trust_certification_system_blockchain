@@ -1,9 +1,9 @@
-package com.dreamsoftware.tcs.services.impl.mail;
+package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.config.mail.properties.MailProperties;
-import com.dreamsoftware.tcs.services.mail.IMailContentBuilderService;
-import com.dreamsoftware.tcs.web.dto.internal.SendMailForActivateAccountDTO;
-import com.dreamsoftware.tcs.web.dto.internal.SendMailForConfirmActivationDTO;
+import com.dreamsoftware.tcs.config.properties.MailProperties;
+import com.dreamsoftware.tcs.model.SendMailForActivateAccountDTO;
+import com.dreamsoftware.tcs.model.SendMailForConfirmActivationDTO;
+import com.dreamsoftware.tcs.service.IMailContentBuilderService;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -55,9 +54,9 @@ public class MailContentBuilderServiceImpl implements IMailContentBuilderService
         final Context context = new Context(request.getLocale());
         context.setVariable("firstname", request.getFirstname());
         context.setVariable("lastname", request.getLastname());
-        context.setVariable("activateUrl",
+        /*context.setVariable("activateUrl",
                 ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/accounts/activate?token={token}")
-                        .buildAndExpand(request.getConfirmationToken()));
+                        .buildAndExpand(request.getConfirmationToken()));*/
 
         return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getConfirmAccountActivationTemplate(), null);
     }
