@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
+import com.dreamsoftware.tcs.service.INotificationService;
 
 /**
  *
@@ -70,6 +71,11 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
     private final CertificateIssuanceRequestRepository certificateIssuedRepository;
 
     /**
+     * Notification Service
+     */
+    private final INotificationService notificationService;
+
+    /**
      *
      * @param event
      * @return
@@ -95,7 +101,7 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
      * @param event
      */
     @Override
-    public void saveCertificate(OnNewCertificateIssuedEvent event) {
+    public void saveCertificate(final OnNewCertificateIssuedEvent event) {
         Assert.notNull(event, "Event can not be null");
         final UserEntity caUserEntity = userRepository.findOneByWalletHash(event.getCaWalletHash()).orElseThrow(() -> new IllegalStateException("CA Wallet Hash not found"));
         final UserEntity studentEntity = userRepository.findOneByWalletHash(event.getStudentWalletHash()).orElseThrow(() -> new IllegalStateException("Student Wallet Hash not found"));
@@ -106,7 +112,8 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
                 .certificateId(event.getCertificateId())
                 .createdAt(new Date())
                 .build();
-        certificateIssuedRepository.save(certificateIssued);
+        final CertificateIssuanceRequestEntity certificateIssuedSaved = certificateIssuedRepository.save(certificateIssued);
+        notificationService.onUserCertificateValidated(certificateIssuedSaved);
     }
 
 }

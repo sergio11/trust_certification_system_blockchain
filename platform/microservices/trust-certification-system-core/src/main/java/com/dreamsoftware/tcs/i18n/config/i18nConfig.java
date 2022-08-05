@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class i18nConfig {
 
-    private static Logger logger = LoggerFactory.getLogger(i18nConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(i18nConfig.class);
 
     /**
      * Provide Message Source to Spring Context

@@ -17,7 +17,7 @@ import java.util.MissingResourceException;
 @Service("i18nService")
 public class i18nServiceImpl implements I18NService {
 
-    private static Logger logger = LoggerFactory.getLogger(i18nServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(i18nServiceImpl.class);
 
     private List<Locale> localeSupported = new ArrayList<>();
 
