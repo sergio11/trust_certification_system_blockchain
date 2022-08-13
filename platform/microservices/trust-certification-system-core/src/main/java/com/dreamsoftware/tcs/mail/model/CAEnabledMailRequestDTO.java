@@ -1,5 +1,6 @@
-package com.dreamsoftware.tcs.model.mail;
+package com.dreamsoftware.tcs.mail.model;
 
+import com.dreamsoftware.tcs.persistence.nosql.entity.EmailTypeEnum;
 import java.util.Locale;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -11,7 +12,7 @@ import lombok.Getter;
  */
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class UserPendingValidationMailRequestDTO extends AbstractMailRequestDTO {
+public class CAEnabledMailRequestDTO extends AbstractMailRequestDTO {
 
     /**
      * Id
@@ -19,29 +20,26 @@ public class UserPendingValidationMailRequestDTO extends AbstractMailRequestDTO 
     private String id;
 
     /**
-     * Name
+     * name
      */
     private String name;
-
-    /**
-     * Confirmation Token
-     */
-    private String confirmationToken;
 
     /**
      *
      * @param id
      * @param name
-     * @param confirmationToken
      * @param email
      * @param locale
      */
     @Builder
-    public UserPendingValidationMailRequestDTO(final String id, final String name, final String confirmationToken, final String email, final Locale locale) {
+    public CAEnabledMailRequestDTO(final String id, final String name, final String email, final Locale locale) {
         super(email, locale);
         this.id = id;
         this.name = name;
-        this.confirmationToken = confirmationToken;
     }
 
+    @Override
+    public EmailTypeEnum getType() {
+        return EmailTypeEnum.CA_ENABLED;
+    }
 }

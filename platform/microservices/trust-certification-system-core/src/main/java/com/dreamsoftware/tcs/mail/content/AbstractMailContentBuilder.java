@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.mail.content;
 
 import com.dreamsoftware.tcs.config.properties.MailProperties;
-import com.dreamsoftware.tcs.model.mail.AbstractMailRequestDTO;
+import com.dreamsoftware.tcs.mail.model.AbstractMailRequestDTO;
 import java.util.Map;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
