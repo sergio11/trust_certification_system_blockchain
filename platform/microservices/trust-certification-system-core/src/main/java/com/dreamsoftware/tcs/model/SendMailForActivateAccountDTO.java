@@ -43,7 +43,7 @@ public class SendMailForActivateAccountDTO {
      */
     private Locale locale;
     /**
-     * Confirmatino Token
+     * Confirmation Token
      */
     private String confirmationToken;
 }

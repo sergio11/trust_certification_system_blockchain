@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
@@ -75,7 +76,7 @@ public class NotificationsController extends SupportController {
     public ResponseEntity<APIResponse<Page<NotificationDTO>>> getNotificationsForUser(
             @RequestParam(name = "page", required = false, defaultValue = "0") final Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "20") final Integer size,
-            @PathVariable @Valid @ShouldBeAValidObjectId(message = "Invalid Id Format") final String id) throws Throwable {
+            @PathVariable @Valid @ShouldBeAValidObjectId(message = "{notification_id_not_valid}") final String id) throws Throwable {
 
         return getNotifications(new ObjectId(id), page, size);
     }
@@ -128,7 +129,7 @@ public class NotificationsController extends SupportController {
     @OnlyAccessForAdminOrNotificationOwner
     public ResponseEntity<APIResponse<NotificationDTO>> getById(
             @Parameter(name = "id", description = "Notification Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "notification_id_valid") @PathVariable("id") String id,
+            @Valid @ShouldBeAValidObjectId(message = "{notification_id_not_valid}") @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
@@ -145,6 +146,7 @@ public class NotificationsController extends SupportController {
      *
      * @param id
      * @param selfUser
+     * @param request
      * @return
      * @throws Throwable
      */
@@ -160,14 +162,15 @@ public class NotificationsController extends SupportController {
     @OnlyAccessForAdminOrNotificationOwner
     public ResponseEntity<APIResponse<String>> deleteById(
             @Parameter(name = "id", description = "Notification Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "notification_id_valid") @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Valid @ShouldBeAValidObjectId(message = "{notification_id_not_valid}") @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
         try {
             notificationService.deleteById(new ObjectId(id));
             return responseHelper.<String>createAndSendResponse(
                     NotificationsResponseCodeEnum.NOTIFICATION_DELETED,
-                    HttpStatus.OK, "Notification Deleted");
+                    HttpStatus.OK, resolveString("notification_deleted", request));
         } catch (final Exception ex) {
             throw new DeleteNotificationException(ex.getMessage(), ex);
         }
