@@ -182,7 +182,7 @@ public class TokenManagementController extends SupportController {
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<Long>> getClientTokens(
             @Parameter(name = "id", description = "User Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "user_id_valid") @PathVariable("id") String id,
+            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}") @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {

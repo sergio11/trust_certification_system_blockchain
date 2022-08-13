@@ -1,5 +1,7 @@
 package com.dreamsoftware.tcs.web.controller.course;
 
+import com.dreamsoftware.tcs.scheduling.events.course.CourseDisabledEvent;
+import com.dreamsoftware.tcs.scheduling.events.course.CourseEnabledEvent;
 import com.dreamsoftware.tcs.services.ICertificationCourseService;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
@@ -25,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
@@ -56,6 +59,7 @@ public class CertificationCourseController extends SupportController {
      *
      * @param certificationCourse
      * @param selfUser
+     * @param request
      * @return
      * @throws Throwable
      */
@@ -73,13 +77,14 @@ public class CertificationCourseController extends SupportController {
             @Parameter(name = "certification_course", description = "Certification Course Data. Cannot null or empty.",
                     required = true, schema = @Schema(implementation = SaveCertificationCourseDTO.class))
             @Validated(ICommonSequence.class) SaveCertificationCourseDTO certificationCourse,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser) throws Throwable {
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
         try {
             certificationCourse.setCaWalletHash(selfUser.getWalletHash());
             certificationCourseService.save(certificationCourse);
             return responseHelper.createAndSendResponse(
                     CertificationCourseResponseCodeEnum.SAVE_CERTIFICATION_COURSE, HttpStatus.OK,
-                    "Course certificate registration request made");
+                    resolveString("new_course_registration_requested", request));
         } catch (final Exception ex) {
             throw new SaveCertificationCourseException(ex.getMessage(), ex);
         }
@@ -104,6 +109,7 @@ public class CertificationCourseController extends SupportController {
     ) throws Throwable {
         try {
             final CertificationCourseDetailDTO certificationCourseDTO = certificationCourseService.enable(selfUser.getWalletHash(), id);
+            applicationEventPublisher.publishEvent(new CourseEnabledEvent(this, certificationCourseDTO.getId()));
             return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_ENABLED,
                     HttpStatus.OK, certificationCourseDTO);
         } catch (final Exception ex) {
@@ -130,6 +136,7 @@ public class CertificationCourseController extends SupportController {
     ) throws Throwable {
         try {
             final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseService.disable(selfUser.getWalletHash(), id);
+            applicationEventPublisher.publishEvent(new CourseDisabledEvent(this, certificationCourseDetailDTO.getId()));
             return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(
                     CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DISABLED,
                     HttpStatus.OK, certificationCourseDetailDTO);
@@ -158,7 +165,7 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> getDetailById(
             @Parameter(name = "id", description = "Course Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "course_id_valid") @PathVariable("id") String id,
+            @Valid @ShouldBeAValidObjectId(message = "{course_id_not_valid}") @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
@@ -191,7 +198,7 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<Boolean>> canBeIssued(
             @Parameter(name = "id", description = "Course Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "course_id_valid") @PathVariable("id") String id,
+            @Valid @ShouldBeAValidObjectId(message = "{course_id_not_valid}") @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
@@ -225,7 +232,7 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<Boolean>> canBeRenewed(
             @Parameter(name = "id", description = "Course Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "course_id_valid") @PathVariable("id") String id,
+            @Valid @ShouldBeAValidObjectId(message = "{course_id_not_valid}") @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {

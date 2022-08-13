@@ -1,5 +1,7 @@
 package com.dreamsoftware.tcs.web.controller.ca;
 
+import com.dreamsoftware.tcs.scheduling.events.ca.CADisabledEvent;
+import com.dreamsoftware.tcs.scheduling.events.ca.CAEnabledEvent;
 import com.dreamsoftware.tcs.services.ICertificationAuthorityService;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.DisableCertificationAuthorityException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.EnableCertificationAuthorityException;
@@ -67,7 +69,7 @@ public class CertificationAuthorityController extends SupportController {
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> getDetailById(
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "user_id_not_valid") @PathVariable("id") String id
+            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}") @PathVariable("id") String id
     ) throws Throwable {
 
         try {
@@ -124,11 +126,12 @@ public class CertificationAuthorityController extends SupportController {
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> enable(
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "user_id_not_valid") @PathVariable("id") String id
+            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}") @PathVariable("id") String id
     ) throws Throwable {
         try {
 
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.enable(id);
+            applicationEventPublisher.publishEvent(new CAEnabledEvent(this, caDetailDTO.getWalletHash()));
             return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_ENABLED,
                     HttpStatus.OK, caDetailDTO);
@@ -150,10 +153,11 @@ public class CertificationAuthorityController extends SupportController {
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> disable(
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "user_id_not_valid") @PathVariable("id") String id
+            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}") @PathVariable("id") String id
     ) throws Throwable {
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.disable(id);
+            applicationEventPublisher.publishEvent(new CADisabledEvent(this, caDetailDTO.getWalletHash()));
             return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_DISABLED,
                     HttpStatus.OK, caDetailDTO);
