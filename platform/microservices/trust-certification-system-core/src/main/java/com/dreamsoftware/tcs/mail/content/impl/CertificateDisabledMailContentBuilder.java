@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class CADisabledMailContentBuilder extends AbstractMailContentBuilder<CADisabledMailRequestDTO> {
+public class CertificateDisabledMailContentBuilder extends AbstractMailContentBuilder<CADisabledMailRequestDTO> {
 
     /**
      *

@@ -1,15 +1,11 @@
-package com.dreamsoftware.tcs.service.impl;
+package com.dreamsoftware.tcs.mail.model.service.impl;
 
 import com.dreamsoftware.tcs.mail.content.AbstractMailContentBuilder;
-import com.dreamsoftware.tcs.model.mail.AbstractMailRequestDTO;
-import com.dreamsoftware.tcs.model.mail.CADisabledMailRequestDTO;
-import com.dreamsoftware.tcs.service.IMailClientService;
+import com.dreamsoftware.tcs.mail.model.AbstractMailRequestDTO;
+import com.dreamsoftware.tcs.mail.model.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.EmailEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.EmailTypeEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.EmailRepository;
-import com.dreamsoftware.tcs.model.mail.UserPendingValidationMailRequestDTO;
-import com.dreamsoftware.tcs.model.mail.CAEnabledMailRequestDTO;
-import com.dreamsoftware.tcs.model.mail.UserActivatedEventMailRequestDTO;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import java.util.Date;
 import java.util.Optional;
@@ -53,76 +49,26 @@ public class MailClientServiceImpl implements IMailClientService {
 
     /**
      *
+     * @param <T>
      * @param request
      */
     @Override
-    public void sendMail(final UserActivatedEventMailRequestDTO request) {
+    public <T extends AbstractMailRequestDTO> void sendMail(final T request) {
         Assert.notNull(request, "request can not be null");
         Assert.notNull(request.getEmail(), "Email can not be null");
         Assert.hasLength(request.getEmail(), "Email can be empty");
-        logger.debug("sendMail - UserActivatedEventMailRequestDTO");
-        sendMail(UserActivatedEventMailRequestDTO.class, request, EmailTypeEnum.USER_ACTIVATED);
-    }
-
-    /**
-     *
-     * @param request
-     */
-    @Override
-    public void sendMail(final UserPendingValidationMailRequestDTO request) {
-        Assert.notNull(request, "request can not be null");
-        Assert.notNull(request.getEmail(), "Email can not be null");
-        Assert.hasLength(request.getEmail(), "Email can be empty");
-        logger.debug("sendMail - UserPendingValidationMailRequestDTO");
-        sendMail(UserPendingValidationMailRequestDTO.class, request, EmailTypeEnum.USER_PENDING_VALIDATION);
-    }
-
-    /**
-     *
-     * @param request
-     */
-    @Override
-    public void sendMail(final CAEnabledMailRequestDTO request) {
-        Assert.notNull(request, "request can not be null");
-        Assert.notNull(request.getEmail(), "Email can not be null");
-        Assert.hasLength(request.getEmail(), "Email can be empty");
-        logger.debug("sendMail - CAEnabledMailRequestDTO");
-        sendMail(CAEnabledMailRequestDTO.class, request, EmailTypeEnum.CA_ENABLED);
-    }
-
-    /**
-     *
-     * @param request
-     */
-    @Override
-    public void sendMail(final CADisabledMailRequestDTO request) {
-        Assert.notNull(request, "request can not be null");
-        Assert.notNull(request.getEmail(), "Email can not be null");
-        Assert.hasLength(request.getEmail(), "Email can be empty");
-        logger.debug("sendMail - CADisabledMailRequestDTO");
-        sendMail(CADisabledMailRequestDTO.class, request, EmailTypeEnum.CA_DISABLED);
+        try {
+            final AbstractMailContentBuilder<T> mailContentBuilder = getMailContentBuilder(request.getEntityType());
+            final MimeMessage message = mailContentBuilder.buildContent(request);
+            sendMail(message, request.getEmail(), request.getType());
+        } catch (MessagingException ex) {
+            logger.error(request.getEntityType().getName() + " - MessagingException: " + ex.getMessage());
+        }
     }
 
     /**
      * Private Methods
      */
-    /**
-     *
-     * @param <T>
-     * @param clazz
-     * @param request
-     * @param type
-     */
-    private <T extends AbstractMailRequestDTO> void sendMail(final Class<T> clazz, final T request, final EmailTypeEnum type) {
-        try {
-            final AbstractMailContentBuilder<T> mailContentBuilder = getMailContentBuilder(clazz);
-            final MimeMessage message = mailContentBuilder.buildContent(request);
-            sendMail(message, request.getEmail(), type);
-        } catch (MessagingException ex) {
-            logger.error(clazz.getName() + " - MessagingException: " + ex.getMessage());
-        }
-    }
-
     /**
      * Send Mail
      *

@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.persistence.nosql.repository;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateStatusEnum;
+import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -20,6 +21,13 @@ public interface CertificateIssuanceRequestRepository extends MongoRepository<Ce
      * @return
      */
     Long countByIdAndStatus(final ObjectId id, final CertificateStatusEnum status);
+
+    /**
+     *
+     * @param certificateId
+     * @return
+     */
+    Optional<CertificateIssuanceRequestEntity> findByCertificateId(final String certificateId);
 
     /**
      *

@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.mail.content.impl;
 
 import com.dreamsoftware.tcs.mail.content.AbstractMailContentBuilder;
-import com.dreamsoftware.tcs.mail.model.CADisabledMailRequestDTO;
+import com.dreamsoftware.tcs.mail.model.IssueCertificateRequestMailRequestDTO;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -14,16 +14,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class CADisabledMailContentBuilder extends AbstractMailContentBuilder<CADisabledMailRequestDTO> {
+public class IssueCertificateRequestMailContentBuilder extends AbstractMailContentBuilder<IssueCertificateRequestMailRequestDTO> {
 
-    /**
-     *
-     * @param request
-     * @return
-     * @throws MessagingException
-     */
     @Override
-    public MimeMessage buildContent(final CADisabledMailRequestDTO request) throws MessagingException {
+    public MimeMessage buildContent(IssueCertificateRequestMailRequestDTO request) throws MessagingException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

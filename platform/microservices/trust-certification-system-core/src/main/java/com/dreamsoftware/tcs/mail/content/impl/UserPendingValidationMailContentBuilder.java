@@ -1,8 +1,8 @@
 package com.dreamsoftware.tcs.mail.content.impl;
 
 import com.dreamsoftware.tcs.mail.content.AbstractMailContentBuilder;
-import com.dreamsoftware.tcs.model.mail.UserActivatedEventMailRequestDTO;
-import com.dreamsoftware.tcs.model.mail.UserPendingValidationMailRequestDTO;
+import com.dreamsoftware.tcs.mail.model.UserActivatedEventMailRequestDTO;
+import com.dreamsoftware.tcs.mail.model.UserPendingValidationMailRequestDTO;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
