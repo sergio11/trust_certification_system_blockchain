@@ -1,7 +1,6 @@
 package com.dreamsoftware.tcs.mail.content.impl;
 
 import com.dreamsoftware.tcs.mail.content.AbstractMailContentBuilder;
-import com.dreamsoftware.tcs.mail.model.UserActivatedEventMailRequestDTO;
 import com.dreamsoftware.tcs.mail.model.UserPendingValidationMailRequestDTO;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -22,8 +21,8 @@ public class UserPendingValidationMailContentBuilder extends AbstractMailContent
     @Override
     public MimeMessage buildContent(UserPendingValidationMailRequestDTO request) throws MessagingException {
         Assert.notNull(request, "Request can not be null");
-        Assert.notNull(mailContentProperties.getConfirmAccountActivationTemplate(), "Account Activation Success Template can not be null");
-        Assert.hasLength(mailContentProperties.getConfirmAccountActivationTemplate(), "Account Activation Success Template can not be empty");
+        Assert.notNull(mailContentProperties.getUserPendingValidationMailTemplate(), "Mail Template can not be null");
+        Assert.hasLength(mailContentProperties.getUserPendingValidationMailTemplate(), "Mail Template can not be empty");
 
         // Generate Email Subject
         String subject = "mail_registration_success_subject_title";
@@ -34,7 +33,7 @@ public class UserPendingValidationMailContentBuilder extends AbstractMailContent
                 ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/accounts/activate?token={token}")
                         .buildAndExpand(request.getConfirmationToken()));*/
 
-        return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getConfirmAccountActivationTemplate(), null);
+        return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getUserPendingValidationMailTemplate(), null);
     }
 
 }

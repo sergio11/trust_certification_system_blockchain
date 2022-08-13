@@ -17,7 +17,7 @@ public class IssueCertificateRequestMailRequestDTO extends AbstractMailRequestDT
     /**
      * Id
      */
-    private String id;
+    private String certificateId;
 
     /**
      * Name
@@ -25,17 +25,24 @@ public class IssueCertificateRequestMailRequestDTO extends AbstractMailRequestDT
     private String name;
 
     /**
+     * Qualification
+     */
+    private Long qualification;
+
+    /**
      *
-     * @param id
+     * @param certificateId
      * @param name
+     * @param qualification
      * @param email
      * @param locale
      */
     @Builder
-    public IssueCertificateRequestMailRequestDTO(final String id, final String name, final String email, final Locale locale) {
+    public IssueCertificateRequestMailRequestDTO(final String certificateId, final String name, final Long qualification, final String email, final Locale locale) {
         super(email, locale);
-        this.id = id;
+        this.certificateId = certificateId;
         this.name = name;
+        this.qualification = qualification;
     }
 
     @Override

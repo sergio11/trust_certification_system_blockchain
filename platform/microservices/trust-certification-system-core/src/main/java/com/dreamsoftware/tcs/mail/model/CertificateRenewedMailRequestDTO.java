@@ -17,7 +17,7 @@ public class CertificateRenewedMailRequestDTO extends AbstractMailRequestDTO {
     /**
      * Id
      */
-    private String id;
+    private String certificateId;
 
     /**
      * Name
@@ -26,15 +26,15 @@ public class CertificateRenewedMailRequestDTO extends AbstractMailRequestDTO {
 
     /**
      *
-     * @param id
+     * @param certificateId
      * @param name
      * @param email
      * @param locale
      */
     @Builder
-    public CertificateRenewedMailRequestDTO(final String id, final String name, final String email, final Locale locale) {
+    public CertificateRenewedMailRequestDTO(final String certificateId, final String name, final String email, final Locale locale) {
         super(email, locale);
-        this.id = id;
+        this.certificateId = certificateId;
         this.name = name;
     }
 
