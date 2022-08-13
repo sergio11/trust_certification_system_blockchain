@@ -32,18 +32,18 @@ public class MailProperties implements Serializable {
     @Value("${mail.resources.base.dir}")
     private String mailResourcesBaseDir;
 
-    @Value("${mail.registration.success.template.name}")
-    private String registrationSuccessTemplate;
+    @Value("${mail.templates.accounts.user-activated}")
+    private String useActivatedMailTemplate;
 
-    @Value("${mail.confirm.account.activation.template.name}")
-    private String confirmAccountActivationTemplate;
+    @Value("${mail.templates.accounts.pending-validation}")
+    private String userPendingValidationMailTemplate;
 
     @PostConstruct
     protected void onPostConstruct() {
         logger.debug("mailFrom: " + mailFrom);
         logger.debug("mailTemplatesBaseDir: " + mailTemplatesBaseDir);
         logger.debug("mailResourcesBaseDir: " + mailResourcesBaseDir);
-        logger.debug("registrationSuccessTemplate: " + registrationSuccessTemplate);
-        logger.debug("confirmAccountActivationTemplate: " + confirmAccountActivationTemplate);
+        logger.debug("useActivatedMailTemplate: " + useActivatedMailTemplate);
+        logger.debug("userPendingValidationMailTemplate: " + userPendingValidationMailTemplate);
     }
 }

@@ -17,7 +17,7 @@ public class CertificateVisibilityChangedMailRequestDTO extends AbstractMailRequ
     /**
      * Id
      */
-    private String id;
+    private String certificateId;
 
     /**
      * Name
@@ -25,17 +25,24 @@ public class CertificateVisibilityChangedMailRequestDTO extends AbstractMailRequ
     private String name;
 
     /**
+     * Is Visible
+     */
+    private Boolean isVisible;
+
+    /**
      *
-     * @param id
+     * @param certificateId
      * @param name
+     * @param isVisible
      * @param email
      * @param locale
      */
     @Builder
-    public CertificateVisibilityChangedMailRequestDTO(final String id, final String name, final String email, final Locale locale) {
+    public CertificateVisibilityChangedMailRequestDTO(final String certificateId, final String name, final Boolean isVisible, final String email, final Locale locale) {
         super(email, locale);
-        this.id = id;
+        this.certificateId = certificateId;
         this.name = name;
+        this.isVisible = isVisible;
     }
 
     @Override
