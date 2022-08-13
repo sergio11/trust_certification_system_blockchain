@@ -6,8 +6,10 @@ package com.dreamsoftware.tcs.persistence.nosql.entity;
  */
 public enum EmailTypeEnum {
     COMPLETE_ACCOUNT_DELETION,
-    CONFIRM_ACCOUNT_ACTIVATION,
+    USER_ACTIVATED,
     CONFIRM_PASSWORD_CHANGE,
     RESET_PASSWORD,
-    ACTIVATE_ACCOUNT;
+    USER_PENDING_VALIDATION,
+    CA_ENABLED,
+    CA_DISABLED;
 }

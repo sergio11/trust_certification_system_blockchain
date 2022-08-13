@@ -1,27 +1,33 @@
 package com.dreamsoftware.tcs.service.impl;
 
+import com.dreamsoftware.tcs.mail.content.AbstractMailContentBuilder;
+import com.dreamsoftware.tcs.model.mail.AbstractMailRequestDTO;
+import com.dreamsoftware.tcs.model.mail.CADisabledMailRequestDTO;
 import com.dreamsoftware.tcs.service.IMailClientService;
-import com.dreamsoftware.tcs.service.IMailContentBuilderService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.EmailEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.EmailTypeEnum;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.EmailRepository;
+import com.dreamsoftware.tcs.model.mail.UserPendingValidationMailRequestDTO;
+import com.dreamsoftware.tcs.model.mail.CAEnabledMailRequestDTO;
+import com.dreamsoftware.tcs.model.mail.UserActivatedEventMailRequestDTO;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
-import com.dreamsoftware.tcs.i18n.service.I18NService;
-import com.dreamsoftware.tcs.model.SendMailForActivateAccountDTO;
 import java.util.Date;
 import java.util.Optional;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.ResolvableType;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.Assert;
 
 /**
+ * Mail Client Service
  *
  * @author ssanchez
  */
@@ -31,11 +37,10 @@ public class MailClientServiceImpl implements IMailClientService {
 
     private final Logger logger = LoggerFactory.getLogger(MailClientServiceImpl.class);
 
-    private final IMailContentBuilderService mailContentBuilderService;
     private final JavaMailSender mailSender;
     private final EmailRepository emailRepository;
+    private final ApplicationContext applicationContext;
     private final UserRepository userRepository;
-    private final I18NService i18nService;
 
     /**
      *
@@ -46,36 +51,76 @@ public class MailClientServiceImpl implements IMailClientService {
         Assert.isTrue(numberOfEmailsToForwarding > 0, "Number of mails should be greater than 0");
     }
 
+    /**
+     *
+     * @param request
+     */
     @Override
-    public void sendMailForActivateAccount(String id) {
-        Assert.notNull(id, "Id can not be null");
-        Assert.hasLength(id, "Id can be empty");
-        Assert.isTrue(ObjectId.isValid(id), "Id is invalid");
-        try {
-
-            final UserEntity user = userRepository.findById(new ObjectId(id)).orElseThrow(() -> {
-                throw new IllegalStateException("User not found!");
-            });
-
-            final SendMailForActivateAccountDTO request = SendMailForActivateAccountDTO.builder()
-                    .email(user.getEmail())
-                    .firstname(user.getName())
-                    .locale(i18nService.parseLocaleOrDefault(user.getLanguage()))
-                    .id(id)
-                    .confirmationToken(user.getConfirmationToken())
-                    .build();
-
-            final MimeMessage message = mailContentBuilderService.buildContent(request);
-            sendMail(message, request.getId(), EmailTypeEnum.CONFIRM_ACCOUNT_ACTIVATION);
-        } catch (Throwable ex) {
-            logger.debug("MessagingException: " + ex.getMessage());
-        }
+    public void sendMail(final UserActivatedEventMailRequestDTO request) {
+        Assert.notNull(request, "request can not be null");
+        Assert.notNull(request.getEmail(), "Email can not be null");
+        Assert.hasLength(request.getEmail(), "Email can be empty");
+        logger.debug("sendMail - UserActivatedEventMailRequestDTO");
+        sendMail(UserActivatedEventMailRequestDTO.class, request, EmailTypeEnum.USER_ACTIVATED);
     }
 
+    /**
+     *
+     * @param request
+     */
     @Override
-    public void sendMailForConfirmActivation(String id) {
-        Assert.notNull(id, "Id can not be null");
-        Assert.hasLength(id, "Id can be empty");
+    public void sendMail(final UserPendingValidationMailRequestDTO request) {
+        Assert.notNull(request, "request can not be null");
+        Assert.notNull(request.getEmail(), "Email can not be null");
+        Assert.hasLength(request.getEmail(), "Email can be empty");
+        logger.debug("sendMail - UserPendingValidationMailRequestDTO");
+        sendMail(UserPendingValidationMailRequestDTO.class, request, EmailTypeEnum.USER_PENDING_VALIDATION);
+    }
+
+    /**
+     *
+     * @param request
+     */
+    @Override
+    public void sendMail(final CAEnabledMailRequestDTO request) {
+        Assert.notNull(request, "request can not be null");
+        Assert.notNull(request.getEmail(), "Email can not be null");
+        Assert.hasLength(request.getEmail(), "Email can be empty");
+        logger.debug("sendMail - CAEnabledMailRequestDTO");
+        sendMail(CAEnabledMailRequestDTO.class, request, EmailTypeEnum.CA_ENABLED);
+    }
+
+    /**
+     *
+     * @param request
+     */
+    @Override
+    public void sendMail(final CADisabledMailRequestDTO request) {
+        Assert.notNull(request, "request can not be null");
+        Assert.notNull(request.getEmail(), "Email can not be null");
+        Assert.hasLength(request.getEmail(), "Email can be empty");
+        logger.debug("sendMail - CADisabledMailRequestDTO");
+        sendMail(CADisabledMailRequestDTO.class, request, EmailTypeEnum.CA_DISABLED);
+    }
+
+    /**
+     * Private Methods
+     */
+    /**
+     *
+     * @param <T>
+     * @param clazz
+     * @param request
+     * @param type
+     */
+    private <T extends AbstractMailRequestDTO> void sendMail(final Class<T> clazz, final T request, final EmailTypeEnum type) {
+        try {
+            final AbstractMailContentBuilder<T> mailContentBuilder = getMailContentBuilder(clazz);
+            final MimeMessage message = mailContentBuilder.buildContent(request);
+            sendMail(message, request.getEmail(), type);
+        } catch (MessagingException ex) {
+            logger.error(clazz.getName() + " - MessagingException: " + ex.getMessage());
+        }
     }
 
     /**
@@ -107,5 +152,16 @@ public class MailClientServiceImpl implements IMailClientService {
             });
             emailRepository.save(emailEntity);
         }
+    }
+
+    /**
+     *
+     * @param <T>
+     * @param clazz
+     * @return
+     */
+    private <T extends AbstractMailRequestDTO> AbstractMailContentBuilder<T> getMailContentBuilder(Class<T> clazz) {
+        ResolvableType type = ResolvableType.forClassWithGenerics(AbstractMailContentBuilder.class, clazz);
+        return (AbstractMailContentBuilder<T>) applicationContext.getBeanProvider(type).getObject();
     }
 }
