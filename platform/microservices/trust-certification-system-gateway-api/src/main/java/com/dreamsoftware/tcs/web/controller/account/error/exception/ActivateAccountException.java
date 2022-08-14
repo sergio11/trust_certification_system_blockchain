@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.web.controller.error.exception;
+package com.dreamsoftware.tcs.web.controller.account.error.exception;
 
 /**
  *
