@@ -1,12 +1,10 @@
 package com.dreamsoftware.tcs.config;
 
-import com.dreamsoftware.tcs.config.mail.properties.PaypalProperties;
+import com.dreamsoftware.tcs.config.properties.CryptoCompareProperties;
 import com.dreamsoftware.tcs.web.interceptors.HeaderRequestInterceptor;
 import com.dreamsoftware.tcs.web.interceptors.LoggingRequestInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.paypal.core.PayPalEnvironment;
-import com.paypal.core.PayPalHttpClient;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,12 +40,13 @@ public class CryptoCompareConfig {
     /**
      * Provide Authorization Interceptor
      *
+     * @param cryptoCompareProperties
      * @return
      */
     @Bean(name = "authorizationInterceptor")
     @Order(1)
-    public ClientHttpRequestInterceptor provideAuthorizationInterceptor() {
-        return new HeaderRequestInterceptor("Authorization", String.format("key=%s", ""));
+    public ClientHttpRequestInterceptor provideAuthorizationInterceptor(final CryptoCompareProperties cryptoCompareProperties) {
+        return new HeaderRequestInterceptor("Authorization", String.format("key=%s", cryptoCompareProperties.getApiKey()));
     }
 
     /**

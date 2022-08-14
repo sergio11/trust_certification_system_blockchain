@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.config.mail.properties;
+package com.dreamsoftware.tcs.config.properties;
 
 import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
@@ -15,25 +15,24 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 @Configuration
 @Data
 @RefreshScope
-public class PaypalProperties {
+public class CryptoCompareProperties {
 
-    private Logger logger = LoggerFactory.getLogger(PaypalProperties.class);
-
-    /**
-     * Client Id
-     */
-    @Value("${paypal.client.id}")
-    private String clientId;
+    private Logger logger = LoggerFactory.getLogger(CryptoCompareProperties.class);
 
     /**
-     * Client Secret
+     * Base Url
      */
-    @Value("${paypal.client.secret}")
-    private String clientSecret;
+    @Value("${cryptoCompare.baseUrl}")
+    private String baseUrl;
+
+    /**
+     * Apy Key
+     */
+    @Value("${cryptoCompare.apiKey}")
+    private String apiKey;
 
     @PostConstruct
     public void onPostConstruct() {
-        logger.debug("Paypal Client Id: " + clientId);
-        logger.debug("Paypal Client Secret: " + clientSecret);
+        logger.debug("CryptoCompare BaseUrl: " + baseUrl);
     }
 }

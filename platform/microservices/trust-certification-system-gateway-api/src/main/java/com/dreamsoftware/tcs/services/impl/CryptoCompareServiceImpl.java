@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.services.impl;
 
-import com.dreamsoftware.tcs.config.mail.properties.CryptoCompareProperties;
+import com.dreamsoftware.tcs.config.properties.CryptoCompareProperties;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.services.ICryptoCompareService;
 import com.dreamsoftware.tcs.web.dto.internal.CryptoComparePricesDTO;
