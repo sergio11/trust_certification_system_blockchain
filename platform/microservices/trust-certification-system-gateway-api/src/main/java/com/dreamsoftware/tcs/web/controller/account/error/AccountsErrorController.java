@@ -1,12 +1,12 @@
 package com.dreamsoftware.tcs.web.controller.account.error;
 
 import com.dreamsoftware.tcs.web.controller.account.AccountsResponseCodeEnum;
-import com.dreamsoftware.tcs.web.controller.error.exception.RefreshTokenException;
-import com.dreamsoftware.tcs.web.controller.error.exception.SignUpException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.RefreshTokenException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
-import com.dreamsoftware.tcs.web.controller.error.exception.ActivateAccountException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAccountException;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,20 +1,26 @@
 package com.dreamsoftware.tcs.web.controller.account;
 
+import com.dreamsoftware.tcs.scheduling.events.account.PasswordResetEvent;
 import com.dreamsoftware.tcs.scheduling.events.account.UserActivatedEvent;
 import com.dreamsoftware.tcs.scheduling.events.account.UserPendingValidationEvent;
 import com.dreamsoftware.tcs.services.IAccountsService;
-import com.dreamsoftware.tcs.web.controller.error.exception.RefreshTokenException;
-import com.dreamsoftware.tcs.web.controller.error.exception.SignUpException;
+import com.dreamsoftware.tcs.services.IPasswordResetTokenService;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.RefreshTokenException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
-import com.dreamsoftware.tcs.web.controller.error.exception.ActivateAccountException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAccountException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.ResetPasswordRequestException;
+import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
 import com.dreamsoftware.tcs.web.dto.request.RefreshTokenDTO;
+import com.dreamsoftware.tcs.web.dto.request.ResetPasswordRequestDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
 import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
+import com.dreamsoftware.tcs.web.validation.constraints.group.IResetPasswordSequence;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,6 +32,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -58,6 +65,7 @@ public class AccountsController extends SupportController {
     private static final Logger logger = LoggerFactory.getLogger(AccountsController.class);
 
     private final IAccountsService authenticationService;
+    private final IPasswordResetTokenService passwordResetTokenService;
 
     /**
      * Create Authentication Token
@@ -196,6 +204,44 @@ public class AccountsController extends SupportController {
         } catch (final Throwable ex) {
             throw new ActivateAccountException(ex.getMessage(), ex.getCause());
         }
+    }
+
+    /**
+     * Reset Password
+     *
+     * @param resetPasswordRequestDTO
+     * @param request
+     * @return
+     */
+    @Operation(summary = "RESET_PASSWORD - Reset Password", description = "Reset Password", tags = {"accounts"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Reset Password Success",
+                content = @Content(schema = @Schema(implementation = String.class))),
+        @ApiResponse(responseCode = "500", description = "Reset Password fail",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @SecurityRequirements
+    @RequestMapping(value = "/reset-password", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<String>> resetPassword(
+            @Parameter(name = "reset_password_request", description = "Reset Password Request. Cannot null or empty.",
+                    required = true, schema = @Schema(implementation = ResetPasswordRequestDTO.class))
+            @Validated(IResetPasswordSequence.class) ResetPasswordRequestDTO resetPasswordRequestDTO,
+            @Parameter(hidden = true) HttpServletRequest request) {
+
+        try {
+            logger.debug("resetPassword for -> " + resetPasswordRequestDTO.getEmail());
+            final PasswordResetTokenDTO resetPasswordToken = Optional.ofNullable(passwordResetTokenService.getPasswordResetTokenForUserWithEmail(resetPasswordRequestDTO.getEmail()))
+                    .orElseGet(() -> passwordResetTokenService.createPasswordResetTokenForUserWithEmail(resetPasswordRequestDTO.getEmail()));
+            applicationEventPublisher.publishEvent(new PasswordResetEvent(this, resetPasswordToken));
+            return responseHelper.<String>createAndSendResponse(
+                    AccountsResponseCodeEnum.RESET_PASSWORD_REQUEST_SUCCESS,
+                    HttpStatus.OK, resolveString("user_password_request_reset_success", request));
+
+        } catch (final Exception ex) {
+            throw new ResetPasswordRequestException(ex.getMessage(), ex.getCause());
+        }
+
     }
 
 }
