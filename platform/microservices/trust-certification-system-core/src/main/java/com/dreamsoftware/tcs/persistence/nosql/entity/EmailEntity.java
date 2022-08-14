@@ -10,6 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import lombok.Builder;
 
 /**
  *
@@ -20,6 +21,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = EmailEntity.COLLECTION_NAME)
+@Builder
 public class EmailEntity {
 
     public final static String COLLECTION_NAME = "emails";
@@ -46,7 +48,13 @@ public class EmailEntity {
      * Last Chance
      */
     @Field("last_chance")
-    private Date lastChance = new Date();
+    private Date lastChance;
+
+    /**
+     * Payload
+     */
+    @Field("payload")
+    private String payload;
 
     /**
      * User
