@@ -9,15 +9,15 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Date;
-import java.util.Optional;
-import java.util.logging.Level;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ResolvableType;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -47,6 +47,11 @@ public class MailClientServiceImpl implements IMailClientService {
     @Override
     public void forwardEmails(int numberOfEmailsToForwarding) {
         Assert.isTrue(numberOfEmailsToForwarding > 0, "Number of mails should be greater than 0");
+        emailRepository.findAllOrderByLastChanceAsc(Pageable.ofSize(numberOfEmailsToForwarding))
+                .forEach((email) -> {
+                    sendMail(email);
+                });
+
     }
 
     /**
@@ -60,12 +65,10 @@ public class MailClientServiceImpl implements IMailClientService {
         Assert.notNull(request.getEmail(), "Email can not be null");
         Assert.hasLength(request.getEmail(), "Email can be empty");
         try {
-            final AbstractMailContentBuilder<T> mailContentBuilder = getMailContentBuilder(request.getEntityType());
-            final MimeMessage message = mailContentBuilder.buildContent(request);
-            mailSender.send(message);
+            mailSender.send(buildMimeMessage(request));
         } catch (final MessagingException | MailException ex) {
             logger.error(request.getEntityType().getName() + " - MailException: " + ex.getMessage());
-            saveFailedEmail(ex.getMessage(), request);
+            saveFailedEmail(null, ex.getMessage(), request);
         }
     }
 
@@ -74,12 +77,32 @@ public class MailClientServiceImpl implements IMailClientService {
      */
     /**
      *
+     * @param email
+     */
+    private void sendMail(final EmailEntity email) {
+        Assert.notNull(email, "email can not be null");
+        AbstractMailRequestDTO request = null;
+        try {
+            request = objectMapper.readValue(email.getPayload(), AbstractMailRequestDTO.class);
+            mailSender.send(buildMimeMessage(request));
+            emailRepository.delete(email);
+        } catch (final MessagingException | MailException ex) {
+            logger.error(" - MailException: " + ex.getMessage());
+            saveFailedEmail(email.getId(), ex.getMessage(), request);
+        } catch (final JsonProcessingException ex) {
+            logger.error(" - JsonProcessingException: " + ex.getMessage());
+            emailRepository.delete(email);
+        }
+    }
+
+    /**
+     *
      * @param <T>
      * @param ex
      * @param request
      */
-    private <T extends AbstractMailRequestDTO> void saveFailedEmail(final String errorMessage, final T request) {
-        EmailEntity emailEntity = emailRepository.findByUserEmailAndType(request.getEmail(), request.getType())
+    private <T extends AbstractMailRequestDTO> void saveFailedEmail(final ObjectId emailId, final String errorMessage, final T request) {
+        EmailEntity emailEntity = emailRepository.findById(emailId)
                 .map((emailEntitySaved) -> {
                     emailEntitySaved.setLastChance(new Date());
                     emailEntitySaved.setError(errorMessage);
@@ -101,6 +124,18 @@ public class MailClientServiceImpl implements IMailClientService {
             }
         }
         emailRepository.save(emailEntity);
+    }
+
+    /**
+     *
+     * @param <T>
+     * @param request
+     * @return
+     * @throws MessagingException
+     */
+    private <T extends AbstractMailRequestDTO> MimeMessage buildMimeMessage(final T request) throws MessagingException {
+        final AbstractMailContentBuilder<T> mailContentBuilder = getMailContentBuilder(request.getEntityType());
+        return mailContentBuilder.buildContent(request);
     }
 
     /**
