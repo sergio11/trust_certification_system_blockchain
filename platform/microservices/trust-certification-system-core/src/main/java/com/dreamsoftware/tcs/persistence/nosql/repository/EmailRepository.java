@@ -1,9 +1,9 @@
 package com.dreamsoftware.tcs.persistence.nosql.repository;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.EmailEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.EmailTypeEnum;
-import java.util.Optional;
+import java.util.List;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,9 +16,9 @@ public interface EmailRepository extends MongoRepository<EmailEntity, ObjectId> 
 
     /**
      *
-     * @param id
-     * @param type
+     * @param pageable
      * @return
      */
-    Optional<EmailEntity> findByUserEmailAndType(final String id, final EmailTypeEnum type);
+    List<EmailEntity> findAllOrderByLastChanceAsc(final Pageable pageable);
+
 }
