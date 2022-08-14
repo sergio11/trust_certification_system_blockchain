@@ -3,4 +3,4 @@ Trust certification System Blockchain
 
 ## Architecture Overview
 
-<img width="auto" src="./doc/trust_certification_system_diagram_v1.png" />
+<img width="900px" src="./doc/trust_certification_system_diagram_v1.png" />
