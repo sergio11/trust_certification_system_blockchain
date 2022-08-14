@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.config;
 
-import com.dreamsoftware.tcs.config.mail.properties.PaypalProperties;
+import com.dreamsoftware.tcs.config.properties.PaypalProperties;
 import com.paypal.core.PayPalEnvironment;
 import com.paypal.core.PayPalHttpClient;
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;

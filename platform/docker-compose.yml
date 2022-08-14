@@ -14,9 +14,10 @@ networks:
   tcs_network:
     name: tcs_network
 
-
+# Platform Services
 services:
 
+  # Apache ZooKeeper is an effort to develop and maintain an open-source server which enables highly reliable distributed coordination.
   zookeeper:
     image: confluentinc/cp-zookeeper
     container_name: zookeeper
@@ -28,6 +29,9 @@ services:
     networks:
       - tcs_network
 
+  # Apache Kafka is an open-source distributed event streaming platform used 
+  # by thousands of companies for high-performance data pipelines, 
+  # streaming analytics, data integration, and mission-critical applications.
   kafka:
     image: confluentinc/cp-kafka
     container_name: kafka
@@ -49,6 +53,7 @@ services:
     networks:
       - tcs_network
 
+  # Manage & view data inside your Apache Kafka ® cluster
   akhq:
     image: tchiotludo/akhq
     container_name: akhq
@@ -66,7 +71,7 @@ services:
     networks:
       - tcs_network
 
-
+  # Manage Secrets & Protect Sensitive Data
   vault:
     image: vault:latest
     restart: on-failure
@@ -87,16 +92,19 @@ services:
     networks:
       - tcs_network
 
+  # MongoDB is a free and open-source cross-platform document-oriented database program
   mongo:
     image: mongo
     container_name: mongo
+    env_file:
+      - .env
     restart: on-failure
     ports:
       - "27017:27017"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=devroot
-      - MONGO_INITDB_ROOT_PASSWORD=devroot
-      - MONGO_INITDB_DATABASE=trustcertificationsystem
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DB}
     networks:
       - tcs_network
 
@@ -106,15 +114,17 @@ services:
     image: mongo-express
     container_name: mongo-express
     restart: on-failure
+    env_file:
+      - .env
     environment:
       - ME_CONFIG_MONGODB_SERVER=mongo
       - ME_CONFIG_MONGODB_PORT=27017
       - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
       - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=devroot
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=devroot
-      - ME_CONFIG_BASICAUTH_USERNAME=dev
-      - ME_CONFIG_BASICAUTH_PASSWORD=dev
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGO_ROOT_USER}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGO_ROOT_PASSWORD}
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGOEXPRESS_LOGIN}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGOEXPRESS_PASSWORD}
     depends_on:
       - mongo
     ports:
@@ -126,6 +136,8 @@ services:
   tcs_discovery_server:
     image: ssanchez11/trust_certification_system_discovery_server:0.0.1-SNAPSHOT
     container_name: tcs-discovery-server
+    env_file:
+      - .env
     ports:
       - "8761:8761"
     networks:
@@ -135,11 +147,13 @@ services:
   tcs_monitor_server:
     image: ssanchez11/trust_certification_system_monitor_server:0.0.1-SNAPSHOT
     container_name: bc-monitor-server
+    env_file:
+      - .env
     ports:
       - "8060:8060"
     environment:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
-      - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
+      - JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD}
     networks:
       - tcs_network
 
@@ -147,6 +161,8 @@ services:
   tcs_config_server:
     image: ssanchez11/trust_certification_system_config_server:0.0.1-SNAPSHOT
     container_name: tcs-config-server
+    env_file:
+      - .env
     networks:
       - tcs_network
     ports:
@@ -158,6 +174,8 @@ services:
   tcs_gateway_api:
     image: ssanchez11/trust_certification_system_gateway_api:0.0.1-SNAPSHOT
     container_name: tcs-gateway-api
+    env_file:
+      - .env
     volumes:
       - ./wallets:/opt/wallets
     ports:
@@ -166,40 +184,46 @@ services:
       - tcs_network
     environment:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
-      - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
+      - JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD}
 
   # Trust Certification System Certificate Events Processor
   tcs_certificate_events_processor:
     image: ssanchez11/trust_certification_system_certificate_events_processor:0.0.1-SNAPSHOT
     container_name: tcs-certificate-events-processor
+    env_file:
+      - .env
     volumes:
       - ./wallets:/opt/wallets
     networks:
       - tcs_network
     environment:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
-      - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
+      - JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD}
 
   # Trust Certification System User Events Processor
   tcs_user_events_processor:
     image: ssanchez11/trust_certification_system_user_events_processor:0.0.1-SNAPSHOT
     container_name: tcs-user-events-processor
+    env_file:
+      - .env
     volumes:
       - ./wallets:/opt/wallets
     networks:
       - tcs_network
     environment:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
-      - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
+      - JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD}
 
   # Trust Certification System Course Events Processor
   tcs_course_events_processor:
     image: ssanchez11/trust_certification_system_course_events_processor:0.0.1-SNAPSHOT
     container_name: tcs-course-events-processor
+    env_file:
+      - .env
     volumes:
       - ./wallets:/opt/wallets
     networks:
       - tcs_network
     environment:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
-      - JASYPT_ENCRYPTOR_PASSWORD=a{uL#t#jkp,Kd[9{
+      - JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD}
