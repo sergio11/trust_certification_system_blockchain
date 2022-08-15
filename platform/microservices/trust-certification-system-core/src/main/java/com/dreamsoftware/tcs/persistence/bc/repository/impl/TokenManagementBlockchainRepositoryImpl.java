@@ -5,6 +5,7 @@ import com.dreamsoftware.tcs.exception.LoadWalletException;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.core.SupportBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 import java.math.BigInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,42 @@ public class TokenManagementBlockchainRepositoryImpl extends SupportBlockchainRe
 
     private final Logger logger = LoggerFactory.getLogger(TokenManagementBlockchainRepositoryImpl.class);
 
+    private final long CA_CLIENT_TYPE_VALUE = 0L;
+    private final long STUDENT_CLIENT_TYPE_VALUE = 1L;
+    private final long ADMIN_CLIENT_TYPE_VALUE = 2L;
+
+    /**
+     *
+     * @param walletHash
+     * @param userType
+     * @throws RepositoryException
+     */
+    @Override
+    public void sendInitialTokenFundsTo(final String walletHash, final UserTypeEnum userType) throws RepositoryException {
+        Assert.notNull(walletHash, "walletHash can not be null");
+        Assert.notNull(userType, "userType can not be null");
+        try {
+            logger.debug("sendInitialTokenFundsTo address: " + properties.getTokenManagementContractAddress());
+            final TokenManagementContractExt tokenManagementContract = loadTokenManagementContract();
+            long clientType;
+            switch (userType) {
+                case CA:
+                    clientType = CA_CLIENT_TYPE_VALUE;
+                    break;
+                case STUDENT:
+                    clientType = STUDENT_CLIENT_TYPE_VALUE;
+                    break;
+                default:
+                    clientType = ADMIN_CLIENT_TYPE_VALUE;
+                    break;
+            }
+            tokenManagementContract.sendInitialTokenFundsTo(walletHash, BigInteger.valueOf(clientType)).send();
+        } catch (final Exception ex) {
+            logger.debug("Ex Message -> " + ex.getMessage());
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
     /**
      * Add Tokens
      *
@@ -30,11 +67,13 @@ public class TokenManagementBlockchainRepositoryImpl extends SupportBlockchainRe
      * @throws RepositoryException
      */
     @Override
-    public void addTokens(String walletHash, Long tokens) throws RepositoryException {
+    public void addTokens(final String walletHash, final Long tokens) throws RepositoryException {
+        Assert.notNull(walletHash, "walletHash can not be null");
+        Assert.notNull(tokens, "Token can not be null");
         try {
             logger.debug("addTokens address: " + properties.getTokenManagementContractAddress());
             final TokenManagementContractExt tokenManagementContract = loadTokenManagementContract(walletHash);
-            final BigInteger tokensPriceInWeis = tokenManagementContract.getTokenPriceInWeis(BigInteger.valueOf(tokens)).send();
+            final BigInteger tokensPriceInWeis = tokenManagementContract.getTokenPriceInWei(BigInteger.valueOf(tokens)).send();
             tokenManagementContract.buyTokens(BigInteger.valueOf(tokens), tokensPriceInWeis).send();
         } catch (final Exception ex) {
             logger.debug("Ex Message -> " + ex.getMessage());
@@ -54,7 +93,7 @@ public class TokenManagementBlockchainRepositoryImpl extends SupportBlockchainRe
         Assert.isTrue(tokenCount > 0, "Token count should be greather than 0");
         try {
             final TokenManagementContractExt tokenManagementContract = loadTokenManagementContract();
-            return tokenManagementContract.getTokenPriceInWeis(BigInteger.valueOf(tokenCount)).send().longValue();
+            return tokenManagementContract.getTokenPriceInWei(BigInteger.valueOf(tokenCount)).send().longValue();
         } catch (final Exception ex) {
             logger.debug("Ex Message -> " + ex.getMessage());
             throw new RepositoryException(ex.getMessage(), ex);

@@ -101,7 +101,8 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
                     web3j, rootTxManager, properties.gas());
             return Flowable.merge(Lists.newArrayList(
                     faucetContract.onDepositEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(etherFaucetEventEntityMapper::mapEventToEntity),
-                    faucetContract.onGetSeedFundsEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(etherFaucetEventEntityMapper::mapEventToEntity)
+                    faucetContract.onSendSeedFundsEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(etherFaucetEventEntityMapper::mapEventToEntity),
+                    faucetContract.onSendFundsEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(etherFaucetEventEntityMapper::mapEventToEntity)
             ));
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);

@@ -14,12 +14,10 @@ public interface ICertificationAuthorityBlockchainRepository extends IBlockchain
      * Register new Certification Authority
      *
      * @param name
-     * @param defaultCostOfIssuingCertificate
      * @param walletHash
-     * @throws
-     * com.dreamsoftware.tcs.persistence.exception.RepositoryException
+     * @throws com.dreamsoftware.tcs.persistence.exception.RepositoryException
      */
-    void register(final String name, final Long defaultCostOfIssuingCertificate, final String walletHash) throws RepositoryException;
+    void register(final String name, final String walletHash) throws RepositoryException;
 
     /**
      * Get Detail

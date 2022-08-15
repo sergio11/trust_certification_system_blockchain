@@ -54,6 +54,27 @@ public abstract class EtherFaucetEventEntityMapper {
         @Mapping(expression = "java(com.dreamsoftware.tcs.persistence.bc.repository.entity.EtherFaucetEventTypeEnum.GET_SEED_FUNDS)", target = "type")
     })
     @Named("mapEventToEntity")
-    public abstract EtherFaucetEventEntity mapEventToEntity(EtherFaucetContract.OnGetSeedFundsEventResponse event);
+    public abstract EtherFaucetEventEntity mapEventToEntity(EtherFaucetContract.OnSendSeedFundsEventResponse event);
+
+    /**
+     *
+     * @param event
+     * @return
+     */
+    @Mappings({
+        @Mapping(source = "event.log.address", target = "address"),
+        @Mapping(source = "event.log.blockHash", target = "blockHash"),
+        @Mapping(source = "event.log.blockNumber", target = "blockNumber"),
+        @Mapping(source = "event.log.blockNumberRaw", target = "blockNumberRaw"),
+        @Mapping(source = "event.log.data", target = "data"),
+        @Mapping(source = "event.log.logIndex", target = "logIndex"),
+        @Mapping(source = "event.log.logIndexRaw", target = "logIndexRaw"),
+        @Mapping(source = "event.log.transactionHash", target = "transactionHash"),
+        @Mapping(source = "event.log.transactionIndex", target = "transactionIndex"),
+        @Mapping(source = "event.log.transactionIndexRaw", target = "transactionIndexRaw"),
+        @Mapping(expression = "java(com.dreamsoftware.tcs.persistence.bc.repository.entity.EtherFaucetEventTypeEnum.SEND_FUNDS)", target = "type")
+    })
+    @Named("mapEventToEntity")
+    public abstract EtherFaucetEventEntity mapEventToEntity(EtherFaucetContract.OnSendFundsEventResponse event);
 
 }
