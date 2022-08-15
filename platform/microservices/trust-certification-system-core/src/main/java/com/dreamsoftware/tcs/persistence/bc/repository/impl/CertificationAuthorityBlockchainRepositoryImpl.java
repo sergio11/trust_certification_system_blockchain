@@ -39,16 +39,15 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
      * Register Certification Authority
      *
      * @param name
-     * @param defaultCostOfIssuingCertificate
      * @param walletHash
      * @throws RepositoryException
      */
     @Override
-    public void register(String name, Long defaultCostOfIssuingCertificate, String walletHash) throws RepositoryException {
+    public void register(String name, String walletHash) throws RepositoryException {
         try {
             logger.debug("registerCertificationAuthority address: " + properties.getCertificationAuthorityContractAddress());
             final CertificationAuthorityContract caContract = loadCAContract(walletHash);
-            caContract.addCertificationAuthority(name, BigInteger.valueOf(defaultCostOfIssuingCertificate)).send();
+            caContract.addCertificationAuthority(name).send();
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }

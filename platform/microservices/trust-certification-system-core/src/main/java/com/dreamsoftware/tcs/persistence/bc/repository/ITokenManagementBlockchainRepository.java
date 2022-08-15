@@ -1,12 +1,21 @@
 package com.dreamsoftware.tcs.persistence.bc.repository;
 
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 
 /**
  *
  * @author ssanchez
  */
 public interface ITokenManagementBlockchainRepository {
+
+    /**
+     *
+     * @param walletHash
+     * @param userType
+     * @throws RepositoryException
+     */
+    void sendInitialTokenFundsTo(final String walletHash, final UserTypeEnum userType) throws RepositoryException;
 
     /**
      * Add Tokens
