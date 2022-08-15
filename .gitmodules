@@ -1,4 +1,4 @@
 [submodule "platform/microservices/trust-certification-system-core/src/main/resources/contracts"]
 	path = platform/microservices/trust-certification-system-core/src/main/resources/contracts
-	url = https://github.com/sergio11/trust_certification_system_smart_contracts.git
+	url = https://github.com/sergio11/trust_certification_system_ethereum_dapp.git
 	branch = main
