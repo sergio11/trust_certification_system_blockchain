@@ -7,6 +7,8 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.thymeleaf.context.Context;
 
 /**
  *
@@ -24,7 +26,18 @@ public class CADisabledMailContentBuilder extends AbstractMailContentBuilder<CAD
      */
     @Override
     public MimeMessage buildContent(final CADisabledMailRequestDTO request) throws MessagingException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Assert.notNull(request, "Request can not be null");
+        Assert.notNull(mailContentProperties.getCaDisabledMailTemplate(), "Mail Template can not be null");
+        Assert.hasLength(mailContentProperties.getCaDisabledMailTemplate(), "Mail Template can not be empty");
+
+        // Generate Email Subject
+        final String subject = resolveString("mail_ca_disabled_subject_title", request.getLocale(),
+                new Object[]{request.getName()});
+
+        final Context context = new Context(request.getLocale());
+        context.setVariable("name", request.getName());
+
+        return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getCaDisabledMailTemplate(), null);
     }
 
 }
