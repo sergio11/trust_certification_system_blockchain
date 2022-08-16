@@ -18,21 +18,27 @@ import org.thymeleaf.context.Context;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class UserPendingValidationMailContentBuilder extends AbstractMailContentBuilder<UserPendingValidationMailRequestDTO> {
 
+    /**
+     *
+     * @param request
+     * @return
+     * @throws MessagingException
+     */
     @Override
-    public MimeMessage buildContent(UserPendingValidationMailRequestDTO request) throws MessagingException {
+    public MimeMessage buildContent(final UserPendingValidationMailRequestDTO request) throws MessagingException {
         Assert.notNull(request, "Request can not be null");
         Assert.notNull(mailContentProperties.getUserPendingValidationMailTemplate(), "Mail Template can not be null");
         Assert.hasLength(mailContentProperties.getUserPendingValidationMailTemplate(), "Mail Template can not be empty");
 
         // Generate Email Subject
-        String subject = "mail_registration_success_subject_title";
+        final String subject = resolveString("mail_user_pending_validation_subject_title", request.getLocale(),
+                new Object[]{request.getName()});
 
         final Context context = new Context(request.getLocale());
         context.setVariable("name", request.getName());
         /*context.setVariable("activateUrl",
                 ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/accounts/activate?token={token}")
                         .buildAndExpand(request.getConfirmationToken()));*/
-
         return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getUserPendingValidationMailTemplate(), null);
     }
 

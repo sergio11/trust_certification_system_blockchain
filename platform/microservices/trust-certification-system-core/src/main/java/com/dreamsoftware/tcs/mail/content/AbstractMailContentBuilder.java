@@ -1,7 +1,9 @@
 package com.dreamsoftware.tcs.mail.content;
 
 import com.dreamsoftware.tcs.config.properties.MailProperties;
+import com.dreamsoftware.tcs.i18n.service.IMessageSourceResolverService;
 import com.dreamsoftware.tcs.mail.model.AbstractMailRequestDTO;
+import java.util.Locale;
 import java.util.Map;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.util.Assert;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -27,6 +30,9 @@ public abstract class AbstractMailContentBuilder<T extends AbstractMailRequestDT
 
     @Autowired
     private JavaMailSender mailSender;
+
+    @Autowired
+    private IMessageSourceResolverService messageSourceResolver;
 
     /**
      *
@@ -70,6 +76,29 @@ public abstract class AbstractMailContentBuilder<T extends AbstractMailRequestDT
      */
     protected MimeMessageHelper createMimeMessageHelper() throws MessagingException {
         return new MimeMessageHelper(this.mailSender.createMimeMessage(), true, "UTF-8");
+    }
+
+    /**
+     *
+     * @param key
+     * @param locale
+     * @param params
+     * @return
+     */
+    protected String resolveString(final String key, final Locale locale, final Object[] params) {
+        Assert.notNull(key, "Key can not be null");
+        Assert.notNull(locale, "locale can not be null");
+        return messageSourceResolver.resolver(key, params, locale);
+    }
+
+    /**
+     *
+     * @param key
+     * @param locale
+     * @return
+     */
+    protected String resolveString(final String key, final Locale locale) {
+        return resolveString(key, locale, null);
     }
 
 }
