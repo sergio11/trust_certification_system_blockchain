@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.service.impl;
 
+import com.dreamsoftware.tcs.config.properties.CertificateGeneratorProperties;
 import com.dreamsoftware.tcs.service.ICertificateGenerator;
 import com.dreamsoftware.tcs.utils.WordReplacer;
 import java.io.File;
@@ -27,8 +28,7 @@ import org.springframework.util.Assert;
 public class CertificateGeneratorImpl implements ICertificateGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(CertificateGeneratorImpl.class);
-    private static final String CERTIFICATE_WATERMARK = "tcs_certificate_background.pdf";
-    private static final String CERTIFICATE_TEMPLATE_FILE = "tcs_academic_certificate_template.docx";
+    private final CertificateGeneratorProperties certificateGeneratorProperties;
 
     /**
      *
@@ -45,12 +45,12 @@ public class CertificateGeneratorImpl implements ICertificateGenerator {
         Assert.notNull(studentName, "Student Name can not be null");
         Assert.notNull(courseName, "Course Name can not be null");
         Assert.notNull(qualification, "Qualification Name can not be null");
-        final File certificateTemplate = getFileForClasspathResource(CERTIFICATE_TEMPLATE_FILE);
+        final File certificateTemplate = getFileForClasspathResource(certificateGeneratorProperties.getTemplateFile());
         final WordReplacer wordReplacer = new WordReplacer(certificateTemplate);
-        wordReplacer.replaceWordsInText("[[CA_NAME]]", caName);
-        wordReplacer.replaceWordsInText("[[STUDE_NAME]]", studentName);
-        wordReplacer.replaceWordsInText("[[COURSE_NAME]]", courseName);
-        wordReplacer.replaceWordsInText("[[STUDE_QUALIFICATION]]", qualification.toString());
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCaNamePlaceholder(), caName);
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), studentName);
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCourseNamePlaceholder(), courseName);
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), qualification.toString());
         final File tempFile = File.createTempFile("tcs--", ".tmp");
         final File tempPdfDestFile = File.createTempFile("tcs--", ".tmp");
         final File fileSaved = wordReplacer.saveAndGetModdedFile(tempFile);
@@ -88,7 +88,7 @@ public class CertificateGeneratorImpl implements ICertificateGenerator {
     private void configureWatermark(File destFile) throws IOException {
         try (final PDDocument doc = PDDocument.load(destFile)) {
             HashMap<Integer, String> overlayGuide = new HashMap<>();
-            final File certificateBackground = getFileForClasspathResource(CERTIFICATE_WATERMARK);
+            final File certificateBackground = getFileForClasspathResource(certificateGeneratorProperties.getWatermarkFile());
             for (int i = 0; i < doc.getNumberOfPages(); i++) {
                 overlayGuide.put(i + 1, certificateBackground.getAbsolutePath());
             }
