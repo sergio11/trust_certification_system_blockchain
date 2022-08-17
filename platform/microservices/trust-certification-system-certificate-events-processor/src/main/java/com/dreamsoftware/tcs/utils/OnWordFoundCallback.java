@@ -9,7 +9,16 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
  */
 public interface OnWordFoundCallback {
 
+    /**
+     *
+     * @param run
+     */
     void onWordFoundInRun(XWPFRun run);
 
+    /**
+     *
+     * @param runs
+     * @param currentRun
+     */
     void onWordFoundInPreviousCurrentNextRun(List<XWPFRun> runs, int currentRun);
 }
