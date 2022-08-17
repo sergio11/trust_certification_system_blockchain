@@ -35,6 +35,8 @@ public class CertificateVisibilityChangedMailContentBuilder extends AbstractMail
 
         final Context context = new Context(request.getLocale());
         context.setVariable("name", request.getName());
+        context.setVariable("certificateId", request.getCertificateId());
+        context.setVariable("isVisible", request.getIsVisible());
 
         return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getCertificateVisibilityChangedMailTemplate(), null);
     }

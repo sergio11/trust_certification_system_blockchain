@@ -183,7 +183,9 @@
                                                         <td style="overflow-wrap:break-word;word-break:break-word;padding:0px 10px 31px;font-family:'Cabin',sans-serif;" align="left">
 
                                                             <div style="color: #e5eaf5; line-height: 140%; text-align: center; word-wrap: break-word;">
-                                                                <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 28px; line-height: 39.2px;"><strong><span style="line-height: 39.2px; font-size: 28px;">Sergio, your account has been activated!</span></strong>
+                                                                <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 28px; line-height: 39.2px;"><strong>
+                                                                            <span style="line-height: 39.2px; font-size: 28px;" th:text="#{mail_certificate_visibility_changed_subject_title(${name}, ${certificateId})}">Sergio, the visibility of your certificate has been updated!.</span>
+                                                                        </strong>
                                                                     </span>
                                                                 </p>
                                                             </div>
@@ -214,7 +216,12 @@
 
                                                             <div style="line-height: 160%; text-align: center; word-wrap: break-word;">
                                                                 <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 22px; line-height: 35.2px;">Hi, </span></p>
-                                                                <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 18px; line-height: 28.8px;">Your account has been successfully activated, we could start to register your digital certificates!. </span></p>
+                                                                <p style="font-size: 14px; line-height: 160%;" th:switch="${isVisible}">
+
+                                                                    <span style="font-size: 18px; line-height: 28.8px;" th:case="true" th:text="#{mail_certificate_changed_to_visible_body(${name}, ${certificateId})}">The visibility of your certificate has been updated!.</span>
+                                                                    <span style="font-size: 18px; line-height: 28.8px;" th:case="false" th:text="#{mail_certificate_changed_to_invisible_body(${name}, ${certificateId})}">The visibility of your certificate has been updated!.</span>
+
+                                                                </p>
                                                             </div>
 
                                                         </td>
