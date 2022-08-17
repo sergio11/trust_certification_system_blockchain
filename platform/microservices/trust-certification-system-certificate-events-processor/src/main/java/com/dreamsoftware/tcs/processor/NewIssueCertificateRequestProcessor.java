@@ -6,8 +6,7 @@ import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedE
 import com.dreamsoftware.tcs.service.ITrustCertificateService;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,20 +14,24 @@ import org.springframework.stereotype.Component;
  *
  * @author ssanchez
  */
+@Slf4j
 @Component("newIssueCertificateRequestProcessor")
 @RequiredArgsConstructor
 public class NewIssueCertificateRequestProcessor implements Function<OnNewIssueCertificateRequestEvent, OnNewCertificateIssuedEvent> {
-
-    private final Logger logger = LoggerFactory.getLogger(NewIssueCertificateRequestProcessor.class);
 
     /**
      * Trust Certification Service
      */
     private final ITrustCertificateService trustCertificateService;
 
+    /**
+     *
+     * @param event
+     * @return
+     */
     @Override
-    public OnNewCertificateIssuedEvent apply(OnNewIssueCertificateRequestEvent event) {
-        logger.debug("NewIssueCertificateRequestProcessor CALLED!");
+    public OnNewCertificateIssuedEvent apply(final OnNewIssueCertificateRequestEvent event) {
+        log.debug("NewIssueCertificateRequestProcessor CALLED!");
         OnNewCertificateIssuedEvent nextEvent = null;
         try {
             final CertificateIssuedEntity certificateIssuedEntity = trustCertificateService.issueCertificate(event);
@@ -39,7 +42,7 @@ public class NewIssueCertificateRequestProcessor implements Function<OnNewIssueC
                     .studentWalletHash(event.getStudentWalletHash())
                     .build();
         } catch (Exception ex) {
-            logger.debug("Ex Message -> " + ex.getMessage());
+            log.debug("Ex Message -> " + ex.getMessage());
         }
         return nextEvent;
     }

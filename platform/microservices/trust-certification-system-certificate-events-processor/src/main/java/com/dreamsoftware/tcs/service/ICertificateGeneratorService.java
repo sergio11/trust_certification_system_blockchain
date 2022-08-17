@@ -3,10 +3,11 @@ package com.dreamsoftware.tcs.service;
 import java.io.File;
 
 /**
+ * Certificate Generator Service
  *
  * @author ssanchez
  */
-public interface ICertificateGenerator {
+public interface ICertificateGeneratorService {
 
     /**
      *
