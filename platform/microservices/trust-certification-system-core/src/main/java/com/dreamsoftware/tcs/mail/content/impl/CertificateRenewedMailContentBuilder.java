@@ -35,6 +35,7 @@ public class CertificateRenewedMailContentBuilder extends AbstractMailContentBui
 
         final Context context = new Context(request.getLocale());
         context.setVariable("name", request.getName());
+        context.setVariable("certificateId", request.getCertificateId());
 
         return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getCertificateRenewedMailTemplate(), null);
     }

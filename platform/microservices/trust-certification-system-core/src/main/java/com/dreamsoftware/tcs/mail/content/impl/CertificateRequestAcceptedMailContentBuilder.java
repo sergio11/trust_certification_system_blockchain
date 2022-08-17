@@ -35,6 +35,7 @@ public class CertificateRequestAcceptedMailContentBuilder extends AbstractMailCo
 
         final Context context = new Context(request.getLocale());
         context.setVariable("name", request.getName());
+        context.setVariable("certificateId", request.getCertificateId());
 
         return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getCertificateRequestAcceptedMailTemplate(), null);
     }
