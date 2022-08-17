@@ -12,33 +12,38 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequest
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateStatusEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
-import com.dreamsoftware.tcs.service.ICertificateGenerator;
 import com.dreamsoftware.tcs.service.ITrustCertificateService;
 import com.dreamsoftware.tcs.service.IipfsGateway;
 import java.io.File;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
+import com.dreamsoftware.tcs.service.ICertificateSigningService;
 import com.dreamsoftware.tcs.service.INotificationService;
+import org.apache.commons.io.FileUtils;
+import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author ssanchez
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TrustCertificateServiceImpl implements ITrustCertificateService {
 
-    private static final Logger logger = LoggerFactory.getLogger(TrustCertificateServiceImpl.class);
-
     /**
      * Certificate Generator
      */
-    private final ICertificateGenerator certificateGenerator;
+    private final ICertificateGeneratorService certificateGenerator;
+
+    /**
+     * Certificate Signing Service
+     */
+    private final ICertificateSigningService certificateSigningService;
 
     /**
      * Certification Course Blockchain Repository
@@ -83,14 +88,18 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
     @Override
     public CertificateIssuedEntity issueCertificate(OnNewIssueCertificateRequestEvent event) throws Exception {
         Assert.notNull(event, "Event can not be null");
-        logger.debug("issueCertificate - CA Wallet: " + event.getCaWalletHash());
-        logger.debug("issueCertificate - Student Wallet: " + event.getStudentWalletHash());
-        logger.debug("issueCertificate - Course ID: " + event.getCourseId());
+        log.debug("issueCertificate - CA Wallet: " + event.getCaWalletHash());
+        log.debug("issueCertificate - Student Wallet: " + event.getStudentWalletHash());
+        log.debug("issueCertificate - Course ID: " + event.getCourseId());
         final CertificationCourseModelEntity certificationCourseModelEntity = certificationCourseBlockchainRepository.get(event.getCourseId());
         final CertificationAuthorityEntity certificationAuthorityEntity = certificationAuthorityBlockchainRepository.getDetail(certificationCourseModelEntity.getCertificationAuthority());
         final String studentName = userRepository.findOneByWalletHash(event.getStudentWalletHash()).map(UserEntity::getName).orElseThrow(() -> new IllegalStateException("Student not found"));
         // Generate new certificate using the data provide by event
         final File certificateFile = certificateGenerator.generate(certificationAuthorityEntity.getName(), studentName, certificationCourseModelEntity.getName(), event.getQualification());
+        // Sign Certificate
+        byte[] certificateFileSignedBytes = certificateSigningService.sign(certificateFile);
+        // Write data into certificate file
+        FileUtils.writeByteArrayToFile(certificateFile, certificateFileSignedBytes, false);
         // Save Certificate in IPFS node
         final String cid = ipfsService.save(certificateFile, true);
         return trustCertificationBlockchainRepository.issueCertificate(event.getCaWalletHash(), event.getStudentWalletHash(), event.getCourseId(), event.getQualification(), cid);

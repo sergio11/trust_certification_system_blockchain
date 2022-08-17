@@ -1,7 +1,6 @@
 package com.dreamsoftware.tcs.service.impl;
 
 import com.dreamsoftware.tcs.config.properties.CertificateGeneratorProperties;
-import com.dreamsoftware.tcs.service.ICertificateGenerator;
 import com.dreamsoftware.tcs.utils.WordReplacer;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,22 +11,22 @@ import org.apache.pdfbox.multipdf.Overlay;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.docx4j.Docx4J;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author ssanchez
  */
+@Slf4j
 @Service("certificateGeneratorImpl")
 @RequiredArgsConstructor
-public class CertificateGeneratorImpl implements ICertificateGenerator {
+public class CertificateGeneratorServiceImpl implements ICertificateGeneratorService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CertificateGeneratorImpl.class);
     private final CertificateGeneratorProperties certificateGeneratorProperties;
 
     /**
@@ -40,11 +39,12 @@ public class CertificateGeneratorImpl implements ICertificateGenerator {
      * @throws Exception
      */
     @Override
-    public File generate(String caName, String studentName, String courseName, Long qualification) throws Exception {
+    public File generate(final String caName, final String studentName, final String courseName, final Long qualification) throws Exception {
         Assert.notNull(caName, "CA Name can not be null");
         Assert.notNull(studentName, "Student Name can not be null");
         Assert.notNull(courseName, "Course Name can not be null");
         Assert.notNull(qualification, "Qualification Name can not be null");
+        log.debug("Generate Certificate for " + studentName);
         final File certificateTemplate = getFileForClasspathResource(certificateGeneratorProperties.getTemplateFile());
         final WordReplacer wordReplacer = new WordReplacer(certificateTemplate);
         wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCaNamePlaceholder(), caName);
@@ -74,7 +74,7 @@ public class CertificateGeneratorImpl implements ICertificateGenerator {
      * @return
      * @throws IOException
      */
-    private File getFileForClasspathResource(String resourceFileName) throws IOException {
+    private File getFileForClasspathResource(final String resourceFileName) throws IOException {
         final Resource resource = new ClassPathResource(resourceFileName);
         return resource.getFile();
     }
@@ -85,7 +85,7 @@ public class CertificateGeneratorImpl implements ICertificateGenerator {
      * @param destFile
      * @throws IOException
      */
-    private void configureWatermark(File destFile) throws IOException {
+    private void configureWatermark(final File destFile) throws IOException {
         try (final PDDocument doc = PDDocument.load(destFile)) {
             HashMap<Integer, String> overlayGuide = new HashMap<>();
             final File certificateBackground = getFileForClasspathResource(certificateGeneratorProperties.getWatermarkFile());
