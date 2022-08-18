@@ -18,6 +18,12 @@ import org.springframework.stereotype.Component;
 public class CertificateGeneratorProperties {
 
     /**
+     * Base Folder
+     */
+    @Value("${certificateGenerator.base-folder}")
+    private String baseFolder;
+
+    /**
      * Watermark File
      */
     @Value("${certificateGenerator.watermark-file}")
@@ -66,10 +72,35 @@ public class CertificateGeneratorProperties {
     private String certificateDatePlaceholder;
 
     /**
+     * Keystore Path
+     */
+    @Value("${certificateGenerator.keystore.file}")
+    private String keystoreFile;
+
+    /**
+     * Keystore Password
+     */
+    @Value("${certificateGenerator.keystore.password}")
+    private String keystorePassword;
+
+    /**
+     * Keystore Certificate Alias
+     */
+    @Value("${certificateGenerator.keystore.certificate-alias}")
+    private String keystoreCertificateAlias;
+
+    /**
+     * Keystore Type
+     */
+    @Value("${certificateGenerator.keystore.type}")
+    private String keystoreType;
+
+    /**
      *
      */
     @PostConstruct
     protected void onPostConstruct() {
+        log.debug("watermarkFile: " + baseFolder);
         log.debug("watermarkFile: " + watermarkFile);
         log.debug("templateFile: " + templateFile);
         log.debug("timestampAuthority: " + timestampAuthority);
@@ -78,6 +109,10 @@ public class CertificateGeneratorProperties {
         log.debug("courseNamePlaceholder: " + courseNamePlaceholder);
         log.debug("studentQualificationPlaceholder: " + studentQualificationPlaceholder);
         log.debug("certificateDatePlaceholder: " + certificateDatePlaceholder);
+        log.debug("keystorePath: " + keystoreFile);
+        log.debug("keystorePassword: " + keystorePassword);
+        log.debug("keystoreCertificateAlias: " + keystoreCertificateAlias);
+        log.debug("keystoreType: " + keystoreType);
     }
 
 }

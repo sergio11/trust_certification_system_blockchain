@@ -11,8 +11,6 @@ import org.apache.pdfbox.multipdf.Overlay;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.docx4j.Docx4J;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
@@ -27,6 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class CertificateGeneratorServiceImpl implements ICertificateGeneratorService {
 
+    /**
+     * Properties
+     */
     private final CertificateGeneratorProperties certificateGeneratorProperties;
 
     /**
@@ -45,7 +46,7 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
         Assert.notNull(courseName, "Course Name can not be null");
         Assert.notNull(qualification, "Qualification Name can not be null");
         log.debug("Generate Certificate for " + studentName);
-        final File certificateTemplate = getFileForClasspathResource(certificateGeneratorProperties.getTemplateFile());
+        final File certificateTemplate = getCertificateTemplate();
         final WordReplacer wordReplacer = new WordReplacer(certificateTemplate);
         wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCaNamePlaceholder(), caName);
         wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), studentName);
@@ -68,15 +69,29 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
      * Private Methods
      */
     /**
-     * Get File for Classpath Resource
+     * Get Certificate Template
      *
-     * @param resourceFileName
      * @return
-     * @throws IOException
      */
-    private File getFileForClasspathResource(final String resourceFileName) throws IOException {
-        final Resource resource = new ClassPathResource(resourceFileName);
-        return resource.getFile();
+    private File getCertificateTemplate() {
+        final File certificateTemplate = new File(certificateGeneratorProperties.getBaseFolder(), certificateGeneratorProperties.getTemplateFile());
+        if (!certificateTemplate.exists() || !certificateTemplate.canRead()) {
+            throw new IllegalStateException("Certification Template can not be found");
+        }
+        return certificateTemplate;
+    }
+
+    /**
+     * Get Certificate Watermark File
+     *
+     * @return
+     */
+    private File getCertificateWatermarkFile() {
+        final File certificateWatermark = new File(certificateGeneratorProperties.getBaseFolder(), certificateGeneratorProperties.getWatermarkFile());
+        if (!certificateWatermark.exists() || !certificateWatermark.canRead()) {
+            throw new IllegalStateException("Certification Watermark can not be found");
+        }
+        return certificateWatermark;
     }
 
     /**
@@ -88,7 +103,7 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
     private void configureWatermark(final File destFile) throws IOException {
         try (final PDDocument doc = PDDocument.load(destFile)) {
             HashMap<Integer, String> overlayGuide = new HashMap<>();
-            final File certificateBackground = getFileForClasspathResource(certificateGeneratorProperties.getWatermarkFile());
+            final File certificateBackground = getCertificateWatermarkFile();
             for (int i = 0; i < doc.getNumberOfPages(); i++) {
                 overlayGuide.put(i + 1, certificateBackground.getAbsolutePath());
             }

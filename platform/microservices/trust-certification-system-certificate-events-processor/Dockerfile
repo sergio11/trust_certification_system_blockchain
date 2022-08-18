@@ -8,9 +8,12 @@ RUN apk update && apk upgrade
 RUN ln -s /bin/bash /usr/bin
 RUN mkdir -p /usr/src/app
 RUN mkdir -p /opt/wallets
+RUN mkdir -p /opt/generator
 WORKDIR /usr/src/app
 
 COPY resources/wait-for-it.sh  wait-for-it.sh
+
+ADD resources/certificate-utils /opt/generator
 COPY target/trust_certification_system_certificate_events_processor.jar app.jar
 
 RUN dos2unix wait-for-it.sh
