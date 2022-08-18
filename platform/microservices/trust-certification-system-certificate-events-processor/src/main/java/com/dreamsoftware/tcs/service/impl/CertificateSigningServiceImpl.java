@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.service.impl;
 
+import com.dreamsoftware.tcs.config.properties.CertificateGeneratorProperties;
 import com.dreamsoftware.tcs.service.ICertificateSigningService;
 import com.dreamsoftware.tcs.utils.TimeStampManager;
 import java.io.File;
@@ -47,7 +48,6 @@ import org.apache.logging.log4j.util.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.util.Assert;
-import org.springframework.util.ResourceUtils;
 
 /**
  *
@@ -58,11 +58,12 @@ import org.springframework.util.ResourceUtils;
 @RequiredArgsConstructor
 public class CertificateSigningServiceImpl implements ICertificateSigningService {
 
-    private static final String KEY_STORE_TYPE = "jks";
-    private String keyStorePath;
-    private String keyStorePassword;
-    private String certificateAlias;
-    private String tsaUrl;
+    private static String SIGNED_CERTIFICATE_TMP_FILE_NAME = "signedCertificate";
+
+    /**
+     * Properties
+     */
+    private final CertificateGeneratorProperties certificateGeneratorProperties;
 
     /**
      *
@@ -72,11 +73,12 @@ public class CertificateSigningServiceImpl implements ICertificateSigningService
     @Override
     public byte[] sign(byte[] certificateToSign) {
         try {
-            KeyStore keyStore = getKeyStore();
-            Signature signature = new Signature(keyStore, keyStorePassword.toCharArray(), certificateAlias, tsaUrl);
+            final KeyStore keyStore = getKeyStore();
+            final Signature signature = new Signature(keyStore, certificateGeneratorProperties.getKeystorePassword().toCharArray(),
+                    certificateGeneratorProperties.getKeystoreCertificateAlias(), certificateGeneratorProperties.getTimestampAuthority());
             File certificateFile = File.createTempFile("pdf", "");
             FileUtils.writeByteArrayToFile(certificateFile, certificateToSign);
-            File signedFile = File.createTempFile("signedCertificate", "");
+            File signedFile = File.createTempFile(SIGNED_CERTIFICATE_TMP_FILE_NAME, "");
             signDetached(signature, certificateFile, signedFile);
             byte[] signedPdfBytes = Files.readAllBytes(signedFile.toPath());
             //remove temporary files
@@ -114,7 +116,6 @@ public class CertificateSigningServiceImpl implements ICertificateSigningService
         if (inFile == null || !inFile.exists()) {
             throw new FileNotFoundException("Document for signing does not exist");
         }
-
         try (FileOutputStream fos = new FileOutputStream(outFile); PDDocument doc = PDDocument.load(inFile)) {
             signDetached(signature, doc, fos);
         }
@@ -147,9 +148,12 @@ public class CertificateSigningServiceImpl implements ICertificateSigningService
      * @throws NoSuchAlgorithmException
      */
     private KeyStore getKeyStore() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-        KeyStore keyStore = KeyStore.getInstance(KEY_STORE_TYPE);
-        File key = ResourceUtils.getFile(keyStorePath);
-        keyStore.load(new FileInputStream(key), keyStorePassword.toCharArray());
+        KeyStore keyStore = KeyStore.getInstance(certificateGeneratorProperties.getKeystoreType());
+        final File keystoreFile = new File(certificateGeneratorProperties.getBaseFolder(), certificateGeneratorProperties.getKeystoreFile());
+        if (!keystoreFile.exists() || !keystoreFile.canRead()) {
+            throw new IllegalStateException("Keystore can not be found");
+        }
+        keyStore.load(new FileInputStream(keystoreFile), certificateGeneratorProperties.getKeystorePassword().toCharArray());
         return keyStore;
     }
 
