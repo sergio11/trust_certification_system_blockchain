@@ -19,6 +19,6 @@ public interface EmailRepository extends MongoRepository<EmailEntity, ObjectId> 
      * @param pageable
      * @return
      */
-    List<EmailEntity> findAllOrderByLastChanceAsc(final Pageable pageable);
+    List<EmailEntity> findAllByOrderByLastChanceAsc(final Pageable pageable);
 
 }

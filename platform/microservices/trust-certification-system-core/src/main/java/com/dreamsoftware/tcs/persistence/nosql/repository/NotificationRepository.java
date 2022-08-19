@@ -21,7 +21,7 @@ public interface NotificationRepository extends MongoRepository<NotificationEnti
      * @param pageable
      * @return
      */
-    Page<NotificationEntity> findByUserIdOrderByCreateAtDesc(final ObjectId id, final Pageable pageable);
+    Page<NotificationEntity> findByUserIdOrderByCreatedAtDesc(final ObjectId id, final Pageable pageable);
 
     /**
      *
@@ -30,7 +30,7 @@ public interface NotificationRepository extends MongoRepository<NotificationEnti
      * @param pageable
      * @return
      */
-    Page<NotificationEntity> findByCreateAtGreaterThanEqualAndUserIdOrderByCreateAtDesc(final Date from, final ObjectId id, final Pageable pageable);
+    Page<NotificationEntity> findByCreatedAtGreaterThanEqualAndUserIdOrderByCreatedAtDesc(final Date from, final ObjectId id, final Pageable pageable);
 
     /**
      *
