@@ -47,7 +47,7 @@ public class MailClientServiceImpl implements IMailClientService {
     @Override
     public void forwardEmails(int numberOfEmailsToForwarding) {
         Assert.isTrue(numberOfEmailsToForwarding > 0, "Number of mails should be greater than 0");
-        emailRepository.findAllOrderByLastChanceAsc(Pageable.ofSize(numberOfEmailsToForwarding))
+        emailRepository.findAllByOrderByLastChanceAsc(Pageable.ofSize(numberOfEmailsToForwarding))
                 .forEach((email) -> {
                     sendMail(email);
                 });

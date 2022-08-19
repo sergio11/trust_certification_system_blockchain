@@ -60,7 +60,7 @@ public class NotificationServiceImpl implements INotificationService {
     public Page<NotificationDTO> findPaginated(ObjectId userId, Pageable pageable) {
         Assert.notNull(userId, "User Id can not be null");
         Assert.notNull(pageable, "Pageable can not be null");
-        return notificationRepository.findByUserIdOrderByCreateAtDesc(userId, pageable)
+        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
                 .map(notificationMapper::entityToDTO);
     }
 
