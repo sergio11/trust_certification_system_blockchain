@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.scheduling.events.course.handler;
 
-import com.dreamsoftware.tcs.mail.model.service.IMailClientService;
+import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.scheduling.events.course.CourseDisabledEvent;
 import com.dreamsoftware.tcs.scheduling.events.course.CourseEnabledEvent;
 import com.dreamsoftware.tcs.scheduling.events.course.NewCourseRegistrationRequestedEvent;

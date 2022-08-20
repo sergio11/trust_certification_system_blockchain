@@ -8,9 +8,11 @@ RUN apk update && apk upgrade
 RUN ln -s /bin/bash /usr/bin
 RUN mkdir -p /usr/src/app
 RUN mkdir -p /opt/wallets
+RUN mkdir -p /opt/i18n
 WORKDIR /usr/src/app
 
 COPY resources/wait-for-it.sh  wait-for-it.sh
+ADD resources/i18n /opt/i18n
 COPY target/trust_certification_system_gateway_api.jar app.jar
 
 RUN dos2unix wait-for-it.sh

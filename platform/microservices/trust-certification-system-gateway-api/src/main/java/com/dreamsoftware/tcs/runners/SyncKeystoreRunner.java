@@ -20,6 +20,6 @@ public class SyncKeystoreRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        sftpGateway.syncRemoteFolderTo(trustCertificationSystemProperties.getWalletDirectory());
+        //sftpGateway.syncRemoteFolderTo(trustCertificationSystemProperties.getWalletDirectory());
     }
 }

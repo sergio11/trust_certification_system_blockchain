@@ -8,7 +8,7 @@ import com.dreamsoftware.tcs.mail.model.CertificateRequestAcceptedMailRequestDTO
 import com.dreamsoftware.tcs.mail.model.CertificateRequestRejectedMailRequestDTO;
 import com.dreamsoftware.tcs.mail.model.CertificateVisibilityChangedMailRequestDTO;
 import com.dreamsoftware.tcs.mail.model.IssueCertificateRequestMailRequestDTO;
-import com.dreamsoftware.tcs.mail.model.service.IMailClientService;
+import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
 import com.dreamsoftware.tcs.scheduling.events.certificate.CertificateDisabledEvent;

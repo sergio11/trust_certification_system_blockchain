@@ -96,8 +96,23 @@ public class CertificateGeneratorProperties {
     private String keystoreType;
 
     /**
-     *
+     * Signature Name
      */
+    @Value("${certificateGenerator.signature.name}")
+    private String signatureName;
+
+    /**
+     * Signature Reason
+     */
+    @Value("${certificateGenerator.signature.reason}")
+    private String signatureReason;
+
+    /**
+     * Signature Contact Info
+     */
+    @Value("${certificateGenerator.signature.contact-info}")
+    private String signatureContactInfo;
+
     @PostConstruct
     protected void onPostConstruct() {
         log.debug("watermarkFile: " + baseFolder);
@@ -113,6 +128,9 @@ public class CertificateGeneratorProperties {
         log.debug("keystorePassword: " + keystorePassword);
         log.debug("keystoreCertificateAlias: " + keystoreCertificateAlias);
         log.debug("keystoreType: " + keystoreType);
+        log.debug("signatureName: " + signatureName);
+        log.debug("signatureReason: " + signatureReason);
+        log.debug("signatureContactInfo: " + signatureContactInfo);
     }
 
 }

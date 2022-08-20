@@ -132,9 +132,9 @@ public class CertificateSigningServiceImpl implements ICertificateSigningService
         PDSignature pdSignature = new PDSignature();
         pdSignature.setFilter(PDSignature.FILTER_ADOBE_PPKLITE);
         pdSignature.setSubFilter(PDSignature.SUBFILTER_ADBE_PKCS7_DETACHED);
-        pdSignature.setName("");
-        pdSignature.setReason("");
-        pdSignature.setContactInfo("");
+        pdSignature.setName(certificateGeneratorProperties.getSignatureName());
+        pdSignature.setReason(certificateGeneratorProperties.getSignatureReason());
+        pdSignature.setContactInfo(certificateGeneratorProperties.getSignatureContactInfo());
         pdSignature.setSignDate(Calendar.getInstance());
         document.addSignature(pdSignature, signature);
         document.saveIncremental(output);

@@ -6,7 +6,7 @@ import com.dreamsoftware.tcs.mail.model.UserPendingValidationMailRequestDTO;
 import com.dreamsoftware.tcs.mail.model.UserActivatedEventMailRequestDTO;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.scheduling.events.account.UserActivatedEvent;
-import com.dreamsoftware.tcs.mail.model.service.IMailClientService;
+import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.scheduling.events.account.PasswordResetEvent;
 import com.dreamsoftware.tcs.scheduling.events.account.UserPendingValidationEvent;
 import lombok.RequiredArgsConstructor;

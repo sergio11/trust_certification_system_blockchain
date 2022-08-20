@@ -36,7 +36,7 @@ public class UserPendingValidationMailContentBuilder extends AbstractMailContent
 
         final Context context = new Context(request.getLocale());
         context.setVariable("name", request.getName());
-        /*context.setVariable("activateUrl",
+        /*context.setVariable("activateUrl",  applicationContext.
                 ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/accounts/activate?token={token}")
                         .buildAndExpand(request.getConfirmationToken()));*/
         return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getUserPendingValidationMailTemplate(), null);
