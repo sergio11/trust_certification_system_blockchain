@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.query.Update;
  *
  * @author ssanchez
  */
-public class CertificationCourseRepositoryImpl implements CertificationCourseRepositoryCustom {
+public class CertificationCourseRepositoryCustomImpl implements CertificationCourseRepositoryCustom {
 
     @Autowired
     private MongoTemplate mongoTemplate;

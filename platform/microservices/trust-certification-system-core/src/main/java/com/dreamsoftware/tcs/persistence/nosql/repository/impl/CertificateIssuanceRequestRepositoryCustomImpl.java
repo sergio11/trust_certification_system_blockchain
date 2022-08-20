@@ -16,7 +16,7 @@ import org.springframework.util.Assert;
  *
  * @author ssanchez
  */
-public class CertificateIssuanceRequestRepositoryImpl implements CertificateIssuanceRequestRepositoryCustom {
+public class CertificateIssuanceRequestRepositoryCustomImpl implements CertificateIssuanceRequestRepositoryCustom {
 
     @Autowired
     private MongoTemplate mongoTemplate;

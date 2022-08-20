@@ -1,59 +1,28 @@
 package com.dreamsoftware.tcs.i18n.service.impl;
 
+import com.dreamsoftware.tcs.i18n.config.properties.i18nProperties;
 import com.dreamsoftware.tcs.i18n.service.I18NService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.MissingResourceException;
+import javax.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  * @author ssanchez
  */
+@Slf4j
 @Service("i18nService")
+@RequiredArgsConstructor
 public class i18nServiceImpl implements I18NService {
 
-    private static final Logger logger = LoggerFactory.getLogger(i18nServiceImpl.class);
+    private final i18nProperties i18nProperties;
 
     private List<Locale> localeSupported = new ArrayList<>();
-
-    /**
-     * Configure Default Locale
-     *
-     * @param defaultLocale
-     */
-    @Value("${i18n.default.locale}")
-    public void setDefaultLocale(String defaultLocale) {
-        if (defaultLocale != null && !defaultLocale.isEmpty()) {
-            final Locale localeConfig = parseLocale(defaultLocale);
-            if (isValid(localeConfig)) {
-                logger.debug("Default Locale -> " + localeConfig.toString());
-                Locale.setDefault(localeConfig);
-            } else {
-                logger.debug("Invalid default locale ");
-            }
-        }
-    }
-
-    /**
-     * Configure Support Locale
-     *
-     * @param localeSupportedConfig
-     */
-    @Value("${i18n.locale.supported}")
-    public void setLocaleSupported(String localeSupportedConfig) {
-        final String[] localeSupportedArr = localeSupportedConfig.split(",");
-        for (String localeString : localeSupportedArr) {
-            final Locale currentLocale = parseLocale(localeString);
-            if (isValid(currentLocale)) {
-                localeSupported.add(currentLocale);
-            }
-        }
-    }
 
     @Override
     public Locale parseLocale(String locale) {
@@ -93,12 +62,12 @@ public class i18nServiceImpl implements I18NService {
     @Override
     public Locale parseLocaleOrDefault(String locale) {
         Locale userLocale = Locale.getDefault();
-        logger.debug("Default Locale -> " + userLocale.toString());
+        log.debug("Default Locale -> " + userLocale.toString());
         if (locale != null && !locale.isEmpty()) {
             final Locale localeParsed = parseLocale(locale);
-            logger.debug("Locale Parsed -> " + localeParsed);
+            log.debug("Locale Parsed -> " + localeParsed);
             if (isValid(localeParsed) && localeSupported.contains(localeParsed)) {
-                logger.debug("Locale Parsed is valid");
+                log.debug("Locale Parsed is valid");
                 userLocale = localeParsed;
             }
         }
@@ -108,5 +77,43 @@ public class i18nServiceImpl implements I18NService {
     @Override
     public Locale getDefault() {
         return Locale.getDefault();
+    }
+
+    /**
+     * Configure Default Locale
+     *
+     * @param defaultLocale
+     */
+    private void setDefaultLocale(String defaultLocale) {
+        if (defaultLocale != null && !defaultLocale.isEmpty()) {
+            final Locale localeConfig = parseLocale(defaultLocale);
+            if (isValid(localeConfig)) {
+                log.debug("Default Locale -> " + localeConfig.toString());
+                Locale.setDefault(localeConfig);
+            } else {
+                log.debug("Invalid default locale ");
+            }
+        }
+    }
+
+    /**
+     * Configure Support Locale
+     *
+     * @param localeSupportedConfig
+     */
+    private void setLocaleSupported(String localeSupportedConfig) {
+        final String[] localeSupportedArr = localeSupportedConfig.split(",");
+        for (String localeString : localeSupportedArr) {
+            final Locale currentLocale = parseLocale(localeString);
+            if (isValid(currentLocale)) {
+                localeSupported.add(currentLocale);
+            }
+        }
+    }
+
+    @PostConstruct
+    private void onPostConstruct() {
+        setDefaultLocale(i18nProperties.getDefaultLocale());
+        setLocaleSupported(i18nProperties.getLocaleSupported());
     }
 }

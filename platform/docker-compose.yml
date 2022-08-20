@@ -153,7 +153,6 @@ services:
       - "8060:8060"
     environment:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
-      - JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD}
     networks:
       - tcs_network
 
@@ -184,7 +183,6 @@ services:
       - tcs_network
     environment:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
-      - JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD}
 
   # Trust Certification System Certificate Events Processor
   tcs_certificate_events_processor:
@@ -198,7 +196,6 @@ services:
       - tcs_network
     environment:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
-      - JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD}
 
   # Trust Certification System User Events Processor
   tcs_user_events_processor:
@@ -212,7 +209,6 @@ services:
       - tcs_network
     environment:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
-      - JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD}
 
   # Trust Certification System Course Events Processor
   tcs_course_events_processor:
@@ -226,4 +222,3 @@ services:
       - tcs_network
     environment:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
-      - JASYPT_ENCRYPTOR_PASSWORD=${JASYPT_ENCRYPTOR_PASSWORD}
