@@ -1,8 +1,8 @@
-package com.dreamsoftware.tcs.mail.model.service.impl;
+package com.dreamsoftware.tcs.mail.service.impl;
 
 import com.dreamsoftware.tcs.mail.content.AbstractMailContentBuilder;
 import com.dreamsoftware.tcs.mail.model.AbstractMailRequestDTO;
-import com.dreamsoftware.tcs.mail.model.service.IMailClientService;
+import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.EmailEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.EmailRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
@@ -12,9 +12,8 @@ import java.util.Date;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.data.domain.Pageable;
@@ -28,11 +27,10 @@ import org.springframework.util.Assert;
  *
  * @author ssanchez
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MailClientServiceImpl implements IMailClientService {
-
-    private final Logger logger = LoggerFactory.getLogger(MailClientServiceImpl.class);
 
     private final JavaMailSender mailSender;
     private final EmailRepository emailRepository;
@@ -67,7 +65,7 @@ public class MailClientServiceImpl implements IMailClientService {
         try {
             mailSender.send(buildMimeMessage(request));
         } catch (final MessagingException | MailException ex) {
-            logger.error(request.getEntityType().getName() + " - MailException: " + ex.getMessage());
+            log.error(request.getEntityType().getName() + " - MailException: " + ex.getMessage());
             saveFailedEmail(null, ex.getMessage(), request);
         }
     }
@@ -87,10 +85,10 @@ public class MailClientServiceImpl implements IMailClientService {
             mailSender.send(buildMimeMessage(request));
             emailRepository.delete(email);
         } catch (final MessagingException | MailException ex) {
-            logger.error(" - MailException: " + ex.getMessage());
+            log.error(" - MailException: " + ex.getMessage());
             saveFailedEmail(email.getId(), ex.getMessage(), request);
         } catch (final JsonProcessingException ex) {
-            logger.error(" - JsonProcessingException: " + ex.getMessage());
+            log.error(" - JsonProcessingException: " + ex.getMessage());
             emailRepository.delete(email);
         }
     }
@@ -102,12 +100,17 @@ public class MailClientServiceImpl implements IMailClientService {
      * @param request
      */
     private <T extends AbstractMailRequestDTO> void saveFailedEmail(final ObjectId emailId, final String errorMessage, final T request) {
-        EmailEntity emailEntity = emailRepository.findById(emailId)
-                .map((emailEntitySaved) -> {
-                    emailEntitySaved.setLastChance(new Date());
-                    emailEntitySaved.setError(errorMessage);
-                    return emailEntitySaved;
-                }).orElse(null);
+
+        EmailEntity emailEntity = null;
+
+        if (emailId != null) {
+            emailEntity = emailRepository.findById(emailId)
+                    .map((emailEntitySaved) -> {
+                        emailEntitySaved.setLastChance(new Date());
+                        emailEntitySaved.setError(errorMessage);
+                        return emailEntitySaved;
+                    }).orElse(null);
+        }
 
         if (emailEntity == null) {
             try {
@@ -120,7 +123,7 @@ public class MailClientServiceImpl implements IMailClientService {
                         .payload(objectMapper.writeValueAsString(request))
                         .build();
             } catch (JsonProcessingException ex) {
-                logger.error("JsonProcessingException:  " + ex.getMessage());
+                log.error("JsonProcessingException:  " + ex.getMessage());
             }
         }
         emailRepository.save(emailEntity);

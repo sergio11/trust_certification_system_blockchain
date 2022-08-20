@@ -4,7 +4,7 @@ import com.dreamsoftware.tcs.i18n.service.I18NService;
 import com.dreamsoftware.tcs.mail.model.CADisabledMailRequestDTO;
 import com.dreamsoftware.tcs.mail.model.CAEnabledMailRequestDTO;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
-import com.dreamsoftware.tcs.mail.model.service.IMailClientService;
+import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.scheduling.events.ca.CADisabledEvent;
 import com.dreamsoftware.tcs.scheduling.events.ca.CAEnabledEvent;
 import lombok.RequiredArgsConstructor;

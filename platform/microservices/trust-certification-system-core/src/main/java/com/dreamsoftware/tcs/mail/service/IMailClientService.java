@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.mail.model.service;
+package com.dreamsoftware.tcs.mail.service;
 
 import com.dreamsoftware.tcs.mail.model.AbstractMailRequestDTO;
 

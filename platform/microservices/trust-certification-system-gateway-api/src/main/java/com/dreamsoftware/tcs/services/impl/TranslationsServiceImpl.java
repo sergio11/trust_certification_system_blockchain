@@ -14,12 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -35,14 +31,10 @@ import org.thymeleaf.util.StringUtils;
  *
  * @author ssanchez
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TranslationsServiceImpl implements ITranslationsService {
-
-    private static final Logger logger = LoggerFactory.getLogger(TranslationsServiceImpl.class);
-
-    @Value("classpath:/i18n/translation_default.xlsx")
-    private Resource translationDefaultFile;
 
     private final TranslationRepository translationRepository;
     private final TranslationMapper translationMapper;
@@ -125,18 +117,18 @@ public class TranslationsServiceImpl implements ITranslationsService {
                 }
             }
 
-            logger.debug("Translations to save -> " + saveTranslationDTOList.size());
+            log.debug("Translations to save -> " + saveTranslationDTOList.size());
             save(saveTranslationDTOList);
 
         } catch (final IOException | InvalidFormatException ex) {
-            logger.debug("Process Translation Default File failed");
+            log.debug("Process Translation Default File failed");
         } finally {
             try {
                 if (workbook != null) {
                     workbook.close();
                 }
             } catch (IOException ex) {
-                logger.debug("Process Translation Default File failed");
+                log.debug("Process Translation Default File failed");
             }
         }
     }
@@ -150,7 +142,7 @@ public class TranslationsServiceImpl implements ITranslationsService {
     public TranslationDTO save(SaveTranslationDTO model) {
         Assert.notNull(model, "Model can not be null");
         final TranslationEntity translationToSave = saveTranslationMapper.saveTranslationDTOToTranslationEntity(model);
-        logger.debug("TranslationEntity Id to save -> " + translationToSave.getId());
+        log.debug("TranslationEntity Id to save -> " + translationToSave.getId());
         final TranslationEntity translationSaved = translationRepository.save(translationToSave);
         return translationMapper.entityToDTO(translationSaved);
     }
@@ -168,21 +160,6 @@ public class TranslationsServiceImpl implements ITranslationsService {
                 saveTranslationMapper.saveTranslationDTOToTranslationEntity(modelList)
         );
         return translationMapper.entityToDTO(translationEntityList);
-    }
-
-    @PostConstruct
-    protected void onInit() {
-        importDefaultTranslations();
-    }
-
-    /**
-     * Import Default Translations
-     */
-    private void importDefaultTranslations() {
-        try {
-            save(translationDefaultFile.getFile());
-        } catch (IOException ex) {
-        }
     }
 
     private enum TranslationXlsFieldNamesEnum {
