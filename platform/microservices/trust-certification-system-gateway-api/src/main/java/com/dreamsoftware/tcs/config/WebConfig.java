@@ -1,11 +1,19 @@
 package com.dreamsoftware.tcs.config;
 
+import com.dreamsoftware.tcs.i18n.config.properties.i18nProperties;
+import com.dreamsoftware.tcs.i18n.resolver.SmartLocaleResolver;
+import com.dreamsoftware.tcs.i18n.service.I18NService;
 import java.util.List;
 import javax.validation.MessageInterpolator;
 import org.springframework.validation.Validator;
 import lombok.RequiredArgsConstructor;
+import org.ocpsoft.prettytime.PrettyTime;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.mobile.device.DeviceHandlerMethodArgumentResolver;
@@ -13,6 +21,7 @@ import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -30,7 +39,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final LocaleChangeInterceptor localeChangeInterceptor;
+    private final i18nProperties i18nProperties;
     private final DeviceResolverHandlerInterceptor deviceResolverHandlerInterceptor;
     private final DeviceHandlerMethodArgumentResolver deviceHandlerMethodArgumentResolver;
     private final MessageInterpolator messageInterpolator;
@@ -73,7 +82,7 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor);
+        registry.addInterceptor(provideLocaleChangeInterceptor());
         registry.addInterceptor(deviceResolverHandlerInterceptor);
     }
 
@@ -85,5 +94,42 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public ShallowEtagHeaderFilter provideShallowEtagHeaderFilter() {
         return new ShallowEtagHeaderFilter();
+    }
+
+    /**
+     * Provide Locale Change Interceptor
+     *
+     * @return LocaleChangeInterceptor
+     */
+    @Bean(name = "localeChangeInterceptor")
+    public LocaleChangeInterceptor provideLocaleChangeInterceptor() {
+        LocaleChangeInterceptor lcInterceptor = new LocaleChangeInterceptor();
+        lcInterceptor.setParamName(i18nProperties.getParamName());
+        return lcInterceptor;
+    }
+
+    /**
+     * Provide Locale Resolver The LocaleResolver interface has implementations
+     * that determine the current locale based on the session, cookies, the
+     * Accept-Language header, or a fixed value.
+     *
+     * @param i18nService
+     * @return LocaleResolver
+     */
+    @Bean
+    @Primary
+    public LocaleResolver customLocaleResolver(final I18NService i18nService) {
+        return new SmartLocaleResolver(i18nService);
+    }
+
+    /**
+     * Provide Pretty time as suitable date format utility
+     *
+     * @return PrettyTime
+     */
+    @Bean(name = "prettyTime")
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public PrettyTime providePrettyTime() {
+        return new PrettyTime(LocaleContextHolder.getLocale());
     }
 }
