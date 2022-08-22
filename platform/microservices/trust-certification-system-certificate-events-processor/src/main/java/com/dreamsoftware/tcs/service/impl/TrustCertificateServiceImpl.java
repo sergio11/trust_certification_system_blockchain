@@ -1,5 +1,8 @@
 package com.dreamsoftware.tcs.service.impl;
 
+import com.dreamsoftware.tcs.i18n.service.I18NService;
+import com.dreamsoftware.tcs.mail.model.CertificateGeneratedMailRequestDTO;
+import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.model.events.OnNewCertificateIssuedEvent;
 import com.dreamsoftware.tcs.model.events.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
@@ -81,6 +84,16 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
     private final INotificationService notificationService;
 
     /**
+     * Mail Client Service
+     */
+    private final IMailClientService mailClientService;
+
+    /**
+     * I18N Service
+     */
+    private final I18NService i18nService;
+
+    /**
      *
      * @param event
      * @return
@@ -123,6 +136,13 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
                 .build();
         final CertificateIssuanceRequestEntity certificateIssuedSaved = certificateIssuedRepository.save(certificateIssued);
         notificationService.onUserCertificateValidated(certificateIssuedSaved);
+        mailClientService.sendMail(CertificateGeneratedMailRequestDTO.builder()
+                .certificateId(certificateIssuedSaved.getCertificateId())
+                .caName(caUserEntity.getName())
+                .email(studentEntity.getEmail())
+                .qualification(certificateIssuedSaved.getQualification())
+                .locale(i18nService.parseLocaleOrDefault(studentEntity.getLanguage()))
+                .build());
     }
 
 }

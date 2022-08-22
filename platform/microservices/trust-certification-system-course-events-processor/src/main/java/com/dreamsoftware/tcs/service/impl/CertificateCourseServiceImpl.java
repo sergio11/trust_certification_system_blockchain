@@ -1,5 +1,8 @@
 package com.dreamsoftware.tcs.service.impl;
 
+import com.dreamsoftware.tcs.i18n.service.I18NService;
+import com.dreamsoftware.tcs.mail.model.CertificationCourseRegisteredMailRequestDTO;
+import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.model.events.CertificationCourseRegisteredEvent;
 import com.dreamsoftware.tcs.model.events.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
@@ -14,8 +17,7 @@ import com.dreamsoftware.tcs.service.ICertificateCourseService;
 import com.dreamsoftware.tcs.service.INotificationService;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -23,11 +25,10 @@ import org.springframework.util.Assert;
  *
  * @author ssanchez
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CertificateCourseServiceImpl implements ICertificateCourseService {
-
-    private static final Logger logger = LoggerFactory.getLogger(CertificateCourseServiceImpl.class);
 
     /**
      * Certification Course Repository
@@ -50,6 +51,16 @@ public class CertificateCourseServiceImpl implements ICertificateCourseService {
     private final INotificationService notificationService;
 
     /**
+     * Mail Client Service
+     */
+    private final IMailClientService mailClientService;
+
+    /**
+     * I18N Service
+     */
+    private final I18NService i18nService;
+
+    /**
      *
      * @param event
      * @throws RepositoryException
@@ -66,13 +77,14 @@ public class CertificateCourseServiceImpl implements ICertificateCourseService {
      * @param event
      */
     @Override
-    public void register(CertificationCourseRegisteredEvent event) {
+    public void register(final CertificationCourseRegisteredEvent event) {
         Assert.notNull(event, "event can not be null");
         Assert.notNull(event.getCaWalletHash(), "caWalletHash can not be null");
         Assert.notNull(event.getCertificationCourse().getId(), "courseId can not be null");
         final String caWalletHash = event.getCaWalletHash();
         final String courseId = event.getCertificationCourse().getId();
-        logger.debug("register: caWalletHash: " + caWalletHash + " courseId: " + courseId + " CALLED!");
+        final String courseName = event.getCertificationCourse().getName();
+        log.debug("register: caWalletHash: " + caWalletHash + " courseId: " + courseId + " CALLED!");
         final UserEntity caUser = userRepository.findOneByWalletHash(caWalletHash).orElseThrow(() -> new IllegalStateException("CA Wallet Hash not found"));
         final CertificationCourseEntity certificationCourseEntity = CertificationCourseEntity
                 .builder()
@@ -81,7 +93,13 @@ public class CertificateCourseServiceImpl implements ICertificateCourseService {
                 .status(CertificationCourseStateEnum.ENABLED)
                 .courseId(courseId)
                 .build();
-        certificationCourseRepository.save(certificationCourseEntity);
-        notificationService.onCACertificationCourseRegistered(certificationCourseEntity);
+        final CertificationCourseEntity certificationCourseEntitySaved = certificationCourseRepository.save(certificationCourseEntity);
+        notificationService.onCACertificationCourseRegistered(certificationCourseEntitySaved);
+        mailClientService.sendMail(CertificationCourseRegisteredMailRequestDTO.builder()
+                .courseId(certificationCourseEntitySaved.getCourseId())
+                .courseName(courseName)
+                .email(caUser.getEmail())
+                .locale(i18nService.parseLocaleOrDefault(caUser.getLanguage()))
+                .build());
     }
 }

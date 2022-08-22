@@ -3,8 +3,7 @@ package com.dreamsoftware.tcs.config.properties;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import lombok.Data;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
@@ -14,12 +13,11 @@ import org.springframework.stereotype.Component;
  *
  * @author sergio
  */
+@Slf4j
 @Data
 @Component
 @RefreshScope
 public class MailProperties implements Serializable {
-
-    private Logger logger = LoggerFactory.getLogger(MailProperties.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -74,24 +72,36 @@ public class MailProperties implements Serializable {
     @Value("${mail.templates.certificates.new-course-registration-request}")
     private String newCourseRegistrationRequestedMailTemplate;
 
+    @Value("${mail.templates.certificates.certificate-generated}")
+    private String certificateGeneratedMailTemplate;
+
+    @Value("${mail.templates.certificates.certification-course-registered}")
+    private String certificationCourseRegisteredMailTemplate;
+
+    @Value("${mail.templates.certificates.user-order-completed}")
+    private String userOrderCompletedMailTemplate;
+
     @PostConstruct
     protected void onPostConstruct() {
-        logger.debug("mailFrom: " + mailFrom);
-        logger.debug("mailTemplatesBaseDir: " + mailTemplatesBaseDir);
-        logger.debug("mailResourcesBaseDir: " + mailResourcesBaseDir);
-        logger.debug("useActivatedMailTemplate: " + userActivatedMailTemplate);
-        logger.debug("userPendingValidationMailTemplate: " + userPendingValidationMailTemplate);
-        logger.debug("caDisabledMailTemplate: " + caDisabledMailTemplate);
-        logger.debug("caEnabledMailTemplate: " + caEnabledMailTemplate);
-        logger.debug("certificateDisabledMailTemplate: " + certificateDisabledMailTemplate);
-        logger.debug("certificateEnabledMailTemplate: " + certificateEnabledMailTemplate);
-        logger.debug("certificateRenewedMailTemplate: " + certificateRenewedMailTemplate);
-        logger.debug("certificateRequestAcceptedMailTemplate: " + certificateRequestAcceptedMailTemplate);
-        logger.debug("certificateRequestRejectedMailTemplate: " + certificateRequestRejectedMailTemplate);
-        logger.debug("certificateVisibilityChangedMailTemplate: " + certificateVisibilityChangedMailTemplate);
-        logger.debug("courseDisabledMailTemplate: " + courseDisabledMailTemplate);
-        logger.debug("courseEnabledMailTemplate: " + courseEnabledMailTemplate);
-        logger.debug("issueCertificateRequestMailTemplate: " + issueCertificateRequestMailTemplate);
-        logger.debug("newCourseRegistrationRequestedMailTemplate: " + newCourseRegistrationRequestedMailTemplate);
+        log.debug("mailFrom: " + mailFrom);
+        log.debug("mailTemplatesBaseDir: " + mailTemplatesBaseDir);
+        log.debug("mailResourcesBaseDir: " + mailResourcesBaseDir);
+        log.debug("useActivatedMailTemplate: " + userActivatedMailTemplate);
+        log.debug("userPendingValidationMailTemplate: " + userPendingValidationMailTemplate);
+        log.debug("caDisabledMailTemplate: " + caDisabledMailTemplate);
+        log.debug("caEnabledMailTemplate: " + caEnabledMailTemplate);
+        log.debug("certificateDisabledMailTemplate: " + certificateDisabledMailTemplate);
+        log.debug("certificateEnabledMailTemplate: " + certificateEnabledMailTemplate);
+        log.debug("certificateRenewedMailTemplate: " + certificateRenewedMailTemplate);
+        log.debug("certificateRequestAcceptedMailTemplate: " + certificateRequestAcceptedMailTemplate);
+        log.debug("certificateRequestRejectedMailTemplate: " + certificateRequestRejectedMailTemplate);
+        log.debug("certificateVisibilityChangedMailTemplate: " + certificateVisibilityChangedMailTemplate);
+        log.debug("courseDisabledMailTemplate: " + courseDisabledMailTemplate);
+        log.debug("courseEnabledMailTemplate: " + courseEnabledMailTemplate);
+        log.debug("issueCertificateRequestMailTemplate: " + issueCertificateRequestMailTemplate);
+        log.debug("newCourseRegistrationRequestedMailTemplate: " + newCourseRegistrationRequestedMailTemplate);
+        log.debug("certificationCourseRegisteredMailTemplate: " + certificationCourseRegisteredMailTemplate);
+        log.debug("certificateGeneratedMailTemplate: " + certificateGeneratedMailTemplate);
+        log.debug("userOrderCompletedMailTemplate: " + userOrderCompletedMailTemplate);
     }
 }
