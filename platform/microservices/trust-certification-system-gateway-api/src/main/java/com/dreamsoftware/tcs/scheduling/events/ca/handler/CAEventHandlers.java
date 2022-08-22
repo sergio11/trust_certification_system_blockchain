@@ -8,6 +8,7 @@ import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.scheduling.events.ca.CADisabledEvent;
 import com.dreamsoftware.tcs.scheduling.events.ca.CAEnabledEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +20,10 @@ import org.springframework.util.Assert;
  *
  * @author ssanchez
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CAEventHandlers {
-
-    private static final Logger logger = LoggerFactory.getLogger(CAEventHandlers.class);
 
     private final IMailClientService mailClientService;
     private final UserRepository userRepository;
@@ -37,7 +37,7 @@ public class CAEventHandlers {
     @EventListener
     void handle(final CAEnabledEvent event) {
         Assert.notNull(event.getWalletHash(), "Wallet Hash can not be null");
-        logger.debug("CAEnabledEvent handled!");
+        log.debug("CAEnabledEvent handled!");
         userRepository.findOneByWalletHash(event.getWalletHash()).ifPresent((user) -> {
             mailClientService.sendMail(CAEnabledMailRequestDTO
                     .builder()
@@ -58,7 +58,7 @@ public class CAEventHandlers {
     @EventListener
     void handle(final CADisabledEvent event) {
         Assert.notNull(event.getWalletHash(), "Wallet Hash can not be null");
-        logger.debug("CADisabledEvent handled!");
+        log.debug("CADisabledEvent handled!");
         userRepository.findOneByWalletHash(event.getWalletHash()).ifPresent((user) -> {
             mailClientService.sendMail(CADisabledMailRequestDTO
                     .builder()
