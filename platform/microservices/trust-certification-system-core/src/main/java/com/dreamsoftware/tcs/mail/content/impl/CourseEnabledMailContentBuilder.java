@@ -31,7 +31,7 @@ public class CourseEnabledMailContentBuilder extends AbstractMailContentBuilder<
         Assert.hasLength(mailContentProperties.getCourseEnabledMailTemplate(), "Mail Template can not be empty");
         // Generate Email Subject
         final String subject = resolveString("mail_certificate_course_enabled_subject_title", request.getLocale(),
-                new Object[]{request.getCourseName(), request.getCaName()});
+                new Object[]{request.getCaName(), request.getCourseName()});
 
         final Context context = new Context(request.getLocale());
         context.setVariable("caName", request.getCaName());
