@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.service.impl;
 
 import com.dreamsoftware.tcs.i18n.service.I18NService;
+import com.dreamsoftware.tcs.mail.model.UserActivatedEventMailRequestDTO;
 import com.dreamsoftware.tcs.mail.model.UserOrderCompletedMailRequestDTO;
 import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.model.events.NewTokensOrderApprovedEvent;
@@ -101,6 +102,12 @@ public class UserServiceImpl implements IUserService {
             userEntity.setState(UserStateEnum.VALIDATED);
             userRepository.save(userEntity);
             notificationService.onUserAccountValidated(userEntity);
+            mailClientService.sendMail(UserActivatedEventMailRequestDTO.builder()
+                    .email(userEntity.getEmail())
+                    .name(userEntity.getName())
+                    .locale(i18nService.parseLocaleOrDefault(userEntity.getLanguage()))
+                    .id(userEntity.getId().toString())
+                    .build());
         });
     }
 

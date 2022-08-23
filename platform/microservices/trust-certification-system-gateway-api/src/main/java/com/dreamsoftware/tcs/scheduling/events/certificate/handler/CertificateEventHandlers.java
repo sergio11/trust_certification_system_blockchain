@@ -19,10 +19,9 @@ import com.dreamsoftware.tcs.scheduling.events.certificate.CertificateRequestRej
 import com.dreamsoftware.tcs.scheduling.events.certificate.CertificateVisibilityChangedEvent;
 import com.dreamsoftware.tcs.scheduling.events.certificate.IssueCertificateRequestedEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
@@ -31,11 +30,10 @@ import org.springframework.util.Assert;
  *
  * @author ssanchez
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CertificateEventHandlers {
-
-    private static final Logger logger = LoggerFactory.getLogger(CertificateEventHandlers.class);
 
     private final IMailClientService mailClientService;
     private final CertificateIssuanceRequestRepository certificateIssuanceRequestRepository;
@@ -49,7 +47,7 @@ public class CertificateEventHandlers {
     @EventListener
     void handle(final CertificateDisabledEvent event) {
         Assert.notNull(event.getId(), "Id can not be null");
-        logger.debug("CertificateDisabledEvent handled!");
+        log.debug("CertificateDisabledEvent handled!");
         certificateIssuanceRequestRepository.findByCertificateId(event.getId()).ifPresent((certificateRequest) -> {
             final String certificateId = certificateRequest.getId().toString();
             final UserEntity studentEntity = certificateRequest.getStudent();
@@ -77,7 +75,7 @@ public class CertificateEventHandlers {
     @EventListener
     void handle(final CertificateEnabledEvent event) {
         Assert.notNull(event.getId(), "Id can not be null");
-        logger.debug("CertificateEnabledEvent handled!");
+        log.debug("CertificateEnabledEvent handled!");
         certificateIssuanceRequestRepository.findByCertificateId(event.getId()).ifPresent((certificateRequest) -> {
             final String certificateId = certificateRequest.getId().toString();
             final UserEntity studentEntity = certificateRequest.getStudent();
@@ -105,7 +103,7 @@ public class CertificateEventHandlers {
     @EventListener
     void handle(final CertificateRenewedEvent event) {
         Assert.notNull(event.getId(), "Id can not be null");
-        logger.debug("CertificateRenewedEvent handled!");
+        log.debug("CertificateRenewedEvent handled!");
         certificateIssuanceRequestRepository.findByCertificateId(event.getId()).ifPresent((certificateRequest) -> {
             final UserEntity studentEntity = certificateRequest.getStudent();
             mailClientService.sendMail(CertificateRenewedMailRequestDTO
@@ -125,7 +123,7 @@ public class CertificateEventHandlers {
     @EventListener
     void handle(final CertificateRequestAcceptedEvent event) {
         Assert.notNull(event.getId(), "Id can not be null");
-        logger.debug("CertificateRequestAcceptedEvent handled!");
+        log.debug("CertificateRequestAcceptedEvent handled!");
         certificateIssuanceRequestRepository.findById(new ObjectId(event.getId())).ifPresent((certificateRequest) -> {
             final UserEntity studentEntity = certificateRequest.getStudent();
             mailClientService.sendMail(CertificateRequestAcceptedMailRequestDTO
@@ -146,7 +144,7 @@ public class CertificateEventHandlers {
     @EventListener
     void handle(final CertificateRequestRejectedEvent event) {
         Assert.notNull(event.getId(), "Id can not be null");
-        logger.debug("CertificateRequestRejectedEvent handled!");
+        log.debug("CertificateRequestRejectedEvent handled!");
         certificateIssuanceRequestRepository.findById(new ObjectId(event.getId())).ifPresent((certificateRequest) -> {
             final UserEntity studentEntity = certificateRequest.getStudent();
             mailClientService.sendMail(CertificateRequestRejectedMailRequestDTO
@@ -167,7 +165,7 @@ public class CertificateEventHandlers {
     @EventListener
     void handle(final CertificateVisibilityChangedEvent event) {
         Assert.notNull(event.getId(), "Id can not be null");
-        logger.debug("CertificateVisibilityChangedEvent handled!");
+        log.debug("CertificateVisibilityChangedEvent handled!");
         certificateIssuanceRequestRepository.findByCertificateId(event.getId()).ifPresent((certificateRequest) -> {
             final UserEntity studentEntity = certificateRequest.getStudent();
             mailClientService.sendMail(CertificateVisibilityChangedMailRequestDTO
@@ -188,7 +186,7 @@ public class CertificateEventHandlers {
     @EventListener
     void handle(final IssueCertificateRequestedEvent event) {
         Assert.notNull(event.getId(), "Id can not be null");
-        logger.debug("IssueCertificateRequestedEvent handled!");
+        log.debug("IssueCertificateRequestedEvent handled!");
         certificateIssuanceRequestRepository.findById(new ObjectId(event.getId())).ifPresent((certificateRequest) -> {
             final Long qualification = certificateRequest.getQualification();
             final String certificationId = certificateRequest.getId().toString();

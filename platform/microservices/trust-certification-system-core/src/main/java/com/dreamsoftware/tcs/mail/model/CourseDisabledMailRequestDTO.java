@@ -22,22 +22,29 @@ public class CourseDisabledMailRequestDTO extends AbstractMailRequestDTO {
     private String id;
 
     /**
-     * Name
+     * Course Name
      */
-    private String name;
+    private String courseName;
+
+    /**
+     * CA Name
+     */
+    private String caName;
 
     /**
      *
      * @param id
-     * @param name
+     * @param courseName
+     * @param caName
      * @param email
      * @param locale
      */
     @Builder
-    public CourseDisabledMailRequestDTO(final String id, final String name, final String email, final Locale locale) {
+    public CourseDisabledMailRequestDTO(final String id, final String courseName, final String caName, final String email, final Locale locale) {
         super(email, locale);
         this.id = id;
-        this.name = name;
+        this.courseName = courseName;
+        this.caName = caName;
     }
 
     @Override

@@ -13,10 +13,12 @@ import org.springframework.context.ApplicationEvent;
 @EqualsAndHashCode(callSuper = false)
 public class NewCourseRegistrationRequestedEvent extends ApplicationEvent {
 
-    private final String id;
+    private final String caWalletHash;
+    private final String courseName;
 
-    public NewCourseRegistrationRequestedEvent(Object source, final String id) {
+    public NewCourseRegistrationRequestedEvent(Object source, final String caWalletHash, final String courseName) {
         super(source);
-        this.id = id;
+        this.caWalletHash = caWalletHash;
+        this.courseName = courseName;
     }
 }

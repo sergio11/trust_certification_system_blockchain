@@ -5,5 +5,5 @@ package com.dreamsoftware.tcs.persistence.nosql.entity;
  * @author ssanchez
  */
 public enum CertificationCourseStateEnum {
-    REMOVED, ENABLED, DISABLED;
+    NOT_VALIDATED, REMOVED, ENABLED, DISABLED;
 }
