@@ -1,7 +1,6 @@
 package com.dreamsoftware.tcs.web.controller.account;
 
 import com.dreamsoftware.tcs.scheduling.events.account.PasswordResetEvent;
-import com.dreamsoftware.tcs.scheduling.events.account.UserActivatedEvent;
 import com.dreamsoftware.tcs.scheduling.events.account.UserPendingValidationEvent;
 import com.dreamsoftware.tcs.services.IAccountsService;
 import com.dreamsoftware.tcs.services.IPasswordResetTokenService;
@@ -199,7 +198,6 @@ public class AccountsController extends SupportController {
             @RequestParam(name = "token") final String token) {
         try {
             final SimpleUserDTO userActivated = authenticationService.activate(token);
-            applicationEventPublisher.publishEvent(new UserActivatedEvent(this, userActivated.getIdentity()));
             return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.ACTIVATE_SUCCESS, HttpStatus.OK, userActivated);
         } catch (final Throwable ex) {
             throw new ActivateAccountException(ex.getMessage(), ex.getCause());

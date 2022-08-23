@@ -14,9 +14,11 @@ import org.springframework.context.ApplicationEvent;
 public class CourseDisabledEvent extends ApplicationEvent {
 
     private final String id;
+    private final String name;
 
-    public CourseDisabledEvent(Object source, final String id) {
+    public CourseDisabledEvent(Object source, final String id, final String name) {
         super(source);
         this.id = id;
+        this.name = name;
     }
 }

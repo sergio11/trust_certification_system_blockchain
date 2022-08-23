@@ -31,10 +31,11 @@ public class CourseDisabledMailContentBuilder extends AbstractMailContentBuilder
         Assert.hasLength(mailContentProperties.getCourseDisabledMailTemplate(), "Mail Template can not be empty");
         // Generate Email Subject
         final String subject = resolveString("mail_certificate_course_disabled_subject_title", request.getLocale(),
-                new Object[]{request.getName()});
+                new Object[]{request.getCaName(), request.getCourseName()});
 
         final Context context = new Context(request.getLocale());
-        context.setVariable("name", request.getName());
+        context.setVariable("caName", request.getCaName());
+        context.setVariable("courseName", request.getCourseName());
 
         return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getCourseDisabledMailTemplate(), null);
     }

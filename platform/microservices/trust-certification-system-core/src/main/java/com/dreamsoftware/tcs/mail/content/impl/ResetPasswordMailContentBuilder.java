@@ -7,6 +7,7 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 /**
  *
@@ -16,9 +17,16 @@ import org.springframework.stereotype.Component;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ResetPasswordMailContentBuilder extends AbstractMailContentBuilder<ResetPasswordMailRequestDTO> {
 
+    /**
+     *
+     * @param request
+     * @return
+     * @throws MessagingException
+     */
     @Override
-    public MimeMessage buildContent(ResetPasswordMailRequestDTO request) throws MessagingException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public MimeMessage buildContent(final ResetPasswordMailRequestDTO request) throws MessagingException {
+        Assert.notNull(request, "request can not be null");
+        return null;
     }
 
 }

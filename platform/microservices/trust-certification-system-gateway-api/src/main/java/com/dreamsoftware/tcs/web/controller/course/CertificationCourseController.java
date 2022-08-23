@@ -1,7 +1,9 @@
 package com.dreamsoftware.tcs.web.controller.course;
 
+import com.dreamsoftware.tcs.mail.model.NewCourseRegistrationRequestedMailRequestDTO;
 import com.dreamsoftware.tcs.scheduling.events.course.CourseDisabledEvent;
 import com.dreamsoftware.tcs.scheduling.events.course.CourseEnabledEvent;
+import com.dreamsoftware.tcs.scheduling.events.course.NewCourseRegistrationRequestedEvent;
 import com.dreamsoftware.tcs.services.ICertificationCourseService;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
@@ -82,6 +84,7 @@ public class CertificationCourseController extends SupportController {
         try {
             certificationCourse.setCaWalletHash(selfUser.getWalletHash());
             certificationCourseService.save(certificationCourse);
+            applicationEventPublisher.publishEvent(new NewCourseRegistrationRequestedEvent(this, selfUser.getUserId().toString(), certificationCourse.getName()));
             return responseHelper.createAndSendResponse(
                     CertificationCourseResponseCodeEnum.SAVE_CERTIFICATION_COURSE, HttpStatus.OK,
                     resolveString("new_course_registration_requested", request));
@@ -109,7 +112,7 @@ public class CertificationCourseController extends SupportController {
     ) throws Throwable {
         try {
             final CertificationCourseDetailDTO certificationCourseDTO = certificationCourseService.enable(selfUser.getWalletHash(), id);
-            applicationEventPublisher.publishEvent(new CourseEnabledEvent(this, certificationCourseDTO.getId()));
+            applicationEventPublisher.publishEvent(new CourseEnabledEvent(this, certificationCourseDTO.getId(), certificationCourseDTO.getName()));
             return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_ENABLED,
                     HttpStatus.OK, certificationCourseDTO);
         } catch (final Exception ex) {
@@ -136,7 +139,7 @@ public class CertificationCourseController extends SupportController {
     ) throws Throwable {
         try {
             final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseService.disable(selfUser.getWalletHash(), id);
-            applicationEventPublisher.publishEvent(new CourseDisabledEvent(this, certificationCourseDetailDTO.getId()));
+            applicationEventPublisher.publishEvent(new CourseDisabledEvent(this, certificationCourseDetailDTO.getId(), certificationCourseDetailDTO.getName()));
             return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(
                     CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DISABLED,
                     HttpStatus.OK, certificationCourseDetailDTO);

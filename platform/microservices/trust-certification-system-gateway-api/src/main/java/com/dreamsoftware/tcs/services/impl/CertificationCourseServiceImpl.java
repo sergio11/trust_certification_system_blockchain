@@ -11,8 +11,7 @@ import com.dreamsoftware.tcs.services.ICertificationCourseService;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -22,11 +21,10 @@ import org.springframework.util.Assert;
  *
  * @author ssanchez
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CertificationCourseServiceImpl implements ICertificationCourseService {
-
-    private final Logger logger = LoggerFactory.getLogger(CertificationCourseServiceImpl.class);
 
     private final CertificationCourseDetailMapper certificationCourseDetailMapper;
     private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
@@ -46,7 +44,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public CertificationCourseDetailDTO enable(final String caWalletHash, final String courseId) throws Throwable {
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
-        logger.debug("Enable course -> " + courseId + " CALLED!");
+        log.debug("Enable course -> " + courseId + " CALLED!");
         final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.enable(caWalletHash, courseId);
         certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.ENABLED);
         return certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
@@ -64,7 +62,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public CertificationCourseDetailDTO disable(final String caWalletHash, final String courseId) throws Throwable {
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
-        logger.debug("Disable course -> " + courseId + " CALLED!");
+        log.debug("Disable course -> " + courseId + " CALLED!");
         final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.disable(caWalletHash, courseId);
         certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.DISABLED);
         return certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
@@ -78,7 +76,6 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     @Override
     public void save(SaveCertificationCourseDTO model) {
         Assert.notNull(model, "model can not be null");
-        logger.debug("Save certification course CALLED!");
         final CourseCertificateRegistrationRequestEvent event = new CourseCertificateRegistrationRequestEvent(
                 model.getName(), model.getCostOfIssuingCertificate(),
                 model.getDurationInHours(), model.getExpirationInDays(),
@@ -96,7 +93,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public CertificationCourseDetailDTO remove(String caWalletHash, String courseId) throws Throwable {
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
-        logger.debug("remove certification course " + courseId + " CALLED!");
+        log.debug("remove certification course " + courseId + " CALLED!");
         final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.remove(caWalletHash, courseId);
         certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.REMOVED);
         return certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
@@ -113,7 +110,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public Boolean canBeIssued(String caWalletHash, String courseId) throws Throwable {
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
-        logger.debug("check certification course " + courseId + " can be issued CALLED!");
+        log.debug("check certification course " + courseId + " can be issued CALLED!");
         return certificationCourseBlockchainRepository.canBeIssued(caWalletHash, courseId);
     }
 
@@ -128,7 +125,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public Boolean canBeRenewed(String caWalletHash, String courseId) throws Throwable {
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
-        logger.debug("check certification course " + courseId + " can be renewed CALLED!");
+        log.debug("check certification course " + courseId + " can be renewed CALLED!");
         return certificationCourseBlockchainRepository.canBeRenewed(caWalletHash, courseId);
     }
 
@@ -143,7 +140,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public CertificationCourseDetailDTO getDetail(String caWalletHash, String courseId) throws Throwable {
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
-        logger.debug("get certification course " + courseId + " detail CALLED!");
+        log.debug("get certification course " + courseId + " detail CALLED!");
         final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.get(caWalletHash, courseId);
         return certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
     }
