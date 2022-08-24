@@ -111,6 +111,24 @@
             <version>${poi.version}</version>
         </dependency>
 
+        <!-- JSR-353 (JSON Processing): API -->
+        <dependency>
+            <groupId>javax.json</groupId>
+            <artifactId>javax.json-api</artifactId>
+        </dependency>
+
+        <!-- JSR-353 (JSON Processing): Johnzon implementation -->
+        <dependency>
+            <groupId>org.apache.johnzon</groupId>
+            <artifactId>johnzon-core</artifactId>
+        </dependency>
+
+        <!-- Jackson module for the JSR-353 (JSON Processing) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr353</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
