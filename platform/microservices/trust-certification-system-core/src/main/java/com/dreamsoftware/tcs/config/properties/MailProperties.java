@@ -66,6 +66,9 @@ public class MailProperties implements Serializable {
     @Value("${mail.templates.certificates.course-enabled}")
     private String courseEnabledMailTemplate;
 
+    @Value("${mail.templates.certificates.course-deleted}")
+    private String courseDeletedMailTemplate;
+
     @Value("${mail.templates.certificates.issue-certificate-request}")
     private String issueCertificateRequestMailTemplate;
 
@@ -98,6 +101,7 @@ public class MailProperties implements Serializable {
         log.debug("certificateVisibilityChangedMailTemplate: " + certificateVisibilityChangedMailTemplate);
         log.debug("courseDisabledMailTemplate: " + courseDisabledMailTemplate);
         log.debug("courseEnabledMailTemplate: " + courseEnabledMailTemplate);
+        log.debug("courseDeletedMailTemplate: " + courseDeletedMailTemplate);
         log.debug("issueCertificateRequestMailTemplate: " + issueCertificateRequestMailTemplate);
         log.debug("newCourseRegistrationRequestedMailTemplate: " + newCourseRegistrationRequestedMailTemplate);
         log.debug("certificationCourseRegisteredMailTemplate: " + certificationCourseRegisteredMailTemplate);

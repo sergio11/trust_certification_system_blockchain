@@ -1,12 +1,13 @@
 package com.dreamsoftware.tcs.web.controller.course;
 
-import com.dreamsoftware.tcs.mail.model.NewCourseRegistrationRequestedMailRequestDTO;
+import com.dreamsoftware.tcs.scheduling.events.course.CourseDeletedEvent;
 import com.dreamsoftware.tcs.scheduling.events.course.CourseDisabledEvent;
 import com.dreamsoftware.tcs.scheduling.events.course.CourseEnabledEvent;
 import com.dreamsoftware.tcs.scheduling.events.course.NewCourseRegistrationRequestedEvent;
 import com.dreamsoftware.tcs.services.ICertificationCourseService;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
+import com.dreamsoftware.tcs.web.controller.course.error.exception.DeleteCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.DisableCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.EnableCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.GetCertificationCourseDetailException;
@@ -15,6 +16,7 @@ import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
+import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdminOrCourseOwner;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
@@ -247,6 +249,39 @@ public class CertificationCourseController extends SupportController {
                     HttpStatus.OK, canBeRenewed);
         } catch (final Exception ex) {
             throw new GetCertificationCourseDetailException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param id
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "DELETE_CERTIFICATION_COURSE - Delete Certification Course", description = "Delete Certification Course", tags = {"COURSE"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Certification Course Deleted",
+                content = @Content(schema = @Schema(implementation = String.class))),
+        @ApiResponse(responseCode = "404", description = "Certification Course Not Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/{id}"}, method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdminOrCourseOwner
+    public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> deleteById(
+            @Parameter(name = "id", description = "Course Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "{course_id_not_valid}") @PathVariable("id") String id,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+    ) throws Throwable {
+        try {
+            final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseService.remove(selfUser.getWalletHash(), id);
+            applicationEventPublisher.publishEvent(new CourseDeletedEvent(this, certificationCourseDetailDTO.getId(), certificationCourseDetailDTO.getName()));
+            return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(
+                    CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DELETED,
+                    HttpStatus.OK, certificationCourseDetailDTO);
+        } catch (final Exception ex) {
+            throw new DeleteCertificationCourseException(ex.getMessage(), ex);
         }
     }
 }
