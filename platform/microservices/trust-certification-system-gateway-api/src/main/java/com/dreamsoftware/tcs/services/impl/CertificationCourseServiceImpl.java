@@ -12,6 +12,7 @@ import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -22,7 +23,7 @@ import org.springframework.util.Assert;
  * @author ssanchez
  */
 @Slf4j
-@Service
+@Service("certificationCourseService")
 @RequiredArgsConstructor
 public class CertificationCourseServiceImpl implements ICertificationCourseService {
 
@@ -143,5 +144,18 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         log.debug("get certification course " + courseId + " detail CALLED!");
         final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.get(caWalletHash, courseId);
         return certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
+    }
+
+    /**
+     *
+     * @param courseId
+     * @param userId
+     * @return
+     */
+    @Override
+    public Boolean isTheOwner(final String courseId, final ObjectId userId) {
+        Assert.notNull(courseId, "Id can not be null");
+        Assert.notNull(userId, "Id can not be null");
+        return certificationCourseRepository.countByIdAndCaId(new ObjectId(courseId), userId) > 0;
     }
 }

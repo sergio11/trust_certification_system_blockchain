@@ -5,9 +5,8 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.NotificationRepository
 import com.dreamsoftware.tcs.services.INotificationService;
 import com.dreamsoftware.tcs.web.dto.response.NotificationDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +18,10 @@ import org.springframework.util.Assert;
  *
  * @author ssanchez
  */
+@Slf4j
 @Service("notificationService")
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements INotificationService {
-
-    private final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
 
     /**
      * Notification Repository
@@ -43,7 +41,7 @@ public class NotificationServiceImpl implements INotificationService {
      * @return
      */
     @Override
-    public Page<NotificationDTO> findPaginated(ObjectId userId, Integer page, Integer size) {
+    public Page<NotificationDTO> findPaginated(final ObjectId userId, final Integer page, final Integer size) {
         Assert.notNull(userId, "User Id can not be null");
         Assert.notNull(page, "Page can not be null");
         Assert.notNull(size, "Size can not be null");
@@ -57,7 +55,7 @@ public class NotificationServiceImpl implements INotificationService {
      * @return
      */
     @Override
-    public Page<NotificationDTO> findPaginated(ObjectId userId, Pageable pageable) {
+    public Page<NotificationDTO> findPaginated(final ObjectId userId, final Pageable pageable) {
         Assert.notNull(userId, "User Id can not be null");
         Assert.notNull(pageable, "Pageable can not be null");
         return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
@@ -70,7 +68,7 @@ public class NotificationServiceImpl implements INotificationService {
      * @return
      */
     @Override
-    public NotificationDTO findById(ObjectId id) {
+    public NotificationDTO findById(final ObjectId id) {
         Assert.notNull(id, "Id can not be null");
         return notificationRepository.findById(id)
                 .map(notificationMapper::entityToDTO)
@@ -82,7 +80,7 @@ public class NotificationServiceImpl implements INotificationService {
      * @param id
      */
     @Override
-    public void deleteById(ObjectId id) {
+    public void deleteById(final ObjectId id) {
         Assert.notNull(id, "Id can not be null");
         notificationRepository.deleteById(id);
     }
@@ -94,7 +92,7 @@ public class NotificationServiceImpl implements INotificationService {
      * @return
      */
     @Override
-    public Boolean isTheOwner(String notificationId, ObjectId userId) {
+    public Boolean isTheOwner(final String notificationId, final ObjectId userId) {
         Assert.notNull(notificationId, "Id can not be null");
         Assert.notNull(userId, "Id can not be null");
         return notificationRepository.countByIdAndUserId(new ObjectId(notificationId), userId) > 0;

@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.services;
 
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
+import org.bson.types.ObjectId;
 
 /**
  *
@@ -74,4 +75,12 @@ public interface ICertificationCourseService {
      * @return
      */
     CertificationCourseDetailDTO getDetail(final String caWalletHash, final String courseId) throws Throwable;
+
+    /**
+     *
+     * @param courseId
+     * @param userId
+     * @return
+     */
+    Boolean isTheOwner(final String courseId, final ObjectId userId);
 }
