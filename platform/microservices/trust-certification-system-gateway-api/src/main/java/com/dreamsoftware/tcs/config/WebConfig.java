@@ -3,6 +3,9 @@ package com.dreamsoftware.tcs.config;
 import com.dreamsoftware.tcs.i18n.config.properties.i18nProperties;
 import com.dreamsoftware.tcs.i18n.resolver.SmartLocaleResolver;
 import com.dreamsoftware.tcs.i18n.service.I18NService;
+import com.dreamsoftware.tcs.web.converter.mediatype.JsonMergePatchHttpMessageConverter;
+import com.dreamsoftware.tcs.web.converter.mediatype.JsonPatchHttpMessageConverter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import javax.validation.MessageInterpolator;
 import org.springframework.validation.Validator;
@@ -16,6 +19,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mobile.device.DeviceHandlerMethodArgumentResolver;
 import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -43,6 +50,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final DeviceResolverHandlerInterceptor deviceResolverHandlerInterceptor;
     private final DeviceHandlerMethodArgumentResolver deviceHandlerMethodArgumentResolver;
     private final MessageInterpolator messageInterpolator;
+    private final ObjectMapper objectMapper;
 
     /**
      * Configure Validator Factory
@@ -54,6 +62,20 @@ public class WebConfig implements WebMvcConfigurer {
         LocalValidatorFactoryBean factory = new LocalValidatorFactoryBean();
         factory.setMessageInterpolator(messageInterpolator);
         return factory;
+    }
+
+    /**
+     * Configure Message Converters
+     *
+     * @param converters
+     */
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(new StringHttpMessageConverter());
+        converters.add(new JsonMergePatchHttpMessageConverter());
+        converters.add(new JsonPatchHttpMessageConverter());
+        converters.add(new MappingJackson2HttpMessageConverter(objectMapper));
+        converters.add(new ByteArrayHttpMessageConverter());
     }
 
     /**
