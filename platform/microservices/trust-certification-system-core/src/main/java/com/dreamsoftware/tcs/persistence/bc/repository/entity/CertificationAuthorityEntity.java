@@ -16,8 +16,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificationAuthorityEntity {
 
+    /**
+     * Name
+     */
     private String name;
+
+    /**
+     * Default cost of issuing certificate
+     */
     private BigInteger defaultCostOfIssuingCertificate;
+
+    /**
+     * Is Enabled
+     */
     private Boolean isEnabled;
+
+    /**
+     * Is Exists
+     */
     private Boolean isExist;
 }
