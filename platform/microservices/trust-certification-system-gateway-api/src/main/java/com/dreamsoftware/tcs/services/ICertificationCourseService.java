@@ -2,6 +2,8 @@ package com.dreamsoftware.tcs.services;
 
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationCourseDTO;
+import java.util.Optional;
 import org.bson.types.ObjectId;
 
 /**
@@ -73,6 +75,7 @@ public interface ICertificationCourseService {
      * @param caWalletHash
      * @param courseId
      * @return
+     * @throws java.lang.Throwable
      */
     CertificationCourseDetailDTO getDetail(final String caWalletHash, final String courseId) throws Throwable;
 
@@ -83,4 +86,20 @@ public interface ICertificationCourseService {
      * @return
      */
     Boolean isTheOwner(final String courseId, final ObjectId userId);
+
+    /**
+     *
+     * @param courseId
+     * @return
+     */
+    Optional<UpdateCertificationCourseDTO> editById(final String courseId);
+
+    /**
+     *
+     * @param courseId
+     * @param model
+     * @param caWalletHash
+     * @return
+     */
+    Optional<CertificationCourseDetailDTO> update(final String courseId, final UpdateCertificationCourseDTO model, final String caWalletHash);
 }

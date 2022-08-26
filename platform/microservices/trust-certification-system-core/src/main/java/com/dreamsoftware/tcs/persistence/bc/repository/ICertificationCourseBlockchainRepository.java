@@ -94,4 +94,13 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
      */
     Boolean canBeRenewed(final String caWallet, final String courseId) throws RepositoryException;
 
+    /**
+     *
+     * @param caWallet
+     * @param model
+     * @return
+     * @throws RepositoryException
+     */
+    CertificationCourseModelEntity update(final String caWallet, final CertificationCourseModelEntity model) throws RepositoryException;
+
 }
