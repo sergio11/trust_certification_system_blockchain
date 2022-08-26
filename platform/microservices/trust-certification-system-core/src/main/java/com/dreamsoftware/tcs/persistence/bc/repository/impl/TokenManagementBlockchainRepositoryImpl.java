@@ -7,8 +7,7 @@ import com.dreamsoftware.tcs.persistence.bc.core.SupportBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 import java.math.BigInteger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.web3j.crypto.Credentials;
@@ -18,10 +17,9 @@ import org.web3j.tx.FastRawTransactionManager;
  *
  * @author ssanchez
  */
+@Slf4j
 @Component
 public class TokenManagementBlockchainRepositoryImpl extends SupportBlockchainRepository implements ITokenManagementBlockchainRepository {
-
-    private final Logger logger = LoggerFactory.getLogger(TokenManagementBlockchainRepositoryImpl.class);
 
     private final long CA_CLIENT_TYPE_VALUE = 0L;
     private final long STUDENT_CLIENT_TYPE_VALUE = 1L;
@@ -38,7 +36,7 @@ public class TokenManagementBlockchainRepositoryImpl extends SupportBlockchainRe
         Assert.notNull(walletHash, "walletHash can not be null");
         Assert.notNull(userType, "userType can not be null");
         try {
-            logger.debug("sendInitialTokenFundsTo address: " + properties.getTokenManagementContractAddress());
+            log.debug("sendInitialTokenFundsTo address: " + properties.getTokenManagementContractAddress());
             final TokenManagementContractExt tokenManagementContract = loadTokenManagementContract();
             long clientType;
             switch (userType) {
@@ -54,7 +52,7 @@ public class TokenManagementBlockchainRepositoryImpl extends SupportBlockchainRe
             }
             tokenManagementContract.sendInitialTokenFundsTo(walletHash, BigInteger.valueOf(clientType)).send();
         } catch (final Exception ex) {
-            logger.debug("Ex Message -> " + ex.getMessage());
+            log.debug("Ex Message -> " + ex.getMessage());
             throw new RepositoryException(ex.getMessage(), ex);
         }
     }
@@ -71,12 +69,12 @@ public class TokenManagementBlockchainRepositoryImpl extends SupportBlockchainRe
         Assert.notNull(walletHash, "walletHash can not be null");
         Assert.notNull(tokens, "Token can not be null");
         try {
-            logger.debug("addTokens address: " + properties.getTokenManagementContractAddress());
+            log.debug("addTokens address: " + properties.getTokenManagementContractAddress());
             final TokenManagementContractExt tokenManagementContract = loadTokenManagementContract(walletHash);
             final BigInteger tokensPriceInWeis = tokenManagementContract.getTokenPriceInWei(BigInteger.valueOf(tokens)).send();
             tokenManagementContract.buyTokens(BigInteger.valueOf(tokens), tokensPriceInWeis).send();
         } catch (final Exception ex) {
-            logger.debug("Ex Message -> " + ex.getMessage());
+            log.debug("Ex Message -> " + ex.getMessage());
             throw new RepositoryException(ex.getMessage(), ex);
         }
     }
@@ -95,7 +93,7 @@ public class TokenManagementBlockchainRepositoryImpl extends SupportBlockchainRe
             final TokenManagementContractExt tokenManagementContract = loadTokenManagementContract();
             return tokenManagementContract.getTokenPriceInWei(BigInteger.valueOf(tokenCount)).send().longValue();
         } catch (final Exception ex) {
-            logger.debug("Ex Message -> " + ex.getMessage());
+            log.debug("Ex Message -> " + ex.getMessage());
             throw new RepositoryException(ex.getMessage(), ex);
         }
     }

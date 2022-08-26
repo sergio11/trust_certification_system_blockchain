@@ -12,8 +12,7 @@ import com.google.common.collect.Lists;
 import io.reactivex.Flowable;
 import java.math.BigInteger;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.web3j.crypto.Credentials;
@@ -24,11 +23,10 @@ import org.web3j.tx.FastRawTransactionManager;
 /**
  * @author ssanchez
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainRepository implements IEtherFaucetBlockchainRepository {
-
-    private final Logger logger = LoggerFactory.getLogger(EtherFaucetBlockchainRepositoryImpl.class);
 
     private final EtherFaucetEventEntityMapper etherFaucetEventEntityMapper;
 
@@ -40,12 +38,12 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
     @Override
     public void addSeedFunds(final String walletHash) throws RepositoryException {
         Assert.notNull(walletHash, "Wallet Hash can not be null");
-        logger.debug("Add Seed Funds to -> " + walletHash);
+        log.debug("Add Seed Funds to -> " + walletHash);
         try {
             final Credentials credentials = walletService.loadCredentials(walletHash);
             final EtherFaucetContractExt etherFaucetContract = loadEtherFaucetContract();
             final TransactionReceipt tr = etherFaucetContract.sendSeedFundsTo(credentials.getAddress()).send();
-            logger.debug("TransactionReceipt -> " + tr.getBlockHash());
+            log.debug("TransactionReceipt -> " + tr.getBlockHash());
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
@@ -60,7 +58,7 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
     @Override
     public void depositFunds(final String walletHash, final Long weiValue) throws RepositoryException {
         Assert.notNull(walletHash, "Wallet hash can not be null");
-        logger.debug("Deposit Funds -> " + walletHash);
+        log.debug("Deposit Funds -> " + walletHash);
         try {
             final EtherFaucetContractExt etherFaucetContract = loadEtherFaucetContract(walletHash);
             etherFaucetContract.deposit(BigInteger.valueOf(weiValue)).send();
@@ -79,7 +77,7 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
     public void sendFunds(String targetWalletHash, Long amountInWei) throws RepositoryException {
         Assert.notNull(targetWalletHash, "Target Wallet hash can not be null");
         Assert.notNull(amountInWei, "amountInWei can not be null");
-        logger.debug("sendFunds Funds -> " + targetWalletHash);
+        log.debug("sendFunds Funds -> " + targetWalletHash);
         try {
             final EtherFaucetContractExt etherFaucetContract = loadEtherFaucetContract();
             final Credentials credentials = walletService.loadCredentials(targetWalletHash);

@@ -15,8 +15,7 @@ import io.reactivex.Flowable;
 import java.math.BigInteger;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.web3j.crypto.Credentials;
@@ -29,11 +28,10 @@ import org.web3j.tx.FastRawTransactionManager;
  *
  * @author ssanchez
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockchainRepository implements ICertificationCourseBlockchainRepository {
-
-    private final Logger logger = LoggerFactory.getLogger(CertificationCourseBlockchainRepositoryImpl.class);
 
     private final CertificationCourseEntityMapper certificationCourseEntityMapper;
     private final CertificationCourseEventEntityMapper certificationCourseEventEntityMapper;
@@ -52,7 +50,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
     @Override
     public CertificationCourseModelEntity register(String walletHash, String name, Long costOfIssuingCertificate, Long durationInHours, Long expirationInDays, Boolean canBeRenewed, Long costOfRenewingCertificate) throws RepositoryException {
         try {
-            logger.debug("register new certification course CALLED!");
+            log.debug("register new certification course CALLED!");
             final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(walletHash);
             final TransactionReceipt transactionReceipt = certificationCourseContract.addCertificationCourse(name, BigInteger.valueOf(costOfIssuingCertificate), BigInteger.valueOf(durationInHours),
                     BigInteger.valueOf(expirationInDays), canBeRenewed, BigInteger.valueOf(costOfRenewingCertificate)).send();
@@ -60,7 +58,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
             final String courseId = events.get(0)._id;
             return getCertificationCourseDetail(certificationCourseContract, courseId);
         } catch (final Exception ex) {
-            logger.debug("ERROR: register new certification course ex -> " + ex.getMessage());
+            log.debug("ERROR: register new certification course ex -> " + ex.getMessage());
             throw new RepositoryException(ex.getMessage(), ex);
         }
     }
@@ -225,6 +223,27 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
     }
 
     /**
+     *
+     * @param caWallet
+     * @param model
+     * @return
+     * @throws RepositoryException
+     */
+    @Override
+    public CertificationCourseModelEntity update(final String caWallet, final CertificationCourseModelEntity model) throws RepositoryException {
+        Assert.notNull(caWallet, "Ca Wallet can not be null");
+        Assert.notNull(model, "Course Id can not be null");
+        try {
+            final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(caWallet);
+            certificationCourseContract.updateCertificationCourse(model.getId(), model.getName(), BigInteger.valueOf(model.getCostOfIssuingCertificate()),
+                    BigInteger.valueOf(model.getDurationInHours()), BigInteger.valueOf(model.getExpirationInDays()), model.getCanBeRenewed(), BigInteger.valueOf(model.getCostOfRenewingCertificate())).send();
+            return getCertificationCourseDetail(certificationCourseContract, model.getId());
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Private Methods
      */
     /**
@@ -260,10 +279,5 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
     private CertificationCourseContract loadCertificationCourseContract() {
         return CertificationCourseContract.load(properties.getCertificationCourseContractAddress(),
                 web3j, rootTxManager, properties.gas());
-    }
-
-    @Override
-    public CertificationCourseModelEntity update(String caWallet, CertificationCourseModelEntity model) throws RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

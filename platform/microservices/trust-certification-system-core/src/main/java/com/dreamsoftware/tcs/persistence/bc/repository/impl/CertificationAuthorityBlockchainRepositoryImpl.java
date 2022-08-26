@@ -12,10 +12,8 @@ import com.dreamsoftware.tcs.persistence.bc.repository.mapper.CertificationAutho
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.google.common.collect.Lists;
 import io.reactivex.Flowable;
-import java.math.BigInteger;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.web3j.crypto.Credentials;
@@ -26,11 +24,10 @@ import org.web3j.tx.FastRawTransactionManager;
  *
  * @author ssanchez
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlockchainRepository implements ICertificationAuthorityBlockchainRepository {
-
-    private final Logger logger = LoggerFactory.getLogger(CertificationAuthorityBlockchainRepositoryImpl.class);
 
     private final CertificationAuthorityEntityMapper certificationAuthorityEntityMapper;
     private final CertificationAuthorityEventEntityMapper certificationAuthorityEventEntityMapper;
@@ -45,7 +42,7 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
     @Override
     public void register(String name, String walletHash) throws RepositoryException {
         try {
-            logger.debug("registerCertificationAuthority address: " + properties.getCertificationAuthorityContractAddress());
+            log.debug("registerCertificationAuthority address: " + properties.getCertificationAuthorityContractAddress());
             final CertificationAuthorityContract caContract = loadCAContract(walletHash);
             caContract.addCertificationAuthority(name).send();
         } catch (final Exception ex) {
@@ -64,8 +61,7 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
         Assert.notNull(walletHash, "Wallet ca not be null");
         try {
             final CertificationAuthorityContract caContract = loadCAContract(walletHash);
-            final CertificationAuthorityRecord caRecord = caContract.getCertificateAuthorityDetail().send();
-            return certificationAuthorityEntityMapper.caRecordToCaEntity(caRecord);
+            return getCertificationAuthorityDetail(caContract);
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
@@ -84,9 +80,9 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         try {
             final CertificationAuthorityContract caContract = loadCAContract(rootWallet);
-            caContract.enableCertificationAuthority(caWallet).send();
-            final CertificationAuthorityRecord caRecord = caContract.getCertificateAuthorityDetail(caWallet).send();
-            return certificationAuthorityEntityMapper.caRecordToCaEntity(caRecord);
+            final Credentials caCredentials = walletService.loadCredentials(caWallet);
+            caContract.enableCertificationAuthority(caCredentials.getAddress()).send();
+            return getCertificationAuthorityDetail(caContract, caCredentials.getAddress());
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
@@ -105,14 +101,39 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         try {
             final CertificationAuthorityContract caContract = loadCAContract(rootWallet);
-            caContract.disableCertificationAuthority(caWallet).send();
-            final CertificationAuthorityRecord caRecord = caContract.getCertificateAuthorityDetail(caWallet).send();
-            return certificationAuthorityEntityMapper.caRecordToCaEntity(caRecord);
+            final Credentials caCredentials = walletService.loadCredentials(caWallet);
+            caContract.disableCertificationAuthority(caCredentials.getAddress()).send();
+            return getCertificationAuthorityDetail(caContract, caCredentials.getAddress());
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
     }
 
+    /**
+     *
+     * @param caWallet
+     * @param caEntity
+     * @return
+     * @throws RepositoryException
+     */
+    @Override
+    public CertificationAuthorityEntity update(final String caWallet, final CertificationAuthorityEntity caEntity) throws RepositoryException {
+        Assert.notNull(caWallet, "Ca Wallet can not be null");
+        Assert.notNull(caEntity, "CA Entity can not be null");
+        try {
+            final Credentials caCredentials = walletService.loadCredentials(caWallet);
+            final CertificationAuthorityContract caContract = loadCAContract(caCredentials);
+            caContract.updateCertificationAuthority(caEntity.getName(), caEntity.getDefaultCostOfIssuingCertificate()).send();
+            return getCertificationAuthorityDetail(caContract, caCredentials.getAddress());
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @return @throws RepositoryException
+     */
     @Override
     public Flowable<CertificationAuthorityEventEntity> getEvents() throws RepositoryException {
         try {
@@ -133,6 +154,29 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
      * Private Methods
      */
     /**
+     *
+     * @param certificationAuthorityContract
+     * @return
+     * @throws Exception
+     */
+    private CertificationAuthorityEntity getCertificationAuthorityDetail(final CertificationAuthorityContract certificationAuthorityContract) throws Exception {
+        final CertificationAuthorityRecord caRecord = certificationAuthorityContract.getCertificateAuthorityDetail().send();
+        return certificationAuthorityEntityMapper.caRecordToCaEntity(caRecord);
+    }
+
+    /**
+     *
+     * @param certificationAuthorityContract
+     * @param caAddress
+     * @return
+     * @throws Exception
+     */
+    private CertificationAuthorityEntity getCertificationAuthorityDetail(final CertificationAuthorityContract certificationAuthorityContract, final String caAddress) throws Exception {
+        final CertificationAuthorityRecord caRecord = certificationAuthorityContract.getCertificateAuthorityDetail(caAddress).send();
+        return certificationAuthorityEntityMapper.caRecordToCaEntity(caRecord);
+    }
+
+    /**
      * Load CA Contract
      *
      * @param walletHash
@@ -141,14 +185,18 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
      */
     private CertificationAuthorityContract loadCAContract(final String walletHash) throws LoadWalletException {
         final Credentials credentials = walletService.loadCredentials(walletHash);
+        return loadCAContract(credentials);
+    }
+
+    /**
+     *
+     * @param credentials
+     * @return
+     * @throws LoadWalletException
+     */
+    private CertificationAuthorityContract loadCAContract(final Credentials credentials) throws LoadWalletException {
         final FastRawTransactionManager txManager = new FastRawTransactionManager(web3j, credentials, properties.getChainId());
         return CertificationAuthorityContract.load(properties.getCertificationAuthorityContractAddress(),
                 web3j, txManager, properties.gas());
     }
-
-    @Override
-    public CertificationAuthorityEntity update(String caWallet, CertificationAuthorityEntity caEntity) throws RepositoryException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }
