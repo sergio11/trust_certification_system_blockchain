@@ -116,6 +116,7 @@ public class CertificationCourseController extends SupportController {
     @RequestMapping(value = "/address/{id}", method = RequestMethod.PATCH,
             consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> partialUpdateCertificationCourse(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
             @Parameter(name = "id", description = "Course Id", required = true)
