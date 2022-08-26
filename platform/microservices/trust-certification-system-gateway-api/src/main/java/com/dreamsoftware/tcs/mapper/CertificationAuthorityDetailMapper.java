@@ -32,5 +32,5 @@ public abstract class CertificationAuthorityDetailMapper {
         @Mapping(expression = "java(caEntity.getIsEnabled())", target = "isEnabled")
     })
     @Named("caEntityToCaDetail")
-    public abstract CertificationAuthorityDetailDTO caEntityToCaDetail(CertificationAuthorityEntity caEntity, UserEntity userEntity);
+    public abstract CertificationAuthorityDetailDTO entityToDTO(CertificationAuthorityEntity caEntity, UserEntity userEntity);
 }

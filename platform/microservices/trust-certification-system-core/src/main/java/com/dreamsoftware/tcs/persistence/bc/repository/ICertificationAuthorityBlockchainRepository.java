@@ -48,4 +48,13 @@ public interface ICertificationAuthorityBlockchainRepository extends IBlockchain
      */
     CertificationAuthorityEntity disable(final String rootWallet, final String caWallet) throws RepositoryException;
 
+    /**
+     *
+     * @param caWallet
+     * @param caEntity
+     * @return
+     * @throws RepositoryException
+     */
+    CertificationAuthorityEntity update(final String caWallet, final CertificationAuthorityEntity caEntity) throws RepositoryException;
+
 }

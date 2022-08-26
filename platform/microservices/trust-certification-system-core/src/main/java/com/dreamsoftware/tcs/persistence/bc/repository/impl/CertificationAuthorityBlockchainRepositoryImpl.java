@@ -146,4 +146,9 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
                 web3j, txManager, properties.gas());
     }
 
+    @Override
+    public CertificationAuthorityEntity update(String caWallet, CertificationAuthorityEntity caEntity) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

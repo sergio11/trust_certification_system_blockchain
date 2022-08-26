@@ -105,7 +105,7 @@ public class CertificationCourseController extends SupportController {
     }
 
     /**
-     * Partial Update User Address
+     * Partial Update Certification Course
      *
      * @param selfUser
      * @param id
@@ -113,7 +113,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      */
     @Operation(summary = "PARTIAL_UPDATE_CERTIFICATION_COURSE", description = "Update Certification Course")
-    @RequestMapping(value = "/address/{id}", method = RequestMethod.PATCH,
+    @RequestMapping(value = "/{id}", method = RequestMethod.PATCH,
             consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
@@ -128,7 +128,7 @@ public class CertificationCourseController extends SupportController {
                     .map(updateCertificationCourse -> patchHelper.mergePatch(mergePatchDocument, updateCertificationCourse, UpdateCertificationCourseDTO.class))
                     .map(updateCertificationCourse -> certificationCourseService.update(id, updateCertificationCourse, selfUser.getWalletHash()).orElseThrow(CertificationCourseNotFoundException::new))
                     .orElseThrow(CertificationCourseNotFoundException::new);
-            return responseHelper.createAndSendResponse(CertificationCourseResponseCodeEnum.PARTIAL_CERTIFICATION_COURSE, HttpStatus.OK, certificationCourseDetailDTO);
+            return responseHelper.createAndSendResponse(CertificationCourseResponseCodeEnum.PARTIAL_CERTIFICATION_COURSE_UPDATE, HttpStatus.OK, certificationCourseDetailDTO);
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Throwable ex) {

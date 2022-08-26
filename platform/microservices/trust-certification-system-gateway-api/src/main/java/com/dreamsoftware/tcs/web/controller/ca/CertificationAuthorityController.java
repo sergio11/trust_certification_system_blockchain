@@ -6,10 +6,13 @@ import com.dreamsoftware.tcs.services.ICertificationAuthorityService;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.DisableCertificationAuthorityException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.EnableCertificationAuthorityException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.GetCertificationAuthorityException;
+import com.dreamsoftware.tcs.web.controller.ca.error.exception.PartialUpdateCAException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
+import com.dreamsoftware.tcs.web.converter.mediatype.PatchMediaType;
 import com.dreamsoftware.tcs.web.dto.response.CertificationAuthorityDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationAuthorityDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdmin;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
@@ -25,6 +28,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.json.JsonMergePatch;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
@@ -32,6 +37,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
@@ -79,6 +85,34 @@ public class CertificationAuthorityController extends SupportController {
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
             throw new GetCertificationAuthorityException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param selfUser
+     * @param mergePatchDocument
+     * @return
+     */
+    @Operation(summary = "PARTIAL_UPDATE_CA", description = "Update CA")
+    @RequestMapping(value = "/", method = RequestMethod.PATCH,
+            consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCA
+    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> partialUpdateCertificationCourse(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @RequestBody JsonMergePatch mergePatchDocument) {
+
+        try {
+            final CertificationAuthorityDetailDTO certificationAuthorityDetailDTO = certificationAuthorityService.editByWalletHash(selfUser.getWalletHash())
+                    .map(updateCertificationAuthority -> patchHelper.mergePatch(mergePatchDocument, updateCertificationAuthority, UpdateCertificationAuthorityDTO.class))
+                    .map(updateCertificationAuthority -> certificationAuthorityService.update(selfUser.getWalletHash(), updateCertificationAuthority).orElseThrow(GetCertificationAuthorityException::new))
+                    .orElseThrow(GetCertificationAuthorityException::new);
+            return responseHelper.createAndSendResponse(CertificationAuthorityResponseCodeEnum.PARTIAL_CERTIFICATION_AUTHORITY_UPDATE, HttpStatus.OK, certificationAuthorityDetailDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new PartialUpdateCAException(ex.getMessage(), ex);
         }
     }
 
