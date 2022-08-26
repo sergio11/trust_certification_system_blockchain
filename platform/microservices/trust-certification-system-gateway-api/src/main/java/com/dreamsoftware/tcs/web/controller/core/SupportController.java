@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.web.controller.core;
 
 import com.dreamsoftware.tcs.i18n.service.IMessageSourceResolverService;
+import com.dreamsoftware.tcs.web.controller.core.helper.PatchHelper;
 import com.dreamsoftware.tcs.web.core.ResponseHelper;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,12 @@ public class SupportController {
      */
     @Autowired
     protected LocaleResolver localeResolver;
+
+    /**
+     * Patch Helper
+     */
+    @Autowired
+    protected PatchHelper patchHelper;
 
     /**
      *

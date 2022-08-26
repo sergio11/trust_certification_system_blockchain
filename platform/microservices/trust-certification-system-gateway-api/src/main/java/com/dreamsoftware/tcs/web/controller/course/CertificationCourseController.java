@@ -7,14 +7,18 @@ import com.dreamsoftware.tcs.scheduling.events.course.NewCourseRegistrationReque
 import com.dreamsoftware.tcs.services.ICertificationCourseService;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
+import com.dreamsoftware.tcs.web.controller.course.error.exception.CertificationCourseNotFoundException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.DeleteCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.DisableCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.EnableCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.GetCertificationCourseDetailException;
+import com.dreamsoftware.tcs.web.controller.course.error.exception.PartialUpdateCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.SaveCertificationCourseException;
+import com.dreamsoftware.tcs.web.converter.mediatype.PatchMediaType;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdminOrCourseOwner;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
@@ -31,7 +35,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.json.JsonMergePatch;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
@@ -39,6 +45,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
@@ -90,8 +97,41 @@ public class CertificationCourseController extends SupportController {
             return responseHelper.createAndSendResponse(
                     CertificationCourseResponseCodeEnum.SAVE_CERTIFICATION_COURSE, HttpStatus.OK,
                     resolveString("new_course_registration_requested", request));
-        } catch (final Exception ex) {
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
             throw new SaveCertificationCourseException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Partial Update User Address
+     *
+     * @param selfUser
+     * @param id
+     * @param mergePatchDocument
+     * @return
+     */
+    @Operation(summary = "PARTIAL_UPDATE_CERTIFICATION_COURSE", description = "Update Certification Course")
+    @RequestMapping(value = "/address/{id}", method = RequestMethod.PATCH,
+            consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> partialUpdateCertificationCourse(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(name = "id", description = "Course Id", required = true)
+            @PathVariable("id") String id,
+            @RequestBody JsonMergePatch mergePatchDocument) {
+
+        try {
+            final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseService.editById(id)
+                    .map(updateCertificationCourse -> patchHelper.mergePatch(mergePatchDocument, updateCertificationCourse, UpdateCertificationCourseDTO.class))
+                    .map(updateCertificationCourse -> certificationCourseService.update(id, updateCertificationCourse, selfUser.getWalletHash()).orElseThrow(CertificationCourseNotFoundException::new))
+                    .orElseThrow(CertificationCourseNotFoundException::new);
+            return responseHelper.createAndSendResponse(CertificationCourseResponseCodeEnum.PARTIAL_CERTIFICATION_COURSE, HttpStatus.OK, certificationCourseDetailDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new PartialUpdateCertificationCourseException(ex.getMessage(), ex);
         }
     }
 
@@ -117,7 +157,9 @@ public class CertificationCourseController extends SupportController {
             applicationEventPublisher.publishEvent(new CourseEnabledEvent(this, certificationCourseDTO.getId(), certificationCourseDTO.getName()));
             return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_ENABLED,
                     HttpStatus.OK, certificationCourseDTO);
-        } catch (final Exception ex) {
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
             throw new EnableCertificationCourseException(ex.getMessage(), ex);
         }
     }
@@ -145,7 +187,9 @@ public class CertificationCourseController extends SupportController {
             return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(
                     CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DISABLED,
                     HttpStatus.OK, certificationCourseDetailDTO);
-        } catch (final Exception ex) {
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
             throw new DisableCertificationCourseException(ex.getMessage(), ex);
         }
     }
@@ -178,7 +222,9 @@ public class CertificationCourseController extends SupportController {
             return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(
                     CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DETAIL,
                     HttpStatus.OK, courseDetailDTO);
-        } catch (final Exception ex) {
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
             throw new GetCertificationCourseDetailException(ex.getMessage(), ex);
         }
     }
@@ -212,7 +258,9 @@ public class CertificationCourseController extends SupportController {
                     canBeIssued ? CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CAN_BE_ISSUED
                             : CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CANNOT_BE_ISSUED,
                     HttpStatus.OK, canBeIssued);
-        } catch (final Exception ex) {
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
             throw new GetCertificationCourseDetailException(ex.getMessage(), ex);
         }
     }
@@ -247,7 +295,9 @@ public class CertificationCourseController extends SupportController {
                             ? CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CAN_BE_RENEWED
                             : CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CANNOT_BE_RENEWED,
                     HttpStatus.OK, canBeRenewed);
-        } catch (final Exception ex) {
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
             throw new GetCertificationCourseDetailException(ex.getMessage(), ex);
         }
     }
@@ -280,7 +330,9 @@ public class CertificationCourseController extends SupportController {
             return responseHelper.<CertificationCourseDetailDTO>createAndSendResponse(
                     CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DELETED,
                     HttpStatus.OK, certificationCourseDetailDTO);
-        } catch (final Exception ex) {
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
             throw new DeleteCertificationCourseException(ex.getMessage(), ex);
         }
     }

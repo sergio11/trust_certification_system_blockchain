@@ -2,14 +2,19 @@ package com.dreamsoftware.tcs.services.impl;
 
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.CertificationCourseDetailMapper;
+import com.dreamsoftware.tcs.mapper.UpdateCertificationCourselMapper;
 import com.dreamsoftware.tcs.model.events.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
+import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.services.ICertificationCourseService;
+import com.dreamsoftware.tcs.utils.Unthrow;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationCourseDTO;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -28,6 +33,7 @@ import org.springframework.util.Assert;
 public class CertificationCourseServiceImpl implements ICertificationCourseService {
 
     private final CertificationCourseDetailMapper certificationCourseDetailMapper;
+    private final UpdateCertificationCourselMapper updateCertificationCourselMapper;
     private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
     private final CertificationCourseRepository certificationCourseRepository;
     private final StreamBridge streamBridge;
@@ -75,7 +81,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
      * @param model
      */
     @Override
-    public void save(SaveCertificationCourseDTO model) {
+    public void save(final SaveCertificationCourseDTO model) {
         Assert.notNull(model, "model can not be null");
         final CourseCertificateRegistrationRequestEvent event = new CourseCertificateRegistrationRequestEvent(
                 model.getName(), model.getCostOfIssuingCertificate(),
@@ -91,7 +97,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
      * @param courseId
      */
     @Override
-    public CertificationCourseDetailDTO remove(String caWalletHash, String courseId) throws Throwable {
+    public CertificationCourseDetailDTO remove(final String caWalletHash, final String courseId) throws Throwable {
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         log.debug("remove certification course " + courseId + " CALLED!");
@@ -108,7 +114,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
      * @throws Throwable
      */
     @Override
-    public Boolean canBeIssued(String caWalletHash, String courseId) throws Throwable {
+    public Boolean canBeIssued(final String caWalletHash, final String courseId) throws Throwable {
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         log.debug("check certification course " + courseId + " can be issued CALLED!");
@@ -123,7 +129,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
      * @throws Throwable
      */
     @Override
-    public Boolean canBeRenewed(String caWalletHash, String courseId) throws Throwable {
+    public Boolean canBeRenewed(final String caWalletHash, final String courseId) throws Throwable {
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         log.debug("check certification course " + courseId + " can be renewed CALLED!");
@@ -138,7 +144,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
      * @return
      */
     @Override
-    public CertificationCourseDetailDTO getDetail(String caWalletHash, String courseId) throws Throwable {
+    public CertificationCourseDetailDTO getDetail(final String caWalletHash, final String courseId) throws Throwable {
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         log.debug("get certification course " + courseId + " detail CALLED!");
@@ -157,5 +163,45 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         Assert.notNull(courseId, "Id can not be null");
         Assert.notNull(userId, "Id can not be null");
         return certificationCourseRepository.countByIdAndCaId(new ObjectId(courseId), userId) > 0;
+    }
+
+    /**
+     *
+     * @param courseId
+     * @return
+     */
+    @Override
+    public Optional<UpdateCertificationCourseDTO> editById(final String courseId) {
+        Assert.notNull(courseId, "Id can not be null");
+        try {
+            return Optional.ofNullable(certificationCourseBlockchainRepository.get(courseId))
+                    .map(updateCertificationCourselMapper::entityToDTO);
+        } catch (final RepositoryException e) {
+            log.debug("editById RepositoryException -> " + e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    /**
+     *
+     * @param courseId
+     * @param model
+     * @param caWalletHash
+     * @return
+     */
+    @Override
+    public Optional<CertificationCourseDetailDTO> update(final String courseId, final UpdateCertificationCourseDTO model, final String caWalletHash) {
+        Assert.notNull(courseId, "Id can not be null");
+        Assert.notNull(model, "Model can not be null");
+        Assert.notNull(caWalletHash, "User Id can not be null");
+        try {
+            return Optional.ofNullable(certificationCourseBlockchainRepository.get(courseId))
+                    .map(certificationCourseEntity -> updateCertificationCourselMapper.update(certificationCourseEntity, model))
+                    .map(certificationCourseEntity -> Unthrow.wrap(() -> certificationCourseBlockchainRepository.update(caWalletHash, certificationCourseEntity)))
+                    .map(certificationCourseDetailMapper::entityToDTO);
+        } catch (final RepositoryException e) {
+            log.debug("editById RepositoryException -> " + e.getMessage());
+            return Optional.empty();
+        }
     }
 }

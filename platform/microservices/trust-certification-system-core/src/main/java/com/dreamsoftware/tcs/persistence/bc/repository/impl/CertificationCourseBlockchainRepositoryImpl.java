@@ -261,4 +261,9 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
         return CertificationCourseContract.load(properties.getCertificationCourseContractAddress(),
                 web3j, rootTxManager, properties.gas());
     }
+
+    @Override
+    public CertificationCourseModelEntity update(String caWallet, CertificationCourseModelEntity model) throws RepositoryException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
