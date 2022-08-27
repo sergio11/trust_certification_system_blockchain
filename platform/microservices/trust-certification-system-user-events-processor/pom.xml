@@ -16,11 +16,26 @@
         <relativePath>../</relativePath>
     </parent>
 
+    <properties>
+        <shedlock-spring.version>4.41.0</shedlock-spring.version>
+        <shedlock-zookeeper.version>4.41.0</shedlock-zookeeper.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>trust-certification-system-core</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-spring</artifactId>
+            <version>${shedlock-spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-zookeeper-curator</artifactId>
+            <version>${shedlock-zookeeper.version}</version>
         </dependency>
     </dependencies>
 
