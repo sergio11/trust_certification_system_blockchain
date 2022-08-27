@@ -21,7 +21,7 @@ public class TaskConfig {
     /**
      * Delete Unactivated Accounts Task
      */
-    @Scheduled(cron = "${task.account.delete.unactivated.accounts}")
+    @Scheduled(cron = "${task.delete.unactivated.accounts}")
     @SchedulerLock(name = "configureDeleteUnactivatedAccountsTask")
     public void configureDeleteUnactivatedAccountsTask() {
         log.debug("configureDeleteUnactivatedAccountsTask CALLED");
