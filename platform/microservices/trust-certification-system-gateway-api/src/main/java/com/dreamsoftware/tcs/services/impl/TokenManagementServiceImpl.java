@@ -2,7 +2,7 @@ package com.dreamsoftware.tcs.services.impl;
 
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.CreatedOrderMapper;
-import com.dreamsoftware.tcs.model.events.NewTokensOrderApprovedEvent;
+import com.dreamsoftware.tcs.stream.events.NewTokensOrderApprovedEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderEntity;

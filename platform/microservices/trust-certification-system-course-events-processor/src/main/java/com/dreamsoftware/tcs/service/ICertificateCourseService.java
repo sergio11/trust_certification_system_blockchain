@@ -1,9 +1,10 @@
 package com.dreamsoftware.tcs.service;
 
-import com.dreamsoftware.tcs.model.events.CertificationCourseRegisteredEvent;
-import com.dreamsoftware.tcs.model.events.CourseCertificateRegistrationRequestEvent;
+import com.dreamsoftware.tcs.stream.events.CertificationCourseRegisteredEvent;
+import com.dreamsoftware.tcs.stream.events.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 
 /**
  *
@@ -22,6 +23,7 @@ public interface ICertificateCourseService {
     /**
      *
      * @param event
+     * @return
      */
-    void register(final CertificationCourseRegisteredEvent event);
+    CertificationCourseEntity register(final CertificationCourseRegisteredEvent event);
 }

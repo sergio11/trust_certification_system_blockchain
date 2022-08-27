@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.runners;
 
-import com.dreamsoftware.tcs.config.properties.TrustCertificationSystemProperties;
+import com.dreamsoftware.tcs.config.properties.EthereumProperties;
 import com.dreamsoftware.tcs.service.ISftpGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SyncKeystoreRunner implements ApplicationRunner {
 
-    private final TrustCertificationSystemProperties trustCertificationSystemProperties;
+    private final EthereumProperties trustCertificationSystemProperties;
     private final ISftpGateway sftpGateway;
 
     @Override

@@ -1,11 +1,12 @@
 package com.dreamsoftware.tcs.processor;
 
-import com.dreamsoftware.tcs.model.events.OnUserRegisteredEvent;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.tcs.stream.events.OnUserRegisteredEvent;
 import com.dreamsoftware.tcs.service.IUserService;
-import java.util.function.Consumer;
+import com.dreamsoftware.tcs.stream.events.notifications.users.UserRegisteredNotificationEvent;
+import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,18 +16,23 @@ import org.springframework.stereotype.Component;
  */
 @Component("userRegisteredProcessor")
 @RequiredArgsConstructor
-public class UserRegisteredProcessor implements Consumer<OnUserRegisteredEvent> {
-
-    private final Logger logger = LoggerFactory.getLogger(UserRegisteredProcessor.class);
+@Slf4j
+public class UserRegisteredProcessor implements Function<OnUserRegisteredEvent, UserRegisteredNotificationEvent> {
 
     /**
      * User Service
      */
     private final IUserService userService;
 
+    /**
+     *
+     * @param event
+     * @return
+     */
     @Override
-    public void accept(OnUserRegisteredEvent event) {
-        logger.debug("UserRegisteredProcessor CALLED!");
-        userService.validate(event.getWalletHash());
+    public UserRegisteredNotificationEvent apply(final OnUserRegisteredEvent event) {
+        log.debug("UserRegisteredProcessor CALLED!");
+        final UserEntity userEntity = userService.validate(event.getWalletHash());
+        return new UserRegisteredNotificationEvent(userEntity.getWalletHash());
     }
 }

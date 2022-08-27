@@ -33,6 +33,7 @@
         <module>trust-certification-system-config-server</module>
         <module>trust-certification-system-discovery-server</module>
         <module>trust-certification-system-gateway-api</module>
+        <module>trust-certification-system-notifications-events-processor</module>
     </modules>
 
     <dependencies>

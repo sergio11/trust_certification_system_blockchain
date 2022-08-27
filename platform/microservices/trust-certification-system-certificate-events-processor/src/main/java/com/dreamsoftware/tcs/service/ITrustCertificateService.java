@@ -1,8 +1,9 @@
 package com.dreamsoftware.tcs.service;
 
-import com.dreamsoftware.tcs.model.events.OnNewCertificateIssuedEvent;
-import com.dreamsoftware.tcs.model.events.OnNewIssueCertificateRequestEvent;
+import com.dreamsoftware.tcs.stream.events.OnNewCertificateIssuedEvent;
+import com.dreamsoftware.tcs.stream.events.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
 
 /**
  *
@@ -21,6 +22,7 @@ public interface ITrustCertificateService {
     /**
      *
      * @param event
+     * @return
      */
-    void saveCertificate(OnNewCertificateIssuedEvent event);
+    CertificateIssuanceRequestEntity saveCertificate(OnNewCertificateIssuedEvent event);
 }

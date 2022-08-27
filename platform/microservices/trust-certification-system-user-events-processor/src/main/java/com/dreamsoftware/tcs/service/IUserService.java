@@ -1,8 +1,10 @@
 package com.dreamsoftware.tcs.service;
 
-import com.dreamsoftware.tcs.model.events.NewTokensOrderApprovedEvent;
-import com.dreamsoftware.tcs.model.events.OnNewUserRegistrationEvent;
-import com.dreamsoftware.tcs.model.events.OnTokensOrderCompletedEvent;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.tcs.stream.events.NewTokensOrderApprovedEvent;
+import com.dreamsoftware.tcs.stream.events.OnNewUserRegistrationEvent;
+import com.dreamsoftware.tcs.stream.events.OnTokensOrderCompletedEvent;
 
 /**
  *
@@ -21,8 +23,9 @@ public interface IUserService {
      * Validate User
      *
      * @param walletHash
+     * @return
      */
-    void validate(String walletHash);
+    UserEntity validate(String walletHash);
 
     /**
      *
@@ -35,7 +38,14 @@ public interface IUserService {
     /**
      *
      * @param event
+     * @return
      */
-    void completeOrder(final OnTokensOrderCompletedEvent event);
+    CreatedOrderEntity completeOrder(final OnTokensOrderCompletedEvent event);
+
+    /**
+     *
+     * @return
+     */
+    long deleteUnactivatedAccounts();
 
 }

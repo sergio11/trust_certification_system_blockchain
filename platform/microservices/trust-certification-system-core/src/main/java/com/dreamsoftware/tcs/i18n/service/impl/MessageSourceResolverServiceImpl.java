@@ -4,8 +4,7 @@ import com.dreamsoftware.tcs.i18n.service.IMessageSourceResolverService;
 import java.util.Locale;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -15,11 +14,10 @@ import org.springframework.util.Assert;
  *
  * @author ssanchez
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MessageSourceResolverServiceImpl implements IMessageSourceResolverService {
-
-    private final Logger logger = LoggerFactory.getLogger(MessageSourceResolverServiceImpl.class);
 
     private final MessageSource messageSource;
 

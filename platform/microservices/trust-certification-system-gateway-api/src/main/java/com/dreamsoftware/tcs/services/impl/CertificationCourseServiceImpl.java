@@ -3,13 +3,17 @@ package com.dreamsoftware.tcs.services.impl;
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.CertificationCourseDetailMapper;
 import com.dreamsoftware.tcs.mapper.UpdateCertificationCourselMapper;
-import com.dreamsoftware.tcs.model.events.CourseCertificateRegistrationRequestEvent;
+import com.dreamsoftware.tcs.stream.events.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.services.ICertificationCourseService;
+import com.dreamsoftware.tcs.stream.events.notifications.course.CourseDeletedNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.course.CourseDisabledNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.course.CourseEnabledNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.course.NewCourseRegistrationRequestedNotificationEvent;
 import com.dreamsoftware.tcs.utils.Unthrow;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
@@ -54,7 +58,12 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         log.debug("Enable course -> " + courseId + " CALLED!");
         final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.enable(caWalletHash, courseId);
         certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.ENABLED);
-        return certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
+        final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
+        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CourseEnabledNotificationEvent.builder()
+                .id(certificationCourseDetailDTO.getId())
+                .name(certificationCourseDetailDTO.getName())
+                .build());
+        return certificationCourseDetailDTO;
     }
 
     /**
@@ -72,7 +81,12 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         log.debug("Disable course -> " + courseId + " CALLED!");
         final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.disable(caWalletHash, courseId);
         certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.DISABLED);
-        return certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
+        final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
+        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CourseDisabledNotificationEvent.builder()
+                .id(certificationCourseDetailDTO.getId())
+                .name(certificationCourseDetailDTO.getName())
+                .build());
+        return certificationCourseDetailDTO;
     }
 
     /**
@@ -83,12 +97,19 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     @Override
     public void save(final SaveCertificationCourseDTO model) {
         Assert.notNull(model, "model can not be null");
-        final CourseCertificateRegistrationRequestEvent event = new CourseCertificateRegistrationRequestEvent(
-                model.getName(), model.getCostOfIssuingCertificate(),
-                model.getDurationInHours(), model.getExpirationInDays(),
-                model.getCanBeRenewed(), model.getCostOfRenewingCertificate(),
-                model.getCaWalletHash());
-        streamBridge.send(streamChannelsProperties.getCertificationCourseRegistration(), event);
+        streamBridge.send(streamChannelsProperties.getCertificationCourseRegistration(), CourseCertificateRegistrationRequestEvent.builder()
+                .name(model.getName())
+                .costOfIssuingCertificate(model.getCostOfIssuingCertificate())
+                .caWalletHash(model.getCaWalletHash())
+                .durationInHours(model.getDurationInHours())
+                .expirationInDays(model.getExpirationInDays())
+                .canBeRenewed(model.getCanBeRenewed())
+                .costOfRenewingCertificate(model.getCostOfRenewingCertificate())
+                .build());
+        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), NewCourseRegistrationRequestedNotificationEvent.builder()
+                .caWalletHash(model.getCaWalletHash())
+                .courseName(model.getName())
+                .build());
     }
 
     /**
@@ -103,7 +124,12 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         log.debug("remove certification course " + courseId + " CALLED!");
         final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.remove(caWalletHash, courseId);
         certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.REMOVED);
-        return certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
+        final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
+        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CourseDeletedNotificationEvent.builder()
+                .id(certificationCourseDetailDTO.getId())
+                .name(certificationCourseDetailDTO.getName())
+                .build());
+        return certificationCourseDetailDTO;
     }
 
     /**

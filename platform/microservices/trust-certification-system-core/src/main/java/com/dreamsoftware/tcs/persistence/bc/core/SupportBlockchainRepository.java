@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.persistence.bc.core;
 
-import com.dreamsoftware.tcs.config.properties.TrustCertificationSystemProperties;
+import com.dreamsoftware.tcs.config.properties.EthereumProperties;
 import com.dreamsoftware.tcs.service.IWalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,7 +17,7 @@ public abstract class SupportBlockchainRepository {
      * Trust Certification System Properties
      */
     @Autowired
-    protected TrustCertificationSystemProperties properties;
+    protected EthereumProperties properties;
 
     /**
      * Web3j

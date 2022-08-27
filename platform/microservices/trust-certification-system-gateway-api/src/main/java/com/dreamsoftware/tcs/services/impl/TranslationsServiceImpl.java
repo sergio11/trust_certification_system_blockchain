@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -25,7 +26,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.thymeleaf.util.StringUtils;
 
 /**
  *
@@ -102,7 +102,7 @@ public class TranslationsServiceImpl implements ITranslationsService {
                             final Cell cell = row.getCell(columnIdxMap.get(field.name()));
                             if (cell != null) {
                                 final String value = cell.getStringCellValue();
-                                if (!StringUtils.isEmptyOrWhitespace(value)) {
+                                if (!StringUtils.isBlank(value)) {
                                     saveTranslationDTOList.add(SaveTranslationDTO.builder()
                                             .name(translationName)
                                             .language(field.name())
