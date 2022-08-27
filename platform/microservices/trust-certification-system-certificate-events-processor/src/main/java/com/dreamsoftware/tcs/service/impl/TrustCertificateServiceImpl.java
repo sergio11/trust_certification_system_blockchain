@@ -1,10 +1,7 @@
 package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.i18n.service.I18NService;
-import com.dreamsoftware.tcs.mail.model.CertificateGeneratedMailRequestDTO;
-import com.dreamsoftware.tcs.mail.service.IMailClientService;
-import com.dreamsoftware.tcs.model.events.OnNewCertificateIssuedEvent;
-import com.dreamsoftware.tcs.model.events.OnNewIssueCertificateRequestEvent;
+import com.dreamsoftware.tcs.stream.events.OnNewCertificateIssuedEvent;
+import com.dreamsoftware.tcs.stream.events.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
@@ -24,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
 import com.dreamsoftware.tcs.service.ICertificateSigningService;
-import com.dreamsoftware.tcs.service.INotificationService;
 import org.apache.commons.io.FileUtils;
 import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
 import lombok.extern.slf4j.Slf4j;
@@ -79,21 +75,6 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
     private final CertificateIssuanceRequestRepository certificateIssuedRepository;
 
     /**
-     * Notification Service
-     */
-    private final INotificationService notificationService;
-
-    /**
-     * Mail Client Service
-     */
-    private final IMailClientService mailClientService;
-
-    /**
-     * I18N Service
-     */
-    private final I18NService i18nService;
-
-    /**
      *
      * @param event
      * @return
@@ -123,7 +104,7 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
      * @param event
      */
     @Override
-    public void saveCertificate(final OnNewCertificateIssuedEvent event) {
+    public CertificateIssuanceRequestEntity saveCertificate(final OnNewCertificateIssuedEvent event) {
         Assert.notNull(event, "Event can not be null");
         final UserEntity caUserEntity = userRepository.findOneByWalletHash(event.getCaWalletHash()).orElseThrow(() -> new IllegalStateException("CA Wallet Hash not found"));
         final UserEntity studentEntity = userRepository.findOneByWalletHash(event.getStudentWalletHash()).orElseThrow(() -> new IllegalStateException("Student Wallet Hash not found"));
@@ -134,15 +115,7 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
                 .certificateId(event.getCertificateId())
                 .createdAt(new Date())
                 .build();
-        final CertificateIssuanceRequestEntity certificateIssuedSaved = certificateIssuedRepository.save(certificateIssued);
-        notificationService.onUserCertificateValidated(certificateIssuedSaved);
-        mailClientService.sendMail(CertificateGeneratedMailRequestDTO.builder()
-                .certificateId(certificateIssuedSaved.getCertificateId())
-                .caName(caUserEntity.getName())
-                .email(studentEntity.getEmail())
-                .qualification(certificateIssuedSaved.getQualification())
-                .locale(i18nService.parseLocaleOrDefault(studentEntity.getLanguage()))
-                .build());
+        return certificateIssuedRepository.save(certificateIssued);
     }
 
 }

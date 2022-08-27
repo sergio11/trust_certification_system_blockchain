@@ -1,8 +1,10 @@
 package com.dreamsoftware.tcs.processor;
 
-import com.dreamsoftware.tcs.model.events.OnNewCertificateIssuedEvent;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
+import com.dreamsoftware.tcs.stream.events.OnNewCertificateIssuedEvent;
 import com.dreamsoftware.tcs.service.ITrustCertificateService;
-import java.util.function.Consumer;
+import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateIssuedNotificationEvent;
+import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component("newCertificateIssuedProcessor")
 @RequiredArgsConstructor
-public class NewCertificateIssuedProcessor implements Consumer<OnNewCertificateIssuedEvent> {
+public class NewCertificateIssuedProcessor implements Function<OnNewCertificateIssuedEvent, CertificateIssuedNotificationEvent> {
 
     /**
      * Trust Certification Service
@@ -25,10 +27,12 @@ public class NewCertificateIssuedProcessor implements Consumer<OnNewCertificateI
     /**
      *
      * @param event
+     * @return
      */
     @Override
-    public void accept(final OnNewCertificateIssuedEvent event) {
+    public CertificateIssuedNotificationEvent apply(final OnNewCertificateIssuedEvent event) {
         log.debug("NewCertificateIssuedProcessor CALLED!");
-        trustCertificateService.saveCertificate(event);
+        final CertificateIssuanceRequestEntity certificateIssuanceRequestEntity = trustCertificateService.saveCertificate(event);
+        return new CertificateIssuedNotificationEvent(certificateIssuanceRequestEntity.getCertificateId());
     }
 }

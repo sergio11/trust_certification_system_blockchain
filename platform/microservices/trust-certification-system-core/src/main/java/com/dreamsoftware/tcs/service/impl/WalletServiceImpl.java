@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.config.properties.TrustCertificationSystemProperties;
+import com.dreamsoftware.tcs.config.properties.EthereumProperties;
 import com.dreamsoftware.tcs.exception.GenerateWalletException;
 import com.dreamsoftware.tcs.exception.LoadWalletException;
 import com.dreamsoftware.tcs.exception.SaveWalletException;
@@ -50,7 +50,7 @@ public class WalletServiceImpl implements IWalletService {
     /**
      * Trust Certification System Properties
      */
-    private final TrustCertificationSystemProperties trustCertificationSystemProperties;
+    private final EthereumProperties trustCertificationSystemProperties;
 
     /**
      * Save Wallet

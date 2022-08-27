@@ -1,8 +1,10 @@
 package com.dreamsoftware.tcs.processor;
 
-import com.dreamsoftware.tcs.model.events.CertificationCourseRegisteredEvent;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
+import com.dreamsoftware.tcs.stream.events.CertificationCourseRegisteredEvent;
 import com.dreamsoftware.tcs.service.ICertificateCourseService;
-import java.util.function.Consumer;
+import com.dreamsoftware.tcs.stream.events.notifications.course.CertificationCourseRegisteredNotificationEvent;
+import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,13 +17,14 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component("courseRegisteredProcessor")
 @RequiredArgsConstructor
-public class CertificationCourseRegisteredProcessor implements Consumer<CertificationCourseRegisteredEvent> {
+public class CertificationCourseRegisteredProcessor implements Function<CertificationCourseRegisteredEvent, CertificationCourseRegisteredNotificationEvent> {
 
     private final ICertificateCourseService certificateCourseService;
 
     @Override
-    public void accept(CertificationCourseRegisteredEvent event) {
-        log.debug("CertificationCourseRegisteredEvent CALLED!");
-        certificateCourseService.register(event);
+    public CertificationCourseRegisteredNotificationEvent apply(CertificationCourseRegisteredEvent event) {
+        log.debug("CertificationCourseRegisteredProcessor CALLED!");
+        final CertificationCourseEntity certificationCourseEntity = certificateCourseService.register(event);
+        return new CertificationCourseRegisteredNotificationEvent(certificationCourseEntity.getCourseId(), event.getCertificationCourse().getName());
     }
 }

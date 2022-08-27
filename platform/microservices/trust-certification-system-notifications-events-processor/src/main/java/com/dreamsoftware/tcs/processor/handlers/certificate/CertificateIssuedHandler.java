@@ -1,0 +1,56 @@
+package com.dreamsoftware.tcs.processor.handlers.certificate;
+
+import com.dreamsoftware.tcs.i18n.service.I18NService;
+import com.dreamsoftware.tcs.mail.model.CertificateGeneratedMailRequestDTO;
+import com.dreamsoftware.tcs.mail.service.IMailClientService;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
+import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
+import com.dreamsoftware.tcs.service.INotificationService;
+import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateIssuedNotificationEvent;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+
+/**
+ *
+ * @author ssanchez
+ */
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@RequiredArgsConstructor
+@Slf4j
+public class CertificateIssuedHandler extends AbstractNotificationHandler<CertificateIssuedNotificationEvent> {
+
+    private final IMailClientService mailClientService;
+    private final CertificateIssuanceRequestRepository certificateIssuanceRequestRepository;
+    private final I18NService i18nService;
+    private final INotificationService notificationService;
+
+    /**
+     *
+     * @param notification
+     */
+    @Override
+    public void onHandle(final CertificateIssuedNotificationEvent notification) {
+        Assert.notNull(notification, "Notification can not be null");
+        log.debug("CertificateIssuedNotificationEvent handled!");
+        certificateIssuanceRequestRepository.findByCertificateId(notification.getId()).ifPresent((certificateIssuedSaved) -> {
+            final UserEntity caUserEntity = certificateIssuedSaved.getCa();
+            final UserEntity studentEntity = certificateIssuedSaved.getStudent();
+            notificationService.onUserCertificateValidated(certificateIssuedSaved);
+            mailClientService.sendMail(CertificateGeneratedMailRequestDTO.builder()
+                    .certificateId(certificateIssuedSaved.getCertificateId())
+                    .caName(caUserEntity.getName())
+                    .email(studentEntity.getEmail())
+                    .qualification(certificateIssuedSaved.getQualification())
+                    .locale(i18nService.parseLocaleOrDefault(studentEntity.getLanguage()))
+                    .build());
+        });
+
+    }
+
+}

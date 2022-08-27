@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.services.impl;
 
-import com.dreamsoftware.tcs.config.properties.TrustCertificationSystemProperties;
+import com.dreamsoftware.tcs.config.properties.EthereumProperties;
 import com.dreamsoftware.tcs.mapper.CertificationAuthorityDetailMapper;
 import com.dreamsoftware.tcs.mapper.UpdateCertificationAuthorityMapper;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
@@ -13,11 +13,15 @@ import org.springframework.stereotype.Service;
 import com.dreamsoftware.tcs.web.dto.response.CertificationAuthorityDetailDTO;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.tcs.stream.events.notifications.ca.CADisabledNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.ca.CAEnabledNotificationEvent;
+import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.utils.Unthrow;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationAuthorityDTO;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.cloud.stream.function.StreamBridge;
 
 /**
  *
@@ -31,8 +35,10 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     private final UserRepository certificationAuthorityRepository;
     private final ICertificationAuthorityBlockchainRepository caBlockchainRepository;
     private final CertificationAuthorityDetailMapper certificationAuthorityDetailMapper;
-    private final TrustCertificationSystemProperties trustCertificationSystemProperties;
+    private final EthereumProperties trustCertificationSystemProperties;
     private final UpdateCertificationAuthorityMapper updateCertificationAuthorityMapper;
+    private final StreamChannelsProperties streamChannelsProperties;
+    private final StreamBridge streamBridge;
 
     /**
      * Get Detail
@@ -69,7 +75,11 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
                 });
         final CertificationAuthorityEntity caEntity = caBlockchainRepository.enable(trustCertificationSystemProperties.getRootPublicKey(),
                 caUserEntity.getWalletHash());
-        return certificationAuthorityDetailMapper.entityToDTO(caEntity, caUserEntity);
+        final CertificationAuthorityDetailDTO certificationAuthorityDetailDTO = certificationAuthorityDetailMapper.entityToDTO(caEntity, caUserEntity);
+        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CAEnabledNotificationEvent.builder()
+                .walletHash(certificationAuthorityDetailDTO.getWalletHash())
+                .build());
+        return certificationAuthorityDetailDTO;
     }
 
     /**
@@ -89,7 +99,11 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
                 });
         final CertificationAuthorityEntity caEntity = caBlockchainRepository.disable(trustCertificationSystemProperties.getRootPublicKey(),
                 caUserEntity.getWalletHash());
-        return certificationAuthorityDetailMapper.entityToDTO(caEntity, caUserEntity);
+        final CertificationAuthorityDetailDTO certificationAuthorityDetailDTO = certificationAuthorityDetailMapper.entityToDTO(caEntity, caUserEntity);
+        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CADisabledNotificationEvent.builder()
+                .walletHash(certificationAuthorityDetailDTO.getWalletHash())
+                .build());
+        return certificationAuthorityDetailDTO;
     }
 
     /**

@@ -1,11 +1,12 @@
 package com.dreamsoftware.tcs.processor;
 
-import com.dreamsoftware.tcs.model.events.OnTokensOrderCompletedEvent;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderEntity;
+import com.dreamsoftware.tcs.stream.events.OnTokensOrderCompletedEvent;
 import com.dreamsoftware.tcs.service.IUserService;
-import java.util.function.Consumer;
+import com.dreamsoftware.tcs.stream.events.notifications.users.OrderCompletedNotificationEvent;
+import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,19 +16,24 @@ import org.springframework.stereotype.Component;
  */
 @Component("tokensOrderCompletedProcessor")
 @RequiredArgsConstructor
-public class TokensOrderCompletedProcessor implements Consumer<OnTokensOrderCompletedEvent> {
-
-    private final Logger logger = LoggerFactory.getLogger(TokensOrderCompletedProcessor.class);
+@Slf4j
+public class TokensOrderCompletedProcessor implements Function<OnTokensOrderCompletedEvent, OrderCompletedNotificationEvent> {
 
     /**
      * User Service
      */
     private final IUserService userService;
 
+    /**
+     *
+     * @param event
+     * @return
+     */
     @Override
-    public void accept(OnTokensOrderCompletedEvent event) {
-        logger.debug("TokensOrderCompletedProcessor called!");
-        userService.completeOrder(event);
+    public OrderCompletedNotificationEvent apply(final OnTokensOrderCompletedEvent event) {
+        log.debug("TokensOrderCompletedProcessor called!");
+        final CreatedOrderEntity orderEntity = userService.completeOrder(event);
+        return new OrderCompletedNotificationEvent(orderEntity.getId().toString());
     }
 
 }

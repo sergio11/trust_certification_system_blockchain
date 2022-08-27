@@ -1,12 +1,8 @@
 package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.i18n.service.I18NService;
-import com.dreamsoftware.tcs.mail.model.UserActivatedEventMailRequestDTO;
-import com.dreamsoftware.tcs.mail.model.UserOrderCompletedMailRequestDTO;
-import com.dreamsoftware.tcs.mail.service.IMailClientService;
-import com.dreamsoftware.tcs.model.events.NewTokensOrderApprovedEvent;
-import com.dreamsoftware.tcs.model.events.OnNewUserRegistrationEvent;
-import com.dreamsoftware.tcs.model.events.OnTokensOrderCompletedEvent;
+import com.dreamsoftware.tcs.stream.events.NewTokensOrderApprovedEvent;
+import com.dreamsoftware.tcs.stream.events.OnNewUserRegistrationEvent;
+import com.dreamsoftware.tcs.stream.events.OnTokensOrderCompletedEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.IEtherFaucetBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchainRepository;
@@ -17,7 +13,6 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CreatedOrderRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
-import com.dreamsoftware.tcs.service.INotificationService;
 import com.dreamsoftware.tcs.service.IUserService;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -60,21 +55,6 @@ public class UserServiceImpl implements IUserService {
     private final CreatedOrderRepository createdOrderRepository;
 
     /**
-     * Notification Service
-     */
-    private final INotificationService notificationService;
-
-    /**
-     * Mail Client Service
-     */
-    private final IMailClientService mailClientService;
-
-    /**
-     * I18N Service
-     */
-    private final I18NService i18nService;
-
-    /**
      *
      * @param event
      */
@@ -94,21 +74,15 @@ public class UserServiceImpl implements IUserService {
      * @param walletHash
      */
     @Override
-    public void validate(String walletHash) {
+    public UserEntity validate(final String walletHash) {
         Assert.notNull(walletHash, "walletHash can not be null");
         log.debug("validate -> " + walletHash + " CALLED!");
-        userRepository.findOneByWalletHash(walletHash).ifPresent((userEntity) -> {
-            userEntity.setActivationDate(new Date());
-            userEntity.setState(UserStateEnum.VALIDATED);
-            userRepository.save(userEntity);
-            notificationService.onUserAccountValidated(userEntity);
-            mailClientService.sendMail(UserActivatedEventMailRequestDTO.builder()
-                    .email(userEntity.getEmail())
-                    .name(userEntity.getName())
-                    .locale(i18nService.parseLocaleOrDefault(userEntity.getLanguage()))
-                    .id(userEntity.getId().toString())
-                    .build());
-        });
+
+        final UserEntity userEntity = userRepository.findOneByWalletHash(walletHash)
+                .orElseThrow(() -> new IllegalStateException("WalletHash not found"));
+        userEntity.setActivationDate(new Date());
+        userEntity.setState(UserStateEnum.VALIDATED);
+        return userRepository.save(userEntity);
     }
 
     /**
@@ -132,27 +106,23 @@ public class UserServiceImpl implements IUserService {
      * @param event
      */
     @Override
-    public void completeOrder(final OnTokensOrderCompletedEvent event) {
+    public CreatedOrderEntity completeOrder(final OnTokensOrderCompletedEvent event) {
         Assert.notNull(event, "event can not be null");
         log.debug("Complete Order id: " + event.getOrderId());
-        createdOrderRepository.findById(event.getOrderId()).ifPresent((orderEntity) -> {
-            orderEntity.setCompletedAt(new Date());
-            orderEntity.setStatus(CreatedOrderStateEnum.COMPLETED);
-            final CreatedOrderEntity orderEntitySaved = createdOrderRepository.save(orderEntity);
-            notificationService.onUserOrderCompleted(orderEntitySaved);
-            final UserEntity userEntity = orderEntitySaved.getUser();
-            mailClientService.sendMail(UserOrderCompletedMailRequestDTO.builder()
-                    .orderId(orderEntitySaved.getId().toString())
-                    .amountEUR(orderEntitySaved.getAmountEUR())
-                    .amountUSD(orderEntitySaved.getAmountUSD())
-                    .amountWEI(orderEntitySaved.getAmountWEI())
-                    .email(userEntity.getEmail())
-                    .userName(userEntity.getName())
-                    .tokenPriceEUR(orderEntitySaved.getTokenPriceEUR())
-                    .tokenPriceUSD(orderEntitySaved.getTokenPriceUSD())
-                    .tokens(orderEntitySaved.getTokens())
-                    .locale(i18nService.parseLocaleOrDefault(userEntity.getLanguage()))
-                    .build());
-        });
+
+        final CreatedOrderEntity orderEntity = createdOrderRepository.findById(event.getOrderId())
+                .orElseThrow(() -> new IllegalStateException("Order not found"));
+        orderEntity.setCompletedAt(new Date());
+        orderEntity.setStatus(CreatedOrderStateEnum.COMPLETED);
+        return createdOrderRepository.save(orderEntity);
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public long deleteUnactivatedAccounts() {
+        return userRepository.deleteByState(UserStateEnum.PENDING_ACTIVATE);
     }
 }

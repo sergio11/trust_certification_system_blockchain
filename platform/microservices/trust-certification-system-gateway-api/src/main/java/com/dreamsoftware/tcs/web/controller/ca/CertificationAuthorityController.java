@@ -1,7 +1,5 @@
 package com.dreamsoftware.tcs.web.controller.ca;
 
-import com.dreamsoftware.tcs.scheduling.events.ca.CADisabledEvent;
-import com.dreamsoftware.tcs.scheduling.events.ca.CAEnabledEvent;
 import com.dreamsoftware.tcs.services.ICertificationAuthorityService;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.DisableCertificationAuthorityException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.EnableCertificationAuthorityException;
@@ -165,7 +163,6 @@ public class CertificationAuthorityController extends SupportController {
         try {
 
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.enable(id);
-            applicationEventPublisher.publishEvent(new CAEnabledEvent(this, caDetailDTO.getWalletHash()));
             return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_ENABLED,
                     HttpStatus.OK, caDetailDTO);
@@ -191,7 +188,6 @@ public class CertificationAuthorityController extends SupportController {
     ) throws Throwable {
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.disable(id);
-            applicationEventPublisher.publishEvent(new CADisabledEvent(this, caDetailDTO.getWalletHash()));
             return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_DISABLED,
                     HttpStatus.OK, caDetailDTO);

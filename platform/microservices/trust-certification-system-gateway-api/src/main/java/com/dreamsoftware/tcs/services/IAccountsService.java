@@ -55,7 +55,7 @@ public interface IAccountsService {
 
     /**
      *
-     * @return
+     * @param email
      */
-    long deleteUnactivatedAccounts();
+    void resetPassword(final String email);
 }

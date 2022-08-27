@@ -1,12 +1,5 @@
 package com.dreamsoftware.tcs.web.controller.certification;
 
-import com.dreamsoftware.tcs.scheduling.events.certificate.CertificateDisabledEvent;
-import com.dreamsoftware.tcs.scheduling.events.certificate.CertificateEnabledEvent;
-import com.dreamsoftware.tcs.scheduling.events.certificate.CertificateRenewedEvent;
-import com.dreamsoftware.tcs.scheduling.events.certificate.CertificateRequestAcceptedEvent;
-import com.dreamsoftware.tcs.scheduling.events.certificate.CertificateRequestRejectedEvent;
-import com.dreamsoftware.tcs.scheduling.events.certificate.CertificateVisibilityChangedEvent;
-import com.dreamsoftware.tcs.scheduling.events.certificate.IssueCertificateRequestedEvent;
 import com.dreamsoftware.tcs.services.ITrustCertificationService;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.AcceptCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.DisableCertificateException;
@@ -86,7 +79,6 @@ public class TrustCertificationController extends SupportController {
     ) throws Throwable {
         try {
             final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.enable(selfUser.getWalletHash(), id);
-            applicationEventPublisher.publishEvent(new CertificateEnabledEvent(this, certificateIssuedDTO.getId()));
             return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_ENABLED,
                     HttpStatus.OK, certificateIssuedDTO);
         } catch (final Exception ex) {
@@ -113,7 +105,6 @@ public class TrustCertificationController extends SupportController {
     ) throws Throwable {
         try {
             final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.disable(selfUser.getWalletHash(), id);
-            applicationEventPublisher.publishEvent(new CertificateDisabledEvent(this, certificateIssuedDTO.getId()));
             return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_DISABLED,
                     HttpStatus.OK, certificateIssuedDTO);
         } catch (final Exception ex) {
@@ -140,7 +131,6 @@ public class TrustCertificationController extends SupportController {
     ) throws Throwable {
         try {
             final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.updateVisibility(selfUser.getWalletHash(), id, true);
-            applicationEventPublisher.publishEvent(new CertificateVisibilityChangedEvent(this, certificateIssuedDTO.getId(), certificateIssuedDTO.getIsVisible()));
             return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_VISIBILITY_UPDATED,
                     HttpStatus.OK, certificateIssuedDTO);
         } catch (final Exception ex) {
@@ -167,7 +157,6 @@ public class TrustCertificationController extends SupportController {
     ) throws Throwable {
         try {
             final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.updateVisibility(selfUser.getWalletHash(), id, false);
-            applicationEventPublisher.publishEvent(new CertificateVisibilityChangedEvent(this, certificateIssuedDTO.getId(), certificateIssuedDTO.getIsVisible()));
             return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_VISIBILITY_UPDATED,
                     HttpStatus.OK, certificateIssuedDTO);
         } catch (final Exception ex) {
@@ -346,7 +335,6 @@ public class TrustCertificationController extends SupportController {
         try {
             issueCertificate.setStudentWalletHash(selfUser.getWalletHash());
             final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.issueCertificateRequest(issueCertificate);
-            applicationEventPublisher.publishEvent(new IssueCertificateRequestedEvent(this, certificateIssuanceRequestDTO.getId()));
             return responseHelper.<CertificateIssuanceRequestDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.NEW_ISSUED_CERTIFICATE_REQUESTED,
                     HttpStatus.OK, certificateIssuanceRequestDTO);
         } catch (final Exception ex) {
@@ -373,7 +361,6 @@ public class TrustCertificationController extends SupportController {
     ) throws Throwable {
         try {
             final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.acceptCertificateRequest(new ObjectId(id));
-            applicationEventPublisher.publishEvent(new CertificateRequestAcceptedEvent(this, certificateIssuanceRequestDTO.getId()));
             return responseHelper.<CertificateIssuanceRequestDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.ISSUE_CERTIFICATE_REQUEST_ACCEPTED,
                     HttpStatus.OK, certificateIssuanceRequestDTO);
         } catch (final Exception ex) {
@@ -400,7 +387,6 @@ public class TrustCertificationController extends SupportController {
     ) throws Throwable {
         try {
             final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.rejectCertificateRequest(new ObjectId(id));
-            applicationEventPublisher.publishEvent(new CertificateRequestRejectedEvent(this, certificateIssuanceRequestDTO.getId()));
             return responseHelper.<CertificateIssuanceRequestDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.ISSUE_CERTIFICATE_REQUEST_REJECTED,
                     HttpStatus.OK, certificateIssuanceRequestDTO);
         } catch (final Exception ex) {
@@ -428,7 +414,6 @@ public class TrustCertificationController extends SupportController {
     ) throws Throwable {
         try {
             final CertificateIssuedDTO certificateIssued = trustCertificationService.renewCertificate(selfUser.getWalletHash(), id);
-            applicationEventPublisher.publishEvent(new CertificateRenewedEvent(this, certificateIssued.getId()));
             return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.RENEW_CERTIFICATE_FAILED,
                     HttpStatus.OK, certificateIssued);
         } catch (final Exception ex) {

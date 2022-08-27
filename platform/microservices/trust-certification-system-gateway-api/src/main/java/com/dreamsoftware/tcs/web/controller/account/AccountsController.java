@@ -1,9 +1,6 @@
 package com.dreamsoftware.tcs.web.controller.account;
 
-import com.dreamsoftware.tcs.scheduling.events.account.PasswordResetEvent;
-import com.dreamsoftware.tcs.scheduling.events.account.UserPendingValidationEvent;
 import com.dreamsoftware.tcs.services.IAccountsService;
-import com.dreamsoftware.tcs.services.IPasswordResetTokenService;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.RefreshTokenException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
@@ -20,6 +17,7 @@ import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
 import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
 import com.dreamsoftware.tcs.web.validation.constraints.group.IResetPasswordSequence;
+import io.micrometer.core.instrument.util.StringUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +31,6 @@ import java.util.Locale;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.mobile.device.Device;
 import org.springframework.validation.annotation.Validated;
@@ -41,13 +38,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.thymeleaf.util.StringUtils;
 
 /**
  * Accounts Controller
@@ -59,12 +55,10 @@ import org.thymeleaf.util.StringUtils;
 @RequestMapping("/api/v1/accounts/")
 @Tag(name = "accounts", description = "/api/v1/accounts/ (Code Response interval -> 1XX)")
 @RequiredArgsConstructor
+@Slf4j
 public class AccountsController extends SupportController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AccountsController.class);
-
     private final IAccountsService authenticationService;
-    private final IPasswordResetTokenService passwordResetTokenService;
 
     /**
      * Create Authentication Token
@@ -159,22 +153,17 @@ public class AccountsController extends SupportController {
         try {
 
             // Configure ISO3 Language
-            if (StringUtils.isEmptyOrWhitespace(user.getLanguage())) {
+            if (StringUtils.isBlank(user.getLanguage())) {
                 user.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
             }
 
             // Configure User Agent from HTTP Header
             user.setUserAgent(userAgent);
-
             final SimpleUserDTO userSaved = authenticationService.signup(user);
-
-            if (userSaved.getState().equals(SimpleUserDTO.PENDING_ACTIVATE_STATE)) {
-                applicationEventPublisher.publishEvent(new UserPendingValidationEvent(this, userSaved.getIdentity()));
-            }
             return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_SUCCESS, HttpStatus.OK, userSaved);
         } catch (final Exception ex) {
             ex.printStackTrace();
-            logger.debug("signup exception: " + ex);
+            log.debug("signup exception: " + ex);
             throw new SignUpException(ex.getMessage(), ex);
         }
     }
@@ -228,10 +217,8 @@ public class AccountsController extends SupportController {
             @Parameter(hidden = true) HttpServletRequest request) {
 
         try {
-            logger.debug("resetPassword for -> " + resetPasswordRequestDTO.getEmail());
-            final PasswordResetTokenDTO resetPasswordToken = Optional.ofNullable(passwordResetTokenService.getPasswordResetTokenForUserWithEmail(resetPasswordRequestDTO.getEmail()))
-                    .orElseGet(() -> passwordResetTokenService.createPasswordResetTokenForUserWithEmail(resetPasswordRequestDTO.getEmail()));
-            applicationEventPublisher.publishEvent(new PasswordResetEvent(this, resetPasswordToken));
+            log.debug("resetPassword for -> " + resetPasswordRequestDTO.getEmail());
+            authenticationService.resetPassword(resetPasswordRequestDTO.getEmail());
             return responseHelper.<String>createAndSendResponse(
                     AccountsResponseCodeEnum.RESET_PASSWORD_REQUEST_SUCCESS,
                     HttpStatus.OK, resolveString("user_password_request_reset_success", request));

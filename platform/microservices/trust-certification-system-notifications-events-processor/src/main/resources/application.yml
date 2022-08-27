@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: tcs-notification-events-processor
+  profiles:
+    active: dev
+  bus:
+    enabled: true
+  config:
+    import: "optional:configserver:"
+  cloud:
+    config:
+        import-check:
+            enabled: false
+        discovery:
+            enabled: true
+            serviceId: tcs-config-server
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://${SERVICE_REGISTRY_HOST:localhost}:${SERVICE_REGISTRY_PORT:8761}/eureka/
+  instance:
+    preferIpAddress: true

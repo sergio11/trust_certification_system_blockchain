@@ -17,10 +17,6 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import lombok.RequiredArgsConstructor;
 
-/**
- *
- * @author ssanchez
- */
 @Slf4j
 @RequiredArgsConstructor
 public class TSAClient {
