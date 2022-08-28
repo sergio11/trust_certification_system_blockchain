@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -83,6 +84,7 @@ public class DeviceGroupsController extends SupportController {
      *
      * @param device
      * @param selfUser
+     * @param request
      * @return
      */
     @Operation(summary = "ADD_DEVICE_TO_GROUP - Add device into devices group", description = "Add device into devices group", tags = {"device-groups"})
@@ -98,11 +100,13 @@ public class DeviceGroupsController extends SupportController {
             @Parameter(name = "device", description = "Device to be added",
                     required = true, schema = @Schema(implementation = AddDeviceDTO.class))
             @Validated(ICommonSequence.class) AddDeviceDTO device,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) final HttpServletRequest request
     ) {
         try {
             deviceGroupsService.addDeviceToGroup(selfUser.getUserId(), device.getDeviceId(), device.getRegistrationToken());
-            return responseHelper.createAndSendResponse(DeviceGroupsResponseCodeEnum.DEVICE_ADDED_TO_GROUP, HttpStatus.OK, "");
+            return responseHelper.createAndSendResponse(DeviceGroupsResponseCodeEnum.DEVICE_ADDED_TO_GROUP,
+                    HttpStatus.OK, resolveString("device_added_successfully", request));
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Throwable ex) {
@@ -110,6 +114,13 @@ public class DeviceGroupsController extends SupportController {
         }
     }
 
+    /**
+     *
+     * @param updateDevice
+     * @param selfUser
+     * @param request
+     * @return
+     */
     @Operation(summary = "UPDATE_DEVICE_REGISTRATION_TOKEN - Update Device Registration Token", description = "Update Device Registration Token", tags = {"device-groups"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Device Updated",
@@ -123,10 +134,12 @@ public class DeviceGroupsController extends SupportController {
             @Parameter(name = "device", description = "Device to be updated",
                     required = true, schema = @Schema(implementation = UpdateDeviceDTO.class))
             @Validated(ICommonSequence.class) UpdateDeviceDTO updateDevice,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser) {
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) final HttpServletRequest request) {
         try {
             deviceGroupsService.updateDevice(selfUser.getUserId(), updateDevice.getDeviceId(), updateDevice.getRegistrationToken());
-            return responseHelper.createAndSendResponse(DeviceGroupsResponseCodeEnum.DEVICE_TOKEN_UPDATED, HttpStatus.OK, "");
+            return responseHelper.createAndSendResponse(DeviceGroupsResponseCodeEnum.DEVICE_TOKEN_UPDATED,
+                    HttpStatus.OK, resolveString("device_updated_successfully", request));
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Throwable ex) {
@@ -138,6 +151,7 @@ public class DeviceGroupsController extends SupportController {
      *
      * @param deviceToSave
      * @param selfUser
+     * @param request
      * @return
      */
     @Operation(summary = "SAVE_DEVICE - Save device into the group", description = "Save device into the group", tags = {"device-groups"})
@@ -153,11 +167,13 @@ public class DeviceGroupsController extends SupportController {
             @Parameter(name = "device", description = "Device to be saved",
                     required = true, schema = @Schema(implementation = UpdateDeviceDTO.class))
             @Validated(ICommonSequence.class) SaveDeviceDTO deviceToSave,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser) {
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) final HttpServletRequest request) {
         try {
             log.debug("Save Device with Id " + deviceToSave.getDeviceId() + " And Registration Token " + deviceToSave.getRegistrationToken());
             deviceGroupsService.createOrUpdateDevice(selfUser.getUserId(), deviceToSave.getDeviceId(), deviceToSave.getRegistrationToken());
-            return responseHelper.createAndSendResponse(DeviceGroupsResponseCodeEnum.DEVICE_TOKEN_SAVED, HttpStatus.OK, "");
+            return responseHelper.createAndSendResponse(DeviceGroupsResponseCodeEnum.DEVICE_TOKEN_SAVED,
+                    HttpStatus.OK, resolveString("device_saved_successfully", request));
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Throwable ex) {
@@ -169,6 +185,7 @@ public class DeviceGroupsController extends SupportController {
      *
      * @param id
      * @param selfUser
+     * @param request
      * @return
      */
     @Operation(summary = "DELETE_DEVICE_FROM_GROUP - Delete Device From Group", description = "Delete Device From Group", tags = {"device-groups"})
@@ -183,12 +200,14 @@ public class DeviceGroupsController extends SupportController {
     public ResponseEntity<APIResponse<String>> deleteDeviceFromGroup(
             @Parameter(name = "id", description = "Device Id", required = true)
             @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) final HttpServletRequest request
     ) {
         try {
             log.debug("Remove device with id " + id);
             deviceGroupsService.removeDeviceFromGroup(id);
-            return responseHelper.createAndSendResponse(DeviceGroupsResponseCodeEnum.DEVICE_REMOVED_FROM_GROUP, HttpStatus.OK, "");
+            return responseHelper.createAndSendResponse(DeviceGroupsResponseCodeEnum.DEVICE_REMOVED_FROM_GROUP,
+                    HttpStatus.OK, resolveString("device_deleted_successfully", request));
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Throwable ex) {
