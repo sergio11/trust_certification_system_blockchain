@@ -1,11 +1,14 @@
 package com.dreamsoftware.tcs.service.impl;
 
+import com.dreamsoftware.tcs.fcm.dto.request.FCMNotificationOperationDTO;
+import com.dreamsoftware.tcs.fcm.dto.request.FCMNotificationOperationDTO.FCMNotification;
 import com.dreamsoftware.tcs.fcm.exception.DeviceAddToGroupFailedException;
 import com.dreamsoftware.tcs.fcm.exception.DeviceGroupCreateFailedException;
 import com.dreamsoftware.tcs.fcm.exception.RemoveDeviceFromGroupFailedException;
 import com.dreamsoftware.tcs.fcm.exception.UpdateDeviceFailedException;
 import com.dreamsoftware.tcs.fcm.properties.FCMCustomProperties;
 import com.dreamsoftware.tcs.fcm.service.IPushNotificationsService;
+import com.dreamsoftware.tcs.i18n.service.IMessageSourceResolverService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.DeviceEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.DeviceGroupEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
@@ -43,6 +46,30 @@ public class DevicesManagementServiceImpl implements IDevicesManagementService {
     private final ISecurityTokenGeneratorService tokenGeneratorService;
     private final FCMCustomProperties firebaseCustomProperties;
     private final UserRepository userRepository;
+
+    /**
+     *
+     * @param userId
+     * @param title
+     * @param body
+     */
+    @Override
+    public void sendNotification(final ObjectId userId, final String title, final String body) {
+        Assert.notNull(userId, "userId can not be null");
+        Assert.notNull(title, "title can not be null");
+        Assert.notNull(body, "body can not be null");
+        deviceGroupRepository.findByOwnerId(userId).ifPresent((deviceGroupEntity) -> {
+            pushNotificationsService.send(FCMNotificationOperationDTO
+                    .builder()
+                    .notificationKey(deviceGroupEntity.getNotificationKey())
+                    .notification(FCMNotification
+                            .builder()
+                            .title(title)
+                            .body(body)
+                            .build())
+                    .build());
+        });
+    }
 
     /**
      *

@@ -6,7 +6,9 @@ import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
+import com.dreamsoftware.tcs.service.IDevicesManagementService;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateVisibilityChangedNotificationEvent;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -27,6 +29,7 @@ public class CertificateVisibilityChangedHandler extends AbstractNotificationHan
     private final IMailClientService mailClientService;
     private final CertificateIssuanceRequestRepository certificateIssuanceRequestRepository;
     private final I18NService i18nService;
+    private final IDevicesManagementService devicesManagementService;
 
     /**
      *
@@ -38,13 +41,20 @@ public class CertificateVisibilityChangedHandler extends AbstractNotificationHan
         log.debug("CertificateVisibilityChangedEvent handled!");
         certificateIssuanceRequestRepository.findByCertificateId(notification.getId()).ifPresent((certificateRequest) -> {
             final UserEntity studentEntity = certificateRequest.getStudent();
+            final Locale userLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
             mailClientService.sendMail(CertificateVisibilityChangedMailRequestDTO
                     .builder()
                     .email(studentEntity.getEmail())
                     .isVisible(notification.getIsVisible())
                     .certificateId(certificateRequest.getId().toString())
-                    .locale(i18nService.parseLocaleOrDefault(studentEntity.getLanguage()))
+                    .locale(userLocale)
                     .build());
+            final String title = resolveString("notification_certificate_visibility_changed_title", userLocale, new Object[]{
+                studentEntity.getName()});
+            final String body = resolveString(notification.getIsVisible()
+                    ? "notification_certificate_changed_to_visible_body" : "notification_certificate_changed_to_invisible_body", userLocale, new Object[]{
+                        studentEntity.getName(), certificateRequest.getId().toString()});
+            devicesManagementService.sendNotification(studentEntity.getId(), title, body);
         });
     }
 
