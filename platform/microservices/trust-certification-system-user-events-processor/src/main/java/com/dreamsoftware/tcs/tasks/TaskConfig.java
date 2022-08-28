@@ -27,4 +27,5 @@ public class TaskConfig {
         log.debug("configureDeleteUnactivatedAccountsTask CALLED");
         userService.deleteUnactivatedAccounts();
     }
+
 }

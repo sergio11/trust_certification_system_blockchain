@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor;
 
-import com.dreamsoftware.tcs.stream.events.CertificationCourseRegisteredEvent;
-import com.dreamsoftware.tcs.stream.events.CourseCertificateRegistrationRequestEvent;
+import com.dreamsoftware.tcs.stream.events.course.CertificationCourseRegisteredEvent;
+import com.dreamsoftware.tcs.stream.events.course.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.service.ICertificateCourseService;

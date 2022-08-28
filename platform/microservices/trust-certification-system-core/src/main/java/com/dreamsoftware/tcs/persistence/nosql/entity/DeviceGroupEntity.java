@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.persistence.nosql.entity;
 
 import java.util.Date;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Document(collection = DeviceEntity.COLLECTION_NAME)
 public class DeviceGroupEntity {
 
@@ -45,8 +47,8 @@ public class DeviceGroupEntity {
     /**
      * Create At
      */
-    @Field("create_at")
-    private Date createAt = new Date();
+    @Field("created_at")
+    private Date createdAt;
 
     /**
      * Owner

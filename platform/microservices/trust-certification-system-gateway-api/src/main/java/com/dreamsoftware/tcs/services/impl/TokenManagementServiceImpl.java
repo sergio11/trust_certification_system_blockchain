@@ -2,7 +2,7 @@ package com.dreamsoftware.tcs.services.impl;
 
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.CreatedOrderMapper;
-import com.dreamsoftware.tcs.stream.events.NewTokensOrderApprovedEvent;
+import com.dreamsoftware.tcs.stream.events.user.NewTokensOrderApprovedEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderEntity;
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import com.dreamsoftware.tcs.services.ISecurityTokenGeneratorService;
+import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
 
 /**
  *

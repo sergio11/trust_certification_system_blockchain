@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.service;
 
-import com.dreamsoftware.tcs.stream.events.OnNewCertificateIssuedEvent;
-import com.dreamsoftware.tcs.stream.events.OnNewIssueCertificateRequestEvent;
+import com.dreamsoftware.tcs.stream.events.certificate.OnNewCertificateIssuedEvent;
+import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
 

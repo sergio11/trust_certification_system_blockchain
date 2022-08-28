@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.persistence.nosql.repository;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.DeviceGroupEntity;
+import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -40,6 +41,6 @@ public interface DeviceGroupRepository extends MongoRepository<DeviceGroupEntity
      * @param id
      * @return
      */
-    DeviceGroupEntity findByOwnerId(final ObjectId id);
+    Optional<DeviceGroupEntity> findByOwnerId(final ObjectId id);
 
 }

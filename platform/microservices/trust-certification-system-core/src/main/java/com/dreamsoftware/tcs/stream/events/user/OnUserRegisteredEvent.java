@@ -1,10 +1,9 @@
-package com.dreamsoftware.tcs.stream.events;
+package com.dreamsoftware.tcs.stream.events.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
 
 /**
  *
@@ -15,11 +14,11 @@ import org.bson.types.ObjectId;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OnTokensOrderCompletedEvent {
+public class OnUserRegisteredEvent {
 
     /**
-     * Order Id
+     * Wallet Hash
      */
-    private ObjectId orderId;
+    private String walletHash;
 
 }

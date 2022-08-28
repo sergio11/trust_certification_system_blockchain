@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.stream.events;
+package com.dreamsoftware.tcs.stream.events.user;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 import lombok.AllArgsConstructor;

@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.persistence.nosql.repository;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.DeviceEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.DeviceGroupEntity;
+import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,13 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface DeviceRepository extends MongoRepository<DeviceEntity, ObjectId>, DeviceRepositoryCustom {
+
+    /**
+     *
+     * @param ownerId
+     * @return
+     */
+    Iterable<DeviceEntity> findByDeviceGroupOwnerId(final ObjectId ownerId);
 
     /**
      *
@@ -60,7 +68,7 @@ public interface DeviceRepository extends MongoRepository<DeviceEntity, ObjectId
      * @param deviceId
      * @return
      */
-    DeviceEntity findByDeviceId(final String deviceId);
+    Optional<DeviceEntity> findByDeviceId(final String deviceId);
 
     /**
      *

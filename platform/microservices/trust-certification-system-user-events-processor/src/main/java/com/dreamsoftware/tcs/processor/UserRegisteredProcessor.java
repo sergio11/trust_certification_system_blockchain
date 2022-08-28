@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
-import com.dreamsoftware.tcs.stream.events.OnUserRegisteredEvent;
+import com.dreamsoftware.tcs.stream.events.user.OnUserRegisteredEvent;
 import com.dreamsoftware.tcs.service.IUserService;
 import com.dreamsoftware.tcs.stream.events.notifications.users.UserRegisteredNotificationEvent;
 import java.util.function.Function;

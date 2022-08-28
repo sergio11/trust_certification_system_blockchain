@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.stream.events;
+package com.dreamsoftware.tcs.stream.events.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import org.bson.types.ObjectId;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewTokensOrderApprovedEvent {
+public class OnTokensOrderCompletedEvent {
 
     /**
      * Order Id

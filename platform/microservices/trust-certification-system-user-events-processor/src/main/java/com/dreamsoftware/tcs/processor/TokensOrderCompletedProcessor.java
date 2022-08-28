@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderEntity;
-import com.dreamsoftware.tcs.stream.events.OnTokensOrderCompletedEvent;
+import com.dreamsoftware.tcs.stream.events.user.OnTokensOrderCompletedEvent;
 import com.dreamsoftware.tcs.service.IUserService;
 import com.dreamsoftware.tcs.stream.events.notifications.users.OrderCompletedNotificationEvent;
 import java.util.function.Function;

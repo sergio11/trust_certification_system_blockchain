@@ -9,8 +9,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.Date;
-import lombok.Builder;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 /**
  *
@@ -20,20 +18,19 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Document(collection = DeviceEntity.COLLECTION_NAME)
-public class DeviceEntity {
+@Document(collection = DeviceRegistrationRequestEntity.COLLECTION_NAME)
+public class DeviceRegistrationRequestEntity {
 
-    public final static String COLLECTION_NAME = "devices";
+    public final static String COLLECTION_NAME = "device_registration_request";
 
     /**
-     * Id
+     *
      */
     @Id
     private ObjectId id;
 
     /**
-     * Device Name
+     * Device ID
      */
     @Field("device_id")
     private String deviceId;
@@ -45,22 +42,27 @@ public class DeviceEntity {
     private String registrationToken;
 
     /**
+     * Owner
+     */
+    @Field("owner")
+    private ObjectId owner;
+
+    /**
      * Created At
      */
     @Field("created_at")
     private Date createdAt;
 
     /**
-     * Device Type
+     * Failed Attempts
      */
-    @Field("device_type")
-    private DeviceTypeEnum deviceTypeEnum;
+    @Field("failed_attempts")
+    private Integer failedAttempts = 0;
 
     /**
-     * Device Group
+     * Last Time Tried
      */
-    @Field("device_group")
-    @DBRef
-    private DeviceGroupEntity deviceGroup;
+    @Field("last_time_tried")
+    private Date lastTimeTried;
 
 }

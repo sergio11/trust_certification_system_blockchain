@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
-import com.dreamsoftware.tcs.stream.events.OnNewCertificateIssuedEvent;
+import com.dreamsoftware.tcs.stream.events.certificate.OnNewCertificateIssuedEvent;
 import com.dreamsoftware.tcs.service.ITrustCertificateService;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateIssuedNotificationEvent;
 import java.util.function.Function;

@@ -3,7 +3,7 @@ package com.dreamsoftware.tcs.services.impl;
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.CertificationCourseDetailMapper;
 import com.dreamsoftware.tcs.mapper.UpdateCertificationCourselMapper;
-import com.dreamsoftware.tcs.stream.events.CourseCertificateRegistrationRequestEvent;
+import com.dreamsoftware.tcs.stream.events.course.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
