@@ -1,9 +1,10 @@
-package com.dreamsoftware.tcs.stream.events;
+package com.dreamsoftware.tcs.stream.events.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
 
 /**
  *
@@ -14,11 +15,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OnUserRegisteredEvent {
+public class NewTokensOrderApprovedEvent {
 
     /**
-     * Wallet Hash
+     * Order Id
      */
-    private String walletHash;
+    private ObjectId orderId;
 
 }

@@ -2,9 +2,9 @@ package com.dreamsoftware.tcs.service;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
-import com.dreamsoftware.tcs.stream.events.NewTokensOrderApprovedEvent;
-import com.dreamsoftware.tcs.stream.events.OnNewUserRegistrationEvent;
-import com.dreamsoftware.tcs.stream.events.OnTokensOrderCompletedEvent;
+import com.dreamsoftware.tcs.stream.events.user.NewTokensOrderApprovedEvent;
+import com.dreamsoftware.tcs.stream.events.user.OnNewUserRegistrationEvent;
+import com.dreamsoftware.tcs.stream.events.user.OnTokensOrderCompletedEvent;
 
 /**
  *

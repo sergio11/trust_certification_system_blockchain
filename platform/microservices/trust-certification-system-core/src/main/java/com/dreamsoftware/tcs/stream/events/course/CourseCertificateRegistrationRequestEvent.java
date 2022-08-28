@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.stream.events;
+package com.dreamsoftware.tcs.stream.events.course;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

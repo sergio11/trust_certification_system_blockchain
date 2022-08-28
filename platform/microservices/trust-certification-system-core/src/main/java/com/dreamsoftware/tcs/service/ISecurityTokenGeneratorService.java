@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.services;
+package com.dreamsoftware.tcs.service;
 
 /**
  *

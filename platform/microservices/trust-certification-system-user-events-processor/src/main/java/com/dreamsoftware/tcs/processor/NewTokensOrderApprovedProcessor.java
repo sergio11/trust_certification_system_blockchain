@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor;
 
-import com.dreamsoftware.tcs.stream.events.NewTokensOrderApprovedEvent;
-import com.dreamsoftware.tcs.stream.events.OnTokensOrderCompletedEvent;
+import com.dreamsoftware.tcs.stream.events.user.NewTokensOrderApprovedEvent;
+import com.dreamsoftware.tcs.stream.events.user.OnTokensOrderCompletedEvent;
 import com.dreamsoftware.tcs.service.IUserService;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;

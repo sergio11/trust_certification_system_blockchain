@@ -1,8 +1,8 @@
 package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.stream.events.NewTokensOrderApprovedEvent;
-import com.dreamsoftware.tcs.stream.events.OnNewUserRegistrationEvent;
-import com.dreamsoftware.tcs.stream.events.OnTokensOrderCompletedEvent;
+import com.dreamsoftware.tcs.stream.events.user.NewTokensOrderApprovedEvent;
+import com.dreamsoftware.tcs.stream.events.user.OnNewUserRegistrationEvent;
+import com.dreamsoftware.tcs.stream.events.user.OnTokensOrderCompletedEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.IEtherFaucetBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchainRepository;

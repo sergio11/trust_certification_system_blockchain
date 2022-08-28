@@ -1,5 +1,6 @@
-package com.dreamsoftware.tcs.stream.events;
+package com.dreamsoftware.tcs.stream.events.course;
 
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,25 +15,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OnNewIssueCertificateRequestEvent {
+public class CertificationCourseRegisteredEvent {
 
     /**
-     * Student Wallet Hash
+     * Certification Course
      */
-    private String studentWalletHash;
+    private CertificationCourseModelEntity certificationCourse;
 
     /**
      * CA Wallet Hash
      */
     private String caWalletHash;
 
-    /**
-     * Course Id
-     */
-    private String courseId;
-
-    /**
-     * Qualification
-     */
-    private Long qualification;
 }

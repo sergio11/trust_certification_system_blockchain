@@ -5,7 +5,7 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.PasswordResetTokenEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.PasswordResetTokenRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.services.IPasswordResetTokenService;
-import com.dreamsoftware.tcs.services.ISecurityTokenGeneratorService;
+import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
 import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
 import java.util.Calendar;
 import java.util.Date;

@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
-import com.dreamsoftware.tcs.stream.events.CertificationCourseRegisteredEvent;
+import com.dreamsoftware.tcs.stream.events.course.CertificationCourseRegisteredEvent;
 import com.dreamsoftware.tcs.service.ICertificateCourseService;
 import com.dreamsoftware.tcs.stream.events.notifications.course.CertificationCourseRegisteredNotificationEvent;
 import java.util.function.Function;

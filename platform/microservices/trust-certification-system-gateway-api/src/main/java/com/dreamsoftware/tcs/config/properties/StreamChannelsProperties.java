@@ -47,6 +47,12 @@ public class StreamChannelsProperties {
     @Value("${channels.notification-delivery-request}")
     private String notificationDeliveryRequest;
 
+    /**
+     * Device Management
+     */
+    @Value("${channels.device-management}")
+    private String deviceManagement;
+
     @PostConstruct
     public void onPostConstruct() {
         log.debug("newUserRegistration -> " + newUserRegistration);
@@ -54,5 +60,6 @@ public class StreamChannelsProperties {
         log.debug("newCertificationRequest -> " + newCertificationRequest);
         log.debug("newTokensOrderApproved -> " + newTokensOrderApproved);
         log.debug("notificationDeliveryRequest -> " + notificationDeliveryRequest);
+        log.debug("deviceManagement -> " + deviceManagement);
     }
 }

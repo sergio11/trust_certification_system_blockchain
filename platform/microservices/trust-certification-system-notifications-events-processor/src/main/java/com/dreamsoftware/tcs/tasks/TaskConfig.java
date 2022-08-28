@@ -31,4 +31,17 @@ public class TaskConfig {
         log.debug("unsuccessfulMailForwarding CALLED");
         mailClienService.forwardEmails(numberOfEmailsToForwarding);
     }
+
+    /**
+     * Check device registration requests
+     */
+    @Scheduled(cron = "${task.device.registration.request}")
+    @SchedulerLock(name = "checkDeviceRegistrationRequests")
+    public void checkDeviceRegistrationRequests() {
+        log.debug("Check Device Registration Requests ...");
+        /*final List<PendingDeviceEntity> pendingDevices = pendingDeviceRepository.findAll();
+        for (PendingDeviceEntity pendingDevice : pendingDevices) {
+            deviceHelper.createOrUpdateDevice(pendingDevice.getOwner(), pendingDevice.getDeviceId(), pendingDevice.getRegistrationToken());
+        }*/
+    }
 }

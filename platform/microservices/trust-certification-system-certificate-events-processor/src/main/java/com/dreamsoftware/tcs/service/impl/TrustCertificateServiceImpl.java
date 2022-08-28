@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.stream.events.OnNewCertificateIssuedEvent;
-import com.dreamsoftware.tcs.stream.events.OnNewIssueCertificateRequestEvent;
+import com.dreamsoftware.tcs.stream.events.certificate.OnNewCertificateIssuedEvent;
+import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;

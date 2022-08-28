@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.stream.events;
+package com.dreamsoftware.tcs.stream.events.certificate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,12 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OnNewCertificateIssuedEvent {
-
-    /**
-     * Certificate Id
-     */
-    private String certificateId;
+public class OnNewIssueCertificateRequestEvent {
 
     /**
      * Student Wallet Hash
@@ -31,4 +26,13 @@ public class OnNewCertificateIssuedEvent {
      */
     private String caWalletHash;
 
+    /**
+     * Course Id
+     */
+    private String courseId;
+
+    /**
+     * Qualification
+     */
+    private Long qualification;
 }

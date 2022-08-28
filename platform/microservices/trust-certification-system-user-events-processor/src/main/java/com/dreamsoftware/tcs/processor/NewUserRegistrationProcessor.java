@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor;
 
-import com.dreamsoftware.tcs.stream.events.OnUserRegisteredEvent;
-import com.dreamsoftware.tcs.stream.events.OnNewUserRegistrationEvent;
+import com.dreamsoftware.tcs.stream.events.user.OnUserRegisteredEvent;
+import com.dreamsoftware.tcs.stream.events.user.OnNewUserRegistrationEvent;
 import com.dreamsoftware.tcs.service.IUserService;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;

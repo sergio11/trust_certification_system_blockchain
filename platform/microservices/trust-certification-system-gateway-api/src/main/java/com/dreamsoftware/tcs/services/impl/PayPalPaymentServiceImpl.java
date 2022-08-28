@@ -2,7 +2,7 @@ package com.dreamsoftware.tcs.services.impl;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.services.IPaymentService;
-import com.dreamsoftware.tcs.services.ISecurityTokenGeneratorService;
+import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
 import com.dreamsoftware.tcs.web.dto.internal.CreatedOrderDTO;
 import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;

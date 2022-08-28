@@ -1,9 +1,9 @@
-package com.dreamsoftware.tcs.services.impl;
+package com.dreamsoftware.tcs.service.impl;
 
 import java.security.SecureRandom;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import com.dreamsoftware.tcs.services.ISecurityTokenGeneratorService;
+import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
 
 /**
  *
