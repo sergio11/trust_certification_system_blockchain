@@ -6,7 +6,9 @@ import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
+import com.dreamsoftware.tcs.service.IDevicesManagementService;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateRenewedNotificationEvent;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -27,6 +29,7 @@ public class CertificateRenewedHandler extends AbstractNotificationHandler<Certi
     private final IMailClientService mailClientService;
     private final CertificateIssuanceRequestRepository certificateIssuanceRequestRepository;
     private final I18NService i18nService;
+    private final IDevicesManagementService devicesManagementService;
 
     /**
      *
@@ -38,12 +41,18 @@ public class CertificateRenewedHandler extends AbstractNotificationHandler<Certi
         log.debug("CertificateRenewedEvent handled!");
         certificateIssuanceRequestRepository.findByCertificateId(notification.getId()).ifPresent((certificateRequest) -> {
             final UserEntity studentEntity = certificateRequest.getStudent();
+            final Locale userLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
             mailClientService.sendMail(CertificateRenewedMailRequestDTO
                     .builder()
                     .email(studentEntity.getEmail())
                     .certificateId(certificateRequest.getId().toString())
-                    .locale(i18nService.parseLocaleOrDefault(studentEntity.getLanguage()))
+                    .locale(userLocale)
                     .build());
+            final String title = resolveString("notification_certificate_renewed_title", userLocale, new Object[]{
+                studentEntity.getName(), certificateRequest.getId().toString()});
+            final String body = resolveString("notification_certificate_renewed_body", userLocale, new Object[]{
+                studentEntity.getName(), certificateRequest.getId().toString()});
+            devicesManagementService.sendNotification(studentEntity.getId(), title, body);
         });
     }
 

@@ -6,7 +6,9 @@ import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
+import com.dreamsoftware.tcs.service.IDevicesManagementService;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.IssueCertificateRequestedNotificationEvent;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -28,6 +30,7 @@ public class IssueCertificateRequestedHandler extends AbstractNotificationHandle
     private final IMailClientService mailClientService;
     private final CertificateIssuanceRequestRepository certificateIssuanceRequestRepository;
     private final I18NService i18nService;
+    private final IDevicesManagementService devicesManagementService;
 
     /**
      *
@@ -41,21 +44,34 @@ public class IssueCertificateRequestedHandler extends AbstractNotificationHandle
             final Long qualification = certificateRequest.getQualification();
             final String certificationId = certificateRequest.getId().toString();
             final UserEntity studentEntity = certificateRequest.getStudent();
+            final Locale studentLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
             mailClientService.sendMail(IssueCertificateRequestMailRequestDTO
                     .builder()
                     .email(studentEntity.getEmail())
                     .qualification(qualification)
                     .certificateId(certificationId)
-                    .locale(i18nService.parseLocaleOrDefault(studentEntity.getLanguage()))
+                    .locale(studentLocale)
                     .build());
+            final String studentNotificationTitle = resolveString("notification_student_issue_certificate_requested_title", studentLocale, new Object[]{
+                studentEntity.getName()});
+            final String studentNotificationBody = resolveString("notification_student_issue_certificate_requested_body", studentLocale, new Object[]{
+                studentEntity.getName()});
+            devicesManagementService.sendNotification(studentEntity.getId(), studentNotificationTitle, studentNotificationBody);
             final UserEntity ca = certificateRequest.getCa();
+            final Locale caLocale = i18nService.parseLocaleOrDefault(ca.getLanguage());
             mailClientService.sendMail(IssueCertificateRequestMailRequestDTO
                     .builder()
                     .email(ca.getEmail())
                     .qualification(qualification)
                     .certificateId(certificationId)
-                    .locale(i18nService.parseLocaleOrDefault(ca.getLanguage()))
+                    .locale(caLocale)
                     .build());
+            final String caNotificationTitle = resolveString("notification_ca_issue_certificate_requested_title", caLocale, new Object[]{
+                studentEntity.getName()});
+            final String caNotificationBody = resolveString("notification_ca_issue_certificate_requested_body", caLocale, new Object[]{
+                studentEntity.getName()});
+            devicesManagementService.sendNotification(ca.getId(), caNotificationTitle, caNotificationBody);
+
         });
     }
 

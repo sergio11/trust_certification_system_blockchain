@@ -6,7 +6,9 @@ import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
+import com.dreamsoftware.tcs.service.IDevicesManagementService;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateRequestAcceptedNotificationEvent;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -28,6 +30,7 @@ public class CertificateRequestAcceptedHandler extends AbstractNotificationHandl
     private final IMailClientService mailClientService;
     private final CertificateIssuanceRequestRepository certificateIssuanceRequestRepository;
     private final I18NService i18nService;
+    private final IDevicesManagementService devicesManagementService;
 
     /**
      *
@@ -39,13 +42,19 @@ public class CertificateRequestAcceptedHandler extends AbstractNotificationHandl
         log.debug("CertificateRequestAcceptedEvent handled!");
         certificateIssuanceRequestRepository.findById(new ObjectId(notification.getId())).ifPresent((certificateRequest) -> {
             final UserEntity studentEntity = certificateRequest.getStudent();
+            final Locale userLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
             mailClientService.sendMail(CertificateRequestAcceptedMailRequestDTO
                     .builder()
                     .email(studentEntity.getEmail())
                     .qualification(certificateRequest.getQualification())
                     .certificateId(certificateRequest.getId().toString())
-                    .locale(i18nService.parseLocaleOrDefault(studentEntity.getLanguage()))
+                    .locale(userLocale)
                     .build());
+            final String title = resolveString("notification_certificate_request_accepted_title", userLocale, new Object[]{
+                studentEntity.getName(), certificateRequest.getId().toString()});
+            final String body = resolveString("notification_certificate_request_accepted_body", userLocale, new Object[]{
+                studentEntity.getName(), certificateRequest.getId().toString()});
+            devicesManagementService.sendNotification(studentEntity.getId(), title, body);
         });
     }
 

@@ -1,10 +1,20 @@
 package com.dreamsoftware.tcs.service;
 
+import org.bson.types.ObjectId;
+
 /**
  *
  * @author ssanchez
  */
 public interface IDevicesManagementService {
+
+    /**
+     *
+     * @param userId
+     * @param title
+     * @param body
+     */
+    void sendNotification(final ObjectId userId, final String title, final String body);
 
     /**
      *

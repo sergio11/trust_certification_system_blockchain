@@ -6,7 +6,9 @@ import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
+import com.dreamsoftware.tcs.service.IDevicesManagementService;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateEnabledNotificationEvent;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -27,6 +29,7 @@ public class CertificateEnabledHandler extends AbstractNotificationHandler<Certi
     private final IMailClientService mailClientService;
     private final CertificateIssuanceRequestRepository certificateIssuanceRequestRepository;
     private final I18NService i18nService;
+    private final IDevicesManagementService devicesManagementService;
 
     /**
      *
@@ -39,19 +42,18 @@ public class CertificateEnabledHandler extends AbstractNotificationHandler<Certi
         certificateIssuanceRequestRepository.findByCertificateId(notification.getId()).ifPresent((certificateRequest) -> {
             final String certificateId = certificateRequest.getId().toString();
             final UserEntity studentEntity = certificateRequest.getStudent();
+            final Locale userLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
             mailClientService.sendMail(CertificateEnabledMailRequestDTO
                     .builder()
                     .email(studentEntity.getEmail())
                     .certificateId(certificateId)
-                    .locale(i18nService.parseLocaleOrDefault(studentEntity.getLanguage()))
+                    .locale(userLocale)
                     .build());
-            final UserEntity ca = certificateRequest.getCa();
-            mailClientService.sendMail(CertificateEnabledMailRequestDTO
-                    .builder()
-                    .email(ca.getEmail())
-                    .certificateId(certificateId)
-                    .locale(i18nService.parseLocaleOrDefault(ca.getLanguage()))
-                    .build());
+            final String title = resolveString("notification_certificate_enabled_title", userLocale, new Object[]{
+                studentEntity.getName(), certificateId});
+            final String body = resolveString("notification_certificate_enabled_body", userLocale, new Object[]{
+                studentEntity.getName(), certificateId});
+            devicesManagementService.sendNotification(studentEntity.getId(), title, body);
         });
     }
 
