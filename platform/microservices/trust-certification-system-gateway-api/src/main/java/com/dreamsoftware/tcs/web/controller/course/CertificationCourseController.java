@@ -19,7 +19,6 @@ import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdmin;
-import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdminOrCa;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdminOrCourseOwner;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;

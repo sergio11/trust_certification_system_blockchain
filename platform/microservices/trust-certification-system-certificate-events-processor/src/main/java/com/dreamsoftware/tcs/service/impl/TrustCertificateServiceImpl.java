@@ -23,6 +23,9 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceReq
 import com.dreamsoftware.tcs.service.ICertificateSigningService;
 import org.apache.commons.io.FileUtils;
 import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -96,7 +99,9 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
         FileUtils.writeByteArrayToFile(certificateFile, certificateFileSignedBytes, false);
         // Save Certificate in IPFS node
         final String cid = ipfsService.save(certificateFile, true);
-        return trustCertificationBlockchainRepository.issueCertificate(event.getCaWalletHash(), event.getStudentWalletHash(), event.getCourseId(), event.getQualification(), cid);
+        // Generate SHA 256 from file
+        String certificateHash = Files.asByteSource(certificateFile).hash(Hashing.sha256()).toString();
+        return trustCertificationBlockchainRepository.issueCertificate(event.getCaWalletHash(), event.getStudentWalletHash(), event.getCourseId(), event.getQualification(), cid, certificateHash);
     }
 
     /**

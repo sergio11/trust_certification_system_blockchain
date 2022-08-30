@@ -19,11 +19,12 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
      * @param certificateCourseId
      * @param qualification
      * @param cid
+     * @param certificateHash
      * @return
      * @throws RepositoryException
      */
-    CertificateIssuedEntity issueCertificate(final String issuerWalletHash,
-            final String studentWalletHash, final String certificateCourseId, final Long qualification, final String cid) throws RepositoryException;
+    CertificateIssuedEntity issueCertificate(final String issuerWalletHash, final String studentWalletHash, final String certificateCourseId,
+            final Long qualification, final String cid, final String certificateHash) throws RepositoryException;
 
     /**
      * Renew Certificate
@@ -103,5 +104,13 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
      * @throws RepositoryException
      */
     List<CertificateIssuedEntity> getMyCertificatesAsIssuer(final String walletHash) throws RepositoryException;
+
+    /**
+     *
+     * @param certificateHash
+     * @return
+     * @throws RepositoryException
+     */
+    Boolean validateCertificateIntegrity(final String certificateHash) throws RepositoryException;
 
 }
