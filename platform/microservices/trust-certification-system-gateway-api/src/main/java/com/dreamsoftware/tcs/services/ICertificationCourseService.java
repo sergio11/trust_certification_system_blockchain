@@ -81,6 +81,20 @@ public interface ICertificationCourseService {
 
     /**
      *
+     * @return @throws Throwable
+     */
+    Iterable<CertificationCourseDetailDTO> getAll() throws Throwable;
+
+    /**
+     *
+     * @param caWalletHash
+     * @return
+     * @throws Throwable
+     */
+    Iterable<CertificationCourseDetailDTO> getAllByCA(final String caWalletHash) throws Throwable;
+
+    /**
+     *
      * @param courseId
      * @param userId
      * @return

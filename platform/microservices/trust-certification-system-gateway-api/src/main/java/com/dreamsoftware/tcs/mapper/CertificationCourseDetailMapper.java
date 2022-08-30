@@ -3,6 +3,7 @@ package com.dreamsoftware.tcs.mapper;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -24,6 +25,14 @@ public abstract class CertificationCourseDetailMapper {
     public abstract CertificationCourseDetailDTO entityToDTO(CertificationCourseModelEntity entity);
 
     /**
+     *
+     * @param entity
+     * @return
+     */
+    @IterableMapping(qualifiedByName = "entityToDTO")
+    public abstract Iterable<CertificationCourseDetailDTO> certificationCourseModelEntityToDTO(Iterable<CertificationCourseModelEntity> entity);
+
+    /**
      * @param entity
      * @return
      */
@@ -32,4 +41,12 @@ public abstract class CertificationCourseDetailMapper {
     })
     @Named("entityToDTO")
     public abstract CertificationCourseDetailDTO entityToDTO(CertificationCourseEntity entity);
+
+    /**
+     *
+     * @param entity
+     * @return
+     */
+    @IterableMapping(qualifiedByName = "entityToDTO")
+    public abstract Iterable<CertificationCourseDetailDTO> certificationCourseEntityToDTO(Iterable<CertificationCourseEntity> entity);
 }

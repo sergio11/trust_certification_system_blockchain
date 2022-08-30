@@ -5,6 +5,8 @@ import com.dreamsoftware.tcs.web.controller.course.CertificationCourseResponseCo
 import com.dreamsoftware.tcs.web.controller.course.error.exception.DeleteCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.DisableCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.EnableCertificationCourseException;
+import com.dreamsoftware.tcs.web.controller.course.error.exception.GetAllCertificationCoursesException;
+import com.dreamsoftware.tcs.web.controller.course.error.exception.GetAllCoursesByCaException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.GetCertificationCourseDetailException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.PartialUpdateCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.SaveCertificationCourseException;
@@ -111,5 +113,33 @@ public class CertificationCourseErrorController extends SupportController {
         log.error("Handler for PartialUpdateCertificationCourseException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.PARTIAL_CERTIFICATION_COURSE_UPDATE_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("partial_certification_course_update_failed", request));
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(GetAllCertificationCoursesException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetAllCertificationCoursesException(final GetAllCertificationCoursesException ex, final HttpServletRequest request) {
+        log.error("Handler for GetAllCertificationCoursesException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.GET_ALL_CERTIFICATION_COURSES_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_all_certification_courses_failed", request));
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(GetAllCoursesByCaException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetAllCoursesByCaException(final GetAllCoursesByCaException ex, final HttpServletRequest request) {
+        log.error("Handler for GetAllCoursesByCaException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.GET_CERTIFICATION_COURSES_BY_CA_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_certification_courses_by_ca_failed", request));
     }
 }
