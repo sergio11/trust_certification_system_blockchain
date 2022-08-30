@@ -230,4 +230,27 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
             return Optional.empty();
         }
     }
+
+    /**
+     *
+     * @return @throws Throwable
+     */
+    @Override
+    public Iterable<CertificationCourseDetailDTO> getAll() throws Throwable {
+        final Iterable<CertificationCourseModelEntity> certificationCourseList = certificationCourseBlockchainRepository.getAll();
+        return certificationCourseDetailMapper.certificationCourseModelEntityToDTO(certificationCourseList);
+    }
+
+    /**
+     *
+     * @param caWalletHash
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Iterable<CertificationCourseDetailDTO> getAllByCA(final String caWalletHash) throws Throwable {
+        Assert.notNull(caWalletHash, "CA wallet hash");
+        final Iterable<CertificationCourseModelEntity> certificationCourseList = certificationCourseBlockchainRepository.getAllByCa(caWalletHash);
+        return certificationCourseDetailMapper.certificationCourseModelEntityToDTO(certificationCourseList);
+    }
 }

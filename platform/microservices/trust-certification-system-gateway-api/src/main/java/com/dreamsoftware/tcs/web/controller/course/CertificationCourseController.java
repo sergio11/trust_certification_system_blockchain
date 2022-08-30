@@ -7,6 +7,8 @@ import com.dreamsoftware.tcs.web.controller.course.error.exception.Certification
 import com.dreamsoftware.tcs.web.controller.course.error.exception.DeleteCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.DisableCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.EnableCertificationCourseException;
+import com.dreamsoftware.tcs.web.controller.course.error.exception.GetAllCertificationCoursesException;
+import com.dreamsoftware.tcs.web.controller.course.error.exception.GetAllCoursesByCaException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.GetCertificationCourseDetailException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.PartialUpdateCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.SaveCertificationCourseException;
@@ -16,6 +18,8 @@ import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
+import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdmin;
+import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdminOrCa;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdminOrCourseOwner;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
@@ -60,6 +64,62 @@ public class CertificationCourseController extends SupportController {
      * Certification Course Service
      */
     private final ICertificationCourseService certificationCourseService;
+
+    /**
+     *
+     * @return @throws Throwable
+     */
+    @Operation(summary = "GET_ALL_COURSES - Get All courses", description = "Get All courses", tags = {"COURSE"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Course Detail",
+                content = @Content(schema = @Schema(implementation = CertificationCourseDetailDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Course Not Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/all"}, method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdmin
+    public ResponseEntity<APIResponse<Iterable<CertificationCourseDetailDTO>>> getAllCourses() throws Throwable {
+        try {
+            final Iterable<CertificationCourseDetailDTO> courseList = certificationCourseService.getAll();
+            return responseHelper.<Iterable<CertificationCourseDetailDTO>>createAndSendResponse(
+                    CertificationCourseResponseCodeEnum.GET_ALL_CERTIFICATION_COURSES,
+                    HttpStatus.OK, courseList);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new GetAllCertificationCoursesException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "GET_ALL_COURSES_BY_CA - Get All courses by CA", description = "Get All courses by CA", tags = {"COURSE"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Course Detail",
+                content = @Content(schema = @Schema(implementation = CertificationCourseDetailDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Course Not Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCA
+    public ResponseEntity<APIResponse<Iterable<CertificationCourseDetailDTO>>> getAllByCA(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser) throws Throwable {
+        try {
+            final Iterable<CertificationCourseDetailDTO> courseListByCa = certificationCourseService.getAllByCA(selfUser.getWalletHash());
+            return responseHelper.<Iterable<CertificationCourseDetailDTO>>createAndSendResponse(
+                    CertificationCourseResponseCodeEnum.GET_CERTIFICATION_COURSES_BY_CA,
+                    HttpStatus.OK, courseListByCa);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new GetAllCoursesByCaException(ex.getMessage(), ex);
+        }
+    }
 
     /**
      * Save Certification Course
