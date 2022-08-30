@@ -63,7 +63,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public CertificateIssuedDTO enable(String ownerWallet, String certificationId) throws Throwable {
+    public CertificateIssuedDTO enable(final String ownerWallet, final String certificationId) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
         final CertificateIssuedEntity certificate = trustCertificationRepository.enable(ownerWallet, certificationId);
@@ -82,7 +82,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public CertificateIssuedDTO disable(String ownerWallet, String certificationId) throws Throwable {
+    public CertificateIssuedDTO disable(final String ownerWallet, final String certificationId) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
         final CertificateIssuedEntity certificate = trustCertificationRepository.disable(ownerWallet, certificationId);
@@ -102,7 +102,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public CertificateIssuedDTO updateVisibility(String ownerWallet, String certificationId, Boolean isVisible) throws Throwable {
+    public CertificateIssuedDTO updateVisibility(final String ownerWallet, final String certificationId, final Boolean isVisible) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
         final CertificateIssuedEntity certificate = trustCertificationRepository.updateCertificateVisibility(ownerWallet, certificationId, isVisible);
@@ -122,7 +122,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public CertificateIssuedDTO getDetail(String ownerWallet, String certificationId) throws Throwable {
+    public CertificateIssuedDTO getDetail(final String ownerWallet, final String certificationId) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
         final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(ownerWallet, certificationId);
@@ -137,7 +137,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public Boolean isCertificateValid(String ownerWallet, String certificationId) throws Throwable {
+    public Boolean isCertificateValid(final String ownerWallet, final String certificationId) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
         return trustCertificationRepository.isCertificateValid(ownerWallet, certificationId);
@@ -150,7 +150,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public Iterable<CertificateIssuedDTO> getMyCertificatesAsRecipient(String ownerWallet) throws Throwable {
+    public Iterable<CertificateIssuedDTO> getMyCertificatesAsRecipient(final String ownerWallet) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         final List<CertificateIssuedEntity> myCertificates = trustCertificationRepository.getMyCertificatesAsRecipient(ownerWallet);
         return certificateIssuedMapper.entityToDTO(myCertificates);
@@ -163,7 +163,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public Iterable<CertificateIssuedDTO> getMyCertificatesAsIssuer(String ownerWallet) throws Throwable {
+    public Iterable<CertificateIssuedDTO> getMyCertificatesAsIssuer(final String ownerWallet) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         final List<CertificateIssuedEntity> myCertificates = trustCertificationRepository.getMyCertificatesAsIssuer(ownerWallet);
         return certificateIssuedMapper.entityToDTO(myCertificates);
@@ -175,7 +175,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public CertificateIssuanceRequestDTO issueCertificateRequest(IssueCertificateRequestDTO issueCertificate) throws Throwable {
+    public CertificateIssuanceRequestDTO issueCertificateRequest(final IssueCertificateRequestDTO issueCertificate) throws Throwable {
         Assert.notNull(issueCertificate.getStudentWalletHash(), "Student Wallet Hash can not be null");
         Assert.notNull(issueCertificate.getCertificateCourseId(), "certificateCourseId can not be null");
         Assert.notNull(issueCertificate.getQualification(), "qualification can not be null");
@@ -206,7 +206,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @param id
      */
     @Override
-    public CertificateIssuanceRequestDTO acceptCertificateRequest(ObjectId id) {
+    public CertificateIssuanceRequestDTO acceptCertificateRequest(final ObjectId id) {
         Assert.notNull(id, "Id can not be null");
         final CertificateIssuanceRequestEntity certificate = certificateIssuanceRequestRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Certificate not found"));
@@ -231,7 +231,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @param id
      */
     @Override
-    public CertificateIssuanceRequestDTO rejectCertificateRequest(ObjectId id) {
+    public CertificateIssuanceRequestDTO rejectCertificateRequest(final ObjectId id) {
         Assert.notNull(id, "Id can not be null");
         final CertificateIssuanceRequestEntity certificateRequestUpdated = certificateIssuanceRequestRepository.updateStatus(id, CertificateStatusEnum.REJECTED);
         final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = certificateIssuanceRequestMapper.entityToDTO(certificateRequestUpdated);

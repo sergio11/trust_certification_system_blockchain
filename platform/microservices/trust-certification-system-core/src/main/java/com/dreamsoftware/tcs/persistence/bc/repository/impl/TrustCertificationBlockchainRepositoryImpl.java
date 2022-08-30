@@ -42,19 +42,22 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
      * @param studentWalletHash
      * @param certificateCourseId
      * @param qualification
+     * @param cid
+     * @param certificateHash
      * @throws RepositoryException
      */
     @Override
-    public CertificateIssuedEntity issueCertificate(final String issuerWalletHash, final String studentWalletHash, final String certificateCourseId, final Long qualification, final String cid) throws RepositoryException {
+    public CertificateIssuedEntity issueCertificate(final String issuerWalletHash, final String studentWalletHash, final String certificateCourseId, final Long qualification, final String cid, final String certificateHash) throws RepositoryException {
         Assert.notNull(issuerWalletHash, "Issuer Wallet can not be null");
         Assert.notNull(studentWalletHash, "Student Wallet Hash can not be null");
         Assert.notNull(certificateCourseId, "certificate Course Id can not be null");
-        Assert.notNull(qualification, "qualification can not be null");
+        Assert.notNull(cid, "cid can not be null");
+        Assert.notNull(certificateHash, "certificateHash can not be null");
         log.debug("issueCertificate CALLED!");
         try {
             final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(issuerWalletHash);
             final Credentials studentCredentials = walletService.loadCredentials(studentWalletHash);
-            final TransactionReceipt transactionReceipt = trustCertificationContract.issueCertificate(studentCredentials.getAddress(), certificateCourseId, BigInteger.valueOf(qualification), cid).send();
+            final TransactionReceipt transactionReceipt = trustCertificationContract.issueCertificate(studentCredentials.getAddress(), certificateCourseId, BigInteger.valueOf(qualification), cid, certificateHash).send();
             final List<TrustCertificationContract.OnNewCertificateGeneratedEventResponse> events = trustCertificationContract.getOnNewCertificateGeneratedEvents(transactionReceipt);
             final String certificationId = events.get(0)._id;
             final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();
@@ -244,6 +247,24 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
 
     /**
      *
+     * @param certificateHash
+     * @return
+     * @throws RepositoryException
+     */
+    @Override
+    public Boolean validateCertificateIntegrity(final String certificateHash) throws RepositoryException {
+        Assert.notNull(certificateHash, "certificateHash can not be null");
+        log.debug("validateCertificateIntegrity CALLED!");
+        try {
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract();
+            return trustCertificationContract.validateCertificateIntegrity(certificateHash).send();
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
      * @return @throws RepositoryException
      */
     @Override
@@ -277,7 +298,17 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
     private TrustCertificationContract loadTrustCertificationContract(final String walletHash) throws LoadWalletException {
         final Credentials credentials = walletService.loadCredentials(walletHash);
         final FastRawTransactionManager txManager = new FastRawTransactionManager(web3j, credentials, properties.getChainId());
-        return TrustCertificationContract.load(properties.getCertificationCourseContractAddress(),
+        return TrustCertificationContract.load(properties.getTrustCertificationContractAddress(),
                 web3j, txManager, properties.gas());
     }
+
+    /**
+     *
+     * @return
+     */
+    private TrustCertificationContract loadTrustCertificationContract() {
+        return TrustCertificationContract.load(properties.getTrustCertificationContractAddress(),
+                web3j, rootTxManager, properties.gas());
+    }
+
 }

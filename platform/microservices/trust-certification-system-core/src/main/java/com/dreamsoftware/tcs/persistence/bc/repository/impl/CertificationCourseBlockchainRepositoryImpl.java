@@ -286,7 +286,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @return
      * @throws Exception
      */
-    private CertificationCourseModelEntity getCertificationCourseDetail(CertificationCourseContract certificationCourseContract, String courseId) throws Exception {
+    private CertificationCourseModelEntity getCertificationCourseDetail(final CertificationCourseContract certificationCourseContract, final String courseId) throws Exception {
         final CertificationCourseRecord certificationCourseDetail = certificationCourseContract.getCertificateCourseDetail(courseId).send();
         return certificationCourseEntityMapper.courseRecordToCertificationCourseEntity(certificationCourseDetail);
     }

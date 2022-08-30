@@ -74,4 +74,9 @@ public class CertificateIssuedEntity {
      * Certificate CID
      */
     private String cid;
+
+    /**
+     * Certificate Hash
+     */
+    private String certificateHash;
 }
