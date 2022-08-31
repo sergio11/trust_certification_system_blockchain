@@ -99,4 +99,10 @@ public class UserEntity {
     @DBRef
     private AuthorityEntity authority;
 
+    /**
+     * Avatar
+     */
+    @DBRef
+    private ImageDataEntity avatar;
+
 }

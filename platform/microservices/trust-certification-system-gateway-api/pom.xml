@@ -17,6 +17,8 @@
         <poi.version>4.1.2</poi.version>
         <jsonwebtoken.version>0.7.0</jsonwebtoken.version>
         <paypel.checkout.sdk>2.0.0</paypel.checkout.sdk>
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
+        <commons-io.version>2.11.0</commons-io.version>
     </properties>
 
     <parent>
@@ -37,8 +39,17 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>1.9.4</version>
+            <version>${commons-beanutils.version}</version>
         </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>com.paypal.sdk</groupId>
