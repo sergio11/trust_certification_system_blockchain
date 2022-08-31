@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.web.core;
 
+import com.dreamsoftware.tcs.web.uploads.models.UploadFileInfo;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -230,10 +231,25 @@ public class ResponseHelper {
     /**
      * Create And Send Media Response
      *
+     * @param fileInfoDTO
+     * @return
+     */
+    public ResponseEntity<byte[]> createAndSendMediaResponse(final FileInfoDTO fileInfoDTO) {
+        return ResponseEntity.ok()
+                .contentLength(fileInfoDTO.getSize())
+                .contentType(fileInfoDTO.getContentType() != null
+                        ? MediaType.parseMediaType(fileInfoDTO.getContentType())
+                        : MediaType.IMAGE_PNG)
+                .body(fileInfoDTO.getContent());
+    }
+
+    /**
+     * Create And Send Media Response
+     *
      * @param uploadFileInfo
      * @return
      */
-    public ResponseEntity<byte[]> createAndSendMediaResponse(final FileInfoDTO uploadFileInfo) {
+    public ResponseEntity<byte[]> createAndSendMediaResponse(final UploadFileInfo uploadFileInfo) {
         return ResponseEntity.ok()
                 .contentLength(uploadFileInfo.getSize())
                 .contentType(uploadFileInfo.getContentType() != null

@@ -8,7 +8,6 @@ import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAccountException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ResetPasswordRequestException;
-import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
 import com.dreamsoftware.tcs.web.dto.request.RefreshTokenDTO;
 import com.dreamsoftware.tcs.web.dto.request.ResetPasswordRequestDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;

@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.web.validation.constraints;
 
-import com.dreamsoftware.tcs.web.validation.validator.ValidPdfFileValidator;
+import com.dreamsoftware.tcs.web.validation.validator.ValidPhotoValidator;
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.CONSTRUCTOR;
@@ -16,9 +16,9 @@ import javax.validation.Payload;
 
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
-@Constraint(validatedBy = ValidPdfFileValidator.class)
+@Constraint(validatedBy = ValidPhotoValidator.class)
 @Documented
-public @interface ValidPdfFile {
+public @interface ValidPhoto {
 
     String message() default "{constraints.email.unique}";
 
