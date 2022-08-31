@@ -12,6 +12,7 @@ import com.dreamsoftware.tcs.web.controller.certification.error.exception.IssueC
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.RejectCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.RenewCertificateException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.UpdateCertificateVisibilityException;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.ValidateCertificateFileException;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
@@ -188,6 +189,20 @@ public class TrustCertificationErrorController extends SupportController {
         logger.error("Handler for DownloadCertificateFileException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.DOWNLOAD_CERTIFICATE_FILE_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("download_certificate_file_failed", request));
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(ValidateCertificateFileException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleValidateCertificateFileException(final ValidateCertificateFileException ex, HttpServletRequest request) {
+        logger.error("Handler for ValidateCertificateFileException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_VALIDATION_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("validate_certificate_failed", request));
     }
 
 }
