@@ -5,6 +5,7 @@ import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
 import org.bson.types.ObjectId;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -132,4 +133,12 @@ public interface ITrustCertificationService {
      * @throws Exception
      */
     FileInfoDTO getCertificateFile(final String ownerWallet, final String certificateId) throws Exception;
+
+    /**
+     *
+     * @param certificateFile
+     * @return
+     * @throws Exception
+     */
+    Boolean validateCertificate(final MultipartFile certificateFile) throws Exception;
 }

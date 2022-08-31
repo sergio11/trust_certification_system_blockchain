@@ -12,6 +12,7 @@ import com.dreamsoftware.tcs.web.controller.certification.error.exception.IssueC
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.RejectCertificateRequestException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.RenewCertificateException;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.UpdateCertificateVisibilityException;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.ValidateCertificateFileException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
@@ -43,6 +44,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.dreamsoftware.tcs.web.validation.constraints.CertificateShouldBePendingReview;
+import com.dreamsoftware.tcs.web.validation.constraints.ValidPdfFile;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -442,5 +447,28 @@ public class TrustCertificationController extends SupportController {
             throw new DownloadCertificateFileException(ex.getMessage(), ex);
         }
 
+    }
+
+    /**
+     * Validate Certificate
+     *
+     * @param certificateFile
+     * @param request
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "VALIDATE_CERTIFICATE - Validate Certificate", description = "Validate Certificate", tags = {"CERTIFICATE_ISSUED"})
+    @RequestMapping(value = "/validate", method = RequestMethod.POST,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<String>> uploadProfileImage(
+            @Valid @RequestPart("certificate") @ValidPdfFile(message = "{certificate_has_invalid_format}") MultipartFile certificateFile,
+            @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
+        try {
+            final Boolean validationResult = trustCertificationService.validateCertificate(certificateFile);
+            return responseHelper.createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_VALIDATION_COMPLETED, HttpStatus.OK,
+                    resolveString(validationResult ? "certificate_is_valid" : "certificate_is_not_valid", request));
+        } catch (final Exception ex) {
+            throw new ValidateCertificateFileException(ex.getMessage(), ex);
+        }
     }
 }

@@ -32,9 +32,14 @@ import com.dreamsoftware.tcs.stream.events.notifications.certificate.Certificate
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.IssueCertificateRequestedNotificationEvent;
 import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
+import com.google.common.io.ByteSource;
+import com.google.common.io.Files;
 import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -302,5 +307,18 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
                 .contentType(MediaType.APPLICATION_PDF_VALUE)
                 .size((long) fileContents.length)
                 .build();
+    }
+
+    /**
+     *
+     * @param certificateFile
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Boolean validateCertificate(final MultipartFile certificateFile) throws Exception {
+        Assert.notNull(certificateFile, "certificateFile can not be null");
+        String certificateHash = ByteSource.wrap(certificateFile.getBytes()).hash(Hashing.sha256()).toString();
+        return trustCertificationRepository.validateCertificateIntegrity(certificateHash);
     }
 }
