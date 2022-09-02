@@ -3,8 +3,7 @@ package com.dreamsoftware.tcs.config.properties;
 import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import lombok.Data;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 
@@ -15,9 +14,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 @Configuration
 @Data
 @RefreshScope
+@Slf4j
 public class PaypalProperties {
-
-    private Logger logger = LoggerFactory.getLogger(PaypalProperties.class);
 
     /**
      * Client Id
@@ -33,7 +31,7 @@ public class PaypalProperties {
 
     @PostConstruct
     public void onPostConstruct() {
-        logger.debug("Paypal Client Id: " + clientId);
-        logger.debug("Paypal Client Secret: " + clientSecret);
+        log.debug("Paypal Client Id: " + clientId);
+        log.debug("Paypal Client Secret: " + clientSecret);
     }
 }

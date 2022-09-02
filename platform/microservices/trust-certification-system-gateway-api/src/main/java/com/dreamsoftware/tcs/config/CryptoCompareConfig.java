@@ -5,7 +5,6 @@ import com.dreamsoftware.tcs.web.interceptors.HeaderRequestInterceptor;
 import com.dreamsoftware.tcs.web.interceptors.LoggingRequestInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
  * @author ssanchez
  */
 @Configuration
-@EnableEncryptableProperties
 public class CryptoCompareConfig {
 
     /**
