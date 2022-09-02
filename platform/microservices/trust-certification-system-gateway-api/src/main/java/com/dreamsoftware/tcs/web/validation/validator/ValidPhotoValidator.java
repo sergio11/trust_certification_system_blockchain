@@ -15,7 +15,8 @@ public class ValidPhotoValidator implements ConstraintValidator<ValidPdfFile, Mu
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext cvc) {
         final MediaType fileMediaType = MediaType.parseMediaType(file.getContentType());
-        return !file.isEmpty() && fileMediaType.equals(MediaType.APPLICATION_PDF);
+        return !file.isEmpty() && (fileMediaType.equals(MediaType.IMAGE_PNG)
+                || fileMediaType.equals(MediaType.IMAGE_JPEG) || fileMediaType.equals(MediaType.IMAGE_GIF));
     }
 
 }

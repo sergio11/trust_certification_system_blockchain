@@ -3,8 +3,7 @@ package com.dreamsoftware.tcs.web.security.config;
 import com.dreamsoftware.tcs.web.security.filter.JwtAuthenticationTokenFilter;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,9 +24,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 @Import(value = {CommonSecurityConfig.class, AuthenticationProvidersConfig.class})
+@Slf4j
 public class WebSecurityConfig {
-
-    private static Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
 
     /**
      * Povide Authentication Filter
@@ -95,6 +93,6 @@ public class WebSecurityConfig {
 
     @PostConstruct
     public void init() {
-        logger.info("Init Web Security Configuration ...");
+        log.info("Init Web Security Configuration ...");
     }
 }
