@@ -1,7 +1,8 @@
-package com.dreamsoftware.tcs.config;
+package com.dreamsoftware.tcs.web.security.config;
 
 import com.dreamsoftware.tcs.config.properties.LdapProperties;
-import com.dreamsoftware.tcs.web.security.provider.LdapUserDetailsService;
+import com.dreamsoftware.tcs.web.security.provider.AdminProviderImpl;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -26,10 +27,10 @@ import org.springframework.util.Assert;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-public class LdapAuthenticationConfig {
+public class AdminsAuthenticationConfig {
 
     private final LdapProperties ldapProperties;
-    private final LdapUserDetailsService userDetailsService;
+    private final AdminProviderImpl userDetailsService;
 
     /**
      * Provide Authentication Strategy
@@ -125,5 +126,10 @@ public class LdapAuthenticationConfig {
         final LdapAuthenticationProvider authenticationProvider = new LdapAuthenticationProvider(ldapAuthenticator, ldapAuthoritiesPopulator);
         authenticationProvider.setUserDetailsContextMapper(userDetailsService);
         return authenticationProvider;
+    }
+
+    @PostConstruct
+    protected void init() {
+        log.info("init AdminsAuthenticationConfig ...");
     }
 }

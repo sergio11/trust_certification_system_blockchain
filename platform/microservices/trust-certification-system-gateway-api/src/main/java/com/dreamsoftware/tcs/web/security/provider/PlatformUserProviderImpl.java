@@ -15,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author ssanchez
  */
-@Service("UserDetailsService")
+@Service("platformUserProvider")
 @RequiredArgsConstructor
 @Slf4j
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class PlatformUserProviderImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserDetailsMapper userDetailsMapper;

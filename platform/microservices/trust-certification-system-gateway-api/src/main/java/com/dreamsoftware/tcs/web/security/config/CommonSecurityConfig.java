@@ -1,9 +1,7 @@
 package com.dreamsoftware.tcs.web.security.config;
 
 import javax.annotation.PostConstruct;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,10 +12,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * @author ssanchez
  */
 @Configuration
+@Slf4j
 public class CommonSecurityConfig {
 
-    private Logger logger = LoggerFactory.getLogger(CommonSecurityConfig.class);
-
+    /**
+     * Provide Password Encoder
+     *
+     * @return
+     */
     @Bean
     public PasswordEncoder providePasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -25,6 +27,6 @@ public class CommonSecurityConfig {
 
     @PostConstruct
     protected void init() {
-        logger.info("init Common Security Config ...");
+        log.info("init Common Security Config ...");
     }
 }
