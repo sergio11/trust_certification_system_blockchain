@@ -96,6 +96,47 @@ services:
     networks:
       - tcs_network
 
+  ## OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol, 
+  ## which makes it possible for organizations to use centralized authentication and directory access services over a network.
+  openldap:
+    image: osixia/openldap:latest
+    container_name: openldap
+    volumes:
+      - openldap-data:/var/lib/ldap
+      - openldap-data:/etc/ldap/slapd.d
+    environment:
+      - LDAP_ORGANISATION=trustcertificationsystem
+      - LDAP_DOMAIN=trustcertificationsystem.org
+      - LDAP_ADMIN_PASSWORD=change_me
+      - LDAP_RFC2307BIS_SCHEMA=true
+      - LDAP_REMOVE_CONFIG_AFTER_SETUP=true
+      - LDAP_TLS_VERIFY_CLIENT=never
+    ports:
+      - 389:389
+      - 636:636
+    networks:
+      - openldap
+
+  openldap-ui:
+    image: wheelybird/ldap-user-manager:latest
+    container_name: openldap-ui
+    environment:
+      - SERVER_HOSTNAME=localhost
+      - LDAP_URI=ldap://openldap
+      - LDAP_BASE_DN=dc=trustcertificationsystem,dc=org
+      - LDAP_ADMINS_GROUP=admins
+      - LDAP_ADMIN_BIND_DN=cn=admin,dc=trustcertificationsystem,dc=org
+      - LDAP_ADMIN_BIND_PWD=change_me
+      - LDAP_IGNORE_CERT_ERRORS=true
+      - NO_HTTPS=TRUE
+    depends_on:
+      - openldap
+    ports:
+      - 18080:80
+    networks:
+      - openldap
+
+
   # MongoDB is a free and open-source cross-platform document-oriented database program
   mongo:
     image: mongo
