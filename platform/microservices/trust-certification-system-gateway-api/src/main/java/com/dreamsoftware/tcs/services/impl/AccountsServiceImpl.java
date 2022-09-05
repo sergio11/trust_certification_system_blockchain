@@ -2,12 +2,15 @@ package com.dreamsoftware.tcs.services.impl;
 
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.SignUpUserMapper;
+import com.dreamsoftware.tcs.mapper.SimpleUserLoginMapper;
 import com.dreamsoftware.tcs.mapper.SimpleUserMapper;
 import com.dreamsoftware.tcs.mapper.UserDetailsMapper;
 import com.dreamsoftware.tcs.stream.events.user.OnNewUserRegistrationEvent;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserLoginEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserLoginPlatformEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
+import com.dreamsoftware.tcs.persistence.nosql.repository.UserLoginRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IWalletService;
 import com.dreamsoftware.tcs.services.IAccountsService;
@@ -33,7 +36,9 @@ import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
 import com.dreamsoftware.tcs.stream.events.notifications.users.PasswordResetNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.users.UserPendingValidationNotificationEvent;
 import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
+import com.dreamsoftware.tcs.web.dto.response.SimpleUserLoginDTO;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -58,6 +63,8 @@ public class AccountsServiceImpl implements IAccountsService {
     private final StreamBridge streamBridge;
     private final StreamChannelsProperties streamChannelsProperties;
     private final IPasswordResetTokenService passwordResetTokenService;
+    private final UserLoginRepository userLoginRepository;
+    private final SimpleUserLoginMapper simpleUserLoginMapper;
 
     /**
      *
@@ -66,23 +73,16 @@ public class AccountsServiceImpl implements IAccountsService {
      * @return
      */
     @Override
-    public AuthenticationDTO signin(SignInUserDTO dto, Device device) {
-        Assert.notNull(dto, "Auth Request DTO can not be null");
+    public AuthenticationDTO signin(final SignInUserDTO dto, final Device device) {
+        Assert.notNull(dto, "DTO can not be null");
         Assert.notNull(device, "Device can not be null");
 
+        final Float loginLat = StringUtils.isNoneEmpty(dto.getLatitude())
+                ? Float.valueOf(dto.getLatitude()) : null;
+        final Float loginLon = StringUtils.isNoneEmpty(dto.getLongitude())
+                ? Float.valueOf(dto.getLongitude()) : null;
         final Authentication authRequest = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
-
-        // Get User details for authentication request
-        final ICommonUserDetailsAware<ObjectId> userDetails = getUserDetails(authRequest);
-
-        // Generate Access Token
-        final AccessTokenDTO accessTokenDTO = jwtTokenHelper.generateToken(userDetails, device);
-
-        // Generate and return Authentication Response
-        return AuthenticationDTO.builder()
-                .accessToken(accessTokenDTO)
-                .type(AUTH_TYPE)
-                .build();
+        return signin(authRequest, loginLat, loginLon, dto.getUserAgent(), device);
     }
 
     /**
@@ -207,6 +207,68 @@ public class AccountsServiceImpl implements IAccountsService {
         final Authentication authentication = authenticationManager.authenticate(authRequest);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return (ICommonUserDetailsAware<ObjectId>) authentication.getPrincipal();
+    }
+
+    /**
+     *
+     * @param userDetails
+     * @param device
+     * @return
+     */
+    private AuthenticationDTO signin(
+            final Authentication authenticationRequest,
+            final Float latitude,
+            final Float longitude,
+            final String userAgent,
+            final Device device) {
+
+        Assert.notNull(authenticationRequest, "Authentication can not be null");
+        Assert.notNull(latitude, "latitude can not be null");
+        Assert.notNull(longitude, "longitude can not be null");
+        Assert.notNull(userAgent, "userAgent can not be null");
+        Assert.notNull(device, "Device can not be null");
+
+        // Get User details for authentication request
+        final ICommonUserDetailsAware<ObjectId> userDetails = getUserDetails(authenticationRequest);
+
+        // Generate Access Token
+        final AccessTokenDTO accessTokenDTO = jwtTokenHelper.generateToken(userDetails, device);
+
+        // Get last success login
+        final SimpleUserLoginDTO lastLoginDTO = userLoginRepository.findFirstByUserIdOrderByCreateAtDesc(userDetails.getUserId())
+                .map(simpleUserLoginMapper::entityToDTO).orElse(null);
+
+        // Save Current success login
+        UserLoginPlatformEnum loginPlatform;
+        switch (device.getDevicePlatform()) {
+            case ANDROID:
+                loginPlatform = UserLoginPlatformEnum.ANDROID;
+                break;
+            case IOS:
+                loginPlatform = UserLoginPlatformEnum.IOS;
+                break;
+            default:
+                loginPlatform = UserLoginPlatformEnum.WEB;
+        }
+
+        userRepository.findById(userDetails.getUserId()).ifPresent((userEntity) -> {
+            final UserLoginEntity loginEntity = UserLoginEntity.builder()
+                    .locationLat(latitude)
+                    .locationLong(longitude)
+                    .userAgent(userAgent)
+                    .platform(loginPlatform)
+                    .user(userEntity)
+                    .build();
+            // track user login
+            userLoginRepository.save(loginEntity);
+        });
+
+        // Generate and return Authentication Response
+        return AuthenticationDTO.builder()
+                .accessToken(accessTokenDTO)
+                .type(AUTH_TYPE)
+                .lastLogin(lastLoginDTO)
+                .build();
     }
 
 }

@@ -44,6 +44,20 @@ public class SignInUserDTO {
     private String password;
 
     /**
+     * Latitude
+     */
+    @Schema(description = "Current Latitude value", required = false)
+    @JsonProperty("latitude")
+    private String latitude;
+
+    /**
+     * Longitude
+     */
+    @Schema(description = "Current Longitude", required = false)
+    @JsonProperty("longitude")
+    private String longitude;
+
+    /**
      * User agent
      */
     @Parameter(hidden = true)
