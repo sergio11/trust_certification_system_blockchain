@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.ExternalTlsDirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.LdapContextSource;
@@ -120,9 +121,10 @@ public class AdminsAuthenticationConfig {
      * @return
      */
     @Bean
+    @Order(1)
     public AuthenticationProvider provideAuthenticationProvider(final LdapAuthenticator ldapAuthenticator, final LdapAuthoritiesPopulator ldapAuthoritiesPopulator) {
-        Assert.state(ldapAuthenticator != null, "LdapAuthenticator must be provided");
-        Assert.state(ldapAuthoritiesPopulator != null, "LdapAuthoritiesPopulator must be provided");
+        Assert.notNull(ldapAuthenticator, "LdapAuthenticator must be provided");
+        Assert.notNull(ldapAuthoritiesPopulator, "LdapAuthoritiesPopulator must be provided");
         final LdapAuthenticationProvider authenticationProvider = new LdapAuthenticationProvider(ldapAuthenticator, ldapAuthoritiesPopulator);
         authenticationProvider.setUserDetailsContextMapper(userDetailsService);
         return authenticationProvider;
