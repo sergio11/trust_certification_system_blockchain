@@ -28,4 +28,10 @@ public class AuthenticationDTO {
     @JsonProperty("type")
     private String type;
 
+    /**
+     * Last Login
+     */
+    @JsonProperty("last_login")
+    private SimpleUserLoginDTO lastLogin;
+
 }

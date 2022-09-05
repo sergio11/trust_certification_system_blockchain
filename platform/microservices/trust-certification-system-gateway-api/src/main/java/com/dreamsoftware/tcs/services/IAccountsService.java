@@ -19,7 +19,7 @@ public interface IAccountsService {
      * @param device
      * @return
      */
-    AuthenticationDTO signin(final SignInUserDTO dto, Device device);
+    AuthenticationDTO signin(final SignInUserDTO dto, final Device device);
 
     /**
      * Refresh Access Token
