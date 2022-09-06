@@ -1,12 +1,17 @@
 package com.dreamsoftware.tcs.web.controller.users;
 
 import com.dreamsoftware.tcs.services.IUploadImagesService;
+import com.dreamsoftware.tcs.services.IUserService;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
+import com.dreamsoftware.tcs.web.controller.users.error.exception.DeleteLoginHistoryException;
 import com.dreamsoftware.tcs.web.controller.users.error.exception.DeleteProfileAvatarException;
+import com.dreamsoftware.tcs.web.controller.users.error.exception.GetLoginHistoryException;
 import com.dreamsoftware.tcs.web.controller.users.error.exception.UploadProfileImageException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
+import com.dreamsoftware.tcs.web.dto.response.UserLoginDTO;
 import com.dreamsoftware.tcs.web.dto.response.UserPhotoDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
+import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdmin;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import com.dreamsoftware.tcs.web.uploads.models.RequestUploadFile;
 import com.dreamsoftware.tcs.web.uploads.models.UploadFileInfo;
@@ -27,10 +32,13 @@ import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,7 +57,64 @@ public class UsersController extends SupportController {
 
     @Qualifier("UploadUserAvatarService")
     private final IUploadImagesService uploadUserAvatarService;
+    private final IUserService userService;
     private final ResourceLoader resourceLoader;
+
+    /**
+     *
+     * @param id
+     * @param page
+     * @param size
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "GET_LOGIN_HISTORY", description = "Get Login History for current user authenticated")
+    @RequestMapping(value = "{id}/login_history", method = RequestMethod.GET)
+    @OnlyAccessForAdmin
+    public ResponseEntity<APIResponse<Page<UserLoginDTO>>> getLoginHistory(
+            @Parameter(name = "id", description = "User Id", required = true)
+            @PathVariable @Valid
+            final String id,
+            @RequestParam(name = "page", required = false, defaultValue = "0") final Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "20") final Integer size) throws Throwable {
+        try {
+            final Page<UserLoginDTO> loginHistoryPage = userService.findLoginHistoryByUserIdPaginated(new ObjectId(id), page, size);
+            return responseHelper.createAndSendResponse(UsersResponseCodeEnum.GET_LOGIN_HISTORY_SUCCESSFULLY,
+                    HttpStatus.OK, loginHistoryPage);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new GetLoginHistoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param id
+     * @param request
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "DELETE_LOGIN_HISTORY", description = "Delete Login History for current user authenticated")
+    @RequestMapping(value = "{id}/login_history", method = RequestMethod.DELETE)
+    @OnlyAccessForAdmin
+    public ResponseEntity<APIResponse<String>> deleteLoginHistory(
+            @Parameter(name = "id", description = "User Id", required = true)
+            @PathVariable @Valid
+            final String id,
+            @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
+
+        try {
+            userService.deleteLoginHistoryForUserId(new ObjectId(id));
+            return responseHelper.createAndSendResponse(UsersResponseCodeEnum.DELETE_LOGIN_HISTORY_SUCCESSFULLY,
+                    HttpStatus.OK, resolveString("login_history_deleted", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new DeleteLoginHistoryException(ex.getMessage(), ex);
+        }
+
+    }
 
     /**
      * Upload Profile Image for Self User
