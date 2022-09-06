@@ -80,7 +80,7 @@ public class TrustCertificationController extends SupportController {
     public ResponseEntity<APIResponse<CertificateIssuedDTO>> enable(
             @Parameter(name = "id", description = "Certificate Id", required = true)
             @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.enable(selfUser.getWalletHash(), id);
@@ -106,7 +106,7 @@ public class TrustCertificationController extends SupportController {
     public ResponseEntity<APIResponse<CertificateIssuedDTO>> disable(
             @Parameter(name = "id", description = "Certificate Id", required = true)
             @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.disable(selfUser.getWalletHash(), id);
@@ -132,7 +132,7 @@ public class TrustCertificationController extends SupportController {
     public ResponseEntity<APIResponse<CertificateIssuedDTO>> visible(
             @Parameter(name = "id", description = "Certificate Id", required = true)
             @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.updateVisibility(selfUser.getWalletHash(), id, true);
@@ -158,7 +158,7 @@ public class TrustCertificationController extends SupportController {
     public ResponseEntity<APIResponse<CertificateIssuedDTO>> invisible(
             @Parameter(name = "id", description = "Certificate Id", required = true)
             @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.updateVisibility(selfUser.getWalletHash(), id, false);
@@ -189,7 +189,7 @@ public class TrustCertificationController extends SupportController {
     public ResponseEntity<APIResponse<CertificateIssuedDTO>> getDetailById(
             @Parameter(name = "id", description = "Certificate Id", required = true)
             @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.getDetail(selfUser.getWalletHash(), id);
@@ -219,7 +219,7 @@ public class TrustCertificationController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<Iterable<CertificateIssuedDTO>>> getMyCertificatesAsRecipient(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final Iterable<CertificateIssuedDTO> certificateIssuedDTOList = trustCertificationService.getMyCertificatesAsRecipient(selfUser.getWalletHash());
@@ -249,7 +249,7 @@ public class TrustCertificationController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<Iterable<CertificateIssuanceRequestDTO>>> getCertificatesIssuanceRequestsFromStudent(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final Iterable<CertificateIssuanceRequestDTO> certificateIssuanceRequestDTOList = trustCertificationService.getCertificatesIssuanceRequestsFromStudent(selfUser.getWalletHash());
@@ -279,7 +279,7 @@ public class TrustCertificationController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<Iterable<CertificateIssuanceRequestDTO>>> getCertificatesIssuanceRequestsFromCa(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final Iterable<CertificateIssuanceRequestDTO> certificateIssuanceRequestDTOList = trustCertificationService.getCertificatesIssuanceRequestsFromCa(selfUser.getWalletHash());
@@ -309,7 +309,7 @@ public class TrustCertificationController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<Iterable<CertificateIssuedDTO>>> getMyCertificatesAsIssuer(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final Iterable<CertificateIssuedDTO> certificateIssuedDTOList = trustCertificationService.getMyCertificatesAsIssuer(selfUser.getWalletHash());
@@ -335,7 +335,7 @@ public class TrustCertificationController extends SupportController {
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> issueCertificateRequest(
             @Validated(ICommonSequence.class) IssueCertificateRequestDTO issueCertificate,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             issueCertificate.setStudentWalletHash(selfUser.getWalletHash());
@@ -362,7 +362,7 @@ public class TrustCertificationController extends SupportController {
     public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> acceptCertificateRequest(
             @Parameter(name = "id", description = "Certificate Id", required = true)
             @Valid @CertificateShouldBePendingReview(message = "{certificate_should_be_pending_review}") @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.acceptCertificateRequest(new ObjectId(id));
@@ -388,7 +388,7 @@ public class TrustCertificationController extends SupportController {
     public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> rejectCertificateRequest(
             @Parameter(name = "id", description = "Certificate Id", required = true)
             @Valid @CertificateShouldBePendingReview(message = "{certificate_should_be_pending_review}") @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.rejectCertificateRequest(new ObjectId(id));
@@ -415,7 +415,7 @@ public class TrustCertificationController extends SupportController {
     public ResponseEntity<APIResponse<CertificateIssuedDTO>> renewCertificate(
             @Parameter(name = "id", description = "Certificate Id", required = true)
             @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final CertificateIssuedDTO certificateIssued = trustCertificationService.renewCertificate(selfUser.getWalletHash(), id);
@@ -438,7 +438,7 @@ public class TrustCertificationController extends SupportController {
     public ResponseEntity<byte[]> downloadCertificateFile(
             @Parameter(name = "id", description = "Certificate Id", required = true)
             @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) {
         try {
             final FileInfoDTO fileInfo = trustCertificationService.getCertificateFile(selfUser.getWalletHash(), id);

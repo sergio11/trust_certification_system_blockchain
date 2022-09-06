@@ -98,7 +98,7 @@ public class CertificationAuthorityController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> partialUpdateCertificationCourse(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @RequestBody JsonMergePatch mergePatchDocument) {
 
         try {
@@ -132,11 +132,11 @@ public class CertificationAuthorityController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> getDetail(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
 
         try {
-            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.getDetail(selfUser.getUserId().toString());
+            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.getDetail(selfUser.getUserId());
             return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_DETAIL,
                     HttpStatus.OK, caDetailDTO);

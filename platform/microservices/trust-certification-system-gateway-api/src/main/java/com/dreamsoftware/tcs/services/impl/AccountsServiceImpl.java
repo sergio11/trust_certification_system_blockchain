@@ -36,6 +36,7 @@ import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
 import com.dreamsoftware.tcs.stream.events.notifications.users.PasswordResetNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.users.UserPendingValidationNotificationEvent;
 import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserLoginDTO;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
@@ -87,6 +88,19 @@ public class AccountsServiceImpl implements IAccountsService {
 
     /**
      *
+     * @param dto
+     * @param device
+     * @return
+     */
+    @Override
+    public AuthenticationDTO signin(final SignInAdminUserDTO dto, final Device device) {
+        Assert.notNull(dto, "DTO can not be null");
+        Assert.notNull(device, "Device can not be null");
+        return null;
+    }
+
+    /**
+     *
      * @param token
      * @return
      */
@@ -112,7 +126,7 @@ public class AccountsServiceImpl implements IAccountsService {
             if (jwtTokenHelper.validateToken(token)) {
                 final ObjectId userId = new ObjectId(jwtTokenHelper.getSubFromToken(token));
                 log.debug("Restore User Details into security context for user id -> " + userId);
-                final ICommonUserDetailsAware<ObjectId> userDetails = userRepository.findById(userId)
+                final ICommonUserDetailsAware<String> userDetails = userRepository.findById(userId)
                         .map(userEntity -> userDetailsMapper.entityToDTO(userEntity))
                         .orElse(null);
                 if (userDetails != null) {
@@ -202,11 +216,11 @@ public class AccountsServiceImpl implements IAccountsService {
      * @param authRequest
      * @return
      */
-    private ICommonUserDetailsAware<ObjectId> getUserDetails(final Authentication authRequest) {
+    private ICommonUserDetailsAware<String> getUserDetails(final Authentication authRequest) {
         Assert.notNull(authRequest, "Auth Request can not be null");
         final Authentication authentication = authenticationManager.authenticate(authRequest);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return (ICommonUserDetailsAware<ObjectId>) authentication.getPrincipal();
+        return (ICommonUserDetailsAware<String>) authentication.getPrincipal();
     }
 
     /**
@@ -229,13 +243,13 @@ public class AccountsServiceImpl implements IAccountsService {
         Assert.notNull(device, "Device can not be null");
 
         // Get User details for authentication request
-        final ICommonUserDetailsAware<ObjectId> userDetails = getUserDetails(authenticationRequest);
+        final ICommonUserDetailsAware<String> userDetails = getUserDetails(authenticationRequest);
 
         // Generate Access Token
         final AccessTokenDTO accessTokenDTO = jwtTokenHelper.generateToken(userDetails, device);
 
         // Get last success login
-        final SimpleUserLoginDTO lastLoginDTO = userLoginRepository.findFirstByUserIdOrderByCreateAtDesc(userDetails.getUserId())
+        final SimpleUserLoginDTO lastLoginDTO = userLoginRepository.findFirstByUserIdOrderByCreateAtDesc(new ObjectId(userDetails.getUserId()))
                 .map(simpleUserLoginMapper::entityToDTO).orElse(null);
 
         // Save Current success login
@@ -251,7 +265,7 @@ public class AccountsServiceImpl implements IAccountsService {
                 loginPlatform = UserLoginPlatformEnum.WEB;
         }
 
-        userRepository.findById(userDetails.getUserId()).ifPresent((userEntity) -> {
+        userRepository.findById(new ObjectId(userDetails.getUserId())).ifPresent((userEntity) -> {
             final UserLoginEntity loginEntity = UserLoginEntity.builder()
                     .locationLat(latitude)
                     .locationLong(longitude)

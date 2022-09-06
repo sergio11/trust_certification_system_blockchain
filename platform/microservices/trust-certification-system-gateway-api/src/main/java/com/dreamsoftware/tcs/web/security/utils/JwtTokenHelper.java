@@ -80,11 +80,12 @@ public class JwtTokenHelper {
     /**
      * Generate Token
      *
+     * @param <T>
      * @param userDetails
      * @param device
      * @return
      */
-    public AccessTokenDTO generateToken(ICommonUserDetailsAware<ObjectId> userDetails, Device device) {
+    public <T> AccessTokenDTO generateToken(ICommonUserDetailsAware<T> userDetails, Device device) {
 
         final Date createdAt = new Date();
         final Date expirationAt = new Date(createdAt.getTime() + expiration * 1000);

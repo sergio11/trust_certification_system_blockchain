@@ -32,10 +32,8 @@ import com.dreamsoftware.tcs.stream.events.notifications.certificate.Certificate
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.IssueCertificateRequestedNotificationEvent;
 import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
-import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
 import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

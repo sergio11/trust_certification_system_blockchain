@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.services;
 
+import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
@@ -20,6 +21,15 @@ public interface IAccountsService {
      * @return
      */
     AuthenticationDTO signin(final SignInUserDTO dto, final Device device);
+
+    /**
+     * Sign in an admin user
+     *
+     * @param dto
+     * @param device
+     * @return
+     */
+    AuthenticationDTO signin(final SignInAdminUserDTO dto, final Device device);
 
     /**
      * Refresh Access Token
