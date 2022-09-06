@@ -73,7 +73,7 @@ public class TokenManagementController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<APIResponse<Long>> getMyTokens(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final Long myTokens = tokenManagementService.getMyTokens(selfUser.getWalletHash());

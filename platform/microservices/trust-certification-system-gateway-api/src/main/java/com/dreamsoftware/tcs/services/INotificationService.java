@@ -18,7 +18,7 @@ public interface INotificationService {
      * @param size
      * @return
      */
-    Page<NotificationDTO> findPaginated(final ObjectId userId, final Integer page, final Integer size);
+    Page<NotificationDTO> findPaginated(final String userId, final Integer page, final Integer size);
 
     /**
      *
@@ -26,20 +26,20 @@ public interface INotificationService {
      * @param pageable
      * @return
      */
-    Page<NotificationDTO> findPaginated(final ObjectId userId, final Pageable pageable);
+    Page<NotificationDTO> findPaginated(final String userId, final Pageable pageable);
 
     /**
      *
      * @param id
      * @return
      */
-    NotificationDTO findById(final ObjectId id);
+    NotificationDTO findById(final String id);
 
     /**
      *
      * @param id
      */
-    void deleteById(final ObjectId id);
+    void deleteById(final String id);
 
     /**
      *

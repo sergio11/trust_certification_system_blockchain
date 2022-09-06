@@ -15,7 +15,7 @@ public interface IDeviceGroupsService {
      * @return
      * @throws Throwable
      */
-    Iterable<DeviceDTO> getDevicesByOwner(final ObjectId ownerId) throws Throwable;
+    Iterable<DeviceDTO> getDevicesByOwner(final String ownerId) throws Throwable;
 
     /**
      *
@@ -23,7 +23,7 @@ public interface IDeviceGroupsService {
      * @param deviceId
      * @param registrationToken
      */
-    void addDeviceToGroup(final ObjectId ownerId, final String deviceId, final String registrationToken);
+    void addDeviceToGroup(final String ownerId, final String deviceId, final String registrationToken);
 
     /**
      *
@@ -31,7 +31,7 @@ public interface IDeviceGroupsService {
      * @param deviceId
      * @param registrationToken
      */
-    void updateDevice(final ObjectId ownerId, final String deviceId, final String registrationToken);
+    void updateDevice(final String ownerId, final String deviceId, final String registrationToken);
 
     /**
      *
@@ -39,7 +39,7 @@ public interface IDeviceGroupsService {
      * @param deviceId
      * @param registrationToken
      */
-    void createOrUpdateDevice(final ObjectId ownerId, final String deviceId, final String registrationToken);
+    void createOrUpdateDevice(final String ownerId, final String deviceId, final String registrationToken);
 
     /**
      *

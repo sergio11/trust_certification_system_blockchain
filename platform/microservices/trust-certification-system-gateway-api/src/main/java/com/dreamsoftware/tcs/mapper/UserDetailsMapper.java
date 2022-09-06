@@ -28,10 +28,11 @@ public abstract class UserDetailsMapper {
      * @return DTO
      */
     @Mappings({
-        @Mapping(expression = "java(getPermissions(entity.getAuthority()))", target = "grantedAuthorities")
+        @Mapping(expression = "java(getPermissions(entity.getAuthority()))", target = "grantedAuthorities"),
+        @Mapping(expression = "java(entity.getId().toString())", target = "id")
     })
     @Named("entityToDTO")
-    public abstract UserDetailsImpl<ObjectId> entityToDTO(UserEntity entity);
+    public abstract UserDetailsImpl<String> entityToDTO(UserEntity entity);
 
     /**
      * User Entity list to User Details list
@@ -40,7 +41,7 @@ public abstract class UserDetailsMapper {
      * @return dto list
      */
     @IterableMapping(qualifiedByName = "entityToDTO")
-    public abstract List<UserDetailsImpl<ObjectId>> entityToDTO(List<UserEntity> entity);
+    public abstract List<UserDetailsImpl<String>> entityToDTO(List<UserEntity> entity);
 
     /**
      * Get Permissions

@@ -1,7 +1,6 @@
 package com.dreamsoftware.tcs.services;
 
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
-import org.bson.types.ObjectId;
 
 /**
  *
@@ -43,5 +42,5 @@ public interface IAuthorizationService {
      *
      * @return
      */
-    ICommonUserDetailsAware<ObjectId> getUserDetails();
+    ICommonUserDetailsAware<String> getUserDetails();
 }

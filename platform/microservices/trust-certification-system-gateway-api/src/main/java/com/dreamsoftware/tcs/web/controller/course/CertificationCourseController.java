@@ -107,7 +107,7 @@ public class CertificationCourseController extends SupportController {
     @RequestMapping(value = {"/"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<Iterable<CertificationCourseDetailDTO>>> getAllByCA(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser) throws Throwable {
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser) throws Throwable {
         try {
             final Iterable<CertificationCourseDetailDTO> courseListByCa = certificationCourseService.getAllByCA(selfUser.getWalletHash());
             return responseHelper.<Iterable<CertificationCourseDetailDTO>>createAndSendResponse(
@@ -143,7 +143,7 @@ public class CertificationCourseController extends SupportController {
             @Parameter(name = "certification_course", description = "Certification Course Data. Cannot null or empty.",
                     required = true, schema = @Schema(implementation = SaveCertificationCourseDTO.class))
             @Validated(ICommonSequence.class) SaveCertificationCourseDTO certificationCourse,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
         try {
             certificationCourse.setCaWalletHash(selfUser.getWalletHash());
@@ -172,7 +172,7 @@ public class CertificationCourseController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> partialUpdateCertificationCourse(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "id", description = "Course Id", required = true)
             @PathVariable("id") String id,
             @RequestBody JsonMergePatch mergePatchDocument) {
@@ -205,7 +205,7 @@ public class CertificationCourseController extends SupportController {
     public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> enable(
             @Parameter(name = "id", description = "Course Id", required = true)
             @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final CertificationCourseDetailDTO certificationCourseDTO = certificationCourseService.enable(selfUser.getWalletHash(), id);
@@ -233,7 +233,7 @@ public class CertificationCourseController extends SupportController {
     public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> disable(
             @Parameter(name = "id", description = "Course Id", required = true)
             @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseService.disable(selfUser.getWalletHash(), id);
@@ -268,7 +268,7 @@ public class CertificationCourseController extends SupportController {
     public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> getDetailById(
             @Parameter(name = "id", description = "Course Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{course_id_not_valid}") @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final CertificationCourseDetailDTO courseDetailDTO = certificationCourseService.getDetail(selfUser.getWalletHash(), id);
@@ -303,7 +303,7 @@ public class CertificationCourseController extends SupportController {
     public ResponseEntity<APIResponse<Boolean>> canBeIssued(
             @Parameter(name = "id", description = "Course Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{course_id_not_valid}") @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final Boolean canBeIssued = certificationCourseService.canBeIssued(selfUser.getWalletHash(), id);
@@ -339,7 +339,7 @@ public class CertificationCourseController extends SupportController {
     public ResponseEntity<APIResponse<Boolean>> canBeRenewed(
             @Parameter(name = "id", description = "Course Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{course_id_not_valid}") @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final Boolean canBeRenewed = certificationCourseService.canBeRenewed(selfUser.getWalletHash(), id);
@@ -375,7 +375,7 @@ public class CertificationCourseController extends SupportController {
     public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> deleteById(
             @Parameter(name = "id", description = "Course Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{course_id_not_valid}") @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
             final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseService.remove(selfUser.getWalletHash(), id);

@@ -10,6 +10,7 @@ import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAcco
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ResetPasswordRequestException;
 import com.dreamsoftware.tcs.web.dto.request.RefreshTokenDTO;
 import com.dreamsoftware.tcs.web.dto.request.ResetPasswordRequestDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
@@ -90,6 +91,36 @@ public class AccountsController extends SupportController {
 
         return Optional.ofNullable(authenticationService.signin(signInUserDTO, device))
                 .map(jwtResponse -> responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_SUCCESS, HttpStatus.OK, jwtResponse))
+                .orElseThrow(() -> {
+                    throw new BadCredentialsException("User Not Found");
+                });
+    }
+
+    /**
+     * Create Authentication Token for Admin users
+     *
+     * @param signInAdminUserDTO
+     * @param device
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "SIGN_IN_ADMIN - Create Access Token for an Admin user (JWT format)", description = "Create Access Token for an Admin user (JWT format)", tags = {"accounts"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Authentication Success",
+                content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Credentials",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @SecurityRequirements
+    @RequestMapping(value = "/signin/admin", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<AuthenticationDTO>> signinAdmin(
+            @Parameter(description = "Admin authentication data. Cannot null or empty.",
+                    required = true, schema = @Schema(implementation = SignInAdminUserDTO.class))
+            @Validated(ICommonSequence.class) SignInAdminUserDTO signInAdminUserDTO,
+            @Parameter(hidden = true) Device device) throws Throwable {
+        return Optional.ofNullable(authenticationService.signin(signInAdminUserDTO, device))
+                .map(jwtResponse -> responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_ADMIN_SUCCESS, HttpStatus.OK, jwtResponse))
                 .orElseThrow(() -> {
                     throw new BadCredentialsException("User Not Found");
                 });

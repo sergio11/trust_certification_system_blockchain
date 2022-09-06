@@ -3,7 +3,6 @@ package com.dreamsoftware.tcs.web.controller.devices;
 import com.dreamsoftware.tcs.services.IDeviceGroupsService;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.SaveCertificationCourseException;
 import com.dreamsoftware.tcs.web.controller.devices.error.exception.AddDeviceToGroupException;
 import com.dreamsoftware.tcs.web.controller.devices.error.exception.GetDevicesByOwnerException;
 import com.dreamsoftware.tcs.web.controller.devices.error.exception.RemoveDeviceFromGroupFailedException;
@@ -30,7 +29,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +49,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Slf4j
 public class DeviceGroupsController extends SupportController {
 
+    /**
+     * Device Groups Service
+     */
     private final IDeviceGroupsService deviceGroupsService;
 
     /**
@@ -69,7 +70,7 @@ public class DeviceGroupsController extends SupportController {
     @RequestMapping(value = {"/", "/all"}, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<Iterable<DeviceDTO>>> getDevicesIntoGroup(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser) throws Throwable {
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser) throws Throwable {
         try {
             final Iterable<DeviceDTO> devices = deviceGroupsService.getDevicesByOwner(selfUser.getUserId());
             return responseHelper.createAndSendResponse(DeviceGroupsResponseCodeEnum.GET_DEVICES_BY_OWNER, HttpStatus.OK, devices);
@@ -100,7 +101,7 @@ public class DeviceGroupsController extends SupportController {
             @Parameter(name = "device", description = "Device to be added",
                     required = true, schema = @Schema(implementation = AddDeviceDTO.class))
             @Validated(ICommonSequence.class) AddDeviceDTO device,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) final HttpServletRequest request
     ) {
         try {
@@ -134,7 +135,7 @@ public class DeviceGroupsController extends SupportController {
             @Parameter(name = "device", description = "Device to be updated",
                     required = true, schema = @Schema(implementation = UpdateDeviceDTO.class))
             @Validated(ICommonSequence.class) UpdateDeviceDTO updateDevice,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) final HttpServletRequest request) {
         try {
             deviceGroupsService.updateDevice(selfUser.getUserId(), updateDevice.getDeviceId(), updateDevice.getRegistrationToken());
@@ -167,7 +168,7 @@ public class DeviceGroupsController extends SupportController {
             @Parameter(name = "device", description = "Device to be saved",
                     required = true, schema = @Schema(implementation = UpdateDeviceDTO.class))
             @Validated(ICommonSequence.class) SaveDeviceDTO deviceToSave,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) final HttpServletRequest request) {
         try {
             log.debug("Save Device with Id " + deviceToSave.getDeviceId() + " And Registration Token " + deviceToSave.getRegistrationToken());
@@ -200,7 +201,7 @@ public class DeviceGroupsController extends SupportController {
     public ResponseEntity<APIResponse<String>> deleteDeviceFromGroup(
             @Parameter(name = "id", description = "Device Id", required = true)
             @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) final HttpServletRequest request
     ) {
         try {

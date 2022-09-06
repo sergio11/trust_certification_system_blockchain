@@ -78,7 +78,7 @@ public class NotificationsController extends SupportController {
             @RequestParam(name = "size", required = false, defaultValue = "20") final Integer size,
             @PathVariable @Valid @ShouldBeAValidObjectId(message = "{notification_id_not_valid}") final String id) throws Throwable {
 
-        return getNotifications(new ObjectId(id), page, size);
+        return getNotifications(id, page, size);
     }
 
     /**
@@ -104,7 +104,7 @@ public class NotificationsController extends SupportController {
     public ResponseEntity<APIResponse<Page<NotificationDTO>>> getMyNotifications(
             @RequestParam(name = "page", required = false, defaultValue = "0") final Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "20") final Integer size,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser) throws Throwable {
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser) throws Throwable {
 
         return getNotifications(selfUser.getUserId(), page, size);
     }
@@ -130,10 +130,10 @@ public class NotificationsController extends SupportController {
     public ResponseEntity<APIResponse<NotificationDTO>> getById(
             @Parameter(name = "id", description = "Notification Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{notification_id_not_valid}") @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
-            final NotificationDTO notification = notificationService.findById(new ObjectId(id));
+            final NotificationDTO notification = notificationService.findById(id);
             return responseHelper.<NotificationDTO>createAndSendResponse(
                     NotificationsResponseCodeEnum.NOTIFICATION_DETAIL,
                     HttpStatus.OK, notification);
@@ -163,11 +163,11 @@ public class NotificationsController extends SupportController {
     public ResponseEntity<APIResponse<String>> deleteById(
             @Parameter(name = "id", description = "Notification Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{notification_id_not_valid}") @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
         try {
-            notificationService.deleteById(new ObjectId(id));
+            notificationService.deleteById(id);
             return responseHelper.<String>createAndSendResponse(
                     NotificationsResponseCodeEnum.NOTIFICATION_DELETED,
                     HttpStatus.OK, resolveString("notification_deleted", request));
@@ -186,7 +186,7 @@ public class NotificationsController extends SupportController {
      * @param size
      * @return
      */
-    private ResponseEntity<APIResponse<Page<NotificationDTO>>> getNotifications(final ObjectId userId, final Integer page, final Integer size) {
+    private ResponseEntity<APIResponse<Page<NotificationDTO>>> getNotifications(final String userId, final Integer page, final Integer size) {
         final Page<NotificationDTO> notificationsPage = notificationService.findPaginated(userId, page, size);
 
         if (!notificationsPage.hasContent()) {

@@ -37,9 +37,10 @@ public class DeviceGroupsServiceImpl implements IDeviceGroupsService {
      * @throws Throwable
      */
     @Override
-    public Iterable<DeviceDTO> getDevicesByOwner(final ObjectId ownerId) throws Throwable {
+    public Iterable<DeviceDTO> getDevicesByOwner(final String ownerId) throws Throwable {
         Assert.notNull(ownerId, "Owner Id can not be null");
-        final Iterable<DeviceEntity> devices = deviceRepository.findByDeviceGroupOwnerId(ownerId);
+        Assert.isTrue(ObjectId.isValid(ownerId), "Owner Id is not valid");
+        final Iterable<DeviceEntity> devices = deviceRepository.findByDeviceGroupOwnerId(new ObjectId(ownerId));
         return deviceEntityMapper.entityToDTO(devices);
     }
 
@@ -50,15 +51,16 @@ public class DeviceGroupsServiceImpl implements IDeviceGroupsService {
      * @param registrationToken
      */
     @Override
-    public void addDeviceToGroup(final ObjectId ownerId, final String deviceId, final String registrationToken) {
+    public void addDeviceToGroup(final String ownerId, final String deviceId, final String registrationToken) {
         Assert.notNull(ownerId, "Owner Id can not be null");
         Assert.notNull(deviceId, "Device Id can not be null");
         Assert.notNull(registrationToken, "Registration Token can not be null");
+        Assert.isTrue(ObjectId.isValid(ownerId), "Owner Id is not valid");
         streamBridge.send(streamChannelsProperties.getDeviceManagement(), DeviceManagementEvent
                 .builder()
                 .deviceId(deviceId)
                 .registrationToken(registrationToken)
-                .ownerObjectId(ownerId.toString())
+                .ownerObjectId(ownerId)
                 .type(DeviceManagementEventTypeEnum.ADD_DEVICE)
                 .build());
     }
@@ -70,15 +72,16 @@ public class DeviceGroupsServiceImpl implements IDeviceGroupsService {
      * @param registrationToken
      */
     @Override
-    public void updateDevice(final ObjectId ownerId, final String deviceId, final String registrationToken) {
+    public void updateDevice(final String ownerId, final String deviceId, final String registrationToken) {
         Assert.notNull(ownerId, "Owner Id can not be null");
         Assert.notNull(deviceId, "Device Id can not be null");
         Assert.notNull(registrationToken, "Registration Token can not be null");
+        Assert.isTrue(ObjectId.isValid(ownerId), "Owner Id is not valid");
         streamBridge.send(streamChannelsProperties.getDeviceManagement(), DeviceManagementEvent
                 .builder()
                 .deviceId(deviceId)
                 .registrationToken(registrationToken)
-                .ownerObjectId(ownerId.toString())
+                .ownerObjectId(ownerId)
                 .type(DeviceManagementEventTypeEnum.UPDATE_DEVICE)
                 .build());
     }
@@ -90,15 +93,16 @@ public class DeviceGroupsServiceImpl implements IDeviceGroupsService {
      * @param registrationToken
      */
     @Override
-    public void createOrUpdateDevice(final ObjectId ownerId, final String deviceId, final String registrationToken) {
+    public void createOrUpdateDevice(final String ownerId, final String deviceId, final String registrationToken) {
         Assert.notNull(ownerId, "Owner Id can not be null");
         Assert.notNull(deviceId, "Device Id can not be null");
         Assert.notNull(registrationToken, "Registration Token can not be null");
+        Assert.isTrue(ObjectId.isValid(ownerId), "Owner Id is not valid");
         streamBridge.send(streamChannelsProperties.getDeviceManagement(), DeviceManagementEvent
                 .builder()
                 .deviceId(deviceId)
                 .registrationToken(registrationToken)
-                .ownerObjectId(ownerId.toString())
+                .ownerObjectId(ownerId)
                 .type(DeviceManagementEventTypeEnum.CREATE_OR_UPDATE_DEVICE)
                 .build());
     }

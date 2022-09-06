@@ -4,7 +4,6 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.AuthorityEnum;
 import com.dreamsoftware.tcs.services.IAuthorizationService;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,38 +17,59 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthorizationServiceImpl implements IAuthorizationService {
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Boolean isAdmin() {
         return hasAuthority(AuthorityEnum.ROLE_ADMIN);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Boolean isCA() {
         return hasAuthority(AuthorityEnum.ROLE_CA);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public Boolean isStudent() {
         return hasAuthority(AuthorityEnum.ROLE_STUDENT);
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     @Override
-    public Boolean isTheAuthenticatedUser(String id) {
+    public Boolean isTheAuthenticatedUser(final String id) {
         Boolean isTheAuthenticatedUser = Boolean.FALSE;
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (ObjectId.isValid(id) && !(auth instanceof AnonymousAuthenticationToken)) {
-            ICommonUserDetailsAware<ObjectId> userDetails = (ICommonUserDetailsAware<ObjectId>) auth.getPrincipal();
-            isTheAuthenticatedUser = userDetails.getUserId().equals(new ObjectId(id));
+        if (auth != null && !(auth instanceof AnonymousAuthenticationToken)) {
+            ICommonUserDetailsAware<String> userDetails = (ICommonUserDetailsAware<String>) auth.getPrincipal();
+            isTheAuthenticatedUser = userDetails.getUserId().equals(id);
         }
         return isTheAuthenticatedUser;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
-    public ICommonUserDetailsAware<ObjectId> getUserDetails() {
-        ICommonUserDetailsAware<ObjectId> userDetails = null;
+    public ICommonUserDetailsAware<String> getUserDetails() {
+        ICommonUserDetailsAware<String> userDetails = null;
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && !(auth instanceof AnonymousAuthenticationToken)) {
-            userDetails = (ICommonUserDetailsAware<ObjectId>) auth.getPrincipal();
+            userDetails = (ICommonUserDetailsAware<String>) auth.getPrincipal();
         }
         return userDetails;
     }

@@ -129,7 +129,7 @@ public class UsersController extends SupportController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<UserPhotoDTO>> uploadProfileImage(
             @Valid @RequestPart("avatar") @ValidPhoto(message = "{avatar_file_has_not_an_invalid_format}") MultipartFile avatar,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser) throws Throwable {
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser) throws Throwable {
 
         try {
             final RequestUploadFile uploadProfileImage = RequestUploadFile.builder()
@@ -163,7 +163,7 @@ public class UsersController extends SupportController {
     @Operation(summary = "DOWNLOAD_SELF_PROFILE_AVATAR - Download Self Profile Image", description = "Download Self Profile Image", tags = {"profile"})
     @RequestMapping(value = "/avatar", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> downloadProfileImage(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<Long> selfUser
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws IOException {
 
         UploadFileInfo uploadFileInfo;
@@ -186,7 +186,7 @@ public class UsersController extends SupportController {
     @Operation(summary = "DELETE_SELF_PROFILE_AVATAR - Delete Self Profile Avatar", description = "Delete Self Profile Avatar", tags = {"profile"})
     @RequestMapping(value = "/avatar", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<String>> deleteProfileAvatar(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<Long> selfUser,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request) {
 
         try {

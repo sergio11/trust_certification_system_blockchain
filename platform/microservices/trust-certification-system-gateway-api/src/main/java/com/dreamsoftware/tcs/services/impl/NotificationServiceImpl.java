@@ -41,7 +41,7 @@ public class NotificationServiceImpl implements INotificationService {
      * @return
      */
     @Override
-    public Page<NotificationDTO> findPaginated(final ObjectId userId, final Integer page, final Integer size) {
+    public Page<NotificationDTO> findPaginated(final String userId, final Integer page, final Integer size) {
         Assert.notNull(userId, "User Id can not be null");
         Assert.notNull(page, "Page can not be null");
         Assert.notNull(size, "Size can not be null");
@@ -55,10 +55,11 @@ public class NotificationServiceImpl implements INotificationService {
      * @return
      */
     @Override
-    public Page<NotificationDTO> findPaginated(final ObjectId userId, final Pageable pageable) {
+    public Page<NotificationDTO> findPaginated(final String userId, final Pageable pageable) {
         Assert.notNull(userId, "User Id can not be null");
         Assert.notNull(pageable, "Pageable can not be null");
-        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
+        Assert.isTrue(ObjectId.isValid(userId), "Id is not valid");
+        return notificationRepository.findByUserIdOrderByCreatedAtDesc(new ObjectId(userId), pageable)
                 .map(notificationMapper::entityToDTO);
     }
 
@@ -68,9 +69,10 @@ public class NotificationServiceImpl implements INotificationService {
      * @return
      */
     @Override
-    public NotificationDTO findById(final ObjectId id) {
+    public NotificationDTO findById(final String id) {
         Assert.notNull(id, "Id can not be null");
-        return notificationRepository.findById(id)
+        Assert.isTrue(ObjectId.isValid(id), "Id is not valid");
+        return notificationRepository.findById(new ObjectId(id))
                 .map(notificationMapper::entityToDTO)
                 .orElseThrow(() -> new IllegalStateException("Notification not found"));
     }
@@ -80,9 +82,10 @@ public class NotificationServiceImpl implements INotificationService {
      * @param id
      */
     @Override
-    public void deleteById(final ObjectId id) {
+    public void deleteById(final String id) {
         Assert.notNull(id, "Id can not be null");
-        notificationRepository.deleteById(id);
+        Assert.isTrue(ObjectId.isValid(id), "Id is not valid");
+        notificationRepository.deleteById(new ObjectId(id));
     }
 
     /**
