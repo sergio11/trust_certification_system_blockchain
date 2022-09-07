@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 /**
- * AuthorizationServiceImpl
+ * Authorization Service Impl
  */
 @Service("authorizationService")
 @RequiredArgsConstructor
