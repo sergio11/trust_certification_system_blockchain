@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.web.security.provider;
+package com.dreamsoftware.tcs.web.security.provider.common;
 
 import com.dreamsoftware.tcs.mapper.UserDetailsMapper;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
