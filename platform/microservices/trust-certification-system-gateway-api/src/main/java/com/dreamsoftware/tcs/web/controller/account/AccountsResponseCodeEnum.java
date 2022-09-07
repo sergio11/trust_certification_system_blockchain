@@ -21,7 +21,9 @@ public enum AccountsResponseCodeEnum implements IResponseCodeTypes {
     REFRESH_TOKEN_FAIL(109L),
     SIGNIN_ADMIN_SUCCESS(110L),
     SIGNIN_VIA_FACEBOOK_SUCCESS(111L),
-    SIGNIN_VIA_FACEBOOK_FAILED(112L);
+    SIGNIN_VIA_FACEBOOK_FAILED(112L),
+    SIGNIN_VIA_GOOGLE_SUCCESS(113L),
+    SIGNIN_VIA_GOOGLE_FAILED(114L);
 
     private final Long code;
     public static final String CATEGORY_NAME = "ACCOUNTS";

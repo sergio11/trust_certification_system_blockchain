@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.web.controller.account;
 
 import com.dreamsoftware.tcs.services.IAccountsService;
 import com.dreamsoftware.tcs.services.IFacebookService;
+import com.dreamsoftware.tcs.services.IGoogleService;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.RefreshTokenException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
@@ -10,6 +11,7 @@ import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAccountException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ResetPasswordRequestException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInFacebookException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInGoogleException;
 import com.dreamsoftware.tcs.web.dto.request.RefreshTokenDTO;
 import com.dreamsoftware.tcs.web.dto.request.ResetPasswordRequestDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
@@ -30,6 +32,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Optional;
@@ -64,6 +67,7 @@ public class AccountsController extends SupportController {
 
     private final IAccountsService authenticationService;
     private final IFacebookService facebookService;
+    private final IGoogleService googleService;
 
     /**
      * Create Authentication Token
@@ -173,6 +177,52 @@ public class AccountsController extends SupportController {
             return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_VIA_FACEBOOK_SUCCESS, HttpStatus.OK, authenticationDTO);
         } catch (final FacebookOAuthException ex) {
             throw new SignInFacebookException(ex.getMessage(), ex.getCause());
+        }
+    }
+
+    /**
+     *
+     * @param externalProviderAuthRequest
+     * @param userAgent
+     * @param locale
+     * @param device
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "SIGN_IN_VIA_GOOGLE - Create Authentication Token Via Google", description = "Create Authentication Token Via Google", tags = {"accounts"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sign in via Google Success",
+                content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
+        @ApiResponse(responseCode = "500", description = "Sign in via Google fail",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @SecurityRequirements
+    @RequestMapping(value = "/signin/google", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<AuthenticationDTO>> signinViaGoogle(
+            @Parameter(description = "Authentication Data. Cannot null or empty.",
+                    required = true, schema = @Schema(implementation = SignInUserViaExternalProviderDTO.class))
+            @Valid SignInUserViaExternalProviderDTO externalProviderAuthRequest,
+            @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
+            @Parameter(hidden = true) Locale locale,
+            @Parameter(hidden = true) Device device) throws Throwable {
+
+        try {
+            // Configure internal request values
+            externalProviderAuthRequest.setId(googleService.getGoogleIdByAccessToken(externalProviderAuthRequest.getToken()));
+            externalProviderAuthRequest.setUserAgent(userAgent);
+            externalProviderAuthRequest.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
+
+            AuthenticationDTO authenticationDTO = authenticationService.findAuthProviderByKey(externalProviderAuthRequest.getId())
+                    .map((authProvider) -> authenticationService.signin(externalProviderAuthRequest, device))
+                    .orElseThrow(() -> {
+                        throw new BadCredentialsException("User Not Found");
+                    });
+
+            return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_VIA_GOOGLE_SUCCESS, HttpStatus.OK, authenticationDTO);
+
+        } catch (final IOException ex) {
+            throw new SignInGoogleException(ex.getMessage(), ex.getCause());
         }
     }
 

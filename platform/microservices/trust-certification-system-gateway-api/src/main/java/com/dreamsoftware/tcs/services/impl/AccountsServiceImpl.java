@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
 import com.dreamsoftware.tcs.services.IFacebookService;
+import com.dreamsoftware.tcs.services.IGoogleService;
 import com.dreamsoftware.tcs.services.IUploadImagesService;
 import com.dreamsoftware.tcs.stream.events.notifications.users.PasswordResetNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.users.UserPendingValidationNotificationEvent;
@@ -49,6 +50,7 @@ import com.dreamsoftware.tcs.web.dto.response.SignUpSocialUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleSocialUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserLoginDTO;
 import com.dreamsoftware.tcs.web.security.provider.social.SocialProviderAuthenticationToken;
+import java.io.IOException;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +87,7 @@ public class AccountsServiceImpl implements IAccountsService {
     private final IUploadImagesService uploadUserAvatarService;
     private final AuthProviderMapper authProviderMapper;
     private final AuthenticationProviderRepository authProviderEntityRepository;
+    private final IGoogleService googleService;
 
     /**
      *
@@ -265,6 +268,24 @@ public class AccountsServiceImpl implements IAccountsService {
                 = facebookService.fetchUserInformation(dto.getId(), dto.getToken());
         // Signup Social User
         return signupSocial(userFacebookDTO, dto.getUserAgent(), dto.getLanguage());
+    }
+
+    /**
+     *
+     * @param dto
+     * @return
+     */
+    @Override
+    public SimpleUserDTO signupViaGoogle(final SignInUserViaExternalProviderDTO dto) {
+        Assert.notNull(dto, "externalProviderDto can not be null");
+        try {
+            // Fetch User Information via Google
+            final SimpleSocialUserDTO userDTO = googleService.fetchUserInformation(dto.getToken());
+            // Signup Social User
+            return signupSocial(userDTO, dto.getUserAgent(), dto.getLanguage());
+        } catch (IOException ex) {
+            throw new RuntimeException("Signup Via Google fail");
+        }
     }
 
     /**

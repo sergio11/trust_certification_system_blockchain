@@ -20,6 +20,7 @@
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <commons-io.version>2.11.0</commons-io.version>
         <rest-fb.version>2022.8.0</rest-fb.version>
+        <google-api-services-oauth2.version>v2-rev157-1.25.0</google-api-services-oauth2.version>
     </properties>
 
     <parent>
@@ -58,6 +59,12 @@
             <version>${rest-fb.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-oauth2 -->
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-oauth2</artifactId>
+            <version>${google-api-services-oauth2.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.paypal.sdk</groupId>
