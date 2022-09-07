@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.web.security.config;
 
 import com.dreamsoftware.tcs.config.properties.LdapProperties;
-import com.dreamsoftware.tcs.web.security.provider.AdminProviderImpl;
+import com.dreamsoftware.tcs.web.security.provider.admin.AdminProviderImpl;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

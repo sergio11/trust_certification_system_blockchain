@@ -105,4 +105,10 @@ public class UserEntity {
     @DBRef
     private ImageDataEntity avatar;
 
+    /**
+     * Auth Provider
+     */
+    @DBRef
+    private AuthenticationProviderEntity authProvider;
+
 }

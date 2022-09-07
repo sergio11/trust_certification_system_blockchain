@@ -23,6 +23,13 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId> {
 
     /**
      *
+     * @param key
+     * @return
+     */
+    Optional<UserEntity> findOneByAuthProviderKey(final String key);
+
+    /**
+     *
      * @param walletHash
      * @return
      */

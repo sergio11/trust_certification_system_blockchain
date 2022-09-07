@@ -56,4 +56,10 @@ public class SimpleUserDTO {
     @JsonProperty("state")
     private String state;
 
+    /**
+     * Auth Provider
+     */
+    @JsonProperty("auth_provider")
+    private SimpleAuthenticationProviderDTO provider;
+
 }

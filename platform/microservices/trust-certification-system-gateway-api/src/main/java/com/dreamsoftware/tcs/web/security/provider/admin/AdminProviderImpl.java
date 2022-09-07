@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.web.security.provider;
+package com.dreamsoftware.tcs.web.security.provider.admin;
 
 import com.dreamsoftware.tcs.web.security.userdetails.impl.UserDetailsImpl;
 import java.util.Collection;
