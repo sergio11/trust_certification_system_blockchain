@@ -8,6 +8,7 @@ import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAccountException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInFacebookException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInGoogleException;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -95,10 +96,24 @@ public class AccountsErrorController extends SupportController {
      */
     @ExceptionHandler(SignInFacebookException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleActivateAccountException(final SignInFacebookException ex, final HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSignInFacebookException(final SignInFacebookException ex, final HttpServletRequest request) {
         log.error("Handler for SignInFacebookException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.SIGNIN_VIA_FACEBOOK_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("sign_in_facebook_failed", request));
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(SignInGoogleException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSignInGoogleException(final SignInGoogleException ex, final HttpServletRequest request) {
+        log.error("Handler for SignInGoogleException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.SIGNIN_VIA_GOOGLE_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("sign_in_google_failed", request));
     }
 
 }

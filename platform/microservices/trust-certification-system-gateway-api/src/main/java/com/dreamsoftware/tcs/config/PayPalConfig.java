@@ -3,7 +3,6 @@ package com.dreamsoftware.tcs.config;
 import com.dreamsoftware.tcs.config.properties.PaypalProperties;
 import com.paypal.core.PayPalEnvironment;
 import com.paypal.core.PayPalHttpClient;
-import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
  * @author ssanchez
  */
 @Configuration
-@EnableEncryptableProperties
 public class PayPalConfig {
 
     /**

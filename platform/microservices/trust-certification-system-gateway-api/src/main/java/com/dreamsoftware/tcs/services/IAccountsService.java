@@ -51,6 +51,13 @@ public interface IAccountsService {
     SimpleUserDTO signupViaFacebook(final SignInUserViaExternalProviderDTO dto);
 
     /**
+     *
+     * @param dto
+     * @return
+     */
+    SimpleUserDTO signupViaGoogle(final SignInUserViaExternalProviderDTO dto);
+
+    /**
      * Refresh Access Token
      *
      * @param token
