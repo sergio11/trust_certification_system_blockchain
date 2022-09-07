@@ -7,9 +7,9 @@ import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAccountException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInFacebookException;
 import javax.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.Ordered;
@@ -26,9 +26,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class AccountsErrorController extends SupportController {
-
-    private static final Logger logger = LoggerFactory.getLogger(AccountsErrorController.class);
 
     /**
      * Handler for Bad Credentials Exception
@@ -40,7 +39,7 @@ public class AccountsErrorController extends SupportController {
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseBody
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleBadCredentialsException(final BadCredentialsException badCredentialsException, final HttpServletRequest request) {
-        logger.error("Handler for BadCredentialsException");
+        log.error("Handler for BadCredentialsException");
         return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.BAD_CREDENTIALS,
                 HttpStatus.BAD_REQUEST, resolveString("bad_credentials", request));
     }
@@ -55,7 +54,7 @@ public class AccountsErrorController extends SupportController {
     @ExceptionHandler(SignUpException.class)
     @ResponseBody
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSignUpException(final SignUpException ex, final HttpServletRequest request) {
-        logger.error("Handler for SignUpException -> " + ex.getMessage());
+        log.error("Handler for SignUpException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.SIGNUP_FAIL,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("signup_failed", request));
     }
@@ -69,7 +68,7 @@ public class AccountsErrorController extends SupportController {
     @ExceptionHandler(RefreshTokenException.class)
     @ResponseBody
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleRefreshTokenException(final RefreshTokenException ex, final HttpServletRequest request) {
-        logger.error("Handler for RefreshTokenException -> " + ex.getMessage());
+        log.error("Handler for RefreshTokenException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.REFRESH_TOKEN_FAIL,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("refresh_token_failed", request));
     }
@@ -83,9 +82,23 @@ public class AccountsErrorController extends SupportController {
     @ExceptionHandler(ActivateAccountException.class)
     @ResponseBody
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleActivateAccountException(final ActivateAccountException ex, final HttpServletRequest request) {
-        logger.error("Handler for ActivateAccountException -> " + ex.getMessage());
+        log.error("Handler for ActivateAccountException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.ACTIVATE_FAIL,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("user_activation_failed", request));
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(SignInFacebookException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleActivateAccountException(final SignInFacebookException ex, final HttpServletRequest request) {
+        log.error("Handler for SignInFacebookException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.SIGNIN_VIA_FACEBOOK_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("sign_in_facebook_failed", request));
     }
 
 }

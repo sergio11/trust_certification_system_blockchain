@@ -19,6 +19,7 @@
         <paypel.checkout.sdk>2.0.0</paypel.checkout.sdk>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <commons-io.version>2.11.0</commons-io.version>
+        <rest-fb.version>2022.8.0</rest-fb.version>
     </properties>
 
     <parent>
@@ -48,6 +49,13 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.restfb/restfb -->
+        <dependency>
+            <groupId>com.restfb</groupId>
+            <artifactId>restfb</artifactId>
+            <version>${rest-fb.version}</version>
         </dependency>
 
 

@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.web.controller.account;
 
 import com.dreamsoftware.tcs.services.IAccountsService;
+import com.dreamsoftware.tcs.services.IFacebookService;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.RefreshTokenException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
@@ -8,15 +9,18 @@ import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAccountException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ResetPasswordRequestException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInFacebookException;
 import com.dreamsoftware.tcs.web.dto.request.RefreshTokenDTO;
 import com.dreamsoftware.tcs.web.dto.request.ResetPasswordRequestDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignInUserViaExternalProviderDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
 import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
 import com.dreamsoftware.tcs.web.validation.constraints.group.IResetPasswordSequence;
+import com.restfb.exception.FacebookOAuthException;
 import io.micrometer.core.instrument.util.StringUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -59,6 +63,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AccountsController extends SupportController {
 
     private final IAccountsService authenticationService;
+    private final IFacebookService facebookService;
 
     /**
      * Create Authentication Token
@@ -124,6 +129,51 @@ public class AccountsController extends SupportController {
                 .orElseThrow(() -> {
                     throw new BadCredentialsException("User Not Found");
                 });
+    }
+
+    /**
+     *
+     * @param externalProviderAuthRequest
+     * @param userAgent
+     * @param locale
+     * @param device
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "SIGN_IN_VIA_FACEBOOK - Get Authorization Token via Facebook", description = "Get Authorization Token via Facebook, The user account is automatically validated", tags = {"accounts"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sign in via Facebook Success",
+                content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
+        @ApiResponse(responseCode = "500", description = "Sign in via Facebook fail",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @SecurityRequirements
+    @RequestMapping(value = "/signin/facebook", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<AuthenticationDTO>> signinViaFacebook(
+            @Parameter(description = "Authentication Data. Cannot null or empty.",
+                    required = true, schema = @Schema(implementation = SignInUserViaExternalProviderDTO.class))
+            @Valid SignInUserViaExternalProviderDTO externalProviderAuthRequest,
+            @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
+            @Parameter(hidden = true) Locale locale,
+            @Parameter(hidden = true) Device device) throws Throwable {
+
+        try {
+            // Fetch User FB id
+            final String fbId = facebookService.getFbIdByAccessToken(externalProviderAuthRequest.getToken());
+            // Configure internal request values
+            externalProviderAuthRequest.setId(fbId);
+            externalProviderAuthRequest.setUserAgent(userAgent);
+            externalProviderAuthRequest.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
+            AuthenticationDTO authenticationDTO = authenticationService.findAuthProviderByKey(externalProviderAuthRequest.getId())
+                    .map((authProvider) -> authenticationService.signin(externalProviderAuthRequest, device))
+                    .orElseThrow(() -> {
+                        throw new BadCredentialsException("User Not Found");
+                    });
+            return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_VIA_FACEBOOK_SUCCESS, HttpStatus.OK, authenticationDTO);
+        } catch (final FacebookOAuthException ex) {
+            throw new SignInFacebookException(ex.getMessage(), ex.getCause());
+        }
     }
 
     /**

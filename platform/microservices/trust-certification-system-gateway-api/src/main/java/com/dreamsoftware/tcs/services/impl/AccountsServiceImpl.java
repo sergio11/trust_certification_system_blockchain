@@ -1,7 +1,10 @@
 package com.dreamsoftware.tcs.services.impl;
 
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
+import com.dreamsoftware.tcs.mapper.AuthProviderMapper;
+import com.dreamsoftware.tcs.mapper.SignUpSocialUserMapper;
 import com.dreamsoftware.tcs.mapper.SignUpUserMapper;
+import com.dreamsoftware.tcs.mapper.SimpleSocialUserMapper;
 import com.dreamsoftware.tcs.mapper.SimpleUserLoginMapper;
 import com.dreamsoftware.tcs.mapper.SimpleUserMapper;
 import com.dreamsoftware.tcs.mapper.UserDetailsMapper;
@@ -10,6 +13,7 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserLoginEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserLoginPlatformEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
+import com.dreamsoftware.tcs.persistence.nosql.repository.AuthenticationProviderRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserLoginRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IWalletService;
@@ -33,14 +37,22 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
+import com.dreamsoftware.tcs.services.IFacebookService;
+import com.dreamsoftware.tcs.services.IUploadImagesService;
 import com.dreamsoftware.tcs.stream.events.notifications.users.PasswordResetNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.users.UserPendingValidationNotificationEvent;
 import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignInUserViaExternalProviderDTO;
+import com.dreamsoftware.tcs.web.dto.response.AuthenticationProviderDTO;
+import com.dreamsoftware.tcs.web.dto.response.SignUpSocialUserDTO;
+import com.dreamsoftware.tcs.web.dto.response.SimpleSocialUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserLoginDTO;
+import com.dreamsoftware.tcs.web.security.provider.social.SocialProviderAuthenticationToken;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  *
@@ -66,6 +78,13 @@ public class AccountsServiceImpl implements IAccountsService {
     private final IPasswordResetTokenService passwordResetTokenService;
     private final UserLoginRepository userLoginRepository;
     private final SimpleUserLoginMapper simpleUserLoginMapper;
+    private final IFacebookService facebookService;
+    private final SimpleSocialUserMapper simpleSocialUserMapper;
+    private final SignUpSocialUserMapper signUpSocialUserMapper;
+    @Qualifier("UploadUserAvatarService")
+    private final IUploadImagesService uploadUserAvatarService;
+    private final AuthProviderMapper authProviderMapper;
+    private final AuthenticationProviderRepository authProviderEntityRepository;
 
     /**
      *
@@ -97,6 +116,29 @@ public class AccountsServiceImpl implements IAccountsService {
         Assert.notNull(dto, "DTO can not be null");
         Assert.notNull(device, "Device can not be null");
         return null;
+    }
+
+    /**
+     *
+     * @param dto
+     * @param device
+     * @return
+     */
+    @Override
+    public AuthenticationDTO signin(final SignInUserViaExternalProviderDTO dto, final Device device) {
+        Assert.notNull(dto, "DTO can not be null");
+        Assert.notNull(device, "Device can not be null");
+
+        final Float loginLat = StringUtils.isNoneEmpty(dto.getLatitude())
+                ? Float.valueOf(dto.getLatitude()) : null;
+        final Float loginLon = StringUtils.isNoneEmpty(dto.getLongitude())
+                ? Float.valueOf(dto.getLongitude()) : null;
+
+        final Authentication authRequest = new SocialProviderAuthenticationToken(dto.getId());
+
+        authProviderEntityRepository.updateAuthenticationProviderTokenForkey(dto.getToken(), dto.getId());
+
+        return signin(authRequest, loginLat, loginLon, dto.getUserAgent(), device);
     }
 
     /**
@@ -211,6 +253,33 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
+     *
+     * @param dto
+     * @return
+     */
+    @Override
+    public SimpleUserDTO signupViaFacebook(final SignInUserViaExternalProviderDTO dto) {
+        Assert.notNull(dto, "externalProviderDto can not be null");
+        // Fetch User Information from facebook service
+        final SimpleSocialUserDTO userFacebookDTO
+                = facebookService.fetchUserInformation(dto.getId(), dto.getToken());
+        // Signup Social User
+        return signupSocial(userFacebookDTO, dto.getUserAgent(), dto.getLanguage());
+    }
+
+    /**
+     *
+     * @param key
+     * @return
+     */
+    @Override
+    public Optional<AuthenticationProviderDTO> findAuthProviderByKey(final String key) {
+        Assert.notNull(key, "key can not be null");
+        return authProviderEntityRepository.findOneByKey(key).map(authProviderMapper::entityToDTO);
+
+    }
+
+    /**
      * Get User Details
      *
      * @param authRequest
@@ -221,6 +290,35 @@ public class AccountsServiceImpl implements IAccountsService {
         final Authentication authentication = authenticationManager.authenticate(authRequest);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return (ICommonUserDetailsAware<String>) authentication.getPrincipal();
+    }
+
+    /**
+     *
+     * @param socialUser
+     * @param userAgent
+     * @param defaultLanguage
+     * @return
+     */
+    private SimpleUserDTO signupSocial(final SimpleSocialUserDTO socialUser, final String userAgent, final String defaultLanguage) {
+        // Map User Information to SigUp Request
+        final SignUpSocialUserDTO signUpSocialUser = simpleSocialUserMapper.simpleSocialUserDTOToSignUpSocialUserDTO(socialUser);
+        // Configure ISO3 Language
+        if (StringUtils.isNoneEmpty(signUpSocialUser.getLanguage())) {
+            signUpSocialUser.setLanguage(defaultLanguage);
+        }
+        // Configure User Agent from HTTP Header
+        signUpSocialUser.setUserAgent(userAgent);
+
+        final UserEntity userEntitySaved = userRepository.save(
+                signUpSocialUserMapper.signUpUserSocialDTOToUserEntity(signUpSocialUser));
+
+        // Upload Avatar URL
+        if (StringUtils.isNoneEmpty(signUpSocialUser.getAvatarUrl())) {
+            uploadUserAvatarService.uploadFromUrl(userEntitySaved.getId(), signUpSocialUser.getAvatarUrl());
+        }
+
+        return simpleUserMapper.entityToDTO(userEntitySaved);
+
     }
 
     /**

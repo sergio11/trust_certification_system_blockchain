@@ -19,7 +19,9 @@ public enum AccountsResponseCodeEnum implements IResponseCodeTypes {
     RESET_PASSWORD_REQUEST_FAIL(107L),
     REFRESH_TOKEN(108L),
     REFRESH_TOKEN_FAIL(109L),
-    SIGNIN_ADMIN_SUCCESS(110L);
+    SIGNIN_ADMIN_SUCCESS(110L),
+    SIGNIN_VIA_FACEBOOK_SUCCESS(111L),
+    SIGNIN_VIA_FACEBOOK_FAILED(112L);
 
     private final Long code;
     public static final String CATEGORY_NAME = "ACCOUNTS";
