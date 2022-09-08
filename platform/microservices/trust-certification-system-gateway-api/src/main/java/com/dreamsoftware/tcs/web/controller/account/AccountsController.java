@@ -1,8 +1,6 @@
 package com.dreamsoftware.tcs.web.controller.account;
 
 import com.dreamsoftware.tcs.services.IAccountsService;
-import com.dreamsoftware.tcs.services.IFacebookService;
-import com.dreamsoftware.tcs.services.IGoogleService;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.RefreshTokenException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
@@ -10,14 +8,15 @@ import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAccountException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ResetPasswordRequestException;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInFacebookException;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInGoogleException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInExternalProviderException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpExternalProviderException;
 import com.dreamsoftware.tcs.web.dto.request.RefreshTokenDTO;
 import com.dreamsoftware.tcs.web.dto.request.ResetPasswordRequestDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignInUserViaExternalProviderDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignInUserExternalProviderDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignUpExternalProviderDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
 import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
@@ -32,7 +31,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Optional;
@@ -66,8 +64,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AccountsController extends SupportController {
 
     private final IAccountsService authenticationService;
-    private final IFacebookService facebookService;
-    private final IGoogleService googleService;
 
     /**
      * Create Authentication Token
@@ -97,7 +93,6 @@ public class AccountsController extends SupportController {
 
         // Configure User Agent
         signInUserDTO.setUserAgent(userAgent);
-
         return Optional.ofNullable(authenticationService.signin(signInUserDTO, device))
                 .map(jwtResponse -> responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_SUCCESS, HttpStatus.OK, jwtResponse))
                 .orElseThrow(() -> {
@@ -144,85 +139,30 @@ public class AccountsController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "SIGN_IN_VIA_FACEBOOK - Get Authorization Token via Facebook", description = "Get Authorization Token via Facebook, The user account is automatically validated", tags = {"accounts"})
+    @Operation(summary = "SIGN_IN_EXTERNAL_ACCOUNT - Get Authorization Token through external social account", description = "Get Authorization Token through external social account, The user account is automatically validated", tags = {"accounts"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Sign in via Facebook Success",
+        @ApiResponse(responseCode = "200", description = "Sign in through external social account Success",
                 content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
-        @ApiResponse(responseCode = "500", description = "Sign in via Facebook fail",
+        @ApiResponse(responseCode = "500", description = "Sign in through external social account fail",
                 content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @SecurityRequirements
-    @RequestMapping(value = "/signin/facebook", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    @RequestMapping(value = "/signin/external", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<AuthenticationDTO>> signinViaFacebook(
             @Parameter(description = "Authentication Data. Cannot null or empty.",
-                    required = true, schema = @Schema(implementation = SignInUserViaExternalProviderDTO.class))
-            @Valid SignInUserViaExternalProviderDTO externalProviderAuthRequest,
+                    required = true, schema = @Schema(implementation = SignInUserExternalProviderDTO.class))
+            @Valid SignInUserExternalProviderDTO externalProviderAuthRequest,
             @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
             @Parameter(hidden = true) Locale locale,
             @Parameter(hidden = true) Device device) throws Throwable {
-
         try {
-            // Fetch User FB id
-            final String fbId = facebookService.getFbIdByAccessToken(externalProviderAuthRequest.getToken());
-            // Configure internal request values
-            externalProviderAuthRequest.setId(fbId);
             externalProviderAuthRequest.setUserAgent(userAgent);
-            externalProviderAuthRequest.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
-            AuthenticationDTO authenticationDTO = authenticationService.findAuthProviderByKey(externalProviderAuthRequest.getId())
-                    .map((authProvider) -> authenticationService.signin(externalProviderAuthRequest, device))
-                    .orElseThrow(() -> {
-                        throw new BadCredentialsException("User Not Found");
-                    });
-            return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_VIA_FACEBOOK_SUCCESS, HttpStatus.OK, authenticationDTO);
+            final AuthenticationDTO authenticationDTO = authenticationService.signin(externalProviderAuthRequest, device);
+            return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGN_IN_EXTERNAL_ACCOUNT_SUCCESS,
+                    HttpStatus.OK, authenticationDTO);
         } catch (final FacebookOAuthException ex) {
-            throw new SignInFacebookException(ex.getMessage(), ex.getCause());
-        }
-    }
-
-    /**
-     *
-     * @param externalProviderAuthRequest
-     * @param userAgent
-     * @param locale
-     * @param device
-     * @return
-     * @throws Throwable
-     */
-    @Operation(summary = "SIGN_IN_VIA_GOOGLE - Create Authentication Token Via Google", description = "Create Authentication Token Via Google", tags = {"accounts"})
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Sign in via Google Success",
-                content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
-        @ApiResponse(responseCode = "500", description = "Sign in via Google fail",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
-    })
-    @SecurityRequirements
-    @RequestMapping(value = "/signin/google", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<APIResponse<AuthenticationDTO>> signinViaGoogle(
-            @Parameter(description = "Authentication Data. Cannot null or empty.",
-                    required = true, schema = @Schema(implementation = SignInUserViaExternalProviderDTO.class))
-            @Valid SignInUserViaExternalProviderDTO externalProviderAuthRequest,
-            @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
-            @Parameter(hidden = true) Locale locale,
-            @Parameter(hidden = true) Device device) throws Throwable {
-
-        try {
-            // Configure internal request values
-            externalProviderAuthRequest.setId(googleService.getGoogleIdByAccessToken(externalProviderAuthRequest.getToken()));
-            externalProviderAuthRequest.setUserAgent(userAgent);
-            externalProviderAuthRequest.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
-
-            AuthenticationDTO authenticationDTO = authenticationService.findAuthProviderByKey(externalProviderAuthRequest.getId())
-                    .map((authProvider) -> authenticationService.signin(externalProviderAuthRequest, device))
-                    .orElseThrow(() -> {
-                        throw new BadCredentialsException("User Not Found");
-                    });
-
-            return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_VIA_GOOGLE_SUCCESS, HttpStatus.OK, authenticationDTO);
-
-        } catch (final IOException ex) {
-            throw new SignInGoogleException(ex.getMessage(), ex.getCause());
+            throw new SignInExternalProviderException(ex.getMessage(), ex.getCause());
         }
     }
 
@@ -286,15 +226,53 @@ public class AccountsController extends SupportController {
             if (StringUtils.isBlank(user.getLanguage())) {
                 user.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
             }
-
             // Configure User Agent from HTTP Header
             user.setUserAgent(userAgent);
             final SimpleUserDTO userSaved = authenticationService.signup(user);
-            return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_SUCCESS, HttpStatus.OK, userSaved);
+            return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_SUCCESS,
+                    HttpStatus.OK, userSaved);
         } catch (final Exception ex) {
             ex.printStackTrace();
             log.debug("signup exception: " + ex);
             throw new SignUpException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * @param user
+     * @param userAgent
+     * @param locale
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "SIGN_UP_SOCIAL - Create user into platform through external social account", description = "Create user into platform through external social account.", tags = {"accounts"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sign Up Success",
+                content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
+        @ApiResponse(responseCode = "500", description = "Sign up fail",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @SecurityRequirements
+    @RequestMapping(value = "/signup/external", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<SimpleUserDTO>> signupSocial(
+            @Parameter(name = "user", description = "New User data. Cannot null or empty.",
+                    required = true, schema = @Schema(implementation = SignUpExternalProviderDTO.class))
+            @Validated(ICommonSequence.class) SignUpExternalProviderDTO user,
+            @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
+            @Parameter(hidden = true) Locale locale) throws Throwable {
+
+        try {
+            user.setUserAgent(userAgent);
+            user.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
+            // Configure User Agent from HTTP Header
+            final SimpleUserDTO userSaved = authenticationService.signup(user);
+            return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_EXTERNAL_ACCOUNT_SUCCESS,
+                    HttpStatus.OK, userSaved);
+        } catch (final Exception ex) {
+            ex.printStackTrace();
+            log.debug("signup exception: " + ex);
+            throw new SignUpExternalProviderException(ex.getMessage(), ex);
         }
     }
 
