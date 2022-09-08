@@ -8,6 +8,7 @@ import com.dreamsoftware.tcs.mapper.SimpleSocialUserMapper;
 import com.dreamsoftware.tcs.mapper.SimpleUserLoginMapper;
 import com.dreamsoftware.tcs.mapper.SimpleUserMapper;
 import com.dreamsoftware.tcs.mapper.UserDetailsMapper;
+import com.dreamsoftware.tcs.persistence.nosql.entity.AuthenticationProviderTypeEnum;
 import com.dreamsoftware.tcs.stream.events.user.OnNewUserRegistrationEvent;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserLoginEntity;
@@ -44,7 +45,8 @@ import com.dreamsoftware.tcs.stream.events.notifications.users.PasswordResetNoti
 import com.dreamsoftware.tcs.stream.events.notifications.users.UserPendingValidationNotificationEvent;
 import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignInUserViaExternalProviderDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignInUserExternalProviderDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignUpExternalProviderDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationProviderDTO;
 import com.dreamsoftware.tcs.web.dto.response.SignUpSocialUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleSocialUserDTO;
@@ -128,18 +130,30 @@ public class AccountsServiceImpl implements IAccountsService {
      * @return
      */
     @Override
-    public AuthenticationDTO signin(final SignInUserViaExternalProviderDTO dto, final Device device) {
+    public AuthenticationDTO signin(final SignInUserExternalProviderDTO dto, final Device device) throws Throwable {
         Assert.notNull(dto, "DTO can not be null");
         Assert.notNull(device, "Device can not be null");
+
+        final String accountId;
+        switch (AuthenticationProviderTypeEnum.valueOf(dto.getProvider())) {
+            case FACEBOOK:
+                accountId = facebookService.getFbIdByAccessToken(dto.getToken());
+                break;
+            case GOOGLE:
+                accountId = googleService.getGoogleIdByAccessToken(dto.getToken());
+                break;
+            default:
+                throw new IllegalStateException("Invalid Provider");
+        }
 
         final Float loginLat = StringUtils.isNoneEmpty(dto.getLatitude())
                 ? Float.valueOf(dto.getLatitude()) : null;
         final Float loginLon = StringUtils.isNoneEmpty(dto.getLongitude())
                 ? Float.valueOf(dto.getLongitude()) : null;
 
-        final Authentication authRequest = new SocialProviderAuthenticationToken(dto.getId());
+        final Authentication authRequest = new SocialProviderAuthenticationToken(accountId);
 
-        authProviderEntityRepository.updateAuthenticationProviderTokenForkey(dto.getToken(), dto.getId());
+        authProviderEntityRepository.updateAuthenticationProviderTokenForkey(dto.getToken(), accountId);
 
         return signin(authRequest, loginLat, loginLon, dto.getUserAgent(), device);
     }
@@ -190,7 +204,7 @@ public class AccountsServiceImpl implements IAccountsService {
      * @return
      */
     @Override
-    public SimpleUserDTO signup(SignUpUserDTO user) {
+    public SimpleUserDTO signup(final SignUpUserDTO user) {
         Assert.notNull(user, "user can not be null");
         // Map to user entity
         final UserEntity userToSave = signUpUserMapper.signUpUserDTOToUserEntity(user);
@@ -208,13 +222,35 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
+     *
+     * @param user
+     * @return
+     */
+    @Override
+    public SimpleUserDTO signup(final SignUpExternalProviderDTO user) throws Throwable {
+        Assert.notNull(user, "user can not be null");
+        final SimpleUserDTO userDTO;
+        switch (AuthenticationProviderTypeEnum.valueOf(user.getProvider())) {
+            case FACEBOOK:
+                userDTO = signupViaFacebook(user);
+                break;
+            case GOOGLE:
+                userDTO = signupViaGoogle(user);
+                break;
+            default:
+                throw new IllegalStateException("Invalid Provider");
+        }
+        return userDTO;
+    }
+
+    /**
      * Activate Account
      *
      * @param confirmationToken
      * @return
      */
     @Override
-    public SimpleUserDTO activate(String confirmationToken) throws Throwable {
+    public SimpleUserDTO activate(final String confirmationToken) throws Throwable {
         Assert.notNull(confirmationToken, "confirmation Token can not be null");
         Assert.hasLength(confirmationToken, "confirmation token can not be empty");
         final UserEntity userToActivate = userRepository.findOneByConfirmationToken(confirmationToken).orElseThrow(() -> {
@@ -257,39 +293,6 @@ public class AccountsServiceImpl implements IAccountsService {
 
     /**
      *
-     * @param dto
-     * @return
-     */
-    @Override
-    public SimpleUserDTO signupViaFacebook(final SignInUserViaExternalProviderDTO dto) {
-        Assert.notNull(dto, "externalProviderDto can not be null");
-        // Fetch User Information from facebook service
-        final SimpleSocialUserDTO userFacebookDTO
-                = facebookService.fetchUserInformation(dto.getId(), dto.getToken());
-        // Signup Social User
-        return signupSocial(userFacebookDTO, dto.getUserAgent(), dto.getLanguage());
-    }
-
-    /**
-     *
-     * @param dto
-     * @return
-     */
-    @Override
-    public SimpleUserDTO signupViaGoogle(final SignInUserViaExternalProviderDTO dto) {
-        Assert.notNull(dto, "externalProviderDto can not be null");
-        try {
-            // Fetch User Information via Google
-            final SimpleSocialUserDTO userDTO = googleService.fetchUserInformation(dto.getToken());
-            // Signup Social User
-            return signupSocial(userDTO, dto.getUserAgent(), dto.getLanguage());
-        } catch (IOException ex) {
-            throw new RuntimeException("Signup Via Google fail");
-        }
-    }
-
-    /**
-     *
      * @param key
      * @return
      */
@@ -315,12 +318,45 @@ public class AccountsServiceImpl implements IAccountsService {
 
     /**
      *
+     * @param dto
+     * @return
+     */
+    private SimpleUserDTO signupViaFacebook(final SignUpExternalProviderDTO dto) throws Throwable {
+        Assert.notNull(dto, "externalProviderDto can not be null");
+        // Fetch User FB id
+        final String fbId = facebookService.getFbIdByAccessToken(dto.getToken());
+        // Fetch User Information from facebook service
+        final SimpleSocialUserDTO userFacebookDTO
+                = facebookService.fetchUserInformation(fbId, dto.getToken());
+        // Signup Social User
+        return signupSocial(userFacebookDTO, dto.getUserAgent(), dto.getLanguage());
+    }
+
+    /**
+     *
+     * @param dto
+     * @return
+     */
+    private SimpleUserDTO signupViaGoogle(final SignUpExternalProviderDTO dto) throws Throwable {
+        Assert.notNull(dto, "externalProviderDto can not be null");
+        try {
+            // Fetch User Information via Google
+            final SimpleSocialUserDTO userDTO = googleService.fetchUserInformation(dto.getToken());
+            // Signup Social User
+            return signupSocial(userDTO, dto.getUserAgent(), dto.getLanguage());
+        } catch (IOException ex) {
+            throw new RuntimeException("Signup Via Google fail");
+        }
+    }
+
+    /**
+     *
      * @param socialUser
      * @param userAgent
      * @param defaultLanguage
      * @return
      */
-    private SimpleUserDTO signupSocial(final SimpleSocialUserDTO socialUser, final String userAgent, final String defaultLanguage) {
+    private SimpleUserDTO signupSocial(final SimpleSocialUserDTO socialUser, final String userAgent, final String defaultLanguage) throws Throwable {
         // Map User Information to SigUp Request
         final SignUpSocialUserDTO signUpSocialUser = simpleSocialUserMapper.simpleSocialUserDTOToSignUpSocialUserDTO(socialUser);
         // Configure ISO3 Language
@@ -329,15 +365,19 @@ public class AccountsServiceImpl implements IAccountsService {
         }
         // Configure User Agent from HTTP Header
         signUpSocialUser.setUserAgent(userAgent);
-
-        final UserEntity userEntitySaved = userRepository.save(
-                signUpSocialUserMapper.signUpUserSocialDTOToUserEntity(signUpSocialUser));
-
+        final UserEntity userToSave = signUpSocialUserMapper.signUpUserSocialDTOToUserEntity(signUpSocialUser);
+        // Generate Wallet for external user
+        userToSave.setWalletHash(walletService.generateWallet());
+        final UserEntity userEntitySaved = userRepository.save(userToSave);
         // Upload Avatar URL
         if (StringUtils.isNoneEmpty(signUpSocialUser.getAvatarUrl())) {
             uploadUserAvatarService.uploadFromUrl(userEntitySaved.getId(), signUpSocialUser.getAvatarUrl());
         }
-
+        streamBridge.send(streamChannelsProperties.getNewUserRegistration(), OnNewUserRegistrationEvent.builder()
+                .name(userEntitySaved.getName())
+                .userType(userEntitySaved.getType())
+                .walletHash(userEntitySaved.getWalletHash())
+                .build());
         return simpleUserMapper.entityToDTO(userEntitySaved);
 
     }
@@ -403,5 +443,4 @@ public class AccountsServiceImpl implements IAccountsService {
                 .lastLogin(lastLoginDTO)
                 .build();
     }
-
 }

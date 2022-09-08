@@ -2,8 +2,9 @@ package com.dreamsoftware.tcs.services;
 
 import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignInUserViaExternalProviderDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignInUserExternalProviderDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignUpExternalProviderDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationProviderDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
@@ -39,23 +40,9 @@ public interface IAccountsService {
      * @param dto
      * @param device
      * @return
+     * @throws java.lang.Throwable
      */
-    AuthenticationDTO signin(final SignInUserViaExternalProviderDTO dto, final Device device);
-
-    /**
-     * Sign in using facebook as external provider
-     *
-     * @param dto
-     * @return
-     */
-    SimpleUserDTO signupViaFacebook(final SignInUserViaExternalProviderDTO dto);
-
-    /**
-     *
-     * @param dto
-     * @return
-     */
-    SimpleUserDTO signupViaGoogle(final SignInUserViaExternalProviderDTO dto);
+    AuthenticationDTO signin(final SignInUserExternalProviderDTO dto, final Device device) throws Throwable;
 
     /**
      * Refresh Access Token
@@ -79,6 +66,15 @@ public interface IAccountsService {
      * @return
      */
     SimpleUserDTO signup(final SignUpUserDTO user);
+
+    /**
+     * Signup SignUpExternalProviderDTO
+     *
+     * @param user
+     * @return
+     * @throws java.lang.Throwable
+     */
+    SimpleUserDTO signup(final SignUpExternalProviderDTO user) throws Throwable;
 
     /**
      * Activate Account
