@@ -31,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.mobile.device.Device;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -57,6 +56,8 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 
 /**
  *
@@ -69,7 +70,6 @@ public class AccountsServiceImpl implements IAccountsService {
 
     private final String AUTH_TYPE = "Bearer";
 
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenHelper jwtTokenHelper;
     private final UserRepository userRepository;
     private final UserDetailsMapper userDetailsMapper;
@@ -90,6 +90,10 @@ public class AccountsServiceImpl implements IAccountsService {
     private final AuthProviderMapper authProviderMapper;
     private final AuthenticationProviderRepository authProviderEntityRepository;
     private final IGoogleService googleService;
+    @Qualifier("usersAuthenticationManager")
+    private final AuthenticationManager usersAuthenticationManager;
+    @Qualifier("adminAuthenticationManager")
+    private final AuthenticationManager adminAuthenticationManager;
 
     /**
      *
@@ -120,7 +124,14 @@ public class AccountsServiceImpl implements IAccountsService {
     public AuthenticationDTO signin(final SignInAdminUserDTO dto, final Device device) {
         Assert.notNull(dto, "DTO can not be null");
         Assert.notNull(device, "Device can not be null");
-        return null;
+        final Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
+        final ICommonUserDetailsAware<String> userDetails = authenticate(adminAuthenticationManager, authenticationRequest);
+        final AccessTokenDTO accessTokenDTO = jwtTokenHelper.generateToken(userDetails, device);
+        // Generate and return Authentication Response
+        return AuthenticationDTO.builder()
+                .accessToken(accessTokenDTO)
+                .type(AUTH_TYPE)
+                .build();
     }
 
     /**
@@ -300,20 +311,6 @@ public class AccountsServiceImpl implements IAccountsService {
     public Optional<AuthenticationProviderDTO> findAuthProviderByKey(final String key) {
         Assert.notNull(key, "key can not be null");
         return authProviderEntityRepository.findOneByKey(key).map(authProviderMapper::entityToDTO);
-
-    }
-
-    /**
-     * Get User Details
-     *
-     * @param authRequest
-     * @return
-     */
-    private ICommonUserDetailsAware<String> getUserDetails(final Authentication authRequest) {
-        Assert.notNull(authRequest, "Auth Request can not be null");
-        final Authentication authentication = authenticationManager.authenticate(authRequest);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return (ICommonUserDetailsAware<String>) authentication.getPrincipal();
     }
 
     /**
@@ -401,8 +398,7 @@ public class AccountsServiceImpl implements IAccountsService {
         Assert.notNull(userAgent, "userAgent can not be null");
         Assert.notNull(device, "Device can not be null");
 
-        // Get User details for authentication request
-        final ICommonUserDetailsAware<String> userDetails = getUserDetails(authenticationRequest);
+        final ICommonUserDetailsAware<String> userDetails = authenticate(usersAuthenticationManager, authenticationRequest);
 
         // Generate Access Token
         final AccessTokenDTO accessTokenDTO = jwtTokenHelper.generateToken(userDetails, device);
@@ -442,5 +438,20 @@ public class AccountsServiceImpl implements IAccountsService {
                 .type(AUTH_TYPE)
                 .lastLogin(lastLoginDTO)
                 .build();
+    }
+
+    /**
+     *
+     * @param authenticationManager
+     * @param authenticationRequest
+     * @return
+     */
+    private ICommonUserDetailsAware<String> authenticate(final AuthenticationManager authenticationManager, final Authentication authenticationRequest) {
+        Assert.notNull(authenticationManager, "authenticationManager can not be null");
+        Assert.notNull(authenticationRequest, "authenticationRequest can not be null");
+        // Get User details for authentication request
+        final Authentication authentication = authenticationManager.authenticate(authenticationRequest);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return (ICommonUserDetailsAware<String>) authentication.getPrincipal();
     }
 }

@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
-@Import(value = {CommonSecurityConfig.class, AuthenticationProvidersConfig.class})
+@Import(value = {CommonSecurityConfig.class, AdminsAuthenticationConfig.class, UsersAuthenticationConfig.class})
 @Slf4j
 public class WebSecurityConfig {
 

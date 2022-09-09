@@ -6,8 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +30,7 @@ public class UsersAuthenticationConfig {
      * @return
      */
     @Bean
-    @Order(2)
+    @Qualifier("usersAuthenticationProvider")
     public AuthenticationProvider provideCommonAuthenticationProvider(
             @Qualifier("platformUserProvider") UserDetailsService userDetails) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -38,6 +39,26 @@ public class UsersAuthenticationConfig {
         return authenticationProvider;
     }
 
+    /**
+     * Provide Users Authentication Manager
+     *
+     * @param usersAuthenticationProvider
+     * @param socialAuthenticationProvider
+     * @return
+     * @throws Exception
+     */
+    @Bean
+    @Qualifier("usersAuthenticationManager")
+    public AuthenticationManager provideAuthenticationManager(
+            @Qualifier("usersAuthenticationProvider") AuthenticationProvider usersAuthenticationProvider,
+            @Qualifier("socialAuthenticationProvider") AuthenticationProvider socialAuthenticationProvider
+    ) throws Exception {
+        return new ProviderManager(usersAuthenticationProvider, socialAuthenticationProvider);
+    }
+
+    /**
+     * SocialAuthenticationProvider
+     */
     @PostConstruct
     protected void init() {
         log.info("init UsersAuthenticationConfig ...");

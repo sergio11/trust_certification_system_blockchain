@@ -5,13 +5,15 @@ import com.dreamsoftware.tcs.web.security.provider.admin.AdminProviderImpl;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.ExternalTlsDirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
@@ -121,13 +123,27 @@ public class AdminsAuthenticationConfig {
      * @return
      */
     @Bean
-    @Order(1)
+    @Qualifier("adminsAuthenticationProvider")
     public AuthenticationProvider provideAuthenticationProvider(final LdapAuthenticator ldapAuthenticator, final LdapAuthoritiesPopulator ldapAuthoritiesPopulator) {
         Assert.notNull(ldapAuthenticator, "LdapAuthenticator must be provided");
         Assert.notNull(ldapAuthoritiesPopulator, "LdapAuthoritiesPopulator must be provided");
         final LdapAuthenticationProvider authenticationProvider = new LdapAuthenticationProvider(ldapAuthenticator, ldapAuthoritiesPopulator);
         authenticationProvider.setUserDetailsContextMapper(userDetailsService);
         return authenticationProvider;
+    }
+
+    /**
+     *
+     * @param adminsAuthenticationProvider
+     * @return
+     * @throws Exception
+     */
+    @Bean
+    @Qualifier("adminAuthenticationManager")
+    public AuthenticationManager provideAuthenticationManager(
+            @Qualifier("adminsAuthenticationProvider") AuthenticationProvider adminsAuthenticationProvider
+    ) throws Exception {
+        return new ProviderManager(adminsAuthenticationProvider);
     }
 
     @PostConstruct
