@@ -8,6 +8,7 @@ import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAccountException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ResetPasswordRequestException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInExternalProviderException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpExternalProviderException;
 import com.dreamsoftware.tcs.web.dto.request.RefreshTokenDTO;
@@ -63,6 +64,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Slf4j
 public class AccountsController extends SupportController {
 
+    /**
+     * Accounts Service
+     */
     private final IAccountsService authenticationService;
 
     /**
@@ -90,14 +94,15 @@ public class AccountsController extends SupportController {
             @Validated(ICommonSequence.class) SignInUserDTO signInUserDTO,
             @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
             @Parameter(hidden = true) Device device) throws Throwable {
-
-        // Configure User Agent
-        signInUserDTO.setUserAgent(userAgent);
-        return Optional.ofNullable(authenticationService.signin(signInUserDTO, device))
-                .map(jwtResponse -> responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_SUCCESS, HttpStatus.OK, jwtResponse))
-                .orElseThrow(() -> {
-                    throw new BadCredentialsException("User Not Found");
-                });
+        try {
+            // Configure User Agent
+            signInUserDTO.setUserAgent(userAgent);
+            final AuthenticationDTO authenticationDTO = authenticationService.signin(signInUserDTO, device);
+            return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_SUCCESS,
+                    HttpStatus.OK, authenticationDTO);
+        } catch (final Exception ex) {
+            throw new SignInException(ex.getMessage(), ex.getCause());
+        }
     }
 
     /**
@@ -123,11 +128,13 @@ public class AccountsController extends SupportController {
                     required = true, schema = @Schema(implementation = SignInAdminUserDTO.class))
             @Validated(ICommonSequence.class) SignInAdminUserDTO signInAdminUserDTO,
             @Parameter(hidden = true) Device device) throws Throwable {
-        return Optional.ofNullable(authenticationService.signin(signInAdminUserDTO, device))
-                .map(jwtResponse -> responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_ADMIN_SUCCESS, HttpStatus.OK, jwtResponse))
-                .orElseThrow(() -> {
-                    throw new BadCredentialsException("User Not Found");
-                });
+        try {
+            final AuthenticationDTO authenticationDTO = authenticationService.signin(signInAdminUserDTO, device);
+            return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_ADMIN_SUCCESS,
+                    HttpStatus.OK, authenticationDTO);
+        } catch (final Exception ex) {
+            throw new SignInException(ex.getMessage(), ex.getCause());
+        }
     }
 
     /**
@@ -185,7 +192,6 @@ public class AccountsController extends SupportController {
             @Parameter(description = "Current Authentication Data. Cannot null or empty.",
                     required = true, schema = @Schema(implementation = RefreshTokenDTO.class))
             @Valid RefreshTokenDTO refreshTokenDTO) {
-
         try {
             final AuthenticationDTO authenticationDTO = authenticationService.refresh(refreshTokenDTO.getToken());
             return responseHelper.createAndSendResponse(
@@ -193,7 +199,6 @@ public class AccountsController extends SupportController {
         } catch (final Exception ex) {
             throw new RefreshTokenException(ex.getMessage(), ex);
         }
-
     }
 
     /**
@@ -245,7 +250,7 @@ public class AccountsController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "SIGN_UP_SOCIAL - Create user into platform through external social account", description = "Create user into platform through external social account.", tags = {"accounts"})
+    @Operation(summary = "SIGN_UP_EXTERNAL_ACCOUNT - Create user into platform through external social account", description = "Create user into platform through external social account.", tags = {"accounts"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Sign Up Success",
                 content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
@@ -261,7 +266,6 @@ public class AccountsController extends SupportController {
             @Validated(ICommonSequence.class) SignUpExternalProviderDTO user,
             @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
             @Parameter(hidden = true) Locale locale) throws Throwable {
-
         try {
             user.setUserAgent(userAgent);
             user.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));

@@ -7,6 +7,7 @@ import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAccountException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInExternalProviderException;
 import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpExternalProviderException;
 import javax.servlet.http.HttpServletRequest;
@@ -31,16 +32,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class AccountsErrorController extends SupportController {
 
     /**
-     * Handler for Bad Credentials Exception
+     * Handler for SignInException
      *
      * @param badCredentialsException
      * @param request
      * @return
      */
-    @ExceptionHandler(BadCredentialsException.class)
+    @ExceptionHandler(SignInException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleBadCredentialsException(final BadCredentialsException badCredentialsException, final HttpServletRequest request) {
-        log.error("Handler for BadCredentialsException");
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSignInException(final BadCredentialsException badCredentialsException, final HttpServletRequest request) {
+        log.error("Handler for SignInException");
         return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.BAD_CREDENTIALS,
                 HttpStatus.BAD_REQUEST, resolveString("bad_credentials", request));
     }
