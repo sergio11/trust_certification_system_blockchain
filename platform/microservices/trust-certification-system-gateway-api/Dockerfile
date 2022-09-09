@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:11-jdk-alpine
 # Add Maintainer Info
 LABEL description="Trust Certification System Gateway API"
 # Args for image
