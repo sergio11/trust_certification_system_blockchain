@@ -1,10 +1,11 @@
-FROM openjdk:11-jdk-alpine
+FROM openjdk:11
 # Add Maintainer Info
 LABEL description="Trust Certification System Certificate Events Processor"
 # Args for image
 ARG PORT=8080
 
-RUN apk update && apk upgrade
+RUN apt-get update -y && apt-get upgrade -y
+RUN apt-get install dos2unix -y
 RUN ln -s /bin/bash /usr/bin
 RUN mkdir -p /usr/src/app
 RUN mkdir -p /opt/wallets
