@@ -18,7 +18,7 @@
 
     <properties>
         <shedlock-spring.version>4.41.0</shedlock-spring.version>
-        <shedlock-zookeeper.version>4.41.0</shedlock-zookeeper.version>
+        <shedlock-provider-redis-spring.version>4.41.0</shedlock-provider-redis-spring.version>
     </properties>
 
     <dependencies>
@@ -34,8 +34,8 @@
         </dependency>
         <dependency>
             <groupId>net.javacrumbs.shedlock</groupId>
-            <artifactId>shedlock-provider-zookeeper-curator</artifactId>
-            <version>${shedlock-zookeeper.version}</version>
+            <artifactId>shedlock-provider-redis-spring</artifactId>
+            <version>${shedlock-provider-redis-spring.version}</version>
         </dependency>
     </dependencies>
 
