@@ -98,6 +98,7 @@ services:
 
   ## OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol, 
   ## which makes it possible for organizations to use centralized authentication and directory access services over a network.
+
   openldap:
     image: osixia/openldap:latest
     container_name: openldap
@@ -115,7 +116,7 @@ services:
       - 389:389
       - 636:636
     networks:
-      - openldap
+      - tcs_network
 
   openldap-ui:
     image: wheelybird/ldap-user-manager:latest
@@ -134,8 +135,7 @@ services:
     ports:
       - 18080:80
     networks:
-      - openldap
-
+      - tcs_network
 
   # MongoDB is a free and open-source cross-platform document-oriented database program
   mongo:
