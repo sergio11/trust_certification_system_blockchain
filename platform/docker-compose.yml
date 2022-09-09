@@ -12,6 +12,8 @@ volumes:
     driver: local
   redis-ui:
     driver: local
+  openldap-data:
+    driver: local
 
 # Networks
 networks:
