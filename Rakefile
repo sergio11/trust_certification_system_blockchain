@@ -1,102 +1,21 @@
 require 'json'
 
-namespace :tasks do
+namespace :tcs do
 
 	task default: %w[deploy]
 
-
-	desc "Deploys Trust certification System Blockchain and launches all services and daemons needed to properly work"
-	task :deploy => [
-		:cleaning_environment_task,
-		:start_ethereum_network,
-		:start_platform,
-		:start_ipfs_cluster,
-		:status] do
-	    puts "Deploying services..."
-	end
-
-	desc "Compile Platform"
-	task :compile_platform => [ :check_docker_task, :login ] do 
-		puts "Compile Platform"
-		baseDirectory = "./platform/microservices"
-		rakeCompileFile = "rake_compile.json"
-		Dir.each_child('./platform/microservices') do |microservice|
-			microserviceFolder = "#{baseDirectory}/#{microservice}"
-			compileFile = "#{microserviceFolder}/#{rakeCompileFile}"
-			puts "microservice folder: #{microserviceFolder}"
-			if(File.file?(compileFile))
-				compileFileContent = JSON.parse(File.read(compileFile))
-				dockerImageName = "#{compileFileContent['account']}/#{compileFileContent['image']}:#{compileFileContent['version']}"
-				puts "Build docker image: #{dockerImageName} at #{microserviceFolder}"  
-				puts `docker build -t #{dockerImageName} #{microserviceFolder}`
-				puts `docker images`
-				puts "Docker image #{dockerImageName} has been created! trying to upload it!"  
-				puts `docker push #{dockerImageName}`
-	  		else
-	  			puts "A rake compile file has not found in this microservice folder"
-	  		end
-		end
-	end 
-
-
-	## Deploy Ethereum Network
-
-	desc "Start Private Ethereum Network"
-	task :start_ethereum_network => [ :check_docker_task, :login, :check_ethereum_network_deployment_file_task ] do 
-		puts "Start Private Ethereum Network Containers"
-		puts `docker-compose -f ./ethereum/docker-compose.yml up -d`
-	end 
-
-	desc "Check Private Ethereum Network Deployment File"
-	task :check_ethereum_network_deployment_file_task do
-		puts "Check Private Ethereum Network Deployment File ..."
-	    raise "Deployment file not found, please check availability" unless File.file?("./ethereum/docker-compose.yml")
-	    puts "Private Ethereum Network Deployment File OK!"
-	end
-
-	## Deploy Platform
-
-	desc "Start Platform"
-	task :start_platform => [ :check_docker_task, :login, :check_platform_deployment_file_task ] do 
-		puts "Start Platform Containers"
-		puts `docker-compose -f ./platform/docker-compose.yml up -d`
-	end 
-
-	desc "Check Platform Deployment File"
-	task :check_platform_deployment_file_task do
-		puts "Check Platform Deployment File ..."
-	    raise "Deployment file not found, please check availability" unless File.file?("./platform/docker-compose.yml")
-	    puts "Platform Deployment File OK!"
+	desc "Authenticating with existing credentials"
+	task :login do
+		puts `docker login 2>&1`
 	end
 
 
-	## Deploy IPFS Cluster
-
-	desc "Start IPFS Cluster"
-	task :start_ipfs_cluster => [ :check_docker_task, :login, :check_ipfs_cluster_deployment_file_task ] do 
-		puts "Start IPFS Cluster Containers"
-		puts `docker-compose -f ./ipfs_cluster/docker-compose.yml up -d`
-	end 
-
-	desc "Check IPFS Cluster Deployment File"
-	task :check_ipfs_cluster_deployment_file_task do
-		puts "Check IPFS Cluster Deployment File ..."
-	    raise "Deployment file not found, please check availability" unless File.file?("./ipfs_cluster/docker-compose.yml")
-	    puts "Platform Deployment File OK!"
+	desc "Cleaning Evironment Task"
+	task :cleaning_environment_task do 
+		puts "Cleaning Environment"
+		puts `docker image prune -af`
+		puts `docker volume prune -f 2>&1`
 	end
-
-
-	desc "Start Trust certification System Blockchain"
-	task :start => [ :start_ethereum_network, :start_platform, :start_ipfs_cluster ] do 
-		puts "Start Trust certification System Blockchain"
-	end 
-
-	desc "UnDeploy Trust certification System Blockchain"
-	task :undeploy => [:status] do 
-		puts "Undeploy Services"
-		puts `docker-compose down -v 2>&1`
-	end
-
 
 	desc "Status Containers"
 	task :status do 
@@ -104,19 +23,32 @@ namespace :tasks do
 		puts `docker-compose ps 2>&1`
 	end
 
-
-	desc "Stop Containers"
-	task :stop => [ :check_docker_task ] do
-		puts "Stop Containers"
-		puts `docker-compose stop 2>&1`
-		puts `docker-compose rm -f 2>&1`
+	desc "Deploys Trust certification System Blockchain and launches all services and daemons needed to properly work"
+	task :deploy => [
+		:cleaning_environment_task,
+		"ethereum:start",
+		"ipfs:start",
+		"platform:start",
+		:status] do
+	    puts "Deploying services..."
 	end
 
-	desc "Cleaning Evironment Task"
-	task :cleaning_environment_task do 
-		puts "Cleaning Environment"
-		puts `docker image prune -af`
-		puts `docker volume prune -f 2>&1`
+	desc "UnDeploy Trust certification System Blockchain"
+	task :undeploy => [ "ethereum:undeploy", "ipfs:undeploy", "platform:undeploy" ] do 
+		puts "Undeploy Services"
+		puts `docker-compose down -v 2>&1`
+	end
+
+
+	desc "Start Trust certification System Blockchain"
+	task :start => [ "ethereum:start", "ipfs:start", "platform:start" ] do 
+		puts "Start Trust certification System Blockchain"
+	end 
+
+
+	desc "Stop Containers"
+	task :stop => [ "ethereum:stop", "ipfs:stop", "platform:stop" ] do
+		puts "Stop Trust certification System Blockchain"
 	end
 
 
@@ -132,11 +64,133 @@ namespace :tasks do
 	end
 
 
-	desc "Authenticating with existing credentials"
-	task :login do
-		puts `docker login 2>&1`
+	
+
+	## Deploy Platform
+	namespace :platform do
+
+		desc "Start Platform"
+		task :start => [ :check_docker_task, :login, :check_deployment_file ] do 
+			puts "Start Platform Containers"
+			puts `docker-compose -f ./platform/docker-compose.yml up -d`
+		end 
+
+		desc "Stop Platform"
+		task :stop => [ :check_docker_task, :login, :check_deployment_file ] do 
+			puts "Stop Platform Containers"
+			puts `docker-compose stop -f ./platform/docker-compose.yml 2>&1`
+		end
+
+		desc "UnDeploy Platform"
+		task :undeploy => [:status] do 
+			puts "Undeploy Services"
+			puts `docker-compose down -f ./platform/docker-compose.yml -v 2>&1`
+		end
+
+		desc "Check Platform Deployment File"
+		task :check_deployment_file do
+			puts "Check Platform Deployment File ..."
+		    raise "Deployment file not found, please check availability" unless File.file?("./platform/docker-compose.yml")
+		    puts "Platform Deployment File OK!"
+		end
+
+		desc "Compile Project"
+		task :compile do 
+			puts "Compile Platform"
+			if which('mvn')
+				puts `mvn -f ./platform/microservices clean install`
+			else
+				raise "Please check that Apache Maven is visible and accessible in the PATH"
+			end
+			
+		end 
+
+		desc "Build Docker Images"
+		task :package => [ :check_docker_task, :login, :compile ] do 
+			puts "Build Docker Images"
+			baseDirectory = "./platform/microservices"
+			rakeCompileFile = "rake_compile.json"
+			Dir.each_child('./platform/microservices') do |microservice|
+				microserviceFolder = "#{baseDirectory}/#{microservice}"
+				compileFile = "#{microserviceFolder}/#{rakeCompileFile}"
+				puts "microservice folder: #{microserviceFolder}"
+				if(File.file?(compileFile))
+					compileFileContent = JSON.parse(File.read(compileFile))
+					dockerImageName = "#{compileFileContent['account']}/#{compileFileContent['image']}:#{compileFileContent['version']}"
+					puts "Build docker image: #{dockerImageName} at #{microserviceFolder}"  
+					puts `docker build -t #{dockerImageName} #{microserviceFolder}`
+					puts `docker images`
+					puts "Docker image #{dockerImageName} has been created! trying to upload it!"  
+					puts `docker push #{dockerImageName}`
+		  		else
+		  			puts "A rake compile file has not found in this microservice folder"
+		  		end
+			end
+		end 
+
 	end
 
+
+	## Deploy IPFS Cluster
+	namespace :ipfs do
+
+		desc "Check IPFS Cluster Deployment File"
+		task :check_cluster_deployment_file do
+			puts "Check IPFS Cluster Deployment File ..."
+		    raise "Deployment file not found, please check availability" unless File.file?("./ipfs_cluster/docker-compose.yml")
+		    puts "Platform Deployment File OK!"
+		end
+
+		desc "Start IPFS Cluster"
+		task :start => [ :check_docker_task, :login, :check_cluster_deployment_file ] do 
+			puts "Start IPFS Cluster Containers"
+			puts `docker-compose -f ./ipfs_cluster/docker-compose.yml up -d`
+		end 
+
+		desc "Stop IPFS Cluster"
+		task :stop => [ :check_docker_task, :login, :check_deployment_file ] do 
+			puts "Stop Platform Containers"
+			puts `docker-compose stop -f ./ipfs_cluster/docker-compose.yml 2>&1`
+		end
+
+		desc "UnDeploy IPFS Cluster"
+		task :undeploy => [:status] do 
+			puts "Undeploy Services"
+			puts `docker-compose down -f ./ipfs_cluster/docker-compose.yml -v 2>&1`
+		end
+
+	end
+
+
+	## Deploy Ethereum Network
+	namespace :ethereum do
+
+		desc "Check Private Ethereum Network Deployment File"
+		task :check_network_deployment_file do
+			puts "Check Private Ethereum Network Deployment File ..."
+		    raise "Deployment file not found, please check availability" unless File.file?("./ethereum/docker-compose.yml")
+		    puts "Private Ethereum Network Deployment File OK!"
+		end
+
+		desc "Start Private Ethereum Network"
+		task :start => [ :check_docker_task, :login, :check_network_deployment_file ] do 
+			puts "Start Private Ethereum Network Containers"
+			puts `docker-compose -f ./ethereum/docker-compose.yml up -d`
+		end 
+
+		desc "Stop Private Ethereum Network"
+		task :stop => [ :check_docker_task, :login, :check_deployment_file ] do 
+			puts "Stop Platform Containers"
+			puts `docker-compose stop -f ./ethereum/docker-compose.yml 2>&1`
+		end
+
+		desc "UnDeploy Private Ethereum Network"
+		task :undeploy => [:status] do 
+			puts "Undeploy Services"
+			puts `docker-compose down -f ./ethereum/docker-compose.yml -v 2>&1`
+		end
+
+	end
 
 	## Utils Functions
 
@@ -160,7 +214,7 @@ namespace :tasks do
 	  end
 	  return nil
 	end
-
+	
 end 
 
 
