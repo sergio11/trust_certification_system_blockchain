@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -14,6 +15,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @EntityAnnotation(entityClass = PasswordResetNotificationEvent.class)
 public class PasswordResetNotificationEvent extends AbstractNotificationEvent {

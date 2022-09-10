@@ -56,7 +56,7 @@ import org.springframework.core.annotation.AnnotationUtils;
     @JsonSubTypes.Type(CertificationCourseRegisteredNotificationEvent.class),
     @JsonSubTypes.Type(CertificateIssuedNotificationEvent.class)
 })
-public class AbstractNotificationEvent {
+public abstract class AbstractNotificationEvent {
 
     /**
      * Get Entity Type
