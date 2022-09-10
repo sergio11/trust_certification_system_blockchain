@@ -9,9 +9,11 @@ RUN ln -s /bin/bash /usr/bin
 RUN mkdir -p /usr/src/app
 RUN mkdir -p /opt/wallets
 RUN mkdir -p /opt/i18n
+RUN mkdir -p /opt/credentials
 WORKDIR /usr/src/app
 
 COPY resources/wait-for-it.sh  wait-for-it.sh
+COPY resources/client_secret.json  /opt/credentials/client_secret.json
 ADD resources/i18n /opt/i18n
 COPY target/trust_certification_system_gateway_api.jar app.jar
 

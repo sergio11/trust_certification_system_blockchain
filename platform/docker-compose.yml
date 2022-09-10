@@ -219,7 +219,7 @@ services:
   # Trust Certification System Monitor Server
   tcs_monitor_server:
     image: ssanchez11/trust_certification_system_monitor_server:0.0.1-SNAPSHOT
-    container_name: bc-monitor-server
+    container_name: tcs-monitor-server
     env_file:
       - .env
     ports:

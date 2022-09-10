@@ -25,6 +25,12 @@ public class FCMCustomProperties implements Serializable {
     private String appServerKey;
 
     /**
+     * Group Prefix
+     */
+    @Value("${fcm.app.group.prefix}")
+    private String groupPrefix;
+
+    /**
      * Notification Groups Url
      */
     @Value("${fcm.notification.groups.url}")
@@ -41,12 +47,6 @@ public class FCMCustomProperties implements Serializable {
      */
     @Value("${fcm.sender.id}")
     private String senderId;
-
-    /**
-     * Group Prefix
-     */
-    @Value("${fcm.app.group.prefix}")
-    private String groupPrefix;
 
     /**
      *
