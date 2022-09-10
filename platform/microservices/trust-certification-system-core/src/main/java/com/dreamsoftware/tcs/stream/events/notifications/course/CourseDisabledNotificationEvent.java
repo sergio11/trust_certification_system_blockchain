@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -15,10 +16,11 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @EntityAnnotation(entityClass = CourseDisabledNotificationEvent.class)
 public class CourseDisabledNotificationEvent extends AbstractNotificationEvent {
 
-    private final String id;
-    private final String name;
+    private String id;
+    private String name;
 
 }

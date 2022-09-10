@@ -34,6 +34,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 /**
  * Web Configuration
@@ -153,5 +154,15 @@ public class WebConfig implements WebMvcConfigurer {
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public PrettyTime providePrettyTime() {
         return new PrettyTime(LocaleContextHolder.getLocale());
+    }
+
+    /**
+     * Provider Default View Resolver
+     *
+     * @return
+     */
+    @Bean
+    public InternalResourceViewResolver defaultViewResolver() {
+        return new InternalResourceViewResolver();
     }
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -15,12 +16,13 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @EntityAnnotation(entityClass = IssueCertificateRequestedNotificationEvent.class)
 public class IssueCertificateRequestedNotificationEvent extends AbstractNotificationEvent {
 
     /**
      * Certification Id
      */
-    private final String id;
+    private String id;
 
 }

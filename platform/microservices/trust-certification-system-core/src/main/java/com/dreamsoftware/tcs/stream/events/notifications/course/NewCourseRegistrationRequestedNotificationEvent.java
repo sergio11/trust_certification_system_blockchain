@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -15,10 +16,11 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @EntityAnnotation(entityClass = NewCourseRegistrationRequestedNotificationEvent.class)
 public class NewCourseRegistrationRequestedNotificationEvent extends AbstractNotificationEvent {
 
-    private final String caWalletHash;
-    private final String courseName;
+    private String caWalletHash;
+    private String courseName;
 
 }

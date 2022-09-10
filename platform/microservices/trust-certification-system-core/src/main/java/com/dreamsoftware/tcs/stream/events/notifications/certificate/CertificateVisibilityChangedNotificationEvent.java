@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -14,6 +15,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @EntityAnnotation(entityClass = CertificateVisibilityChangedNotificationEvent.class)
 public class CertificateVisibilityChangedNotificationEvent extends AbstractNotificationEvent {
@@ -21,11 +23,11 @@ public class CertificateVisibilityChangedNotificationEvent extends AbstractNotif
     /**
      * Certification Id
      */
-    private final String id;
+    private String id;
 
     /**
      * Is Visible
      */
-    private final Boolean isVisible;
+    private Boolean isVisible;
 
 }

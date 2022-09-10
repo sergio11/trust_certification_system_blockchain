@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -15,11 +16,12 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @EntityAnnotation(entityClass = OrderCompletedNotificationEvent.class)
 public class OrderCompletedNotificationEvent extends AbstractNotificationEvent {
 
     /**
      * Order Id
      */
-    private final String orderId;
+    private String orderId;
 }
