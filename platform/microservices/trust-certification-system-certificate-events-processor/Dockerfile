@@ -1,11 +1,10 @@
-FROM openjdk:11
+FROM amazoncorretto:11.0.16-alpine3.14
 # Add Maintainer Info
 LABEL description="Trust Certification System Certificate Events Processor"
 # Args for image
 ARG PORT=8080
 
-RUN apt-get update -y && apt-get upgrade -y
-RUN apt-get install dos2unix -y
+RUN apk update && apk upgrade
 RUN ln -s /bin/bash /usr/bin
 RUN mkdir -p /usr/src/app
 RUN mkdir -p /opt/wallets
