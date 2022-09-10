@@ -9,6 +9,7 @@ ethereum/sftp/keystore
 platform/wallets
 platform/.env
 ipfs_cluster/data
+platform/microservices/trust-certification-system-gateway-api/resources/client_secret.json
 ### STS ###
 .apt_generated
 .classpath

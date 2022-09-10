@@ -29,8 +29,7 @@ public class UsersAuthenticationConfig {
      * @param userDetails
      * @return
      */
-    @Bean
-    @Qualifier("usersAuthenticationProvider")
+    @Bean("usersAuthenticationProvider")
     public AuthenticationProvider provideCommonAuthenticationProvider(
             @Qualifier("platformUserProvider") UserDetailsService userDetails) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
@@ -47,8 +46,7 @@ public class UsersAuthenticationConfig {
      * @return
      * @throws Exception
      */
-    @Bean
-    @Qualifier("usersAuthenticationManager")
+    @Bean("usersAuthenticationManager")
     public AuthenticationManager provideAuthenticationManager(
             @Qualifier("usersAuthenticationProvider") AuthenticationProvider usersAuthenticationProvider,
             @Qualifier("socialAuthenticationProvider") AuthenticationProvider socialAuthenticationProvider

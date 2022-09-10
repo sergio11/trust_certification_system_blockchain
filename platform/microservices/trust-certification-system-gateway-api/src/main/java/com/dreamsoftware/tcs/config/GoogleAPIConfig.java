@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import java.io.File;
+import java.io.FileInputStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
@@ -54,7 +56,7 @@ public class GoogleAPIConfig {
      */
     @Bean
     public InputStreamReader provideInputStreamReader() throws IOException {
-        return new InputStreamReader(googleApiProperties.getClientSecret().getInputStream(), "UTF-8");
+        return new InputStreamReader(new FileInputStream(new File(googleApiProperties.getClientSecretPath())), "UTF-8");
     }
 
     /**

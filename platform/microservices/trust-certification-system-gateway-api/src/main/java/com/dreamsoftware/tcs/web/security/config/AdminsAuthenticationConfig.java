@@ -122,8 +122,7 @@ public class AdminsAuthenticationConfig {
      * @param ldapAuthoritiesPopulator
      * @return
      */
-    @Bean
-    @Qualifier("adminsAuthenticationProvider")
+    @Bean("adminsAuthenticationProvider")
     public AuthenticationProvider provideAuthenticationProvider(final LdapAuthenticator ldapAuthenticator, final LdapAuthoritiesPopulator ldapAuthoritiesPopulator) {
         Assert.notNull(ldapAuthenticator, "LdapAuthenticator must be provided");
         Assert.notNull(ldapAuthoritiesPopulator, "LdapAuthoritiesPopulator must be provided");
@@ -138,8 +137,7 @@ public class AdminsAuthenticationConfig {
      * @return
      * @throws Exception
      */
-    @Bean
-    @Qualifier("adminAuthenticationManager")
+    @Bean("adminAuthenticationManager")
     public AuthenticationManager provideAuthenticationManager(
             @Qualifier("adminsAuthenticationProvider") AuthenticationProvider adminsAuthenticationProvider
     ) throws Exception {

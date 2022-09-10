@@ -404,7 +404,7 @@ public class AccountsServiceImpl implements IAccountsService {
         final AccessTokenDTO accessTokenDTO = jwtTokenHelper.generateToken(userDetails, device);
 
         // Get last success login
-        final SimpleUserLoginDTO lastLoginDTO = userLoginRepository.findFirstByUserIdOrderByCreateAtDesc(new ObjectId(userDetails.getUserId()))
+        final SimpleUserLoginDTO lastLoginDTO = userLoginRepository.findFirstByUserIdOrderByCreatedAtDesc(new ObjectId(userDetails.getUserId()))
                 .map(simpleUserLoginMapper::entityToDTO).orElse(null);
 
         // Save Current success login

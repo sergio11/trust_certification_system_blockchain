@@ -14,7 +14,6 @@
         <ipfs.version>v1.3.3</ipfs.version>
         <jasypt.spring.boot.version>2.1.1</jasypt.spring.boot.version>
         <sshj.version>0.27.0</sshj.version>
-        <redis-om-spring.version>0.6.0</redis-om-spring.version>
         <web3j-maven-plugin.version>4.8.2</web3j-maven-plugin.version>
     </properties>
 
@@ -61,11 +60,12 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis -->
         <dependency>
-            <groupId>com.redis.om</groupId>
-            <artifactId>redis-om-spring</artifactId>
-            <version>${redis-om-spring.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>

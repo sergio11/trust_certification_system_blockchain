@@ -20,7 +20,7 @@ public interface UserLoginRepository extends MongoRepository<UserLoginEntity, Ob
      * @param userId
      * @return
      */
-    Optional<UserLoginEntity> findFirstByUserIdOrderByCreateAtDesc(final ObjectId userId);
+    Optional<UserLoginEntity> findFirstByUserIdOrderByCreatedAtDesc(final ObjectId userId);
 
     /**
      *
