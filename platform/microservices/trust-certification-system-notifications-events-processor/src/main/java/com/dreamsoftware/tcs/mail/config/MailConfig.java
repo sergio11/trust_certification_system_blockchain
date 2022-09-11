@@ -5,7 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 /**
  *
@@ -23,15 +24,15 @@ public class MailConfig {
      * @return
      */
     @Bean
-    public ClassLoaderTemplateResolver provideMailTemplateResolver() {
-        ClassLoaderTemplateResolver secondaryTemplateResolver = new ClassLoaderTemplateResolver();
-        secondaryTemplateResolver.setPrefix(mailProperties.getMailTemplatesBaseDir());
-        secondaryTemplateResolver.setSuffix(".html");
-        secondaryTemplateResolver.setTemplateMode(TemplateMode.HTML);
-        secondaryTemplateResolver.setCharacterEncoding("UTF-8");
-        secondaryTemplateResolver.setOrder(1);
-        secondaryTemplateResolver.setCheckExistence(true);
-        return secondaryTemplateResolver;
+    public ITemplateResolver provideMailTemplateResolver() {
+        FileTemplateResolver fileTemplateResolver = new FileTemplateResolver();
+        fileTemplateResolver.setPrefix(mailProperties.getMailTemplatesBaseDir());
+        fileTemplateResolver.setSuffix(".html");
+        fileTemplateResolver.setTemplateMode(TemplateMode.HTML);
+        fileTemplateResolver.setCharacterEncoding("UTF-8");
+        fileTemplateResolver.setOrder(1);
+        fileTemplateResolver.setCheckExistence(true);
+        return fileTemplateResolver;
     }
 
 }
