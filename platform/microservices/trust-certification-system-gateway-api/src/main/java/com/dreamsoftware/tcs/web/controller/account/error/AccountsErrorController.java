@@ -34,13 +34,13 @@ public class AccountsErrorController extends SupportController {
     /**
      * Handler for SignInException
      *
-     * @param badCredentialsException
+     * @param signInException
      * @param request
      * @return
      */
     @ExceptionHandler(SignInException.class)
     @ResponseBody
-    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSignInException(final BadCredentialsException badCredentialsException, final HttpServletRequest request) {
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSignInException(final SignInException signInException, final HttpServletRequest request) {
         log.error("Handler for SignInException");
         return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.BAD_CREDENTIALS,
                 HttpStatus.BAD_REQUEST, resolveString("bad_credentials", request));

@@ -1,11 +1,11 @@
 package com.dreamsoftware.tcs.config.properties;
 
+import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.annotation.Configuration;
 
 /**
  *
@@ -18,62 +18,41 @@ import org.springframework.context.annotation.Configuration;
 public class LdapProperties {
 
     /**
-     * LDAP Server URI
+     * Ldap URL
      */
-    @Value("${ldap.uri}")
-    private String uri;
+    @Value("${ldap.url}")
+    private String ldapUrl;
 
     /**
-     * LDAP Admin DN
+     * Ldap Base
      */
-    @Value("${ldap.admin-dn}")
-    private String adminDn;
+    @Value("${ldap.base}")
+    private String ldapBase;
 
     /**
-     * LDAP Admin Password
+     * Ldap Base User Search
      */
-    @Value("${ldap.admin-password}")
-    private String adminPassword;
+    @Value("${ldap.base-user-search}")
+    private String ldapBaseUserSearch;
 
     /**
-     * LDAP Search Base
+     * Ldap Username
      */
-    @Value("${ldap.search-base}")
-    private String searchBase; //ou=organization;
+    @Value("${ldap.username}")
+    private String ldapUsername;
 
     /**
-     * LDAP Search Filter
+     * Ldap User Password
      */
-    @Value("${ldap.search-filter}")
-    private String searchFilter; //uid={0}
-
-    /**
-     * LDAP Group Search Base
-     */
-    @Value("${ldap.group-search-base}")
-    private String groupSearchBase; //ou=groups
-
-    /**
-     * LDAP Group Search Filter
-     */
-    @Value("${ldap.group-search-filter}")
-    private String groupSearchFilter; //memberUid={1}
-
-    /**
-     * LDAP Group Role Attribute
-     */
-    @Value("${ldap.group-role-attribute}")
-    private String groupRoleAttribute; //cn
+    @Value("${ldap.password}")
+    private String ldapUserPassword;
 
     @PostConstruct
     public void onPostConstruct() {
-        log.debug("LdapProperties uri: " + uri);
-        log.debug("LdapProperties adminDn: " + adminDn);
-        log.debug("LdapProperties adminPassword: " + adminPassword);
-        log.debug("LdapProperties searchBase: " + searchBase);
-        log.debug("LdapProperties searchFilter: " + searchFilter);
-        log.debug("LdapProperties groupSearchBase: " + groupSearchBase);
-        log.debug("LdapProperties groupSearchFilter: " + groupSearchFilter);
-        log.debug("LdapProperties groupRoleAttribute: " + groupRoleAttribute);
+        log.debug("Ldap URL: " + ldapUrl);
+        log.debug("Ldap Base: " + ldapBase);
+        log.debug("Ldap Base User Search: " + ldapBaseUserSearch);
+        log.debug("Ldap Usernanme: " + ldapUsername);
+        log.debug("Ldap User Password: " + ldapUserPassword);
     }
 }

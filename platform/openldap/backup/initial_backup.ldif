@@ -1,0 +1,41 @@
+version: 1
+
+dn: dc=trustcertificationsystem,dc=org
+objectClass: dcObject
+objectClass: organization
+objectClass: top
+dc: trustcertificationsystem
+o: trustcertificationsystem
+
+dn: ou=groups,dc=trustcertificationsystem,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: groups
+
+dn: ou=people,dc=trustcertificationsystem,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: people
+
+dn: cn=admin-tcs,ou=groups,dc=trustcertificationsystem,dc=org
+objectClass: groupOfMembers
+objectClass: posixGroup
+objectClass: top
+cn: admin-tcs
+gidNumber: 123456789
+businessCategory: ADMIN
+description: Group of admins to manage TCS platform
+
+dn: cn=sergio,ou=people,dc=trustcertificationsystem,dc=org
+objectClass: account
+objectClass: posixAccount
+objectClass: top
+cn: sergio
+gidNumber: 123456789
+homeDirectory: /home/sergio
+uid: sergio
+uidNumber: 1200
+l:: w4F2aWxh
+userPassword:: e1NIQTI1Nn1yeHo3bkZUYmhvajlxNWEwMlEyYTJQMmcrR2ZRRFloVEtMeG8yc
+ FJsS1pzPQ==
+

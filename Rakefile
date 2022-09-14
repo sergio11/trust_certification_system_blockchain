@@ -75,6 +75,12 @@ namespace :tcs do
 			puts `docker-compose -f ./platform/docker-compose.yml up -d`
 		end 
 
+		desc "Load initial ldap backup"
+		task :init_ldap_backup => [ :check_docker_task ] do 
+			puts "Load initial ldap backup"
+			puts `docker exec -it openldap slapd-restore-data initial_backup.zip`
+		end
+
 		desc "Stop Platform"
 		task :stop => [ :check_docker_task, :login, :check_deployment_file ] do 
 			puts "Stop Platform Containers"

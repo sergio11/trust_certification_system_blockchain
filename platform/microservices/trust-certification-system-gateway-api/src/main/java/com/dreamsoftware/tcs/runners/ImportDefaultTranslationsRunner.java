@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.runners;
 
-import com.dreamsoftware.tcs.config.properties.TranslationslProperties;
+import com.dreamsoftware.tcs.config.properties.TranslationsProperties;
 import com.dreamsoftware.tcs.services.ITranslationsService;
 import java.io.File;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class ImportDefaultTranslationsRunner implements CommandLineRunner {
 
     private final ITranslationsService translationsService;
-    private final TranslationslProperties translationslProperties;
+    private final TranslationsProperties translationslProperties;
 
     @Override
     public void run(String... args) throws Exception {
