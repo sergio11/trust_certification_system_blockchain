@@ -124,7 +124,7 @@ public class AccountsServiceImpl implements IAccountsService {
     public AuthenticationDTO signin(final SignInAdminUserDTO dto, final Device device) {
         Assert.notNull(dto, "DTO can not be null");
         Assert.notNull(device, "Device can not be null");
-        final Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
+        final Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(dto.getUid(), dto.getPassword());
         final ICommonUserDetailsAware<String> userDetails = authenticate(adminAuthenticationManager, authenticationRequest);
         final AccessTokenDTO accessTokenDTO = jwtTokenHelper.generateToken(userDetails, device);
         // Generate and return Authentication Response

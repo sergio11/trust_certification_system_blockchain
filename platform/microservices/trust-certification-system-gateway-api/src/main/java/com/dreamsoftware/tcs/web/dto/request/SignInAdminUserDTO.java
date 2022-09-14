@@ -25,13 +25,12 @@ import lombok.NoArgsConstructor;
 public class SignInAdminUserDTO {
 
     /**
-     * User Email
+     * Admin UID
      */
-    @Schema(description = "User Email.", example = "user_example@gmail.com", required = true)
-    @NotEmpty(message = "{user_email_not_empty}")
-    @Pattern(regexp = "\\S+@\\S+\\.\\S+", message = "{user_email_invalid}", groups = {IExtended.class})
-    @JsonProperty("email")
-    private String email;
+    @Schema(description = "UID", example = "admin-tcs", required = true)
+    @NotEmpty(message = "{admin_uid_not_empty}")
+    @JsonProperty("uid")
+    private String uid;
 
     /**
      * User Password

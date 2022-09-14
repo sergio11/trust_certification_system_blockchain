@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.mapper;
 
-import com.dreamsoftware.tcs.persistence.nosql.entity.AuthorityEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.AuthorityEnum;
+import com.dreamsoftware.tcs.web.security.model.UserLdapAccount;
 import com.dreamsoftware.tcs.web.security.userdetails.impl.UserDetailsImpl;
 import java.util.HashSet;
 import java.util.List;
@@ -15,32 +15,29 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 /**
- * User Details Mapper
+ * User Ldap Account
  */
 @Mapper(unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
-public abstract class UserDetailsMapper {
+public abstract class UserLdapAccountMapper {
 
     /**
-     * User Entity to User Details mapping
-     *
      * @param entity
      * @return DTO
      */
     @Mappings({
-        @Mapping(expression = "java(getPermissions(entity.getAuthority()))", target = "grantedAuthorities"),
-        @Mapping(expression = "java(entity.getId().toString())", target = "id")
+        @Mapping(expression = "java(getPermissions())", target = "grantedAuthorities"),
+        @Mapping(expression = "java(entity.getId())", target = "id")
     })
     @Named("entityToDTO")
-    public abstract UserDetailsImpl<String> entityToDTO(UserEntity entity);
+    public abstract UserDetailsImpl<String> entityToDTO(final UserLdapAccount entity);
 
     /**
-     * User Entity list to User Details list
      *
      * @param entity list
      * @return dto list
      */
     @IterableMapping(qualifiedByName = "entityToDTO")
-    public abstract List<UserDetailsImpl<String>> entityToDTO(List<UserEntity> entity);
+    public abstract List<UserDetailsImpl<String>> entityToDTO(final List<UserLdapAccount> entity);
 
     /**
      * Get Permissions
@@ -48,9 +45,9 @@ public abstract class UserDetailsMapper {
      * @param authorityEntity
      * @return
      */
-    protected Set<GrantedAuthority> getPermissions(final AuthorityEntity authorityEntity) {
+    protected Set<GrantedAuthority> getPermissions() {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority(authorityEntity.getType().name()));
+        grantedAuthorities.add(new SimpleGrantedAuthority(AuthorityEnum.ROLE_ADMIN.name()));
         return grantedAuthorities;
     }
 }
