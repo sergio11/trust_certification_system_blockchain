@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.EqualsFilter;
-import static org.springframework.ldap.query.LdapQueryBuilder.query;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,13 +41,6 @@ public class AdminProviderImpl implements AuthenticationProvider {
      */
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
-
-        try {
-            findAccountByUid(authentication.getName());
-        } catch (final Exception ex) {
-            ex.printStackTrace();
-            log.debug("AdminProviderImpl - findAccountByUid ex: " + ex.getMessage());
-        }
         log.debug("AdminProviderImpl - authenticate for: " + authentication.getName());
         boolean authenticate = ldapTemplate.authenticate(ldapProperties.getLdapBaseUserSearch(), new EqualsFilter("uid", authentication.getName()).encode(),
                 authentication.getCredentials().toString());

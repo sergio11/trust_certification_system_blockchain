@@ -32,7 +32,6 @@ public class AdminsAuthenticationConfig {
     public LdapContextSource provideLdapContextSource() {
         LdapContextSource ldapContextSource = new LdapContextSource();
         ldapContextSource.setUrl(ldapProperties.getLdapUrl());
-        //ldapContextSource.setBase(ldapProperties.getLdapBase());
         ldapContextSource.setUserDn(ldapProperties.getLdapUsername());
         ldapContextSource.setPassword(ldapProperties.getLdapUserPassword());
         ldapContextSource.afterPropertiesSet();
