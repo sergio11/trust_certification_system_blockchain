@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dreamsoftware</groupId>
-    <artifactId>trust-certification-system-core-utils</artifactId>
+    <artifactId>trust-certification-system-core</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>trust_certification_system_core_utils</name>
-    <description>Trust Certification System Utils Core Module</description>
+    <name>trust_certification_system_core</name>
+    <description>Trust Certification System Core Module</description>
     <packaging>jar</packaging>
 
     <properties>

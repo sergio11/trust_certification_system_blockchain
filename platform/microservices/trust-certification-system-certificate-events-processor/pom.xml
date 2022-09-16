@@ -27,7 +27,7 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>trust-certification-system-core-utils</artifactId>
+            <artifactId>trust-certification-system-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
