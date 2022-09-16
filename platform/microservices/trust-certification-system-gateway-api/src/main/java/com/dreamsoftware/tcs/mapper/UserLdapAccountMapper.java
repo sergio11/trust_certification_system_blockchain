@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.mapper;
 
+import com.dreamsoftware.tcs.persistence.ldap.entity.UserLdapEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.AuthorityEnum;
-import com.dreamsoftware.tcs.web.security.model.UserLdapAccount;
 import com.dreamsoftware.tcs.web.security.userdetails.impl.UserDetailsImpl;
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +29,7 @@ public abstract class UserLdapAccountMapper {
         @Mapping(expression = "java(entity.getId())", target = "id")
     })
     @Named("entityToDTO")
-    public abstract UserDetailsImpl<String> entityToDTO(final UserLdapAccount entity);
+    public abstract UserDetailsImpl<String> entityToDTO(final UserLdapEntity entity);
 
     /**
      *
@@ -37,12 +37,11 @@ public abstract class UserLdapAccountMapper {
      * @return dto list
      */
     @IterableMapping(qualifiedByName = "entityToDTO")
-    public abstract List<UserDetailsImpl<String>> entityToDTO(final List<UserLdapAccount> entity);
+    public abstract List<UserDetailsImpl<String>> entityToDTO(final List<UserLdapEntity> entity);
 
     /**
      * Get Permissions
      *
-     * @param authorityEntity
      * @return
      */
     protected Set<GrantedAuthority> getPermissions() {

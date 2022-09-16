@@ -23,7 +23,6 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceReq
 import com.dreamsoftware.tcs.service.ICertificateSigningService;
 import org.apache.commons.io.FileUtils;
 import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
-import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import lombok.extern.slf4j.Slf4j;
