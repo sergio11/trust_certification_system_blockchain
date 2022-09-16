@@ -63,7 +63,17 @@ public class UserServiceImpl implements IUserService {
         Assert.notNull(event, "Event can not be null");
         log.debug("register -> " + event.getWalletHash() + " CALLED!");
         // Add initial TCS ERC-20 funds
-        tokenManagementBlockchainRepository.sendInitialTokenFundsTo(event.getWalletHash(), event.getUserType());
+        switch (event.getUserType()) {
+            case CA:
+                tokenManagementBlockchainRepository.configureInitialTokenFundsToCa(event.getWalletHash());
+                break;
+            case STUDENT:
+                tokenManagementBlockchainRepository.configureInitialTokenFundsToStudent(event.getWalletHash());
+                break;
+            case ADMIN:
+                tokenManagementBlockchainRepository.configureInitialTokenFundsToAdmin(event.getWalletHash());
+                break;
+        }
         if (event.getUserType() == UserTypeEnum.CA) {
             certificationAuthorityBlockchainRepository.register(event.getName(), event.getWalletHash());
         }

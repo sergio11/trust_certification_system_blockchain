@@ -24,7 +24,17 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>trust-certification-system-core</artifactId>
+            <artifactId>trust-certification-system-core-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>trust-certification-system-core-bc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>trust-certification-system-core-notification</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

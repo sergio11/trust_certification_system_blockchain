@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.dreamsoftware</groupId>
+    <artifactId>trust-certification-system-core-nosql</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>trust_certification_system_core_nosql</name>
+    <description>Trust Certification System NoSQL Core Module</description>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>com.dreamsoftware</groupId>
+        <artifactId>trust_certification_system_blockchain</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../</relativePath>
+    </parent>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>

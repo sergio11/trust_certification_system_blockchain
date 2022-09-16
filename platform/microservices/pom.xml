@@ -29,7 +29,13 @@
 
 
     <modules>
-        <module>trust-certification-system-core</module>
+        <module>trust-certification-system-core-nosql</module>
+        <module>trust-certification-system-core-ldap</module>
+        <module>trust-certification-system-core-bc</module>
+        <module>trust-certification-system-core-ipfs</module>
+        <module>trust-certification-system-core-utils</module>
+        <module>trust-certification-system-core-notification</module>
+        <module>trust-certification-system-core-i18n</module>
         <module>trust-certification-system-user-events-processor</module>
         <module>trust-certification-system-certificate-events-processor</module>
         <module>trust-certification-system-course-events-processor</module>

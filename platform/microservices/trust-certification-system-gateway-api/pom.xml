@@ -33,7 +33,27 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>trust-certification-system-core</artifactId>
+            <artifactId>trust-certification-system-core-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>trust-certification-system-core-bc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>trust-certification-system-core-ldap</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>trust-certification-system-core-ipfs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>trust-certification-system-core-notification</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -104,10 +124,10 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-ldap</artifactId>
-        </dependency>
+        </dependency>-->
 
 
         <dependency>
@@ -124,11 +144,11 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-        <dependency>
+        <!--<dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
-        </dependency>
+        </dependency>-->
 
         <!-- Apache POI -->
         <dependency>
