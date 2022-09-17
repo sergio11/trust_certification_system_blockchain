@@ -2,9 +2,7 @@ package com.dreamsoftware.tcs.web.dto.request;
 
 import com.dreamsoftware.tcs.web.validation.constraints.EmailShouldBeUnique;
 import com.dreamsoftware.tcs.web.validation.constraints.FieldMatch;
-import com.dreamsoftware.tcs.web.validation.constraints.IExtended;
 import com.dreamsoftware.tcs.web.validation.constraints.ShouldBeValidISOLanguage;
-import com.dreamsoftware.tcs.web.validation.constraints.ValidUserType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.Email;
@@ -60,12 +58,10 @@ public class SignUpUserDTO {
     protected String confirmPassword;
 
     /**
-     * Type
+     * Register as CA
      */
-    @JsonProperty("type")
-    @NotBlank(message = "{user_type_not_null}")
-    @ValidUserType(message = "{user_type_invalid}", groups = {IExtended.class})
-    private String type;
+    @JsonProperty("registerAsCA")
+    private boolean registerAsCA;
 
     /**
      * User Agent

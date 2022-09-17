@@ -12,7 +12,6 @@ import org.mapstruct.Mappings;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.Assert;
 
 /**
  *
@@ -41,8 +40,8 @@ public abstract class SignUpUserMapper {
      */
     @Mappings({
         @Mapping(expression = "java(passwordEncoder.encode(user.getPasswordClear()))", target = "password"),
-        @Mapping(expression = "java(getUserAuthority(user.getType()))", target = "authority"),
-        @Mapping(expression = "java(com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum.valueOf(user.getType()))", target = "type")
+        @Mapping(expression = "java(getUserAuthority(user.isRegisterAsCA()))", target = "authority"),
+        @Mapping(expression = "java(getUserType(user.isRegisterAsCA()))", target = "type")
     })
     @Named("signUpUserDTOToUserEntity")
     public abstract UserEntity signUpUserDTOToUserEntity(SignUpUserDTO user);
@@ -50,27 +49,21 @@ public abstract class SignUpUserMapper {
     /**
      * Get User Authority
      *
-     * @param userType
+     * @param registerAsCA
      * @return
      */
-    protected AuthorityEntity getUserAuthority(final String userType) {
-        Assert.notNull(userType, "User Type can not be null");
-        final UserTypeEnum userTypeEnum = UserTypeEnum.valueOf(userType);
-        final AuthorityEnum authorityTypeEnum;
-        switch (userTypeEnum) {
-            case CA:
-                authorityTypeEnum = AuthorityEnum.ROLE_CA;
-                break;
-            case STUDENT:
-                authorityTypeEnum = AuthorityEnum.ROLE_STUDENT;
-                break;
-            case ADMIN:
-                authorityTypeEnum = AuthorityEnum.ROLE_ADMIN;
-                break;
-            default:
-                authorityTypeEnum = null;
-                break;
-        }
+    protected AuthorityEntity getUserAuthority(final Boolean registerAsCA) {
+        final AuthorityEnum authorityTypeEnum = registerAsCA ? AuthorityEnum.ROLE_CA : AuthorityEnum.ROLE_STUDENT;
         return authorityRepository.findOneByType(authorityTypeEnum).orElse(null);
     }
+
+    /**
+     *
+     * @param registerAsCA
+     * @return
+     */
+    protected UserTypeEnum getUserType(final Boolean registerAsCA) {
+        return registerAsCA ? UserTypeEnum.CA : UserTypeEnum.STUDENT;
+    }
+
 }
