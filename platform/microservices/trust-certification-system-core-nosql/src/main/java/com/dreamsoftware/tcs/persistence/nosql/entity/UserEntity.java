@@ -94,6 +94,12 @@ public class UserEntity {
     private Date activationDate;
 
     /**
+     * Last Password Reset
+     */
+    @Field("last_password_reset")
+    private Date lastPasswordReset;
+
+    /**
      * Authority
      */
     @DBRef
