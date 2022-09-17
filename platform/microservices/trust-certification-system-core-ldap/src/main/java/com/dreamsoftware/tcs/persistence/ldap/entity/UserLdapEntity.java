@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserLdapEntity {
 
-    private String id;
-    private String name;
-    private String surname;
+    private String uidNumber;
+    private String uid;
+    private String cn;
     private String email;
 }

@@ -73,6 +73,7 @@ public class AccountsController extends SupportController {
      * @param signInUserDTO
      * @param device
      * @param userAgent
+     * @param request
      * @return
      * @throws Throwable
      */
@@ -91,8 +92,11 @@ public class AccountsController extends SupportController {
                     required = true, schema = @Schema(implementation = SignInUserDTO.class))
             @Validated(ICommonSequence.class) SignInUserDTO signInUserDTO,
             @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
-            @Parameter(hidden = true) Device device) throws Throwable {
+            @Parameter(hidden = true) Device device,
+            @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
         try {
+            // Configure remote addr
+            signInUserDTO.setRemoteAddr(request.getRemoteAddr());
             // Configure User Agent
             signInUserDTO.setUserAgent(userAgent);
             final AuthenticationDTO authenticationDTO = authenticationService.signin(signInUserDTO, device);
@@ -107,7 +111,9 @@ public class AccountsController extends SupportController {
      * Create Authentication Token for Admin users
      *
      * @param signInAdminUserDTO
+     * @param userAgent
      * @param device
+     * @param request
      * @return
      * @throws Throwable
      */
@@ -125,8 +131,13 @@ public class AccountsController extends SupportController {
             @Parameter(description = "Admin authentication data. Cannot null or empty.",
                     required = true, schema = @Schema(implementation = SignInAdminUserDTO.class))
             @Validated(ICommonSequence.class) SignInAdminUserDTO signInAdminUserDTO,
-            @Parameter(hidden = true) Device device) throws Throwable {
+            @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
+            @Parameter(hidden = true) Device device,
+            @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
         try {
+            // Configure remote addr
+            signInAdminUserDTO.setRemoteAddr(request.getRemoteAddr());
+            signInAdminUserDTO.setUserAgent(userAgent);
             final AuthenticationDTO authenticationDTO = authenticationService.signin(signInAdminUserDTO, device);
             return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_ADMIN_SUCCESS,
                     HttpStatus.OK, authenticationDTO);
@@ -141,6 +152,7 @@ public class AccountsController extends SupportController {
      * @param userAgent
      * @param locale
      * @param device
+     * @param request
      * @return
      * @throws Throwable
      */
@@ -160,8 +172,10 @@ public class AccountsController extends SupportController {
             @Valid SignInUserExternalProviderDTO externalProviderAuthRequest,
             @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
             @Parameter(hidden = true) Locale locale,
-            @Parameter(hidden = true) Device device) throws Throwable {
+            @Parameter(hidden = true) Device device,
+            @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
         try {
+            externalProviderAuthRequest.setRemoteAddr(request.getRemoteAddr());
             externalProviderAuthRequest.setUserAgent(userAgent);
             final AuthenticationDTO authenticationDTO = authenticationService.signin(externalProviderAuthRequest, device);
             return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGN_IN_EXTERNAL_ACCOUNT_SUCCESS,

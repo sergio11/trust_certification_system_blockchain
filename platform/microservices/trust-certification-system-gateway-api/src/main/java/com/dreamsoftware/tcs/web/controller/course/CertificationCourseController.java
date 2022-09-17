@@ -38,7 +38,6 @@ import javax.json.JsonMergePatch;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,7 +67,7 @@ public class CertificationCourseController extends SupportController {
      *
      * @return @throws Throwable
      */
-    @Operation(summary = "GET_ALL_COURSES - Get All courses", description = "Get All courses", tags = {"COURSE"})
+    @Operation(summary = "GET_ALL_COURSES - Get All courses (Only Access For Admin)", description = "Get All courses", tags = {"COURSE"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Course Detail",
                 content = @Content(schema = @Schema(implementation = CertificationCourseDetailDTO.class))),
@@ -362,7 +361,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "DELETE_CERTIFICATION_COURSE - Delete Certification Course", description = "Delete Certification Course", tags = {"COURSE"})
+    @Operation(summary = "DELETE_CERTIFICATION_COURSE - Delete Certification Course (Only Access For Admin Or Course Owner)", description = "Delete Certification Course", tags = {"COURSE"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Certification Course Deleted",
                 content = @Content(schema = @Schema(implementation = String.class))),

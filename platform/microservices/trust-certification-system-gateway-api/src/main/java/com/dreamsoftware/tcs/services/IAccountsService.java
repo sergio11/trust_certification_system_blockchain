@@ -56,8 +56,10 @@ public interface IAccountsService {
      * Restore Security Context For
      *
      * @param token
+     * @param clientAddr
+     * @param clientUserAgent
      */
-    void restoreSecurityContextFor(final String token);
+    void restoreSecurityContextFor(final String token, final String clientAddr, final String clientUserAgent);
 
     /**
      * Signup User

@@ -54,6 +54,13 @@ public class SignInUserExternalProviderDTO {
     private String longitude;
 
     /**
+     * User Remote Addr
+     */
+    @Parameter(hidden = true)
+    @JsonIgnore
+    private String remoteAddr;
+
+    /**
      * User Agent
      */
     @Parameter(hidden = true)

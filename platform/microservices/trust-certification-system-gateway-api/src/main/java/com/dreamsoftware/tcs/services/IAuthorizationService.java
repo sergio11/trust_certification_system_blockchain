@@ -19,6 +19,13 @@ public interface IAuthorizationService {
     Boolean isAdmin();
 
     /**
+     * Is Ca Or Student
+     *
+     * @return
+     */
+    Boolean isCAOrStudent();
+
+    /**
      * Is CA
      *
      * @return

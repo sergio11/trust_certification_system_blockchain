@@ -24,6 +24,12 @@ public class LdapProperties {
     private String ldapUrl;
 
     /**
+     * Ldap Base
+     */
+    @Value("${ldap.base}")
+    private String ldapBase;
+
+    /**
      * Ldap Base User Search
      */
     @Value("${ldap.base-user-search}")
@@ -44,6 +50,7 @@ public class LdapProperties {
     @PostConstruct
     public void onPostConstruct() {
         log.debug("Ldap URL: " + ldapUrl);
+        log.debug("Ldap Base: " + ldapBase);
         log.debug("Ldap Base User Search: " + ldapBaseUserSearch);
         log.debug("Ldap Usernanme: " + ldapUsername);
         log.debug("Ldap User Password: " + ldapUserPassword);

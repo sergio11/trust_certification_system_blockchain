@@ -42,4 +42,18 @@ public class SignInAdminUserDTO {
     @JsonProperty("password")
     private String password;
 
+    /**
+     * User Remote Addr
+     */
+    @Parameter(hidden = true)
+    @JsonIgnore
+    private String remoteAddr;
+
+    /**
+     * User Agent
+     */
+    @Parameter(hidden = true)
+    @JsonIgnore
+    private String userAgent;
+
 }

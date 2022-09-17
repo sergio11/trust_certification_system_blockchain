@@ -34,6 +34,15 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
      * @return
      */
     @Override
+    public Boolean isCAOrStudent() {
+        return isCA() || isStudent();
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
     public Boolean isCA() {
         return hasAuthority(AuthorityEnum.ROLE_CA);
     }
