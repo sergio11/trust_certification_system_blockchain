@@ -3,9 +3,12 @@ package com.dreamsoftware.tcs.services.impl;
 import com.dreamsoftware.tcs.persistence.nosql.entity.AuthorityEnum;
 import com.dreamsoftware.tcs.services.IAuthorizationService;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
+import io.jsonwebtoken.lang.Assert;
+import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -75,6 +78,19 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
     }
 
     /**
+     *
+     * @param authority
+     * @param authorities
+     * @return
+     */
+    @Override
+    public Boolean hasAuthority(final AuthorityEnum authority, final Collection<? extends GrantedAuthority> authorities) {
+        Assert.notNull(authority, "authority can not be null");
+        Assert.notNull(authorities, "authorities can not be null");
+        return authorities.contains(new SimpleGrantedAuthority(authority.name()));
+    }
+
+    /**
      * Private Method
      */
     /**
@@ -83,8 +99,9 @@ public class AuthorizationServiceImpl implements IAuthorizationService {
      * @param authority
      * @return
      */
-    private Boolean hasAuthority(AuthorityEnum authority) {
+    private Boolean hasAuthority(final AuthorityEnum authority) {
         return (SecurityContextHolder.getContext().getAuthentication().getAuthorities()
                 .contains(new SimpleGrantedAuthority(authority.name())));
     }
+
 }
