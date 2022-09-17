@@ -6,9 +6,8 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,9 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 /**
  * JWT Authentication Token Filter
  */
+@Slf4j
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
-
-    private Logger logger = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
 
     private final String PREFIX = "Bearer ";
 

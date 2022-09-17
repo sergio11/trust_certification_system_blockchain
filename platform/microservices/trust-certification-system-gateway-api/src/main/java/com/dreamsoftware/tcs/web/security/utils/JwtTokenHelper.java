@@ -3,15 +3,21 @@ package com.dreamsoftware.tcs.web.security.utils;
 import com.dreamsoftware.tcs.web.dto.response.AccessTokenDTO;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import java.util.Collection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import org.bson.types.ObjectId;
+import java.util.UUID;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
 /**
@@ -24,6 +30,7 @@ public class JwtTokenHelper {
     static final String CLAIM_KEY_AUDIENCE = "audience";
     static final String CLAIM_KEY_CREATED = "created";
     static final String CLAIM_KEY_EXPIRED = "exp";
+    static final String CLAIM_KEY_AUTHORITIES = "Authorities";
 
     static final String AUDIENCE_UNKNOWN = "unknown";
     static final String AUDIENCE_WEB = "web";
@@ -48,9 +55,22 @@ public class JwtTokenHelper {
      * @param token
      * @return
      */
-    public String getSubFromToken(String token) {
+    public String getSubFromToken(final String token) {
+        Assert.notNull(token, "Token can not be null");
         final Claims claims = getClaimsFromToken(token);
         return String.valueOf(claims.getSubject());
+    }
+
+    /**
+     * Get Authorities from token
+     *
+     * @param token
+     * @return
+     */
+    public Collection<? extends GrantedAuthority> getAuthoritiesFromToken(final String token) {
+        Assert.notNull(token, "Token can not be null");
+        final Claims claims = getClaimsFromToken(token);
+        return (Collection<? extends GrantedAuthority>) claims.get(CLAIM_KEY_AUTHORITIES);
     }
 
     /**
@@ -59,7 +79,7 @@ public class JwtTokenHelper {
      * @param token
      * @return
      */
-    public AccessTokenDTO refreshToken(String token) {
+    public AccessTokenDTO refreshToken(final String token) {
         Assert.notNull(token, "Token can not be null");
         final Date createdAt = new Date();
         final Date expirationAt = new Date(createdAt.getTime() + expiration * 1000);
@@ -95,6 +115,7 @@ public class JwtTokenHelper {
         claims.put(CLAIM_KEY_SUB, userDetails.getUserId());
         claims.put(CLAIM_KEY_AUDIENCE, audience);
         claims.put(CLAIM_KEY_CREATED, createdAt);
+        claims.put(CLAIM_KEY_AUTHORITIES, userDetails.getAuthorities());
 
         final String token = doGenerateToken(claims, expirationAt);
 
@@ -194,7 +215,7 @@ public class JwtTokenHelper {
                     .setSigningKey(secret)
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (Exception e) {
+        } catch (ExpiredJwtException | MalformedJwtException | SignatureException | UnsupportedJwtException | IllegalArgumentException e) {
             claims = null;
         }
         return claims;
@@ -258,6 +279,8 @@ public class JwtTokenHelper {
     private String doGenerateToken(final Map<String, Object> claims, final Date expirationDate) {
         return Jwts.builder()
                 .setClaims(claims)
+                .setSubject("jwt_token")
+                .setId(UUID.randomUUID().toString())
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
