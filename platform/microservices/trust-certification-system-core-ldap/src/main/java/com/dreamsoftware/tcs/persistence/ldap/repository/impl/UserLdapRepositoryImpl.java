@@ -6,6 +6,7 @@ import com.dreamsoftware.tcs.persistence.ldap.entity.UserLdapEntity;
 import com.dreamsoftware.tcs.persistence.ldap.mapper.UserEntityAttributesMapper;
 import com.dreamsoftware.tcs.persistence.ldap.repository.IUserLdapRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ldap.core.LdapTemplate;
@@ -29,21 +30,16 @@ public class UserLdapRepositoryImpl implements IUserLdapRepository {
      *
      * @param uid
      * @return
-     * @throws DirectoryException
      */
     @Override
-    public UserLdapEntity findOneByUid(final String uid) throws DirectoryException {
+    public Optional<UserLdapEntity> findOneByUid(final String uid) {
         Assert.notNull(uid, "Uid can not be null");
         log.debug("UserLdapRepositoryImpl - findOneByUid: " + uid);
-        try {
-            final List<UserLdapEntity> users = ldapTemplate.search(ldapProperties.getLdapBaseUserSearch(), new EqualsFilter("uid", uid).encode(), new UserEntityAttributesMapper());
-            if (users.isEmpty()) {
-                throw new IllegalStateException(uid + " can not be found!", null);
-            }
-            return users.get(0);
-        } catch (final Exception ex) {
-            throw new DirectoryException(ex.getMessage(), ex);
+        final List<UserLdapEntity> users = ldapTemplate.search(ldapProperties.getLdapBaseUserSearch(), new EqualsFilter("uid", uid).encode(), new UserEntityAttributesMapper());
+        if (users.isEmpty()) {
+            return Optional.empty();
         }
+        return Optional.of(users.get(0));
     }
 
     /**

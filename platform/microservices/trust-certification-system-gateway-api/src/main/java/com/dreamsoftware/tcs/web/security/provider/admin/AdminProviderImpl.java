@@ -1,8 +1,6 @@
 package com.dreamsoftware.tcs.web.security.provider.admin;
 
 import com.dreamsoftware.tcs.mapper.UserLdapAccountMapper;
-import com.dreamsoftware.tcs.persistence.exception.DirectoryException;
-import com.dreamsoftware.tcs.persistence.ldap.entity.UserLdapEntity;
 import com.dreamsoftware.tcs.persistence.ldap.repository.IUserLdapRepository;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import lombok.RequiredArgsConstructor;
@@ -35,20 +33,19 @@ public class AdminProviderImpl implements AuthenticationProvider {
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         log.debug("AdminProviderImpl - authenticate for: " + authentication.getName());
-        try {
-            boolean authenticate = userLdapRepository.authenticate(authentication.getName(), authentication.getCredentials().toString());
-            if (!authenticate) {
-                throw new BadCredentialsException("Ldap Authentication Failed");
-            }
-            log.debug("AdminProviderImpl - authenticate succesfully!");
-            final UserLdapEntity userEntity = userLdapRepository.findOneByUid(authentication.getName());
-            final ICommonUserDetailsAware<String> userDetails = userLdapAccountMapper.entityToDTO(userEntity);
-            return new UsernamePasswordAuthenticationToken(userDetails,
-                    authentication.getCredentials().toString(), userDetails.getAuthorities());
-        } catch (final DirectoryException ex) {
-            log.debug("AdminProviderImpl - DirectoryException ex -> " + ex.getMessage());
+        boolean authenticate = userLdapRepository.authenticate(authentication.getName(), authentication.getCredentials().toString());
+        if (!authenticate) {
             throw new BadCredentialsException("Ldap Authentication Failed");
         }
+        log.debug("AdminProviderImpl - authenticate succesfully!");
+        final ICommonUserDetailsAware<String> userDetails = userLdapRepository.findOneByUid(authentication.getName())
+                .map(userEntity -> userLdapAccountMapper.entityToDTO(userEntity))
+                .orElse(null);
+        if (userDetails == null) {
+            throw new BadCredentialsException("Ldap Authentication Failed");
+        }
+        return new UsernamePasswordAuthenticationToken(userDetails,
+                authentication.getCredentials().toString(), userDetails.getAuthorities());
     }
 
     @Override

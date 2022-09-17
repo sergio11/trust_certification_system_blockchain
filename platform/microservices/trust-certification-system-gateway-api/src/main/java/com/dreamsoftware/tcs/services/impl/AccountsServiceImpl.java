@@ -8,7 +8,10 @@ import com.dreamsoftware.tcs.mapper.SimpleSocialUserMapper;
 import com.dreamsoftware.tcs.mapper.SimpleUserLoginMapper;
 import com.dreamsoftware.tcs.mapper.SimpleUserMapper;
 import com.dreamsoftware.tcs.mapper.UserDetailsMapper;
+import com.dreamsoftware.tcs.mapper.UserLdapAccountMapper;
+import com.dreamsoftware.tcs.persistence.ldap.repository.IUserLdapRepository;
 import com.dreamsoftware.tcs.persistence.nosql.entity.AuthenticationProviderTypeEnum;
+import com.dreamsoftware.tcs.persistence.nosql.entity.AuthorityEnum;
 import com.dreamsoftware.tcs.stream.events.user.OnNewUserRegistrationEvent;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserLoginEntity;
@@ -37,6 +40,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
+import com.dreamsoftware.tcs.services.IAuthorizationService;
 import com.dreamsoftware.tcs.services.IFacebookService;
 import com.dreamsoftware.tcs.services.IGoogleService;
 import com.dreamsoftware.tcs.services.IUploadImagesService;
@@ -52,12 +56,13 @@ import com.dreamsoftware.tcs.web.dto.response.SimpleSocialUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserLoginDTO;
 import com.dreamsoftware.tcs.web.security.provider.social.SocialProviderAuthenticationToken;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  *
@@ -94,6 +99,9 @@ public class AccountsServiceImpl implements IAccountsService {
     private final AuthenticationManager usersAuthenticationManager;
     @Qualifier("adminAuthenticationManager")
     private final AuthenticationManager adminAuthenticationManager;
+    private final IAuthorizationService authorizationService;
+    private final IUserLdapRepository userLdapRepository;
+    private final UserLdapAccountMapper userLdapAccountMapper;
 
     /**
      *
@@ -190,15 +198,24 @@ public class AccountsServiceImpl implements IAccountsService {
      * @param token
      */
     @Override
-    public void restoreSecurityContextFor(String token) {
+    public void restoreSecurityContextFor(final String token) {
         Assert.notNull(token, "Token can not be null");
         try {
             if (jwtTokenHelper.validateToken(token)) {
-                final ObjectId userId = new ObjectId(jwtTokenHelper.getSubFromToken(token));
-                log.debug("Restore User Details into security context for user id -> " + userId);
-                final ICommonUserDetailsAware<String> userDetails = userRepository.findById(userId)
-                        .map(userEntity -> userDetailsMapper.entityToDTO(userEntity))
-                        .orElse(null);
+                ICommonUserDetailsAware<String> userDetails = null;
+                final String sub = jwtTokenHelper.getSubFromToken(token);
+                final Collection<? extends GrantedAuthority> authorities = jwtTokenHelper.getAuthoritiesFromToken(token);
+                if (authorizationService.hasAuthority(AuthorityEnum.ROLE_CA, authorities)
+                        || authorizationService.hasAuthority(AuthorityEnum.ROLE_STUDENT, authorities)) {
+                    log.debug("Restore User Details into security context for user id -> " + sub);
+                    userDetails = userRepository.findById(new ObjectId(sub))
+                            .map(userEntity -> userDetailsMapper.entityToDTO(userEntity))
+                            .orElse(null);
+                } else if (authorizationService.hasAuthority(AuthorityEnum.ROLE_ADMIN, authorities)) {
+                    userDetails = userLdapRepository.findOneByUid(sub)
+                            .map(userEntity -> userLdapAccountMapper.entityToDTO(userEntity))
+                            .orElse(null);
+                }
                 if (userDetails != null) {
                     SecurityContextHolder.getContext().setAuthentication(
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()));

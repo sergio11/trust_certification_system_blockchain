@@ -1,6 +1,9 @@
 package com.dreamsoftware.tcs.services;
 
+import com.dreamsoftware.tcs.persistence.nosql.entity.AuthorityEnum;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
+import java.util.Collection;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  *
@@ -43,4 +46,12 @@ public interface IAuthorizationService {
      * @return
      */
     ICommonUserDetailsAware<String> getUserDetails();
+
+    /**
+     *
+     * @param authority
+     * @param authorities
+     * @return
+     */
+    Boolean hasAuthority(final AuthorityEnum authority, final Collection<? extends GrantedAuthority> authorities);
 }
