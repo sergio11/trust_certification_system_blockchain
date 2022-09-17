@@ -33,7 +33,8 @@ public class AdminProviderImpl implements AuthenticationProvider {
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         log.debug("AdminProviderImpl - authenticate for: " + authentication.getName());
-        boolean authenticate = userLdapRepository.authenticate(authentication.getName(), authentication.getCredentials().toString());
+        boolean authenticate = userLdapRepository.authenticate(authentication.getName(),
+                authentication.getCredentials().toString());
         if (!authenticate) {
             throw new BadCredentialsException("Ldap Authentication Failed");
         }
@@ -52,5 +53,4 @@ public class AdminProviderImpl implements AuthenticationProvider {
     public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
-
 }

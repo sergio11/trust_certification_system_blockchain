@@ -26,7 +26,7 @@ public abstract class UserLdapAccountMapper {
      */
     @Mappings({
         @Mapping(expression = "java(getPermissions())", target = "grantedAuthorities"),
-        @Mapping(expression = "java(entity.getId())", target = "id")
+        @Mapping(expression = "java(entity.getUid())", target = "id")
     })
     @Named("entityToDTO")
     public abstract UserDetailsImpl<String> entityToDTO(final UserLdapEntity entity);

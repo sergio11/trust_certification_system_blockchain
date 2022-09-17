@@ -40,7 +40,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
-import com.dreamsoftware.tcs.services.IAuthorizationService;
 import com.dreamsoftware.tcs.services.IFacebookService;
 import com.dreamsoftware.tcs.services.IGoogleService;
 import com.dreamsoftware.tcs.services.IUploadImagesService;
@@ -57,12 +56,12 @@ import com.dreamsoftware.tcs.web.dto.response.SimpleUserLoginDTO;
 import com.dreamsoftware.tcs.web.security.provider.social.SocialProviderAuthenticationToken;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.GrantedAuthority;
 
 /**
  *
@@ -99,7 +98,6 @@ public class AccountsServiceImpl implements IAccountsService {
     private final AuthenticationManager usersAuthenticationManager;
     @Qualifier("adminAuthenticationManager")
     private final AuthenticationManager adminAuthenticationManager;
-    private final IAuthorizationService authorizationService;
     private final IUserLdapRepository userLdapRepository;
     private final UserLdapAccountMapper userLdapAccountMapper;
 
@@ -112,6 +110,8 @@ public class AccountsServiceImpl implements IAccountsService {
     @Override
     public AuthenticationDTO signin(final SignInUserDTO dto, final Device device) {
         Assert.notNull(dto, "DTO can not be null");
+        Assert.notNull(dto.getUserAgent(), "UserAgent can not be null");
+        Assert.notNull(dto.getRemoteAddr(), "RemoteAddr can not be null");
         Assert.notNull(device, "Device can not be null");
 
         final Float loginLat = StringUtils.isNoneEmpty(dto.getLatitude())
@@ -119,7 +119,7 @@ public class AccountsServiceImpl implements IAccountsService {
         final Float loginLon = StringUtils.isNoneEmpty(dto.getLongitude())
                 ? Float.valueOf(dto.getLongitude()) : null;
         final Authentication authRequest = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
-        return signin(authRequest, loginLat, loginLon, dto.getUserAgent(), device);
+        return signin(authRequest, loginLat, loginLon, dto.getUserAgent(), dto.getRemoteAddr(), device);
     }
 
     /**
@@ -131,10 +131,12 @@ public class AccountsServiceImpl implements IAccountsService {
     @Override
     public AuthenticationDTO signin(final SignInAdminUserDTO dto, final Device device) {
         Assert.notNull(dto, "DTO can not be null");
+        Assert.notNull(dto.getUserAgent(), "UserAgent can not be null");
+        Assert.notNull(dto.getRemoteAddr(), "RemoteAddr can not be null");
         Assert.notNull(device, "Device can not be null");
         final Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(dto.getUid(), dto.getPassword());
         final ICommonUserDetailsAware<String> userDetails = authenticate(adminAuthenticationManager, authenticationRequest);
-        final AccessTokenDTO accessTokenDTO = jwtTokenHelper.generateToken(userDetails, device);
+        final AccessTokenDTO accessTokenDTO = jwtTokenHelper.generateToken(userDetails, device, dto.getUserAgent(), dto.getRemoteAddr());
         // Generate and return Authentication Response
         return AuthenticationDTO.builder()
                 .accessToken(accessTokenDTO)
@@ -151,6 +153,8 @@ public class AccountsServiceImpl implements IAccountsService {
     @Override
     public AuthenticationDTO signin(final SignInUserExternalProviderDTO dto, final Device device) throws Throwable {
         Assert.notNull(dto, "DTO can not be null");
+        Assert.notNull(dto.getUserAgent(), "UserAgent can not be null");
+        Assert.notNull(dto.getRemoteAddr(), "RemoteAddr can not be null");
         Assert.notNull(device, "Device can not be null");
 
         final String accountId;
@@ -174,7 +178,7 @@ public class AccountsServiceImpl implements IAccountsService {
 
         authProviderEntityRepository.updateAuthenticationProviderTokenForkey(dto.getToken(), accountId);
 
-        return signin(authRequest, loginLat, loginLon, dto.getUserAgent(), device);
+        return signin(authRequest, loginLat, loginLon, dto.getUserAgent(), dto.getRemoteAddr(), device);
     }
 
     /**
@@ -196,22 +200,27 @@ public class AccountsServiceImpl implements IAccountsService {
     /**
      *
      * @param token
+     * @param clientAddr
+     * @param clientUserAgent
      */
     @Override
-    public void restoreSecurityContextFor(final String token) {
+    public void restoreSecurityContextFor(final String token, final String clientAddr, final String clientUserAgent) {
         Assert.notNull(token, "Token can not be null");
+        Assert.notNull(clientAddr, "clientAddr can not be null");
+        Assert.notNull(clientUserAgent, "clientUserAgent can not be null");
+        log.debug("restoreSecurityContextFor: token " + token + ", clientAddr " + clientAddr + ", clientUserAgent " + clientUserAgent);
         try {
-            if (jwtTokenHelper.validateToken(token)) {
+            if (jwtTokenHelper.validateToken(token, clientAddr, clientUserAgent)) {
                 ICommonUserDetailsAware<String> userDetails = null;
                 final String sub = jwtTokenHelper.getSubFromToken(token);
-                final Collection<? extends GrantedAuthority> authorities = jwtTokenHelper.getAuthoritiesFromToken(token);
-                if (authorizationService.hasAuthority(AuthorityEnum.ROLE_CA, authorities)
-                        || authorizationService.hasAuthority(AuthorityEnum.ROLE_STUDENT, authorities)) {
+                final Collection<String> authorities = jwtTokenHelper.getAuthoritiesFromToken(token);
+                if (authorities.containsAll(List.of(AuthorityEnum.ROLE_STUDENT.name(), AuthorityEnum.ROLE_CA.name()))) {
                     log.debug("Restore User Details into security context for user id -> " + sub);
                     userDetails = userRepository.findById(new ObjectId(sub))
                             .map(userEntity -> userDetailsMapper.entityToDTO(userEntity))
                             .orElse(null);
-                } else if (authorizationService.hasAuthority(AuthorityEnum.ROLE_ADMIN, authorities)) {
+                } else if (authorities.contains(AuthorityEnum.ROLE_ADMIN.name())) {
+                    log.debug("Restore User Details into security context for user id -> " + sub);
                     userDetails = userLdapRepository.findOneByUid(sub)
                             .map(userEntity -> userLdapAccountMapper.entityToDTO(userEntity))
                             .orElse(null);
@@ -398,7 +407,11 @@ public class AccountsServiceImpl implements IAccountsService {
 
     /**
      *
-     * @param userDetails
+     * @param authenticationRequest
+     * @param latitude
+     * @param longitude
+     * @param userAgent
+     * @param remoteAddr
      * @param device
      * @return
      */
@@ -407,18 +420,20 @@ public class AccountsServiceImpl implements IAccountsService {
             final Float latitude,
             final Float longitude,
             final String userAgent,
+            final String remoteAddr,
             final Device device) {
 
         Assert.notNull(authenticationRequest, "Authentication can not be null");
         Assert.notNull(latitude, "latitude can not be null");
         Assert.notNull(longitude, "longitude can not be null");
         Assert.notNull(userAgent, "userAgent can not be null");
+        Assert.notNull(remoteAddr, "remoteAddr can not be null");
         Assert.notNull(device, "Device can not be null");
 
         final ICommonUserDetailsAware<String> userDetails = authenticate(usersAuthenticationManager, authenticationRequest);
 
         // Generate Access Token
-        final AccessTokenDTO accessTokenDTO = jwtTokenHelper.generateToken(userDetails, device);
+        final AccessTokenDTO accessTokenDTO = jwtTokenHelper.generateToken(userDetails, device, userAgent, remoteAddr);
 
         // Get last success login
         final SimpleUserLoginDTO lastLoginDTO = userLoginRepository.findFirstByUserIdOrderByCreatedAtDesc(new ObjectId(userDetails.getUserId()))

@@ -1,7 +1,6 @@
 package com.dreamsoftware.tcs.persistence.ldap.repository.impl;
 
 import com.dreamsoftware.tcs.config.properties.LdapProperties;
-import com.dreamsoftware.tcs.persistence.exception.DirectoryException;
 import com.dreamsoftware.tcs.persistence.ldap.entity.UserLdapEntity;
 import com.dreamsoftware.tcs.persistence.ldap.mapper.UserEntityAttributesMapper;
 import com.dreamsoftware.tcs.persistence.ldap.repository.IUserLdapRepository;

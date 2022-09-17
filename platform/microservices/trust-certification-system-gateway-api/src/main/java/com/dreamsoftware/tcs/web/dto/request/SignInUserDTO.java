@@ -58,6 +58,13 @@ public class SignInUserDTO {
     private String longitude;
 
     /**
+     * User Remote Addr
+     */
+    @Parameter(hidden = true)
+    @JsonIgnore
+    private String remoteAddr;
+
+    /**
      * User agent
      */
     @Parameter(hidden = true)

@@ -35,10 +35,11 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             if (existeJWTToken(request, response)) {
                 // Get JWT token from HTTP Header
                 String jwtToken = request.getHeader(tokenHeader).replace(PREFIX, "");
-
+                log.debug("JwtAuthenticationTokenFilter  jwtToken -> " + jwtToken);
                 // Restore Security Context
                 if (StringUtils.isNotEmpty(jwtToken)) {
-                    accountService.restoreSecurityContextFor(jwtToken);
+                    log.debug("JwtAuthenticationTokenFilter  restoreSecurityContextFor");
+                    accountService.restoreSecurityContextFor(jwtToken, request.getRemoteAddr(), request.getHeader("User-Agent"));
                 }
             }
         }

@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.web.security.utils;
 
 import com.dreamsoftware.tcs.web.dto.response.AccessTokenDTO;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
+import com.google.common.hash.Hashing;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -17,7 +18,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
 /**
@@ -30,7 +30,9 @@ public class JwtTokenHelper {
     static final String CLAIM_KEY_AUDIENCE = "audience";
     static final String CLAIM_KEY_CREATED = "created";
     static final String CLAIM_KEY_EXPIRED = "exp";
-    static final String CLAIM_KEY_AUTHORITIES = "Authorities";
+    static final String CLAIM_KEY_AUTHORITIES = "authorities";
+    static final String CLAIM_KEY_CLIENT_ADDR = "clientAddr";
+    static final String CLAIM_KEY_USER_AGENT = "clientUserAgent";
 
     static final String AUDIENCE_UNKNOWN = "unknown";
     static final String AUDIENCE_WEB = "web";
@@ -67,10 +69,10 @@ public class JwtTokenHelper {
      * @param token
      * @return
      */
-    public Collection<? extends GrantedAuthority> getAuthoritiesFromToken(final String token) {
+    public Collection<String> getAuthoritiesFromToken(final String token) {
         Assert.notNull(token, "Token can not be null");
         final Claims claims = getClaimsFromToken(token);
-        return (Collection<? extends GrantedAuthority>) claims.get(CLAIM_KEY_AUTHORITIES);
+        return (Collection<String>) claims.get(CLAIM_KEY_AUTHORITIES);
     }
 
     /**
@@ -103,9 +105,11 @@ public class JwtTokenHelper {
      * @param <T>
      * @param userDetails
      * @param device
+     * @param userAgent
+     * @param remoteAddr
      * @return
      */
-    public <T> AccessTokenDTO generateToken(ICommonUserDetailsAware<T> userDetails, Device device) {
+    public <T> AccessTokenDTO generateToken(final ICommonUserDetailsAware<T> userDetails, final Device device, final String userAgent, final String remoteAddr) {
 
         final Date createdAt = new Date();
         final Date expirationAt = new Date(createdAt.getTime() + expiration * 1000);
@@ -115,7 +119,10 @@ public class JwtTokenHelper {
         claims.put(CLAIM_KEY_SUB, userDetails.getUserId());
         claims.put(CLAIM_KEY_AUDIENCE, audience);
         claims.put(CLAIM_KEY_CREATED, createdAt);
-        claims.put(CLAIM_KEY_AUTHORITIES, userDetails.getAuthorities());
+        claims.put(CLAIM_KEY_CLIENT_ADDR, Hashing.sha512().hashBytes(remoteAddr.getBytes()).toString());
+        claims.put(CLAIM_KEY_USER_AGENT, Hashing.sha512().hashBytes(userAgent.getBytes()).toString());
+        claims.put(CLAIM_KEY_AUTHORITIES, userDetails.getAuthorities().stream()
+                .map((auth) -> auth.getAuthority()).toArray());
 
         final String token = doGenerateToken(claims, expirationAt);
 
@@ -133,10 +140,12 @@ public class JwtTokenHelper {
      * Validate Token
      *
      * @param token
+     * @param clientAddr
+     * @param clientUserAgent
      * @return
      */
-    public Boolean validateToken(String token) {
-        return !isTokenExpired(token);
+    public Boolean validateToken(final String token, final String clientAddr, final String clientUserAgent) {
+        return !isTokenExpired(token) && isFromSameClientAddr(token, clientAddr) && isFromSameUserAgent(token, clientUserAgent);
     }
 
     /**
@@ -232,6 +241,28 @@ public class JwtTokenHelper {
     }
 
     /**
+     *
+     * @param clientAddr
+     * @return
+     */
+    private Boolean isFromSameClientAddr(final String token, final String clientAddr) {
+        final Claims claims = getClaimsFromToken(token);
+        final String tokenClientAddr = (String) claims.get(CLAIM_KEY_CLIENT_ADDR);
+        return Hashing.sha512().hashBytes(clientAddr.getBytes()).toString().equals(tokenClientAddr);
+    }
+
+    /**
+     *
+     * @param clientAddr
+     * @return
+     */
+    private Boolean isFromSameUserAgent(final String token, final String clientUserAgent) {
+        final Claims claims = getClaimsFromToken(token);
+        final String tokenUserAgent = (String) claims.get(CLAIM_KEY_USER_AGENT);
+        return Hashing.sha512().hashBytes(clientUserAgent.getBytes()).toString().equals(tokenUserAgent);
+    }
+
+    /**
      * is Created Before Last Password Reset
      *
      * @param created
@@ -279,7 +310,6 @@ public class JwtTokenHelper {
     private String doGenerateToken(final Map<String, Object> claims, final Date expirationDate) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject("jwt_token")
                 .setId(UUID.randomUUID().toString())
                 .setExpiration(expirationDate)
                 .signWith(SignatureAlgorithm.HS512, secret)

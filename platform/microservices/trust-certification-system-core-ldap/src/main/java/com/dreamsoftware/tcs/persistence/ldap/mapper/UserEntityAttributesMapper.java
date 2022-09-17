@@ -14,6 +14,10 @@ import org.springframework.ldap.core.AttributesMapper;
 @Slf4j
 public class UserEntityAttributesMapper implements AttributesMapper {
 
+    private final String UID_NUMBER = "uidNumber";
+    private final String UID = "uid";
+    private final String CN = "cn";
+
     /**
      *
      * @param attributes
@@ -26,13 +30,18 @@ public class UserEntityAttributesMapper implements AttributesMapper {
             log.debug("AdminProviderImpl - entryId -> " + entryId);
         }));
         final UserLdapEntity userAccount = new UserLdapEntity();
-        Attribute attribute = attributes.get("uid");
+
+        Attribute attribute = attributes.get(UID_NUMBER);
         if (attribute != null) {
-            userAccount.setId((String) attribute.get());
+            userAccount.setUidNumber((String) attribute.get());
         }
-        attribute = attributes.get("mail");
+        attribute = attributes.get(UID);
         if (attribute != null) {
-            userAccount.setEmail((String) attribute.get());
+            userAccount.setUid((String) attribute.get());
+        }
+        attribute = attributes.get(CN);
+        if (attribute != null) {
+            userAccount.setCn((String) attribute.get());
         }
         return userAccount;
     }
