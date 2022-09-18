@@ -214,7 +214,7 @@ public class AccountsServiceImpl implements IAccountsService {
                 ICommonUserDetailsAware<String> userDetails = null;
                 final String sub = jwtTokenHelper.getSubFromToken(token);
                 final Collection<String> authorities = jwtTokenHelper.getAuthoritiesFromToken(token);
-                if (authorities.containsAll(List.of(AuthorityEnum.ROLE_STUDENT.name(), AuthorityEnum.ROLE_CA.name()))) {
+                if (authorities.contains(AuthorityEnum.ROLE_STUDENT.name()) || authorities.contains(AuthorityEnum.ROLE_CA.name())) {
                     log.debug("Restore User Details into security context for user id -> " + sub);
                     userDetails = userRepository.findById(new ObjectId(sub))
                             .map(userEntity -> userDetailsMapper.entityToDTO(userEntity))
