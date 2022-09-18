@@ -34,8 +34,11 @@ public class TokenManagementBlockchainRepositoryImpl extends SupportBlockchainRe
         Assert.notNull(walletHash, "walletHash can not be null");
         try {
             log.debug("sendInitialTokenFundsTo address: " + properties.getTokenManagementContractAddress());
+            final Credentials credentials = walletService.loadCredentials(walletHash);
             final TokenManagementContractExt tokenManagementContract = loadTokenManagementContract();
-            tokenManagementContract.sendInitialTokenFundsTo(walletHash, BigInteger.valueOf(STUDENT_CLIENT_TYPE_VALUE)).send();
+            tokenManagementContract.sendInitialTokenFundsTo(credentials.getAddress(), BigInteger.valueOf(STUDENT_CLIENT_TYPE_VALUE)).send();
+            final BigInteger clientTokens = tokenManagementContract.getTokens(credentials.getAddress()).send();
+            log.debug("sendInitialTokenFundsTo Success! client tokens -> " + clientTokens);
         } catch (final Exception ex) {
             log.debug("Ex Message -> " + ex.getMessage());
             throw new RepositoryException(ex.getMessage(), ex);
@@ -52,8 +55,11 @@ public class TokenManagementBlockchainRepositoryImpl extends SupportBlockchainRe
         Assert.notNull(walletHash, "walletHash can not be null");
         try {
             log.debug("sendInitialTokenFundsTo address: " + properties.getTokenManagementContractAddress());
+            final Credentials credentials = walletService.loadCredentials(walletHash);
             final TokenManagementContractExt tokenManagementContract = loadTokenManagementContract();
-            tokenManagementContract.sendInitialTokenFundsTo(walletHash, BigInteger.valueOf(CA_CLIENT_TYPE_VALUE)).send();
+            tokenManagementContract.sendInitialTokenFundsTo(credentials.getAddress(), BigInteger.valueOf(CA_CLIENT_TYPE_VALUE)).send();
+            final BigInteger clientTokens = tokenManagementContract.getTokens(credentials.getAddress()).send();
+            log.debug("sendInitialTokenFundsTo Success! client tokens -> " + clientTokens);
         } catch (final Exception ex) {
             log.debug("Ex Message -> " + ex.getMessage());
             throw new RepositoryException(ex.getMessage(), ex);
@@ -70,8 +76,11 @@ public class TokenManagementBlockchainRepositoryImpl extends SupportBlockchainRe
         Assert.notNull(walletHash, "walletHash can not be null");
         try {
             log.debug("sendInitialTokenFundsTo address: " + properties.getTokenManagementContractAddress());
+            final Credentials credentials = walletService.loadCredentials(walletHash);
             final TokenManagementContractExt tokenManagementContract = loadTokenManagementContract();
-            tokenManagementContract.sendInitialTokenFundsTo(walletHash, BigInteger.valueOf(ADMIN_CLIENT_TYPE_VALUE)).send();
+            tokenManagementContract.sendInitialTokenFundsTo(credentials.getAddress(), BigInteger.valueOf(ADMIN_CLIENT_TYPE_VALUE)).send();
+            final BigInteger clientTokens = tokenManagementContract.getTokens(credentials.getAddress()).send();
+            log.debug("sendInitialTokenFundsTo Success! client tokens -> " + clientTokens);
         } catch (final Exception ex) {
             log.debug("Ex Message -> " + ex.getMessage());
             throw new RepositoryException(ex.getMessage(), ex);
