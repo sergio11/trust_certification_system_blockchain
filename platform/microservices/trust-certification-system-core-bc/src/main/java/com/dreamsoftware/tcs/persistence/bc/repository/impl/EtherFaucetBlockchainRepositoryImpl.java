@@ -131,7 +131,7 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
      * @return
      */
     private EtherFaucetContractExt loadEtherFaucetContract() {
-        return EtherFaucetContractExt.load(properties.getTokenManagementContractAddress(),
+        return EtherFaucetContractExt.load(properties.getTrustEtherFaucetContractAddress(),
                 web3j, rootTxManager, properties.gas());
     }
 }
