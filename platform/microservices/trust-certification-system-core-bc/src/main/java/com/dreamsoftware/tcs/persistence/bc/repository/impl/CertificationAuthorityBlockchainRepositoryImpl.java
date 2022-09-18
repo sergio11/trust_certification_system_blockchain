@@ -40,7 +40,7 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
      * @throws RepositoryException
      */
     @Override
-    public void register(String name, String walletHash) throws RepositoryException {
+    public void register(final String name, final String walletHash) throws RepositoryException {
         try {
             log.debug("registerCertificationAuthority address: " + properties.getCertificationAuthorityContractAddress());
             final CertificationAuthorityContract caContract = loadCAContract(walletHash);
@@ -57,7 +57,7 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
      * @throws RepositoryException
      */
     @Override
-    public CertificationAuthorityEntity getDetail(String walletHash) throws RepositoryException {
+    public CertificationAuthorityEntity getDetail(final String walletHash) throws RepositoryException {
         Assert.notNull(walletHash, "Wallet ca not be null");
         try {
             final CertificationAuthorityContract caContract = loadCAContract(walletHash);

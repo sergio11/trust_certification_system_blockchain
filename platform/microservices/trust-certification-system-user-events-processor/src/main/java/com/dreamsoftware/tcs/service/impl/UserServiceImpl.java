@@ -62,6 +62,8 @@ public class UserServiceImpl implements IUserService {
     public void register(OnNewUserRegistrationEvent event) throws Exception {
         Assert.notNull(event, "Event can not be null");
         log.debug("register -> " + event.getWalletHash() + " CALLED!");
+        // Add ETH funds
+        etherFaucetBlockchainRepository.addSeedFunds(event.getWalletHash());
         // Add initial TCS ERC-20 funds
         switch (event.getUserType()) {
             case CA:

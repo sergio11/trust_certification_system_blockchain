@@ -35,6 +35,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.text.MessageFormat;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.mobile.device.Device;
@@ -102,6 +103,8 @@ public class AccountsController extends SupportController {
             final AuthenticationDTO authenticationDTO = authenticationService.signin(signInUserDTO, device);
             return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_SUCCESS,
                     HttpStatus.OK, authenticationDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             throw new SignInException(ex.getMessage(), ex.getCause());
         }
@@ -141,6 +144,8 @@ public class AccountsController extends SupportController {
             final AuthenticationDTO authenticationDTO = authenticationService.signin(signInAdminUserDTO, device);
             return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_ADMIN_SUCCESS,
                     HttpStatus.OK, authenticationDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             throw new SignInException(ex.getMessage(), ex.getCause());
         }
@@ -180,6 +185,8 @@ public class AccountsController extends SupportController {
             final AuthenticationDTO authenticationDTO = authenticationService.signin(externalProviderAuthRequest, device);
             return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGN_IN_EXTERNAL_ACCOUNT_SUCCESS,
                     HttpStatus.OK, authenticationDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final FacebookOAuthException ex) {
             throw new SignInExternalProviderException(ex.getMessage(), ex.getCause());
         }
@@ -208,6 +215,8 @@ public class AccountsController extends SupportController {
             final AuthenticationDTO authenticationDTO = authenticationService.refresh(refreshTokenDTO.getToken());
             return responseHelper.createAndSendResponse(
                     AccountsResponseCodeEnum.REFRESH_TOKEN, HttpStatus.OK, authenticationDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             throw new RefreshTokenException(ex.getMessage(), ex);
         }
@@ -248,6 +257,8 @@ public class AccountsController extends SupportController {
             final SimpleUserDTO userSaved = authenticationService.signup(user);
             return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_SUCCESS,
                     HttpStatus.OK, userSaved);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             ex.printStackTrace();
             log.debug("signup exception: " + ex);
@@ -285,6 +296,8 @@ public class AccountsController extends SupportController {
             final SimpleUserDTO userSaved = authenticationService.signup(user);
             return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_EXTERNAL_ACCOUNT_SUCCESS,
                     HttpStatus.OK, userSaved);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             ex.printStackTrace();
             log.debug("signup exception: " + ex);
@@ -312,6 +325,8 @@ public class AccountsController extends SupportController {
         try {
             final SimpleUserDTO userActivated = authenticationService.activate(token);
             return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.ACTIVATE_SUCCESS, HttpStatus.OK, userActivated);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Throwable ex) {
             throw new ActivateAccountException(ex.getMessage(), ex.getCause());
         }
@@ -347,6 +362,8 @@ public class AccountsController extends SupportController {
                     AccountsResponseCodeEnum.RESET_PASSWORD_REQUEST_SUCCESS,
                     HttpStatus.OK, resolveString("user_password_request_reset_success", request));
 
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             throw new ResetPasswordRequestException(ex.getMessage(), ex.getCause());
         }
