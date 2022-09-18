@@ -252,7 +252,7 @@ public class TrustCertificationController extends SupportController {
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
-            final Iterable<CertificateIssuanceRequestDTO> certificateIssuanceRequestDTOList = trustCertificationService.getCertificatesIssuanceRequestsFromStudent(selfUser.getWalletHash());
+            final Iterable<CertificateIssuanceRequestDTO> certificateIssuanceRequestDTOList = trustCertificationService.getCertificatesIssuanceRequestsFromStudent(selfUser.getUserId());
             return responseHelper.<Iterable<CertificateIssuanceRequestDTO>>createAndSendResponse(
                     TrustCertificationResponseCodeEnum.GET_CERTIFICATES_ISSUANCE_REQUEST_SUCCESS,
                     HttpStatus.OK, certificateIssuanceRequestDTOList);
@@ -282,7 +282,7 @@ public class TrustCertificationController extends SupportController {
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
-            final Iterable<CertificateIssuanceRequestDTO> certificateIssuanceRequestDTOList = trustCertificationService.getCertificatesIssuanceRequestsFromCa(selfUser.getWalletHash());
+            final Iterable<CertificateIssuanceRequestDTO> certificateIssuanceRequestDTOList = trustCertificationService.getCertificatesIssuanceRequestsFromCa(selfUser.getUserId());
             return responseHelper.<Iterable<CertificateIssuanceRequestDTO>>createAndSendResponse(
                     TrustCertificationResponseCodeEnum.GET_CERTIFICATES_ISSUANCE_REQUEST_SUCCESS,
                     HttpStatus.OK, certificateIssuanceRequestDTOList);
@@ -365,7 +365,7 @@ public class TrustCertificationController extends SupportController {
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
-            final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.acceptCertificateRequest(new ObjectId(id));
+            final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.acceptCertificateRequest(id);
             return responseHelper.<CertificateIssuanceRequestDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.ISSUE_CERTIFICATE_REQUEST_ACCEPTED,
                     HttpStatus.OK, certificateIssuanceRequestDTO);
         } catch (final Exception ex) {
@@ -391,7 +391,7 @@ public class TrustCertificationController extends SupportController {
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
-            final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.rejectCertificateRequest(new ObjectId(id));
+            final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.rejectCertificateRequest(id);
             return responseHelper.<CertificateIssuanceRequestDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.ISSUE_CERTIFICATE_REQUEST_REJECTED,
                     HttpStatus.OK, certificateIssuanceRequestDTO);
         } catch (final Exception ex) {

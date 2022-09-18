@@ -60,6 +60,7 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
     public CertificationAuthorityEntity getDetail(final String walletHash) throws RepositoryException {
         Assert.notNull(walletHash, "Wallet ca not be null");
         try {
+            log.debug("Get Certification Authority Detail with walletHash: " + walletHash);
             final CertificationAuthorityContract caContract = loadCAContract(walletHash);
             return getCertificationAuthorityDetail(caContract);
         } catch (final Exception ex) {
@@ -185,6 +186,7 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
      */
     private CertificationAuthorityContract loadCAContract(final String walletHash) throws LoadWalletException {
         final Credentials credentials = walletService.loadCredentials(walletHash);
+        log.debug("loadCAContract, credentials.getAddress -> " + credentials.getAddress());
         return loadCAContract(credentials);
     }
 

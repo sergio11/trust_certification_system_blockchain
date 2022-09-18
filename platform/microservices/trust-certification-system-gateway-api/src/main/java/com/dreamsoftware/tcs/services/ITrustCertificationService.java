@@ -62,19 +62,19 @@ public interface ITrustCertificationService {
 
     /**
      *
-     * @param ownerWallet
+     * @param ownerId
      * @return
      * @throws Throwable
      */
-    Iterable<CertificateIssuedDTO> getMyCertificatesAsRecipient(final String ownerWallet) throws Throwable;
+    Iterable<CertificateIssuedDTO> getMyCertificatesAsRecipient(final String ownerId) throws Throwable;
 
     /**
      *
-     * @param ownerWallet
+     * @param ownerId
      * @return
      * @throws Throwable
      */
-    Iterable<CertificateIssuedDTO> getMyCertificatesAsIssuer(final String ownerWallet) throws Throwable;
+    Iterable<CertificateIssuedDTO> getMyCertificatesAsIssuer(final String ownerId) throws Throwable;
 
     /**
      * Issue Certificate Request
@@ -91,7 +91,7 @@ public interface ITrustCertificationService {
      * @param id
      * @return
      */
-    CertificateIssuanceRequestDTO acceptCertificateRequest(final ObjectId id);
+    CertificateIssuanceRequestDTO acceptCertificateRequest(final String id);
 
     /**
      * Reject request for certificate issuance
@@ -99,7 +99,7 @@ public interface ITrustCertificationService {
      * @param id
      * @return
      */
-    CertificateIssuanceRequestDTO rejectCertificateRequest(final ObjectId id);
+    CertificateIssuanceRequestDTO rejectCertificateRequest(final String id);
 
     /**
      *

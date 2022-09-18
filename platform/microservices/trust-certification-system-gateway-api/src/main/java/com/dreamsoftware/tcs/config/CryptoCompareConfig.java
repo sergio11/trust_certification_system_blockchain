@@ -14,7 +14,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -75,7 +75,7 @@ public class CryptoCompareConfig {
             final ClientHttpRequestFactory clientHttpRequestFactory,
             final @Qualifier("loggingRequestInterceptor") ClientHttpRequestInterceptor loggingRequestInterceptor,
             final @Qualifier("authorizationInterceptor") ClientHttpRequestInterceptor authorizationInterceptor) {
-        final RestTemplate rest = new RestTemplate(Collections.singletonList(new FormHttpMessageConverter()));
+        final RestTemplate rest = new RestTemplate(Collections.singletonList(new MappingJackson2HttpMessageConverter()));
         rest.setRequestFactory(clientHttpRequestFactory);
         rest.setInterceptors(Lists.newArrayList(loggingRequestInterceptor, authorizationInterceptor));
         return rest;

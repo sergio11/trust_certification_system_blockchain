@@ -10,8 +10,7 @@ import io.reactivex.disposables.Disposable;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -19,28 +18,28 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  */
 @RequiredArgsConstructor
+@Slf4j
 public abstract class SupportEventObserver<T extends AbstractBlockchainEventEntity> {
 
-    private final Logger logger = LoggerFactory.getLogger(SupportEventObserver.class);
     private final BlockchainEventLogRepository blockchainEventLogRepository;
     private final IBlockchainEventRepository<T> blockchainEventRepository;
     private Disposable disposable = null;
 
-    @PostConstruct
-    public void onPostConstruct() {
+    protected void startObserverEvents() {
+        log.debug("startObserverEvents CALLED!");
         try {
             disposable = blockchainEventRepository.getEvents().subscribe(event -> {
-                logger.debug("on new Event!!");
+                log.debug("on new Event!!");
                 final BlockchainEventLogEntity logEntity = mapToBlockchainEventLogEntity(event);
                 blockchainEventLogRepository.save(logEntity);
             });
         } catch (RepositoryException ex) {
-            logger.debug("SupportEventBroadcaster ex -> " + ex.getMessage());
+            log.debug("SupportEventBroadcaster ex -> " + ex.getMessage());
         }
     }
 
-    @PreDestroy
-    public void onPreDestroy() {
+    protected void stopObserverEvents() {
+        log.debug("stopObserverEvents CALLED!");
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
         }
@@ -75,4 +74,13 @@ public abstract class SupportEventObserver<T extends AbstractBlockchainEventEnti
                 .build();
     }
 
+    @PostConstruct
+    public void onPostConstruct() {
+        startObserverEvents();
+    }
+
+    @PreDestroy
+    public void onPreDestroy() {
+        stopObserverEvents();
+    }
 }
