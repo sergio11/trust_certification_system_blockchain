@@ -5,6 +5,8 @@ import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCours
 import com.dreamsoftware.tcs.persistence.nosql.entity.AbstractEventPayload;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEventPayloadEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.BlockchainEventLogRepository;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,5 +34,4 @@ public class CertificationCourseObserver extends SupportEventObserver<Certificat
                 .type(event.getType().name())
                 .build();
     }
-
 }

@@ -69,7 +69,7 @@ public class TokenManagementController extends SupportController {
                 content = @Content(
                         schema = @Schema(implementation = Long.class)))
     })
-    @RequestMapping(value = {"/"}, method = RequestMethod.GET, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    @RequestMapping(value = {"/"}, method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<APIResponse<Long>> getMyTokens(
@@ -97,7 +97,7 @@ public class TokenManagementController extends SupportController {
                 content = @Content(
                         schema = @Schema(implementation = TokenPricesDTO.class)))
     })
-    @RequestMapping(value = {"/prices"}, method = RequestMethod.GET, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    @RequestMapping(value = {"/prices"}, method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<APIResponse<TokenPricesDTO>> getTokenPrices(
@@ -125,9 +125,11 @@ public class TokenManagementController extends SupportController {
     @RequestMapping(value = "/order", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<OrderDetailDTO>> placeTokensOrder(
+            @Parameter(name = "order", description = "Place token order",
+                    required = true, schema = @Schema(implementation = PlaceTokensOrderRequestDTO.class))
             @Validated(ICommonSequence.class) PlaceTokensOrderRequestDTO placeTokensOrderRequestDTO,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser,
-            final HttpServletRequest request
+            @Parameter(hidden = true) final HttpServletRequest request
     ) throws Throwable {
         try {
             placeTokensOrderRequestDTO.setWalletHash(selfUser.getWalletHash());
@@ -176,7 +178,7 @@ public class TokenManagementController extends SupportController {
                 content = @Content(
                         schema = @Schema(implementation = Long.class)))
     })
-    @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @OnlyAccessForAdmin

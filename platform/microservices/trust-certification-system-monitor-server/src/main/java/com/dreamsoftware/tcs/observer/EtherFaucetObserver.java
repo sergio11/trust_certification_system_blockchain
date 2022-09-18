@@ -5,6 +5,8 @@ import com.dreamsoftware.tcs.persistence.bc.repository.entity.EtherFaucetEventEn
 import com.dreamsoftware.tcs.persistence.nosql.entity.AbstractEventPayload;
 import com.dreamsoftware.tcs.persistence.nosql.entity.EtherFaucetEventPayloadEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.BlockchainEventLogRepository;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,5 +35,4 @@ public class EtherFaucetObserver extends SupportEventObserver<EtherFaucetEventEn
                 .type(event.getType().name())
                 .build();
     }
-
 }

@@ -97,7 +97,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     @Override
     public void save(final SaveCertificationCourseDTO model) {
         Assert.notNull(model, "model can not be null");
-        streamBridge.send(streamChannelsProperties.getCertificationCourseRegistration(), CourseCertificateRegistrationRequestEvent.builder()
+        streamBridge.send(streamChannelsProperties.getNewCertificationCourseRegistration(), CourseCertificateRegistrationRequestEvent.builder()
                 .name(model.getName())
                 .costOfIssuingCertificate(model.getCostOfIssuingCertificate())
                 .caWalletHash(model.getCaWalletHash())

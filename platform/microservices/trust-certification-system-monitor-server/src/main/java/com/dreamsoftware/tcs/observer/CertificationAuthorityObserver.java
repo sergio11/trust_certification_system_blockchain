@@ -33,4 +33,5 @@ public class CertificationAuthorityObserver extends SupportEventObserver<Certifi
                 .type(event.getType().name())
                 .build();
     }
+
 }

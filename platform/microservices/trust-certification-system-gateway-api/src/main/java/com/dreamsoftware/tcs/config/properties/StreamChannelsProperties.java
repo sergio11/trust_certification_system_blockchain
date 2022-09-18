@@ -18,31 +18,31 @@ import org.springframework.context.annotation.Configuration;
 public class StreamChannelsProperties {
 
     /**
-     * Channels Initial Funds
+     * New User Registration Channel
      */
     @Value("${channels.new-user-registration}")
     private String newUserRegistration;
 
     /**
-     * Certification Course Registration
+     * New Certification Course Registration Channel
      */
-    @Value("${channels.certification-course-registration}")
-    private String certificationCourseRegistration;
+    @Value("${channels.new-certification-course-registration}")
+    private String newCertificationCourseRegistration;
 
     /**
-     * New Certification Request
+     * New Certification Request Channel
      */
     @Value("${channels.new-certification-request}")
     private String newCertificationRequest;
 
     /**
-     * New Tokens Order Approved
+     * New Tokens Order Approved Channel
      */
     @Value("${channels.new-tokens-order-approved}")
     private String newTokensOrderApproved;
 
     /**
-     * Notification Delivery Request
+     * Notification Delivery Request Channel
      */
     @Value("${channels.notification-delivery-request}")
     private String notificationDeliveryRequest;
@@ -56,7 +56,7 @@ public class StreamChannelsProperties {
     @PostConstruct
     public void onPostConstruct() {
         log.debug("newUserRegistration -> " + newUserRegistration);
-        log.debug("certificationCourseRegistration -> " + certificationCourseRegistration);
+        log.debug("newCertificationCourseRegistration -> " + newCertificationCourseRegistration);
         log.debug("newCertificationRequest -> " + newCertificationRequest);
         log.debug("newTokensOrderApproved -> " + newTokensOrderApproved);
         log.debug("notificationDeliveryRequest -> " + notificationDeliveryRequest);

@@ -67,8 +67,9 @@ public class DeviceGroupsController extends SupportController {
         @ApiResponse(responseCode = "500", description = "An exception ocurred",
                 content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/", "/all"}, method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/", "/all"}, method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<APIResponse<Iterable<DeviceDTO>>> getDevicesIntoGroup(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser) throws Throwable {
         try {

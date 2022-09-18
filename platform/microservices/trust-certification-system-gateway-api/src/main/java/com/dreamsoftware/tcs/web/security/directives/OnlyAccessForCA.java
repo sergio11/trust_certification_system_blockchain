@@ -11,7 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@PreAuthorize("@authorizationService.isCa()")
+@PreAuthorize("@authorizationService.isCA()")
 public @interface OnlyAccessForCA {
 
 }

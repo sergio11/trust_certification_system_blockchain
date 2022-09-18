@@ -209,9 +209,9 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @param id
      */
     @Override
-    public CertificateIssuanceRequestDTO acceptCertificateRequest(final ObjectId id) {
+    public CertificateIssuanceRequestDTO acceptCertificateRequest(final String id) {
         Assert.notNull(id, "Id can not be null");
-        final CertificateIssuanceRequestEntity certificate = certificateIssuanceRequestRepository.findById(id)
+        final CertificateIssuanceRequestEntity certificate = certificateIssuanceRequestRepository.findById(new ObjectId(id))
                 .orElseThrow(() -> new IllegalStateException("Certificate not found"));
         final OnNewIssueCertificateRequestEvent event = OnNewIssueCertificateRequestEvent
                 .builder()
@@ -221,7 +221,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
                 .studentWalletHash(certificate.getStudent().getWalletHash())
                 .build();
         streamBridge.send(streamChannelsProperties.getNewCertificationRequest(), event);
-        final CertificateIssuanceRequestEntity certificateRequestUpdated = certificateIssuanceRequestRepository.updateStatus(id, CertificateStatusEnum.REVIEWED);
+        final CertificateIssuanceRequestEntity certificateRequestUpdated = certificateIssuanceRequestRepository.updateStatus(new ObjectId(id), CertificateStatusEnum.REVIEWED);
         final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = certificateIssuanceRequestMapper.entityToDTO(certificateRequestUpdated);
         streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CertificateRequestAcceptedNotificationEvent.builder()
                 .id(certificateIssuanceRequestDTO.getId())
@@ -234,9 +234,9 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @param id
      */
     @Override
-    public CertificateIssuanceRequestDTO rejectCertificateRequest(final ObjectId id) {
+    public CertificateIssuanceRequestDTO rejectCertificateRequest(final String id) {
         Assert.notNull(id, "Id can not be null");
-        final CertificateIssuanceRequestEntity certificateRequestUpdated = certificateIssuanceRequestRepository.updateStatus(id, CertificateStatusEnum.REJECTED);
+        final CertificateIssuanceRequestEntity certificateRequestUpdated = certificateIssuanceRequestRepository.updateStatus(new ObjectId(id), CertificateStatusEnum.REJECTED);
         final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = certificateIssuanceRequestMapper.entityToDTO(certificateRequestUpdated);
         streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CertificateRequestRejectedNotificationEvent.builder()
                 .id(certificateIssuanceRequestDTO.getId())
@@ -271,19 +271,19 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     @Override
     public Iterable<CertificateIssuanceRequestDTO> getCertificatesIssuanceRequestsFromStudent(final String studentWalletHash) {
         Assert.notNull(studentWalletHash, "Student Wallet hash can not be null");
-        Iterable<CertificateIssuanceRequestEntity> certificateRequests = certificateIssuanceRequestRepository.findByStudentWalletHashOrderByUpdatedAtDesc(studentWalletHash);
+        Iterable<CertificateIssuanceRequestEntity> certificateRequests = certificateIssuanceRequestRepository.findByStudentOrderByUpdatedAtDesc(studentWalletHash);
         return certificateIssuanceRequestMapper.entityToDTO(certificateRequests);
     }
 
     /**
      *
-     * @param caWalletHash
+     * @param ownerId
      * @return
      */
     @Override
-    public Iterable<CertificateIssuanceRequestDTO> getCertificatesIssuanceRequestsFromCa(final String caWalletHash) {
-        Assert.notNull(caWalletHash, "CA Wallet hash can not be null");
-        Iterable<CertificateIssuanceRequestEntity> certificateRequests = certificateIssuanceRequestRepository.findByCaWalletHashOrderByUpdatedAtDesc(caWalletHash);
+    public Iterable<CertificateIssuanceRequestDTO> getCertificatesIssuanceRequestsFromCa(final String ownerId) {
+        Assert.notNull(ownerId, "Owner Id can not be null");
+        Iterable<CertificateIssuanceRequestEntity> certificateRequests = certificateIssuanceRequestRepository.findByCaOrderByUpdatedAtDesc(new ObjectId(ownerId));
         return certificateIssuanceRequestMapper.entityToDTO(certificateRequests);
     }
 

@@ -31,16 +31,16 @@ public interface CertificateIssuanceRequestRepository extends MongoRepository<Ce
 
     /**
      *
-     * @param studentWalletHash
+     * @param studentId
      * @return
      */
-    Iterable<CertificateIssuanceRequestEntity> findByStudentWalletHashOrderByUpdatedAtDesc(final String studentWalletHash);
+    Iterable<CertificateIssuanceRequestEntity> findByStudentOrderByUpdatedAtDesc(final String studentId);
 
     /**
      *
-     * @param caWalletHash
+     * @param caId
      * @return
      */
-    Iterable<CertificateIssuanceRequestEntity> findByCaWalletHashOrderByUpdatedAtDesc(final String caWalletHash);
+    Iterable<CertificateIssuanceRequestEntity> findByCaOrderByUpdatedAtDesc(final ObjectId caId);
 
 }

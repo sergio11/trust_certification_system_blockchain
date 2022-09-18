@@ -15,7 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@PreAuthorize("@authorizationService.isAdmin() || @authorizationService.isCa()")
+@PreAuthorize("@authorizationService.isAdmin() || @authorizationService.isCA()")
 public @interface OnlyAccessForAdminOrCa {
 
 }
