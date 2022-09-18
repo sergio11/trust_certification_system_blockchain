@@ -131,3 +131,18 @@ services:
     command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc --networkid=85 --http  --bootnodes="enode://288b97262895b1c7ec61cf314c2e2004407d0a5dc77566877aad1f2a36659c8b698f4b56fd06c4a0c0bf007b4cfb3e7122d907da3b005fa90e724441902eb19e@XXX:30303" --mine --miner.threads=2 --miner.gasprice 0 --syncmode full --miner.etherbase=0xE545f3b554175BABcBeF152D4516Ff90455095EE'
     networks:
       - tcs_network
+
+  eth_node_6:
+    build: eth_geth
+    container_name: eth_geth_6
+    hostname: eth_geth_6
+    links:
+      - eth_bootstrap
+      - eth_netstats
+    entrypoint: /root/start.sh
+    volumes:
+      - ./sftp/keystore:/root/.ethereum/keystore:rw
+      - ./eth_geth/data/node_6:/root/.ethereum/devchain/geth:rw
+    command: '--datadir=~/.ethereum/devchain --ipcpath=~/.ethereum/ipc --networkid=85 --http --bootnodes="enode://288b97262895b1c7ec61cf314c2e2004407d0a5dc77566877aad1f2a36659c8b698f4b56fd06c4a0c0bf007b4cfb3e7122d907da3b005fa90e724441902eb19e@XXX:30303"'
+    networks:
+      - tcs_network
