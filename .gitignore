@@ -7,6 +7,7 @@ target/
 ethereum/eth_geth/data
 ethereum/sftp/keystore
 platform/wallets
+platform/microservices/trust-certification-system-core-bc/src/main/java/generated
 platform/.env
 ipfs_cluster/data
 platform/microservices/trust-certification-system-gateway-api/resources/client_secret.json
