@@ -31,6 +31,56 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
     private final EtherFaucetEventEntityMapper etherFaucetEventEntityMapper;
 
     /**
+     * Get Initial Amount
+     *
+     * @return
+     * @throws RepositoryException
+     */
+    @Override
+    public BigInteger getInitialAmount() throws RepositoryException {
+        try {
+            final EtherFaucetContractExt etherFaucetContract = loadEtherFaucetContract();
+            return etherFaucetContract.getInitialAmount().send();
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Set intial Amount
+     *
+     * @param amount
+     * @throws RepositoryException
+     */
+    @Override
+    public void setInitialAmount(final BigInteger amount) throws RepositoryException {
+        Assert.notNull(amount, "amount can not be null");
+        log.debug("setInitialAmount to -> " + amount);
+        try {
+            final EtherFaucetContractExt etherFaucetContract = loadEtherFaucetContract();
+            final TransactionReceipt tr = etherFaucetContract.setInitialAmount(amount).send();
+            log.debug("TransactionReceipt -> " + tr.getBlockHash());
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @return @throws RepositoryException
+     */
+    @Override
+    public BigInteger getBalance() throws RepositoryException {
+        log.debug("getBalance CALLED!");
+        try {
+            final EtherFaucetContractExt etherFaucetContract = loadEtherFaucetContract();
+            return etherFaucetContract.getBalance().send();
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Add Seed Funds
      *
      * @param walletHash
@@ -51,17 +101,15 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
 
     /**
      *
-     * @param walletHash
-     * @param weiValue
+     * @param amount
      * @throws RepositoryException
      */
     @Override
-    public void depositFunds(final String walletHash, final Long weiValue) throws RepositoryException {
-        Assert.notNull(walletHash, "Wallet hash can not be null");
-        log.debug("Deposit Funds -> " + walletHash);
+    public void depositFunds(final BigInteger amount) throws RepositoryException {
+        log.debug("Deposit Funds CALLED!");
         try {
-            final EtherFaucetContractExt etherFaucetContract = loadEtherFaucetContract(walletHash);
-            etherFaucetContract.deposit(BigInteger.valueOf(weiValue)).send();
+            final EtherFaucetContractExt etherFaucetContract = loadEtherFaucetContract();
+            etherFaucetContract.deposit(amount).send();
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
@@ -74,7 +122,7 @@ public class EtherFaucetBlockchainRepositoryImpl extends SupportBlockchainReposi
      * @throws RepositoryException
      */
     @Override
-    public void sendFunds(String targetWalletHash, Long amountInWei) throws RepositoryException {
+    public void sendFunds(final String targetWalletHash, final Long amountInWei) throws RepositoryException {
         Assert.notNull(targetWalletHash, "Target Wallet hash can not be null");
         Assert.notNull(amountInWei, "amountInWei can not be null");
         log.debug("sendFunds Funds -> " + targetWalletHash);

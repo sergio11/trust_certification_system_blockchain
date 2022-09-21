@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 import org.web3j.abi.EventEncoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Bool;
+import org.web3j.abi.datatypes.DynamicArray;
 import org.web3j.abi.datatypes.DynamicStruct;
 import org.web3j.abi.datatypes.Event;
 import org.web3j.abi.datatypes.Type;
@@ -47,6 +49,8 @@ public class ICertificationAuthorityContract extends Contract {
     public static final String FUNC_DISABLECERTIFICATIONAUTHORITY = "disableCertificationAuthority";
 
     public static final String FUNC_ENABLECERTIFICATIONAUTHORITY = "enableCertificationAuthority";
+
+    public static final String FUNC_GETALLCERTIFICATIONAUTHORITIES = "getAllCertificationAuthorities";
 
     public static final String FUNC_getCertificateAuthorityDetail = "getCertificateAuthorityDetail";
 
@@ -290,6 +294,21 @@ public class ICertificationAuthorityContract extends Contract {
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _address)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteFunctionCall<List> getAllCertificationAuthorities() {
+        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETALLCERTIFICATIONAUTHORITIES, 
+                Arrays.<Type>asList(), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<DynamicArray<CertificationAuthorityRecord>>() {}));
+        return new RemoteFunctionCall<List>(function,
+                new Callable<List>() {
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public List call() throws Exception {
+                        List<Type> result = (List<Type>) executeCallSingleValueReturn(function, List.class);
+                        return convertToNative(result);
+                    }
+                });
     }
 
     public RemoteFunctionCall<CertificationAuthorityRecord> getCertificateAuthorityDetail(String _address) {

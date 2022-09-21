@@ -14,6 +14,7 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CreatedOrderRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IUserService;
+import java.math.BigInteger;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,13 @@ public class UserServiceImpl implements IUserService {
     public void register(OnNewUserRegistrationEvent event) throws Exception {
         Assert.notNull(event, "Event can not be null");
         log.debug("register -> " + event.getWalletHash() + " CALLED!");
+        final BigInteger initialAmount = etherFaucetBlockchainRepository.getInitialAmount();
+        final BigInteger currentBalance = etherFaucetBlockchainRepository.getBalance();
+        log.debug("initialAmount -> " + initialAmount + " Current Balance Contract -> " + currentBalance);
+        if (currentBalance.compareTo(initialAmount) == -1) {
+            log.debug("depositFunds ...");
+            etherFaucetBlockchainRepository.depositFunds(initialAmount.multiply(BigInteger.TEN));
+        }
         // Add ETH funds
         etherFaucetBlockchainRepository.addSeedFunds(event.getWalletHash());
         // Add initial TCS ERC-20 funds
@@ -89,7 +97,6 @@ public class UserServiceImpl implements IUserService {
     public UserEntity validate(final String walletHash) {
         Assert.notNull(walletHash, "walletHash can not be null");
         log.debug("validate -> " + walletHash + " CALLED!");
-
         final UserEntity userEntity = userRepository.findOneByWalletHash(walletHash)
                 .orElseThrow(() -> new IllegalStateException("WalletHash not found"));
         userEntity.setActivationDate(new Date());
