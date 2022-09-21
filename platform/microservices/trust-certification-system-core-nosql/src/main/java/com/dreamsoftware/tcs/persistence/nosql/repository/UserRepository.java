@@ -19,7 +19,14 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId> {
      * @param email
      * @return
      */
-    Optional<UserEntity> findOneByEmail(String email);
+    Optional<UserEntity> findOneByEmail(final String email);
+
+    /**
+     *
+     * @param fullName
+     * @return
+     */
+    Optional<UserEntity> findOneByFullName(final String fullName);
 
     /**
      *

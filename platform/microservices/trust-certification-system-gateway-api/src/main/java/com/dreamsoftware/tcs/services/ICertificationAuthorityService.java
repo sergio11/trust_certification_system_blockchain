@@ -11,6 +11,14 @@ import java.util.Optional;
 public interface ICertificationAuthorityService {
 
     /**
+     * Get All
+     *
+     * @return
+     * @throws java.lang.Throwable
+     */
+    Iterable<CertificationAuthorityDetailDTO> getAll() throws Throwable;
+
+    /**
      * Get Detail
      *
      * @param id

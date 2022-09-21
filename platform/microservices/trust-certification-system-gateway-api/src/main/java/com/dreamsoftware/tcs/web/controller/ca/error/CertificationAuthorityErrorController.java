@@ -3,6 +3,7 @@ package com.dreamsoftware.tcs.web.controller.ca.error;
 import com.dreamsoftware.tcs.web.controller.ca.CertificationAuthorityResponseCodeEnum;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.DisableCertificationAuthorityException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.EnableCertificationAuthorityException;
+import com.dreamsoftware.tcs.web.controller.ca.error.exception.GetAllCertificationAuthoritiesException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.GetCertificationAuthorityException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.PartialUpdateCAException;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
@@ -26,6 +27,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CertificationAuthorityErrorController extends SupportController {
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(GetAllCertificationAuthoritiesException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetAllCertificationAuthoritiesException(final GetAllCertificationAuthoritiesException ex, final HttpServletRequest request) {
+        log.error("Handler for GetAllCertificationAuthoritiesException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationAuthorityResponseCodeEnum.ALL_CERTIFICATION_AUTHORITIES_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_all_certification_authorities_failed", request));
+    }
 
     /**
      *

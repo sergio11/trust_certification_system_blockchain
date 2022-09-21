@@ -1,6 +1,5 @@
 package com.dreamsoftware.tcs.services.impl;
 
-import com.dreamsoftware.tcs.config.properties.EthereumProperties;
 import com.dreamsoftware.tcs.mapper.CertificationAuthorityDetailMapper;
 import com.dreamsoftware.tcs.mapper.UpdateCertificationAuthorityMapper;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
@@ -19,7 +18,10 @@ import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.utils.Unthrow;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationAuthorityDTO;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.ObjectId;
 import org.springframework.cloud.stream.function.StreamBridge;
 
@@ -35,10 +37,21 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     private final UserRepository certificationAuthorityRepository;
     private final ICertificationAuthorityBlockchainRepository caBlockchainRepository;
     private final CertificationAuthorityDetailMapper certificationAuthorityDetailMapper;
-    private final EthereumProperties trustCertificationSystemProperties;
     private final UpdateCertificationAuthorityMapper updateCertificationAuthorityMapper;
     private final StreamChannelsProperties streamChannelsProperties;
     private final StreamBridge streamBridge;
+
+    /**
+     *
+     * @return @throws Throwable
+     */
+    @Override
+    public Iterable<CertificationAuthorityDetailDTO> getAll() throws Throwable {
+        return StreamSupport.stream(caBlockchainRepository.getAll().spliterator(), true)
+                .map((ca) -> Pair.of(ca, certificationAuthorityRepository.findOneByFullName(ca.getName()).orElseThrow(IllegalStateException::new)))
+                .map((caPair) -> certificationAuthorityDetailMapper.entityToDTO(caPair.getLeft(), caPair.getRight()))
+                .collect(Collectors.toList());
+    }
 
     /**
      * Get Detail
@@ -73,8 +86,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
                 .orElseThrow(() -> {
                     throw new IllegalStateException("User Not Found");
                 });
-        final CertificationAuthorityEntity caEntity = caBlockchainRepository.enable(trustCertificationSystemProperties.getRootPublicKey(),
-                caUserEntity.getWalletHash());
+        final CertificationAuthorityEntity caEntity = caBlockchainRepository.enable(caUserEntity.getWalletHash());
         final CertificationAuthorityDetailDTO certificationAuthorityDetailDTO = certificationAuthorityDetailMapper.entityToDTO(caEntity, caUserEntity);
         streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CAEnabledNotificationEvent.builder()
                 .walletHash(certificationAuthorityDetailDTO.getWalletHash())
@@ -97,8 +109,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
                 .orElseThrow(() -> {
                     throw new IllegalStateException("User Not Found");
                 });
-        final CertificationAuthorityEntity caEntity = caBlockchainRepository.disable(trustCertificationSystemProperties.getRootPublicKey(),
-                caUserEntity.getWalletHash());
+        final CertificationAuthorityEntity caEntity = caBlockchainRepository.disable(caUserEntity.getWalletHash());
         final CertificationAuthorityDetailDTO certificationAuthorityDetailDTO = certificationAuthorityDetailMapper.entityToDTO(caEntity, caUserEntity);
         streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CADisabledNotificationEvent.builder()
                 .walletHash(certificationAuthorityDetailDTO.getWalletHash())
