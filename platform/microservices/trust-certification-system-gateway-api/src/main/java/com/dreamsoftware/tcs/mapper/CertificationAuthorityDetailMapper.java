@@ -24,7 +24,7 @@ public abstract class CertificationAuthorityDetailMapper {
      */
     @Mappings({
         @Mapping(expression = "java(userEntity.getId().toString())", target = "id"),
-        @Mapping(expression = "java(userEntity.getName())", target = "name"),
+        @Mapping(expression = "java(userEntity.getFullName())", target = "name"),
         @Mapping(expression = "java(userEntity.getState().name())", target = "state"),
         @Mapping(expression = "java(userEntity.getType().name())", target = "type"),
         @Mapping(expression = "java(userEntity.getEmail())", target = "email"),
