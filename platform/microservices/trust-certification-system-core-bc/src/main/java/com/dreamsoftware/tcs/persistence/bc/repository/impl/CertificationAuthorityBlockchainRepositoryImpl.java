@@ -45,6 +45,7 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
             log.debug("registerCertificationAuthority address: " + properties.getCertificationAuthorityContractAddress());
             final CertificationAuthorityContract caContract = loadCAContract(walletHash);
             caContract.addCertificationAuthority(name).send();
+            caContract.getCertificateAuthorityDetail().send();
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
