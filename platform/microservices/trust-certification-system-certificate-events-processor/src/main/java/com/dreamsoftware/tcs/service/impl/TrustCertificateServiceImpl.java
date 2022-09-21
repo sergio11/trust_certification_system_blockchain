@@ -89,7 +89,7 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
         log.debug("issueCertificate - Course ID: " + event.getCourseId());
         final CertificationCourseModelEntity certificationCourseModelEntity = certificationCourseBlockchainRepository.get(event.getCourseId());
         final CertificationAuthorityEntity certificationAuthorityEntity = certificationAuthorityBlockchainRepository.getDetail(certificationCourseModelEntity.getCertificationAuthority());
-        final String studentName = userRepository.findOneByWalletHash(event.getStudentWalletHash()).map(UserEntity::getName).orElseThrow(() -> new IllegalStateException("Student not found"));
+        final String studentName = userRepository.findOneByWalletHash(event.getStudentWalletHash()).map(UserEntity::getFullName).orElseThrow(() -> new IllegalStateException("Student not found"));
         // Generate new certificate using the data provide by event
         final File certificateFile = certificateGenerator.generate(certificationAuthorityEntity.getName(), studentName, certificationCourseModelEntity.getName(), event.getQualification());
         // Sign Certificate

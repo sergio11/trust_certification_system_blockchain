@@ -42,7 +42,7 @@ public class CourseDisabledHandler extends AbstractNotificationHandler<CourseDis
                     .builder()
                     .id(notification.getId())
                     .courseName(notification.getName())
-                    .caName(caEntity.getName())
+                    .caName(caEntity.getFullName())
                     .locale(i18nService.parseLocaleOrDefault(caEntity.getLanguage()))
                     .email(caEntity.getEmail())
                     .build());

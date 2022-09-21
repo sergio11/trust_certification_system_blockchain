@@ -50,7 +50,7 @@ public class OrderCompletedHandler extends AbstractNotificationHandler<OrderComp
                     .amountUSD(orderEntitySaved.getAmountUSD())
                     .amountWEI(orderEntitySaved.getAmountWEI())
                     .email(userEntity.getEmail())
-                    .userName(userEntity.getName())
+                    .userName(userEntity.getFullName())
                     .tokenPriceEUR(orderEntitySaved.getTokenPriceEUR())
                     .tokenPriceUSD(orderEntitySaved.getTokenPriceUSD())
                     .tokens(orderEntitySaved.getTokens())

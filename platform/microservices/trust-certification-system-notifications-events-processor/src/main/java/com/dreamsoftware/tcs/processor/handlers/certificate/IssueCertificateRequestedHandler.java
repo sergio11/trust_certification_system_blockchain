@@ -53,9 +53,9 @@ public class IssueCertificateRequestedHandler extends AbstractNotificationHandle
                     .locale(studentLocale)
                     .build());
             final String studentNotificationTitle = resolveString("notification_student_issue_certificate_requested_title", studentLocale, new Object[]{
-                studentEntity.getName()});
+                studentEntity.getFullName()});
             final String studentNotificationBody = resolveString("notification_student_issue_certificate_requested_body", studentLocale, new Object[]{
-                studentEntity.getName()});
+                studentEntity.getFullName()});
             devicesManagementService.sendNotification(studentEntity.getId(), studentNotificationTitle, studentNotificationBody);
             final UserEntity ca = certificateRequest.getCa();
             final Locale caLocale = i18nService.parseLocaleOrDefault(ca.getLanguage());
@@ -67,9 +67,9 @@ public class IssueCertificateRequestedHandler extends AbstractNotificationHandle
                     .locale(caLocale)
                     .build());
             final String caNotificationTitle = resolveString("notification_ca_issue_certificate_requested_title", caLocale, new Object[]{
-                studentEntity.getName()});
+                studentEntity.getFullName()});
             final String caNotificationBody = resolveString("notification_ca_issue_certificate_requested_body", caLocale, new Object[]{
-                studentEntity.getName()});
+                studentEntity.getFullName()});
             devicesManagementService.sendNotification(ca.getId(), caNotificationTitle, caNotificationBody);
 
         });

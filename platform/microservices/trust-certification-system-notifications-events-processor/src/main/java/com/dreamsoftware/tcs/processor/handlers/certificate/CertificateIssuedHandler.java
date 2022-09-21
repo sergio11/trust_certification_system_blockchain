@@ -48,16 +48,16 @@ public class CertificateIssuedHandler extends AbstractNotificationHandler<Certif
             notificationService.onUserCertificateValidated(certificateIssuedSaved);
             mailClientService.sendMail(CertificateGeneratedMailRequestDTO.builder()
                     .certificateId(certificateIssuedSaved.getCertificateId())
-                    .caName(caUserEntity.getName())
+                    .caName(caUserEntity.getFullName())
                     .email(studentEntity.getEmail())
                     .qualification(certificateIssuedSaved.getQualification())
                     .locale(userLocale)
                     .build());
 
             final String title = resolveString("notification_certificate_issued_title", userLocale, new Object[]{
-                studentEntity.getName(), certificateIssuedSaved.getCertificateId()});
+                studentEntity.getFullName(), certificateIssuedSaved.getCertificateId()});
             final String body = resolveString("notification_certificate_issued_body", userLocale, new Object[]{
-                studentEntity.getName(), certificateIssuedSaved.getCertificateId()});
+                studentEntity.getFullName(), certificateIssuedSaved.getCertificateId()});
             devicesManagementService.sendNotification(studentEntity.getId(), title, body);
         });
 

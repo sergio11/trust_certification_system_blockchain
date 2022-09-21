@@ -39,7 +39,7 @@ public class UserPendingValidationHandler extends AbstractNotificationHandler<Us
         userRepository.findById(new ObjectId(notification.getUserId())).ifPresent((user) -> {
             mailClientService.sendMail(UserPendingValidationMailRequestDTO.builder()
                     .email(user.getEmail())
-                    .name(user.getName())
+                    .name(user.getFullName())
                     .locale(i18nService.parseLocaleOrDefault(user.getLanguage()))
                     .id(notification.getUserId())
                     .confirmationToken(user.getConfirmationToken())

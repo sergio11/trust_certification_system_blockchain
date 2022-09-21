@@ -41,7 +41,7 @@ public class UserRegisteredHandler extends AbstractNotificationHandler<UserRegis
             notificationService.onUserAccountValidated(userEntity);
             mailClientService.sendMail(UserActivatedEventMailRequestDTO.builder()
                     .email(userEntity.getEmail())
-                    .name(userEntity.getName())
+                    .name(userEntity.getFullName())
                     .locale(i18nService.parseLocaleOrDefault(userEntity.getLanguage()))
                     .id(userEntity.getId().toString())
                     .build());

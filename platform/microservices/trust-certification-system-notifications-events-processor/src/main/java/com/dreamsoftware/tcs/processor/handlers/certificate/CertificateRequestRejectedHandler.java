@@ -51,9 +51,9 @@ public class CertificateRequestRejectedHandler extends AbstractNotificationHandl
                     .locale(userLocale)
                     .build());
             final String title = resolveString("notification_certificate_request_rejected_title", userLocale, new Object[]{
-                studentEntity.getName(), certificateRequest.getId().toString()});
+                studentEntity.getFullName(), certificateRequest.getId().toString()});
             final String body = resolveString("notification_certificate_request_rejected_body", userLocale, new Object[]{
-                studentEntity.getName(), certificateRequest.getId().toString()});
+                studentEntity.getFullName(), certificateRequest.getId().toString()});
             devicesManagementService.sendNotification(studentEntity.getId(), title, body);
         });
     }
