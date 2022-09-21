@@ -49,9 +49,9 @@ public class CertificateRenewedHandler extends AbstractNotificationHandler<Certi
                     .locale(userLocale)
                     .build());
             final String title = resolveString("notification_certificate_renewed_title", userLocale, new Object[]{
-                studentEntity.getName(), certificateRequest.getId().toString()});
+                studentEntity.getFullName(), certificateRequest.getId().toString()});
             final String body = resolveString("notification_certificate_renewed_body", userLocale, new Object[]{
-                studentEntity.getName(), certificateRequest.getId().toString()});
+                studentEntity.getFullName(), certificateRequest.getId().toString()});
             devicesManagementService.sendNotification(studentEntity.getId(), title, body);
         });
     }

@@ -40,7 +40,7 @@ public class CADisabledHandler extends AbstractNotificationHandler<CADisabledNot
                     .builder()
                     .email(user.getEmail())
                     .id(user.getId().toString())
-                    .name(user.getName())
+                    .name(user.getFullName())
                     .locale(i18nService.parseLocaleOrDefault(user.getLanguage()))
                     .build());
         });

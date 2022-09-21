@@ -43,7 +43,7 @@ public class NewCourseRegistrationRequestedHandler extends AbstractNotificationH
                     .email(caEntity.getEmail())
                     .id(caEntity.getId().toString())
                     .locale(i18nService.parseLocaleOrDefault(caEntity.getLanguage()))
-                    .caName(caEntity.getName())
+                    .caName(caEntity.getFullName())
                     .build()
             );
         });

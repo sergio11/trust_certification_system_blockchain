@@ -50,10 +50,10 @@ public class CertificateVisibilityChangedHandler extends AbstractNotificationHan
                     .locale(userLocale)
                     .build());
             final String title = resolveString("notification_certificate_visibility_changed_title", userLocale, new Object[]{
-                studentEntity.getName()});
+                studentEntity.getFullName()});
             final String body = resolveString(notification.getIsVisible()
                     ? "notification_certificate_changed_to_visible_body" : "notification_certificate_changed_to_invisible_body", userLocale, new Object[]{
-                        studentEntity.getName(), certificateRequest.getId().toString()});
+                        studentEntity.getFullName(), certificateRequest.getId().toString()});
             devicesManagementService.sendNotification(studentEntity.getId(), title, body);
         });
     }

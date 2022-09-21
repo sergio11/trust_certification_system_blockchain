@@ -50,9 +50,9 @@ public class CertificateEnabledHandler extends AbstractNotificationHandler<Certi
                     .locale(userLocale)
                     .build());
             final String title = resolveString("notification_certificate_enabled_title", userLocale, new Object[]{
-                studentEntity.getName(), certificateId});
+                studentEntity.getFullName(), certificateId});
             final String body = resolveString("notification_certificate_enabled_body", userLocale, new Object[]{
-                studentEntity.getName(), certificateId});
+                studentEntity.getFullName(), certificateId});
             devicesManagementService.sendNotification(studentEntity.getId(), title, body);
         });
     }
