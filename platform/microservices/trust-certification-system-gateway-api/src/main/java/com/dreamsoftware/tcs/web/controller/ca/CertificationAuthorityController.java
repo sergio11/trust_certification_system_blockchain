@@ -3,6 +3,7 @@ package com.dreamsoftware.tcs.web.controller.ca;
 import com.dreamsoftware.tcs.services.ICertificationAuthorityService;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.DisableCertificationAuthorityException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.EnableCertificationAuthorityException;
+import com.dreamsoftware.tcs.web.controller.ca.error.exception.GetAllCertificationAuthoritiesException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.GetCertificationAuthorityException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.PartialUpdateCAException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
@@ -54,6 +55,33 @@ public class CertificationAuthorityController extends SupportController {
     private final ICertificationAuthorityService certificationAuthorityService;
 
     /**
+     * Get All certification authorities have been registered
+     *
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "GET_ALL - Get All certification authorities have been registered (only ADMIN)", description = "Get All certification authorities have been registered", tags = {"CA"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "All CAs registered",
+                content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
+        @ApiResponse(responseCode = "404", description = "User Not Found",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = "/all", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdmin
+    public ResponseEntity<APIResponse<Iterable<CertificationAuthorityDetailDTO>>> getAll() throws Throwable {
+        try {
+            final Iterable<CertificationAuthorityDetailDTO> caListDTO = certificationAuthorityService.getAll();
+            return responseHelper.<Iterable<CertificationAuthorityDetailDTO>>createAndSendResponse(
+                    CertificationAuthorityResponseCodeEnum.ALL_CERTIFICATION_AUTHORITIES_SUCCESS,
+                    HttpStatus.OK, caListDTO);
+        } catch (final Exception ex) {
+            throw new GetAllCertificationAuthoritiesException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Get Certification Authority Detail
      *
      * @param id
@@ -67,7 +95,7 @@ public class CertificationAuthorityController extends SupportController {
         @ApiResponse(responseCode = "404", description = "User Not Found",
                 content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET,
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> getDetailById(
@@ -127,7 +155,7 @@ public class CertificationAuthorityController extends SupportController {
         @ApiResponse(responseCode = "404", description = "User Not Found",
                 content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/"}, method = RequestMethod.GET,
+    @RequestMapping(value = "/", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> getDetail(

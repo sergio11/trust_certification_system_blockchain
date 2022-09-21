@@ -34,8 +34,9 @@ public class UserEntity {
     /**
      * Name
      */
-    @Field("name")
-    private String name;
+    @Field("full_name")
+    @Indexed(unique = true)
+    private String fullName;
 
     /**
      * Email

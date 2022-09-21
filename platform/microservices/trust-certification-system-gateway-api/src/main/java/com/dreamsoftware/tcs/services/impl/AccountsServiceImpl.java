@@ -246,7 +246,7 @@ public class AccountsServiceImpl implements IAccountsService {
         // Map to user entity
         final UserEntity userToSave = signUpUserMapper.signUpUserDTOToUserEntity(user);
         // Configure confirmation token
-        final String confirmationToken = tokenGeneratorService.generateToken(userToSave.getName());
+        final String confirmationToken = tokenGeneratorService.generateToken(userToSave.getFullName());
         userToSave.setConfirmationToken(confirmationToken);
         final UserEntity userEntitySaved = userRepository.save(userToSave);
         final SimpleUserDTO simpleUserDTO = simpleUserMapper.entityToDTO(userEntitySaved);
@@ -301,7 +301,7 @@ public class AccountsServiceImpl implements IAccountsService {
         userToActivate.setWalletHash(walletHash);
         final UserEntity userActivated = userRepository.save(userToActivate);
         streamBridge.send(streamChannelsProperties.getNewUserRegistration(), OnNewUserRegistrationEvent.builder()
-                .name(userActivated.getName())
+                .name(userActivated.getFullName())
                 .userType(userActivated.getType())
                 .walletHash(userActivated.getWalletHash())
                 .build());
@@ -397,7 +397,7 @@ public class AccountsServiceImpl implements IAccountsService {
             uploadUserAvatarService.uploadFromUrl(userEntitySaved.getId(), signUpSocialUser.getAvatarUrl());
         }
         streamBridge.send(streamChannelsProperties.getNewUserRegistration(), OnNewUserRegistrationEvent.builder()
-                .name(userEntitySaved.getName())
+                .name(userEntitySaved.getFullName())
                 .userType(userEntitySaved.getType())
                 .walletHash(userEntitySaved.getWalletHash())
                 .build());

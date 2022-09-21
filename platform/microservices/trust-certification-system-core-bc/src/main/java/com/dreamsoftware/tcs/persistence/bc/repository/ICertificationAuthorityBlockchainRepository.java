@@ -11,6 +11,14 @@ import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 public interface ICertificationAuthorityBlockchainRepository extends IBlockchainEventRepository<CertificationAuthorityEventEntity> {
 
     /**
+     * Get Detail
+     *
+     * @return
+     * @throws RepositoryException
+     */
+    Iterable<CertificationAuthorityEntity> getAll() throws RepositoryException;
+
+    /**
      * Register new Certification Authority
      *
      * @param name
@@ -31,22 +39,20 @@ public interface ICertificationAuthorityBlockchainRepository extends IBlockchain
     /**
      * Enable Certification Authority
      *
-     * @param rootWallet
      * @param caWallet
      * @return
      * @throws RepositoryException
      */
-    CertificationAuthorityEntity enable(final String rootWallet, final String caWallet) throws RepositoryException;
+    CertificationAuthorityEntity enable(final String caWallet) throws RepositoryException;
 
     /**
      * Disable Certification Authority
      *
-     * @param rootWallet
      * @param caWallet
      * @return
      * @throws RepositoryException
      */
-    CertificationAuthorityEntity disable(final String rootWallet, final String caWallet) throws RepositoryException;
+    CertificationAuthorityEntity disable(final String caWallet) throws RepositoryException;
 
     /**
      *

@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.persistence.bc.repository.impl;
 
 import com.dreamsoftware.tcs.contracts.CertificationAuthorityContract;
 import com.dreamsoftware.tcs.contracts.CertificationAuthorityContract.CertificationAuthorityRecord;
+import com.dreamsoftware.tcs.contracts.CertificationCourseContract;
 import com.dreamsoftware.tcs.exception.LoadWalletException;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.core.SupportBlockchainRepository;
@@ -31,6 +32,22 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
 
     private final CertificationAuthorityEntityMapper certificationAuthorityEntityMapper;
     private final CertificationAuthorityEventEntityMapper certificationAuthorityEventEntityMapper;
+
+    /**
+     *
+     * @return @throws RepositoryException
+     */
+    @Override
+    public Iterable<CertificationAuthorityEntity> getAll() throws RepositoryException {
+        log.debug("get All certification authorities ");
+        try {
+            final CertificationAuthorityContract caContract = loadCAContractAsRoot();
+            final List<CertificationAuthorityRecord> authorities = caContract.getAllCertificationAuthorities().send();
+            return certificationAuthorityEntityMapper.caRecordToCaEntity(authorities);
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
 
     /**
      * Register Certification Authority
@@ -71,17 +88,15 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
 
     /**
      *
-     * @param rootWallet
      * @param caWallet
      * @return
      * @throws RepositoryException
      */
     @Override
-    public CertificationAuthorityEntity enable(final String rootWallet, final String caWallet) throws RepositoryException {
-        Assert.notNull(rootWallet, "Root Wallet can not be null");
+    public CertificationAuthorityEntity enable(final String caWallet) throws RepositoryException {
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         try {
-            final CertificationAuthorityContract caContract = loadCAContract(rootWallet);
+            final CertificationAuthorityContract caContract = loadCAContractAsRoot();
             final Credentials caCredentials = walletService.loadCredentials(caWallet);
             caContract.enableCertificationAuthority(caCredentials.getAddress()).send();
             return getCertificationAuthorityDetail(caContract, caCredentials.getAddress());
@@ -92,17 +107,15 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
 
     /**
      *
-     * @param rootWallet
      * @param caWallet
      * @return
      * @throws RepositoryException
      */
     @Override
-    public CertificationAuthorityEntity disable(final String rootWallet, final String caWallet) throws RepositoryException {
-        Assert.notNull(rootWallet, "Root Wallet can not be null");
+    public CertificationAuthorityEntity disable(final String caWallet) throws RepositoryException {
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         try {
-            final CertificationAuthorityContract caContract = loadCAContract(rootWallet);
+            final CertificationAuthorityContract caContract = loadCAContractAsRoot();
             final Credentials caCredentials = walletService.loadCredentials(caWallet);
             caContract.disableCertificationAuthority(caCredentials.getAddress()).send();
             return getCertificationAuthorityDetail(caContract, caCredentials.getAddress());
@@ -201,5 +214,14 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
         final FastRawTransactionManager txManager = new FastRawTransactionManager(web3j, credentials, properties.getChainId());
         return CertificationAuthorityContract.load(properties.getCertificationAuthorityContractAddress(),
                 web3j, txManager, properties.gas());
+    }
+
+    /**
+     *
+     * @return
+     */
+    private CertificationAuthorityContract loadCAContractAsRoot() {
+        return CertificationAuthorityContract.load(properties.getCertificationAuthorityContractAddress(),
+                web3j, rootTxManager, properties.gas());
     }
 }

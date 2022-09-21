@@ -69,7 +69,7 @@ public class PayPalPaymentServiceImpl implements IPaymentService {
         final Payer payer = new Payer();
         payer.email(userEntity.getEmail());
         final Name payerName = new Name();
-        payerName.fullName(userEntity.getName());
+        payerName.fullName(userEntity.getFullName());
         payer.name(payerName);
         payer.payerId(userEntity.getId().toString());
         orderRequest.payer(payer);
