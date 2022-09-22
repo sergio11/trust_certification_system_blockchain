@@ -54,10 +54,9 @@ public class CryptoCompareConfig {
      */
     @Bean
     public ClientHttpRequestFactory provideClientHttpRequestFactory() {
-        int timeout = 5000;
-        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory
+        final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory
                 = new HttpComponentsClientHttpRequestFactory();
-        clientHttpRequestFactory.setConnectTimeout(timeout);
+        clientHttpRequestFactory.setConnectTimeout(5000);
         return clientHttpRequestFactory;
     }
 
@@ -67,15 +66,17 @@ public class CryptoCompareConfig {
      * @param clientHttpRequestFactory
      * @param loggingRequestInterceptor
      * @param authorizationInterceptor
+     * @param messageConverter
      * @return
      */
-    @Bean("cryptoCompareRestTemplate")
+    @Bean(name = "cryptoCompareRestTemplate")
     public RestTemplate cryptoCompareRestTemplate(
             final ObjectMapper objectMapper,
             final ClientHttpRequestFactory clientHttpRequestFactory,
             final @Qualifier("loggingRequestInterceptor") ClientHttpRequestInterceptor loggingRequestInterceptor,
-            final @Qualifier("authorizationInterceptor") ClientHttpRequestInterceptor authorizationInterceptor) {
-        final RestTemplate rest = new RestTemplate(Collections.singletonList(new MappingJackson2HttpMessageConverter()));
+            final @Qualifier("authorizationInterceptor") ClientHttpRequestInterceptor authorizationInterceptor,
+            final MappingJackson2HttpMessageConverter messageConverter) {
+        final RestTemplate rest = new RestTemplate(Collections.singletonList(messageConverter));
         rest.setRequestFactory(clientHttpRequestFactory);
         rest.setInterceptors(Lists.newArrayList(loggingRequestInterceptor, authorizationInterceptor));
         return rest;

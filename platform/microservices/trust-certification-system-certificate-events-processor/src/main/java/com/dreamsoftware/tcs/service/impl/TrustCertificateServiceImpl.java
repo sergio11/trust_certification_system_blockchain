@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.service.impl;
 
+import com.dreamsoftware.tcs.dto.CertificateIssuedQRDataDTO;
 import com.dreamsoftware.tcs.stream.events.certificate.OnNewCertificateIssuedEvent;
 import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
@@ -91,7 +92,15 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
         final CertificationAuthorityEntity certificationAuthorityEntity = certificationAuthorityBlockchainRepository.getDetail(certificationCourseModelEntity.getCertificationAuthority());
         final String studentName = userRepository.findOneByWalletHash(event.getStudentWalletHash()).map(UserEntity::getFullName).orElseThrow(() -> new IllegalStateException("Student not found"));
         // Generate new certificate using the data provide by event
-        final File certificateFile = certificateGenerator.generate(certificationAuthorityEntity.getName(), studentName, certificationCourseModelEntity.getName(), event.getQualification());
+        final File certificateFile = certificateGenerator.generate(ICertificateGeneratorService.CertificationGenerationRequest.builder()
+                .caName(certificationAuthorityEntity.getName())
+                .caWalletHash(event.getCaWalletHash())
+                .studentName(studentName)
+                .studentWalletHash(event.getStudentWalletHash())
+                .courseName(certificationCourseModelEntity.getName())
+                .courseId(event.getCourseId())
+                .qualification(event.getQualification())
+                .build());
         // Sign Certificate
         byte[] certificateFileSignedBytes = certificateSigningService.sign(certificateFile);
         // Write data into certificate file
@@ -100,6 +109,7 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
         final String cid = ipfsService.save(certificateFile, true);
         // Generate SHA 256 from file
         String certificateHash = Files.asByteSource(certificateFile).hash(Hashing.sha256()).toString();
+
         return trustCertificationBlockchainRepository.issueCertificate(event.getCaWalletHash(), event.getStudentWalletHash(), event.getCourseId(), event.getQualification(), cid, certificateHash);
     }
 

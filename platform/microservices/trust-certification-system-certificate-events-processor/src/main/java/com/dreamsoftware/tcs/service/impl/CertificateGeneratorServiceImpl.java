@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.service.impl;
 
 import com.dreamsoftware.tcs.config.properties.CertificateGeneratorProperties;
+import com.dreamsoftware.tcs.dto.CertificateIssuedQRDataDTO;
 import com.dreamsoftware.tcs.utils.WordReplacer;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,7 +15,13 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
+import com.dreamsoftware.tcs.service.ICryptService;
+import com.dreamsoftware.tcs.service.IQRCodeGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.zxing.WriterException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 /**
  *
@@ -31,27 +38,35 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
     private final CertificateGeneratorProperties certificateGeneratorProperties;
 
     /**
+     * QR Code Generator
+     */
+    private final IQRCodeGenerator qrCodeGenerator;
+
+    /**
+     * Crypt Service
+     */
+    private final ICryptService cryptService;
+
+    /**
+     * Object Mapper
+     */
+    private final ObjectMapper objectMapper;
+
+    /**
      *
-     * @param caName
-     * @param studentName
-     * @param courseName
-     * @param qualification
+     * @param request
      * @return
      * @throws Exception
      */
     @Override
-    public File generate(final String caName, final String studentName, final String courseName, final Long qualification) throws Exception {
-        Assert.notNull(caName, "CA Name can not be null");
-        Assert.notNull(studentName, "Student Name can not be null");
-        Assert.notNull(courseName, "Course Name can not be null");
-        Assert.notNull(qualification, "Qualification Name can not be null");
-        log.debug("Generate Certificate for " + studentName);
+    public File generate(final CertificationGenerationRequest request) throws Exception {
+        Assert.notNull(request, "Certification Generation Request can not be null");
         final File certificateTemplate = getCertificateTemplate();
         final WordReplacer wordReplacer = new WordReplacer(certificateTemplate);
-        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCaNamePlaceholder(), caName);
-        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), studentName);
-        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCourseNamePlaceholder(), courseName);
-        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), qualification.toString());
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCaNamePlaceholder(), request.getCaName());
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), request.getStudentName());
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCourseNamePlaceholder(), request.getCourseName());
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), request.getQualification().toString());
         final File tempFile = File.createTempFile("tcs--", ".tmp");
         final File tempPdfDestFile = File.createTempFile("tcs--", ".tmp");
         final File fileSaved = wordReplacer.saveAndGetModdedFile(tempFile);
@@ -60,6 +75,7 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
             Docx4J.toPDF(wordMLPackage, out);
             tempFile.delete();
             configureWatermark(tempPdfDestFile);
+            configureQRCode(tempPdfDestFile, request);
             return tempPdfDestFile;
         }
 
@@ -111,6 +127,33 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
                 overlay.setInputPDF(doc);
                 overlay.overlay(overlayGuide).save(destFile);
             }
+        }
+    }
+
+    /**
+     * Configure QR Code
+     *
+     * @param destFile
+     * @param request
+     * @throws IOException
+     */
+    private void configureQRCode(final File destFile, final CertificationGenerationRequest request) throws IOException, WriterException {
+        try (
+                final PDDocument doc = PDDocument.load(destFile);
+                final PDPageContentStream contents = new PDPageContentStream(doc, doc.getPage(0))) {
+            // Generate Certificate QR Data
+            final String certificateQrData = objectMapper.writeValueAsString(CertificateIssuedQRDataDTO.builder()
+                    .caWalletHash(request.getCaWalletHash())
+                    .studentWalletHash(request.getStudentName())
+                    .courseId(request.getCourseId())
+                    .build());
+            final String certificateQrDataEncrypted = cryptService.encrypt(certificateQrData);
+            log.debug("issueCertificate - QR data: " + certificateQrData);
+            log.debug("issueCertificate - QR data encrypted: " + certificateQrDataEncrypted);
+            // Generate QR Code
+            final PDImageXObject qrCodeImage = PDImageXObject.createFromByteArray(doc, qrCodeGenerator.getQRCodeImage(cryptService.encrypt(certificateQrDataEncrypted)), "CertificationQRCode");
+            contents.drawImage(qrCodeImage, 70, 250);
+            doc.save(destFile);
         }
     }
 

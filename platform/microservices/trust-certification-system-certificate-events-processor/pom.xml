@@ -14,6 +14,7 @@
         <docx4j.version>8.3.8</docx4j.version>
         <pdfbox.version>2.0.26</pdfbox.version>
         <bcprov.jdk18on.version>1.71</bcprov.jdk18on.version>
+        <zxing.version>3.5.0</zxing.version>
     </properties>
 
     <parent>
@@ -90,6 +91,18 @@
             <groupId>org.docx4j</groupId>
             <artifactId>docx4j-export-fo</artifactId>
             <version>${docx4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>${zxing.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>${zxing.version}</version>
         </dependency>
 
     </dependencies>
