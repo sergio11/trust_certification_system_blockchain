@@ -317,6 +317,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     public Boolean validateCertificate(final MultipartFile certificateFile) throws Exception {
         Assert.notNull(certificateFile, "certificateFile can not be null");
         String certificateHash = ByteSource.wrap(certificateFile.getBytes()).hash(Hashing.sha256()).toString();
-        return trustCertificationRepository.validateCertificateIntegrity(certificateHash);
+        //return trustCertificationRepository.validateCertificateIntegrity(certificateHash);
+        return false;
     }
 }

@@ -4,6 +4,7 @@ import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedE
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.TrustCertificationEventEntity;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -14,17 +15,20 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
     /**
      * Issue Certificate
      *
+     * @param id
      * @param issuerWalletHash
      * @param studentWalletHash
      * @param certificateCourseId
      * @param qualification
-     * @param cid
-     * @param certificateHash
+     * @param fileCid
+     * @param fileHash
+     * @param imageCid
+     * @param imageHash
      * @return
      * @throws RepositoryException
      */
-    CertificateIssuedEntity issueCertificate(final String issuerWalletHash, final String studentWalletHash, final String certificateCourseId,
-            final Long qualification, final String cid, final String certificateHash) throws RepositoryException;
+    CertificateIssuedEntity issueCertificate(final UUID id, final String issuerWalletHash, final String studentWalletHash, final String certificateCourseId,
+            final Long qualification, final String fileCid, final String fileHash, final String imageCid, final String imageHash) throws RepositoryException;
 
     /**
      * Renew Certificate
@@ -107,10 +111,12 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
 
     /**
      *
-     * @param certificateHash
+     * @param id
+     * @param fileCertificateHash
+     * @param recipientAddress
      * @return
      * @throws RepositoryException
      */
-    Boolean validateCertificateIntegrity(final String certificateHash) throws RepositoryException;
+    Boolean validateCertificateIntegrity(final String id, final String fileCertificateHash, final String recipientAddress) throws RepositoryException;
 
 }

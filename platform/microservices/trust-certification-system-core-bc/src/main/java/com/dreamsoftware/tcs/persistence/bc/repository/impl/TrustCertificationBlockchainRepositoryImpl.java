@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.persistence.bc.repository.impl;
 
 import com.dreamsoftware.tcs.contracts.TrustCertificationContract;
 import com.dreamsoftware.tcs.contracts.TrustCertificationContract.CertificateRecord;
+import com.dreamsoftware.tcs.contracts.TrustCertificationContract.IssueCertificateRequest;
 import com.dreamsoftware.tcs.exception.LoadWalletException;
 import com.dreamsoftware.tcs.persistence.bc.core.SupportBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
@@ -14,6 +15,7 @@ import io.reactivex.Flowable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -37,26 +39,35 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
 
     /**
      *
+     * @param id
      * @param issuerWalletHash
      * @param studentWalletHash
      * @param certificateCourseId
      * @param qualification
-     * @param cid
-     * @param certificateHash
+     * @param fileCid
+     * @param fileHash
+     * @param imageCid
+     * @param imageHash
+     * @return
      * @throws RepositoryException
      */
     @Override
-    public CertificateIssuedEntity issueCertificate(final String issuerWalletHash, final String studentWalletHash, final String certificateCourseId, final Long qualification, final String cid, final String certificateHash) throws RepositoryException {
+    public CertificateIssuedEntity issueCertificate(final UUID id, final String issuerWalletHash, final String studentWalletHash, final String certificateCourseId,
+            final Long qualification, final String fileCid, final String fileHash, final String imageCid, final String imageHash) throws RepositoryException {
+        Assert.notNull(id, "ID can not be null");
         Assert.notNull(issuerWalletHash, "Issuer Wallet can not be null");
         Assert.notNull(studentWalletHash, "Student Wallet Hash can not be null");
         Assert.notNull(certificateCourseId, "certificate Course Id can not be null");
-        Assert.notNull(cid, "cid can not be null");
-        Assert.notNull(certificateHash, "certificateHash can not be null");
+        Assert.notNull(fileCid, "fileCid can not be null");
+        Assert.notNull(fileHash, "fileHash can not be null");
+        Assert.notNull(imageCid, "imageCid can not be null");
+        Assert.notNull(imageHash, "imageHash can not be null");
         log.debug("issueCertificate CALLED!");
         try {
             final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(issuerWalletHash);
             final Credentials studentCredentials = walletService.loadCredentials(studentWalletHash);
-            final TransactionReceipt transactionReceipt = trustCertificationContract.issueCertificate(studentCredentials.getAddress(), certificateCourseId, BigInteger.valueOf(qualification), cid, certificateHash).send();
+            final TransactionReceipt transactionReceipt = trustCertificationContract.issueCertificate(new IssueCertificateRequest(id.toString(), studentCredentials.getAddress(),
+                    certificateCourseId, BigInteger.valueOf(qualification), fileCid, fileHash, imageCid, imageHash)).send();
             final List<TrustCertificationContract.OnNewCertificateGeneratedEventResponse> events = trustCertificationContract.getOnNewCertificateGeneratedEvents(transactionReceipt);
             final String certificationId = events.get(0)._id;
             final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();
@@ -246,17 +257,21 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
 
     /**
      *
-     * @param certificateHash
+     * @param id
+     * @param fileCertificateHash
+     * @param recipientAddress
      * @return
      * @throws RepositoryException
      */
     @Override
-    public Boolean validateCertificateIntegrity(final String certificateHash) throws RepositoryException {
-        Assert.notNull(certificateHash, "certificateHash can not be null");
+    public Boolean validateCertificateIntegrity(final String id, final String fileCertificateHash, final String recipientAddress) throws RepositoryException {
+        Assert.notNull(id, "id can not be null");
+        Assert.notNull(fileCertificateHash, "certificateHash can not be null");
+        Assert.notNull(recipientAddress, "certificateHash can not be null");
         log.debug("validateCertificateIntegrity CALLED!");
         try {
             final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract();
-            return trustCertificationContract.validateCertificateIntegrity(certificateHash).send();
+            return trustCertificationContract.validateCertificateIntegrity(id, fileCertificateHash, recipientAddress).send();
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }

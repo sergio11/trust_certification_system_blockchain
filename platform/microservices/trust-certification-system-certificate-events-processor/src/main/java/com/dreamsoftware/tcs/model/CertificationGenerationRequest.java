@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.dto;
+package com.dreamsoftware.tcs.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,21 +13,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CertificateIssuedQRDataDTO {
+public class CertificationGenerationRequest {
 
-    /**
-     * CA Wallet Hash
-     */
+    private String caName;
     private String caWalletHash;
-
-    /**
-     * Student Wallet Hash
-     */
+    private String studentName;
     private String studentWalletHash;
-
-    /**
-     * Course Id
-     */
+    private String courseName;
     private String courseId;
-
+    private Long qualification;
 }

@@ -1,11 +1,8 @@
 package com.dreamsoftware.tcs.web.interceptors;
 
-import com.dreamsoftware.tcs.utils.ResetOnCloseInputStream;
-import java.io.BufferedReader;
+import com.google.common.io.ByteStreams;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
+import java.nio.charset.Charset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpRequest;
@@ -38,28 +35,18 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
         log.debug("==========================request end================================================");
     }
 
-    public static String fromStream(InputStream in) throws IOException {
-        @SuppressWarnings("resource")
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new ResetOnCloseInputStream(in)));
-        StringBuilder out = new StringBuilder();
-        String newLine = System.getProperty("line.separator");
-        String line;
-        while ((line = reader.readLine()) != null) {
-            out.append(line);
-            out.append(newLine);
-        }
-        return out.toString();
-    }
-
     private void traceResponse(ClientHttpResponse response) {
-
         try {
-
             log.debug("============================response begin==========================================");
             log.debug("Status code  : {}", response.getStatusCode());
             log.debug("Status text  : {}", response.getStatusText());
             log.debug("Headers      : {}", response.getHeaders());
-            //log.debug("Body: ", fromStream(response.getBody()));
+            try {
+                final String bodyAsString = new String(ByteStreams.toByteArray(response.getBody()), Charset.forName("UTF-8"));
+                log.debug("Body: ", bodyAsString);
+            } catch (final Exception ex) {
+                log.debug("Parse Body Exception -> " + ex.getMessage());
+            }
             log.debug("=======================response end=================================================");
         } catch (IOException ex) {
             log.error(ex.getMessage());

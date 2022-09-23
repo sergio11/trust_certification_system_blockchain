@@ -38,7 +38,6 @@ import org.springframework.util.Assert;
 public class CryptServiceImpl implements ICryptService {
 
     private static final String ALGORITHM = "AES";
-    private static final String IV_SEPARATOR = "]:";
     private final String transformation = "AES/CFB/PKCS5Padding";
 
     private final CryptProperties cryptProperties;
@@ -81,7 +80,7 @@ public class CryptServiceImpl implements ICryptService {
         Assert.notNull(content, "Content can not be null");
         try {
             final String contentDecoded = new String(Base64.getDecoder().decode(content));
-            final String[] contentDecodedChunks = contentDecoded.split(IV_SEPARATOR);
+            final String[] contentDecodedChunks = contentDecoded.split(buildSeparator());
             if (contentDecodedChunks.length != 2) {
                 throw new IllegalStateException("Content decoded invalid");
             }
@@ -93,7 +92,7 @@ public class CryptServiceImpl implements ICryptService {
             byte[] plainText = cipher.doFinal(Base64.getDecoder()
                     .decode(cipherText));
             return new String(plainText);
-        } catch (final InvalidAlgorithmParameterException | InvalidKeySpecException | NoSuchProviderException | InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException ex) {
+        } catch (final InvalidAlgorithmParameterException | IOException | InvalidKeySpecException | NoSuchProviderException | InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException ex) {
             throw new CryptException(ex.getMessage(), ex);
         }
     }

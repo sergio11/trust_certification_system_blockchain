@@ -1,10 +1,7 @@
 package com.dreamsoftware.tcs.service;
 
-import java.io.File;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.dreamsoftware.tcs.model.CertificateGenerated;
+import com.dreamsoftware.tcs.model.CertificationGenerationRequest;
 
 /**
  * Certificate Generator Service
@@ -19,20 +16,5 @@ public interface ICertificateGeneratorService {
      * @return
      * @throws Exception
      */
-    File generate(final CertificationGenerationRequest request) throws Exception;
-
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public class CertificationGenerationRequest {
-
-        private String caName;
-        private String caWalletHash;
-        private String studentName;
-        private String studentWalletHash;
-        private String courseName;
-        private String courseId;
-        private Long qualification;
-    }
+    CertificateGenerated generate(final CertificationGenerationRequest request) throws Exception;
 }

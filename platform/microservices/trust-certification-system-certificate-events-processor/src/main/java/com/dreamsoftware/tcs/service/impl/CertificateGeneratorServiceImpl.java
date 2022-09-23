@@ -1,7 +1,8 @@
 package com.dreamsoftware.tcs.service.impl;
 
 import com.dreamsoftware.tcs.config.properties.CertificateGeneratorProperties;
-import com.dreamsoftware.tcs.dto.CertificateIssuedQRDataDTO;
+import com.dreamsoftware.tcs.model.CertificateGenerated;
+import com.dreamsoftware.tcs.model.CertificationGenerationRequest;
 import com.dreamsoftware.tcs.utils.WordReplacer;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,13 +16,20 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
+import com.dreamsoftware.tcs.service.ICertificateSigningService;
 import com.dreamsoftware.tcs.service.ICryptService;
 import com.dreamsoftware.tcs.service.IQRCodeGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.WriterException;
+import java.awt.image.BufferedImage;
+import java.util.UUID;
+import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.rendering.ImageType;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
+import org.apache.pdfbox.rendering.PDFRenderer;
 
 /**
  *
@@ -31,6 +39,8 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 @Service("certificateGeneratorImpl")
 @RequiredArgsConstructor
 public class CertificateGeneratorServiceImpl implements ICertificateGeneratorService {
+
+    private final static Integer DEFAULT_DPI = 600;
 
     /**
      * Properties
@@ -48,9 +58,9 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
     private final ICryptService cryptService;
 
     /**
-     * Object Mapper
+     * Certificate Signing Service
      */
-    private final ObjectMapper objectMapper;
+    private final ICertificateSigningService certificateSigningService;
 
     /**
      *
@@ -59,26 +69,21 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
      * @throws Exception
      */
     @Override
-    public File generate(final CertificationGenerationRequest request) throws Exception {
+    public CertificateGenerated generate(final CertificationGenerationRequest request) throws Exception {
         Assert.notNull(request, "Certification Generation Request can not be null");
+        final UUID certificateId = UUID.randomUUID();
         final File certificateTemplate = getCertificateTemplate();
-        final WordReplacer wordReplacer = new WordReplacer(certificateTemplate);
-        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCaNamePlaceholder(), request.getCaName());
-        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), request.getStudentName());
-        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCourseNamePlaceholder(), request.getCourseName());
-        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), request.getQualification().toString());
-        final File tempFile = File.createTempFile("tcs--", ".tmp");
-        final File tempPdfDestFile = File.createTempFile("tcs--", ".tmp");
-        final File fileSaved = wordReplacer.saveAndGetModdedFile(tempFile);
-        WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(fileSaved);
-        try (final FileOutputStream out = new FileOutputStream(tempPdfDestFile, true)) {
-            Docx4J.toPDF(wordMLPackage, out);
-            tempFile.delete();
-            configureWatermark(tempPdfDestFile);
-            configureQRCode(tempPdfDestFile, request);
-            return tempPdfDestFile;
-        }
-
+        final File certificateFileConfigured = replaceCertificatePlaceholders(certificateTemplate, request);
+        final File certificatePdfFile = convertToPdf(certificateFileConfigured);
+        configureWatermark(certificatePdfFile);
+        configureQRCode(certificatePdfFile, certificateId);
+        signCertificate(certificatePdfFile);
+        final File certificateImageFile = generateCertificateImage(certificatePdfFile);
+        return CertificateGenerated.builder()
+                .id(certificateId)
+                .image(certificateImageFile)
+                .file(certificatePdfFile)
+                .build();
     }
 
     /**
@@ -111,6 +116,45 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
     }
 
     /**
+     *
+     * @param certificateTemplate
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws Exception
+     */
+    private File replaceCertificatePlaceholders(final File certificateTemplate, final CertificationGenerationRequest request) throws IOException, Exception {
+        Assert.notNull(certificateTemplate, "Certificate Template can not be null");
+        Assert.notNull(request, "request can not be null");
+        final WordReplacer wordReplacer = new WordReplacer(certificateTemplate);
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCaNamePlaceholder(), request.getCaName());
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), request.getStudentName());
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCourseNamePlaceholder(), request.getCourseName());
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), request.getQualification().toString());
+        final File tempFile = File.createTempFile("tcs--", ".tmp");
+        return wordReplacer.saveAndGetModdedFile(tempFile);
+    }
+
+    /**
+     *
+     * @param certificateFile
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws Docx4JException
+     * @throws WriterException
+     */
+    private File convertToPdf(final File certificateFile) throws IOException, Docx4JException, WriterException {
+        final File pdfDestFile = File.createTempFile("tcs--", ".tmp");
+        WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(certificateFile);
+        try (final FileOutputStream out = new FileOutputStream(pdfDestFile, true)) {
+            Docx4J.toPDF(wordMLPackage, out);
+            certificateFile.delete();
+            return pdfDestFile;
+        }
+    }
+
+    /**
      * Configure Watermark
      *
      * @param destFile
@@ -134,27 +178,52 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
      * Configure QR Code
      *
      * @param destFile
-     * @param request
+     * @param certificateId
      * @throws IOException
      */
-    private void configureQRCode(final File destFile, final CertificationGenerationRequest request) throws IOException, WriterException {
+    private void configureQRCode(final File destFile, final UUID certificateId) throws IOException, WriterException {
         try (
                 final PDDocument doc = PDDocument.load(destFile);
                 final PDPageContentStream contents = new PDPageContentStream(doc, doc.getPage(0))) {
-            // Generate Certificate QR Data
-            final String certificateQrData = objectMapper.writeValueAsString(CertificateIssuedQRDataDTO.builder()
-                    .caWalletHash(request.getCaWalletHash())
-                    .studentWalletHash(request.getStudentName())
-                    .courseId(request.getCourseId())
-                    .build());
-            final String certificateQrDataEncrypted = cryptService.encrypt(certificateQrData);
-            log.debug("issueCertificate - QR data: " + certificateQrData);
+            final String certificateQrDataEncrypted = cryptService.encrypt(certificateId.toString());
+            log.debug("issueCertificate - QR data: " + certificateId.toString());
             log.debug("issueCertificate - QR data encrypted: " + certificateQrDataEncrypted);
             // Generate QR Code
             final PDImageXObject qrCodeImage = PDImageXObject.createFromByteArray(doc, qrCodeGenerator.getQRCodeImage(cryptService.encrypt(certificateQrDataEncrypted)), "CertificationQRCode");
             contents.drawImage(qrCodeImage, 70, 250);
             doc.save(destFile);
         }
+    }
+
+    /**
+     *
+     * @param certificateFile
+     * @return
+     * @throws IOException
+     */
+    private File generateCertificateImage(final File certificateFile) throws IOException {
+        try (final PDDocument doc = PDDocument.load(certificateFile)) {
+            final PDFRenderer pdfRenderer = new PDFRenderer(doc);
+            BufferedImage bImage = pdfRenderer.renderImageWithDPI(0, DEFAULT_DPI, ImageType.RGB);
+            final File imageDestFile = File.createTempFile("tcs--", ".tmp");
+            ImageIO.write(bImage, "png", imageDestFile);
+            return imageDestFile;
+        }
+
+    }
+
+    /**
+     *
+     * @param certificateFile
+     * @return
+     * @throws IOException
+     */
+    private File signCertificate(final File certificateFile) throws IOException {
+        // Sign Certificate
+        byte[] certificateFileSignedBytes = certificateSigningService.sign(certificateFile);
+        // Write data into certificate file
+        FileUtils.writeByteArrayToFile(certificateFile, certificateFileSignedBytes, false);
+        return certificateFile;
     }
 
 }
