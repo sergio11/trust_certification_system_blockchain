@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.dto.CertificateIssuedQRDataDTO;
+import com.dreamsoftware.tcs.model.CertificateGenerated;
+import com.dreamsoftware.tcs.model.CertificationGenerationRequest;
 import com.dreamsoftware.tcs.stream.events.certificate.OnNewCertificateIssuedEvent;
 import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
@@ -15,14 +16,11 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.ITrustCertificateService;
 import com.dreamsoftware.tcs.service.IipfsGateway;
-import java.io.File;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
-import com.dreamsoftware.tcs.service.ICertificateSigningService;
-import org.apache.commons.io.FileUtils;
 import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
@@ -41,11 +39,6 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
      * Certificate Generator
      */
     private final ICertificateGeneratorService certificateGenerator;
-
-    /**
-     * Certificate Signing Service
-     */
-    private final ICertificateSigningService certificateSigningService;
 
     /**
      * Certification Course Blockchain Repository
@@ -92,7 +85,7 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
         final CertificationAuthorityEntity certificationAuthorityEntity = certificationAuthorityBlockchainRepository.getDetail(certificationCourseModelEntity.getCertificationAuthority());
         final String studentName = userRepository.findOneByWalletHash(event.getStudentWalletHash()).map(UserEntity::getFullName).orElseThrow(() -> new IllegalStateException("Student not found"));
         // Generate new certificate using the data provide by event
-        final File certificateFile = certificateGenerator.generate(ICertificateGeneratorService.CertificationGenerationRequest.builder()
+        final CertificateGenerated certificateGenerated = certificateGenerator.generate(CertificationGenerationRequest.builder()
                 .caName(certificationAuthorityEntity.getName())
                 .caWalletHash(event.getCaWalletHash())
                 .studentName(studentName)
@@ -101,16 +94,16 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
                 .courseId(event.getCourseId())
                 .qualification(event.getQualification())
                 .build());
-        // Sign Certificate
-        byte[] certificateFileSignedBytes = certificateSigningService.sign(certificateFile);
-        // Write data into certificate file
-        FileUtils.writeByteArrayToFile(certificateFile, certificateFileSignedBytes, false);
         // Save Certificate in IPFS node
-        final String cid = ipfsService.save(certificateFile, true);
+        final String fileCertificateCid = ipfsService.save(certificateGenerated.getFile(), true);
+        // Save Certificate Image in IPFS node
+        final String iamgeCertificateCid = ipfsService.save(certificateGenerated.getImage(), true);
         // Generate SHA 256 from file
-        String certificateHash = Files.asByteSource(certificateFile).hash(Hashing.sha256()).toString();
-
-        return trustCertificationBlockchainRepository.issueCertificate(event.getCaWalletHash(), event.getStudentWalletHash(), event.getCourseId(), event.getQualification(), cid, certificateHash);
+        String fileCertificateHash = Files.asByteSource(certificateGenerated.getFile()).hash(Hashing.sha256()).toString();
+        // Generate SHA 256 from image
+        String imageCertificateHash = Files.asByteSource(certificateGenerated.getImage()).hash(Hashing.sha256()).toString();
+        return trustCertificationBlockchainRepository.issueCertificate(certificateGenerated.getId(), event.getCaWalletHash(), event.getStudentWalletHash(), event.getCourseId(),
+                event.getQualification(), fileCertificateCid, fileCertificateHash, iamgeCertificateCid, imageCertificateHash);
     }
 
     /**

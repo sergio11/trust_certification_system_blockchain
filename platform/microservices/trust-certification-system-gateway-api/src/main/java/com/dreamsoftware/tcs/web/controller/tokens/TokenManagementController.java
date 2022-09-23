@@ -122,7 +122,7 @@ public class TokenManagementController extends SupportController {
      * @throws Throwable
      */
     @Operation(summary = "PLACE_TOKENS_ORDER - Place Tokens Order", description = "Place Tokens Order", tags = {"tokens-manadgement"})
-    @RequestMapping(value = "/order", method = RequestMethod.PUT,
+    @RequestMapping(value = "/order", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<OrderDetailDTO>> placeTokensOrder(
             @Parameter(name = "order", description = "Place token order",

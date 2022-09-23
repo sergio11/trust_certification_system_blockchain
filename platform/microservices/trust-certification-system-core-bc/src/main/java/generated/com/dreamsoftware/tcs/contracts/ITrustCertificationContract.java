@@ -364,14 +364,10 @@ public class ITrustCertificationContract extends Contract {
         return executeRemoteCallSingleValueReturn(function, Boolean.class);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> issueCertificate(String _recipientAddress, String _certificateCourseId, BigInteger _qualification, String _cid, String _certificateHash) {
+    public RemoteFunctionCall<TransactionReceipt> issueCertificate(IssueCertificateRequest _request) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_ISSUECERTIFICATE, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _recipientAddress), 
-                new org.web3j.abi.datatypes.Utf8String(_certificateCourseId), 
-                new org.web3j.abi.datatypes.generated.Uint256(_qualification), 
-                new org.web3j.abi.datatypes.Utf8String(_cid), 
-                new org.web3j.abi.datatypes.Utf8String(_certificateHash)), 
+                Arrays.<Type>asList(_request), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -393,9 +389,11 @@ public class ITrustCertificationContract extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<Boolean> validateCertificateIntegrity(String _certificateHash) {
+    public RemoteFunctionCall<Boolean> validateCertificateIntegrity(String _id, String _fileCertificateHash, String recipientAddress) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_VALIDATECERTIFICATEINTEGRITY, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_certificateHash)), 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_id), 
+                new org.web3j.abi.datatypes.Utf8String(_fileCertificateHash), 
+                new org.web3j.abi.datatypes.Address(160, recipientAddress)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
         return executeRemoteCallSingleValueReturn(function, Boolean.class);
     }
@@ -437,6 +435,8 @@ public class ITrustCertificationContract extends Contract {
     }
 
     public static class CertificateRecord extends DynamicStruct {
+        public String id;
+
         public String issuerAddress;
 
         public String recipientAddress;
@@ -449,9 +449,13 @@ public class ITrustCertificationContract extends Contract {
 
         public BigInteger durationInHours;
 
-        public String cid;
+        public String fileCid;
 
-        public String certificateHash;
+        public String fileCertificateHash;
+
+        public String imageCid;
+
+        public String imageCertificateHash;
 
         public BigInteger expeditionDate;
 
@@ -461,36 +465,84 @@ public class ITrustCertificationContract extends Contract {
 
         public Boolean isExist;
 
-        public CertificateRecord(String issuerAddress, String recipientAddress, String course, BigInteger expirationDate, BigInteger qualification, BigInteger durationInHours, String cid, String certificateHash, BigInteger expeditionDate, Boolean isVisible, Boolean isEnabled, Boolean isExist) {
-            super(new org.web3j.abi.datatypes.Address(issuerAddress),new org.web3j.abi.datatypes.Address(recipientAddress),new org.web3j.abi.datatypes.Utf8String(course),new org.web3j.abi.datatypes.generated.Uint256(expirationDate),new org.web3j.abi.datatypes.generated.Uint256(qualification),new org.web3j.abi.datatypes.generated.Uint256(durationInHours),new org.web3j.abi.datatypes.Utf8String(cid),new org.web3j.abi.datatypes.Utf8String(certificateHash),new org.web3j.abi.datatypes.generated.Uint256(expeditionDate),new org.web3j.abi.datatypes.Bool(isVisible),new org.web3j.abi.datatypes.Bool(isEnabled),new org.web3j.abi.datatypes.Bool(isExist));
+        public CertificateRecord(String id, String issuerAddress, String recipientAddress, String course, BigInteger expirationDate, BigInteger qualification, BigInteger durationInHours, String fileCid, String fileCertificateHash, String imageCid, String imageCertificateHash, BigInteger expeditionDate, Boolean isVisible, Boolean isEnabled, Boolean isExist) {
+            super(new org.web3j.abi.datatypes.Utf8String(id),new org.web3j.abi.datatypes.Address(issuerAddress),new org.web3j.abi.datatypes.Address(recipientAddress),new org.web3j.abi.datatypes.Utf8String(course),new org.web3j.abi.datatypes.generated.Uint256(expirationDate),new org.web3j.abi.datatypes.generated.Uint256(qualification),new org.web3j.abi.datatypes.generated.Uint256(durationInHours),new org.web3j.abi.datatypes.Utf8String(fileCid),new org.web3j.abi.datatypes.Utf8String(fileCertificateHash),new org.web3j.abi.datatypes.Utf8String(imageCid),new org.web3j.abi.datatypes.Utf8String(imageCertificateHash),new org.web3j.abi.datatypes.generated.Uint256(expeditionDate),new org.web3j.abi.datatypes.Bool(isVisible),new org.web3j.abi.datatypes.Bool(isEnabled),new org.web3j.abi.datatypes.Bool(isExist));
+            this.id = id;
             this.issuerAddress = issuerAddress;
             this.recipientAddress = recipientAddress;
             this.course = course;
             this.expirationDate = expirationDate;
             this.qualification = qualification;
             this.durationInHours = durationInHours;
-            this.cid = cid;
-            this.certificateHash = certificateHash;
+            this.fileCid = fileCid;
+            this.fileCertificateHash = fileCertificateHash;
+            this.imageCid = imageCid;
+            this.imageCertificateHash = imageCertificateHash;
             this.expeditionDate = expeditionDate;
             this.isVisible = isVisible;
             this.isEnabled = isEnabled;
             this.isExist = isExist;
         }
 
-        public CertificateRecord(Address issuerAddress, Address recipientAddress, Utf8String course, Uint256 expirationDate, Uint256 qualification, Uint256 durationInHours, Utf8String cid, Utf8String certificateHash, Uint256 expeditionDate, Bool isVisible, Bool isEnabled, Bool isExist) {
-            super(issuerAddress,recipientAddress,course,expirationDate,qualification,durationInHours,cid,certificateHash,expeditionDate,isVisible,isEnabled,isExist);
+        public CertificateRecord(Utf8String id, Address issuerAddress, Address recipientAddress, Utf8String course, Uint256 expirationDate, Uint256 qualification, Uint256 durationInHours, Utf8String fileCid, Utf8String fileCertificateHash, Utf8String imageCid, Utf8String imageCertificateHash, Uint256 expeditionDate, Bool isVisible, Bool isEnabled, Bool isExist) {
+            super(id,issuerAddress,recipientAddress,course,expirationDate,qualification,durationInHours,fileCid,fileCertificateHash,imageCid,imageCertificateHash,expeditionDate,isVisible,isEnabled,isExist);
+            this.id = id.getValue();
             this.issuerAddress = issuerAddress.getValue();
             this.recipientAddress = recipientAddress.getValue();
             this.course = course.getValue();
             this.expirationDate = expirationDate.getValue();
             this.qualification = qualification.getValue();
             this.durationInHours = durationInHours.getValue();
-            this.cid = cid.getValue();
-            this.certificateHash = certificateHash.getValue();
+            this.fileCid = fileCid.getValue();
+            this.fileCertificateHash = fileCertificateHash.getValue();
+            this.imageCid = imageCid.getValue();
+            this.imageCertificateHash = imageCertificateHash.getValue();
             this.expeditionDate = expeditionDate.getValue();
             this.isVisible = isVisible.getValue();
             this.isEnabled = isEnabled.getValue();
             this.isExist = isExist.getValue();
+        }
+    }
+
+    public static class IssueCertificateRequest extends DynamicStruct {
+        public String id;
+
+        public String recipientAddress;
+
+        public String certificateCourseId;
+
+        public BigInteger qualification;
+
+        public String fileCid;
+
+        public String fileCertificateHash;
+
+        public String imageCid;
+
+        public String imageCertificateHash;
+
+        public IssueCertificateRequest(String id, String recipientAddress, String certificateCourseId, BigInteger qualification, String fileCid, String fileCertificateHash, String imageCid, String imageCertificateHash) {
+            super(new org.web3j.abi.datatypes.Utf8String(id),new org.web3j.abi.datatypes.Address(recipientAddress),new org.web3j.abi.datatypes.Utf8String(certificateCourseId),new org.web3j.abi.datatypes.generated.Uint256(qualification),new org.web3j.abi.datatypes.Utf8String(fileCid),new org.web3j.abi.datatypes.Utf8String(fileCertificateHash),new org.web3j.abi.datatypes.Utf8String(imageCid),new org.web3j.abi.datatypes.Utf8String(imageCertificateHash));
+            this.id = id;
+            this.recipientAddress = recipientAddress;
+            this.certificateCourseId = certificateCourseId;
+            this.qualification = qualification;
+            this.fileCid = fileCid;
+            this.fileCertificateHash = fileCertificateHash;
+            this.imageCid = imageCid;
+            this.imageCertificateHash = imageCertificateHash;
+        }
+
+        public IssueCertificateRequest(Utf8String id, Address recipientAddress, Utf8String certificateCourseId, Uint256 qualification, Utf8String fileCid, Utf8String fileCertificateHash, Utf8String imageCid, Utf8String imageCertificateHash) {
+            super(id,recipientAddress,certificateCourseId,qualification,fileCid,fileCertificateHash,imageCid,imageCertificateHash);
+            this.id = id.getValue();
+            this.recipientAddress = recipientAddress.getValue();
+            this.certificateCourseId = certificateCourseId.getValue();
+            this.qualification = qualification.getValue();
+            this.fileCid = fileCid.getValue();
+            this.fileCertificateHash = fileCertificateHash.getValue();
+            this.imageCid = imageCid.getValue();
+            this.imageCertificateHash = imageCertificateHash.getValue();
         }
     }
 

@@ -28,10 +28,10 @@ public class SignUpUserDTO {
     /**
      * Name
      */
-    @JsonProperty("name")
+    @JsonProperty("fullName")
     @NotBlank(message = "{user_name_not_null}")
     @Size(min = 2, max = 45, message = "{user_name_size}")
-    private String name;
+    private String fullName;
 
     /**
      * Email

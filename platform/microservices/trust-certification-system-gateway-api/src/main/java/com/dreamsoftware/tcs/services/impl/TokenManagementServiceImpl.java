@@ -20,9 +20,8 @@ import com.dreamsoftware.tcs.web.dto.response.OrderDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.TokenPricesDTO;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -33,9 +32,8 @@ import org.springframework.util.Assert;
  */
 @Service("tokenManagementService")
 @RequiredArgsConstructor
+@Slf4j
 public class TokenManagementServiceImpl implements ITokenManagementService {
-
-    private final Logger logger = LoggerFactory.getLogger(TokenManagementServiceImpl.class);
 
     private final Double ONE_WEI_IN_ETH = 0.000000000000000001;
 
@@ -104,15 +102,17 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
     public OrderDetailDTO placeTokensOrder(final PlaceTokensOrderRequestDTO orderRequest) throws Exception {
         Assert.notNull(orderRequest.getWalletHash(), "Wallet Hash can not be null");
         Assert.notNull(orderRequest.getTokens(), "Token Count can not be null");
+        log.debug("placeTokensOrder, walletHash: " + orderRequest.getWalletHash() + " , tokens: " + orderRequest.getTokens() + " CALLED!");
         final UserEntity userEntity = userRepository.findOneByWalletHash(orderRequest.getWalletHash()).orElseThrow(() -> new IllegalStateException("User not found"));
         final Long tokens = orderRequest.getTokens();
         final Long tokenPriceInWeis = tokenManagementBlockchainRepository.getTokenPriceInWeis(tokens);
         final Double tokenPriceInEth = tokenPriceInWeis * ONE_WEI_IN_ETH;
+        log.debug("placeTokensOrder, tokenPriceInEth: " + tokenPriceInEth + " CALLED!");
         final CryptoComparePricesDTO prices = cryptoCompareService.getEthPrices();
         final Double tokenPriceInEUR = prices.getEUR() * tokenPriceInEth;
         final Double tokenPriceInUSD = prices.getUSD() * tokenPriceInEth;
-        logger.debug("tokenPriceInEUR -> " + tokenPriceInEUR);
-        logger.debug("tokenPriceInEth -> " + tokenPriceInEth);
+        log.debug("tokenPriceInEUR -> " + tokenPriceInEUR);
+        log.debug("tokenPriceInEth -> " + tokenPriceInEth);
         final Double orderAmountEUR = tokens * tokenPriceInEUR;
         final Double orderAmountUSD = tokens * tokenPriceInUSD;
         final Long orderAmountWEI = tokens * tokenPriceInWeis;
