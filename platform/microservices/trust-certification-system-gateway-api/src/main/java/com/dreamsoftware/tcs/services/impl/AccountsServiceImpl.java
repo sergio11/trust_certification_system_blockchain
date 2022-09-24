@@ -56,7 +56,6 @@ import com.dreamsoftware.tcs.web.dto.response.SimpleUserLoginDTO;
 import com.dreamsoftware.tcs.web.security.provider.social.SocialProviderAuthenticationToken;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import lombok.extern.slf4j.Slf4j;
