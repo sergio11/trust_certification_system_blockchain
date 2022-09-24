@@ -266,7 +266,7 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> getDetailById(
             @Parameter(name = "id", description = "Course Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{course_id_not_valid}") @PathVariable("id") String id,
+            @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
@@ -301,7 +301,7 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<Boolean>> canBeIssued(
             @Parameter(name = "id", description = "Course Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{course_id_not_valid}") @PathVariable("id") String id,
+            @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
@@ -337,7 +337,7 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<Boolean>> canBeRenewed(
             @Parameter(name = "id", description = "Course Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{course_id_not_valid}") @PathVariable("id") String id,
+            @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
@@ -373,7 +373,7 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> deleteById(
             @Parameter(name = "id", description = "Course Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{course_id_not_valid}") @PathVariable("id") String id,
+            @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
