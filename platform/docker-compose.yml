@@ -255,7 +255,7 @@ services:
 
 
   # Trust Certification System Notification Events Processor
-  tcs_certificate_events_processor:
+  tcs_notification_events_processor:
     image: ssanchez11/trust_certification_system_notification_events_processor:0.0.1-SNAPSHOT
     container_name: tcs-notification-events-processor
     env_file:

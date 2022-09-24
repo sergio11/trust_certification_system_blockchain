@@ -44,7 +44,7 @@ public class CryptoCompareConfig {
     @Bean(name = "authorizationInterceptor")
     @Order(1)
     public ClientHttpRequestInterceptor provideAuthorizationInterceptor(final CryptoCompareProperties cryptoCompareProperties) {
-        return new HeaderRequestInterceptor("Authorization", String.format("key=%s", cryptoCompareProperties.getApiKey()));
+        return new HeaderRequestInterceptor("Authorization", String.format("ApiKey %s", cryptoCompareProperties.getApiKey()));
     }
 
     /**

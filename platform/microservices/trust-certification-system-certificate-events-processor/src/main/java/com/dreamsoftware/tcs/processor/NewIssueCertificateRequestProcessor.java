@@ -42,6 +42,7 @@ public class NewIssueCertificateRequestProcessor implements Function<OnNewIssueC
                     .studentWalletHash(event.getStudentWalletHash())
                     .build();
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.debug("Ex Message -> " + ex.getMessage());
         }
         return nextEvent;

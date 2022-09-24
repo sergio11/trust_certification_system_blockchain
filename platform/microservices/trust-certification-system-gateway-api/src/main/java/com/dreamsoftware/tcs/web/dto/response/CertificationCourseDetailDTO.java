@@ -41,12 +41,6 @@ public class CertificationCourseDetailDTO {
     private Long costOfRenewingCertificate;
 
     /**
-     * Certificate Authority
-     */
-    @JsonProperty("certificationAuthority")
-    private String certificationAuthority;
-
-    /**
      * Duration in hours
      */
     @JsonProperty("durationInHours")

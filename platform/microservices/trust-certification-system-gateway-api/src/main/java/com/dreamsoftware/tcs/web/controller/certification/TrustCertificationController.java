@@ -36,7 +36,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.validation.Valid;
-import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -330,10 +329,12 @@ public class TrustCertificationController extends SupportController {
      * @throws java.lang.Throwable
      */
     @Operation(summary = "ISSUE_CERTIFICATE_REQUEST - Issue Certificate Request", description = "Issue Certificate Request", tags = {"CERTIFICATE_ISSUED"})
-    @RequestMapping(value = "/request", method = RequestMethod.PUT,
+    @RequestMapping(value = "/request", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> issueCertificateRequest(
+            @Parameter(name = "issue_certificate_request", description = "Issue Certificate Request. Cannot null or empty.",
+                    required = true, schema = @Schema(implementation = IssueCertificateRequestDTO.class))
             @Validated(ICommonSequence.class) IssueCertificateRequestDTO issueCertificate,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
