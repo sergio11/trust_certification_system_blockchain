@@ -53,15 +53,21 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
      * Register Certification Authority
      *
      * @param name
+     * @param location
+     * @param executiveDirector
      * @param walletHash
      * @throws RepositoryException
      */
     @Override
-    public void register(final String name, final String walletHash) throws RepositoryException {
+    public void register(final String name, final String location, final String executiveDirector, final String walletHash) throws RepositoryException {
+        Assert.notNull(name, "name ca not be null");
+        Assert.notNull(location, "location ca not be null");
+        Assert.notNull(executiveDirector, "executiveDirector ca not be null");
+        Assert.notNull(walletHash, "walletHash ca not be null");
         try {
             log.debug("registerCertificationAuthority address: " + properties.getCertificationAuthorityContractAddress());
             final CertificationAuthorityContract caContract = loadCAContract(walletHash);
-            caContract.addCertificationAuthority(name).send();
+            caContract.addCertificationAuthority(name, location, executiveDirector).send();
             caContract.getCertificateAuthorityDetail().send();
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
@@ -138,7 +144,9 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
         try {
             final Credentials caCredentials = walletService.loadCredentials(caWallet);
             final CertificationAuthorityContract caContract = loadCAContract(caCredentials);
-            caContract.updateCertificationAuthority(caEntity.getName(), caEntity.getDefaultCostOfIssuingCertificate()).send();
+            caContract.updateCertificationAuthority(caEntity.getName(), caEntity.getLocation(), caEntity.getExecutiveDirector(),
+                    caEntity.getDefaultCostOfIssuingCertificate()
+            ).send();
             return getCertificationAuthorityDetail(caContract, caCredentials.getAddress());
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);

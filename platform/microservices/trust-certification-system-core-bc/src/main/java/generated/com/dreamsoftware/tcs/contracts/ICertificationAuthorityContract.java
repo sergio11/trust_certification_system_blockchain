@@ -77,11 +77,11 @@ public class ICertificationAuthorityContract extends Contract {
     ;
 
     public static final Event ONCERTIFICATIONAUTHORITYUPDATED_EVENT = new Event("OnCertificationAuthorityUpdated", 
-            Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Uint256>() {}));
+            Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Utf8String>() {}));
     ;
 
     public static final Event ONNEWCERTIFICATIONAUTHORITYCREATED_EVENT = new Event("OnNewCertificationAuthorityCreated", 
-            Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Utf8String>() {}));
+            Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}, new TypeReference<Utf8String>() {}));
     ;
 
     @Deprecated
@@ -203,7 +203,6 @@ public class ICertificationAuthorityContract extends Contract {
             typedResponse.log = eventValues.getLog();
             typedResponse._address = (String) eventValues.getNonIndexedValues().get(0).getValue();
             typedResponse._name = (String) eventValues.getNonIndexedValues().get(1).getValue();
-            typedResponse._defaultCostOfIssuingCertificate = (BigInteger) eventValues.getNonIndexedValues().get(2).getValue();
             responses.add(typedResponse);
         }
         return responses;
@@ -218,7 +217,6 @@ public class ICertificationAuthorityContract extends Contract {
                 typedResponse.log = log;
                 typedResponse._address = (String) eventValues.getNonIndexedValues().get(0).getValue();
                 typedResponse._name = (String) eventValues.getNonIndexedValues().get(1).getValue();
-                typedResponse._defaultCostOfIssuingCertificate = (BigInteger) eventValues.getNonIndexedValues().get(2).getValue();
                 return typedResponse;
             }
         });
@@ -237,7 +235,9 @@ public class ICertificationAuthorityContract extends Contract {
             OnNewCertificationAuthorityCreatedEventResponse typedResponse = new OnNewCertificationAuthorityCreatedEventResponse();
             typedResponse.log = eventValues.getLog();
             typedResponse._address = (String) eventValues.getNonIndexedValues().get(0).getValue();
-            typedResponse.name = (String) eventValues.getNonIndexedValues().get(1).getValue();
+            typedResponse._name = (String) eventValues.getNonIndexedValues().get(1).getValue();
+            typedResponse._location = (String) eventValues.getNonIndexedValues().get(2).getValue();
+            typedResponse._executiveDirector = (String) eventValues.getNonIndexedValues().get(3).getValue();
             responses.add(typedResponse);
         }
         return responses;
@@ -251,7 +251,9 @@ public class ICertificationAuthorityContract extends Contract {
                 OnNewCertificationAuthorityCreatedEventResponse typedResponse = new OnNewCertificationAuthorityCreatedEventResponse();
                 typedResponse.log = log;
                 typedResponse._address = (String) eventValues.getNonIndexedValues().get(0).getValue();
-                typedResponse.name = (String) eventValues.getNonIndexedValues().get(1).getValue();
+                typedResponse._name = (String) eventValues.getNonIndexedValues().get(1).getValue();
+                typedResponse._location = (String) eventValues.getNonIndexedValues().get(2).getValue();
+                typedResponse._executiveDirector = (String) eventValues.getNonIndexedValues().get(3).getValue();
                 return typedResponse;
             }
         });
@@ -263,19 +265,23 @@ public class ICertificationAuthorityContract extends Contract {
         return onNewCertificationAuthorityCreatedEventFlowable(filter);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> addCertificationAuthority(String _name) {
+    public RemoteFunctionCall<TransactionReceipt> addCertificationAuthority(String _name, String _location, String _executiveDirector, BigInteger _defaultCostOfIssuingCertificate) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_addCertificationAuthority, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name)), 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name), 
+                new org.web3j.abi.datatypes.Utf8String(_location), 
+                new org.web3j.abi.datatypes.Utf8String(_executiveDirector), 
+                new org.web3j.abi.datatypes.generated.Uint256(_defaultCostOfIssuingCertificate)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> addCertificationAuthority(String _name, BigInteger _defaultCostOfIssuingCertificate) {
+    public RemoteFunctionCall<TransactionReceipt> addCertificationAuthority(String _name, String _location, String _executiveDirector) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_addCertificationAuthority, 
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name), 
-                new org.web3j.abi.datatypes.generated.Uint256(_defaultCostOfIssuingCertificate)), 
+                new org.web3j.abi.datatypes.Utf8String(_location), 
+                new org.web3j.abi.datatypes.Utf8String(_executiveDirector)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -354,10 +360,12 @@ public class ICertificationAuthorityContract extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> updateCertificationAuthority(String _name, BigInteger _defaultCostOfIssuingCertificate) {
+    public RemoteFunctionCall<TransactionReceipt> updateCertificationAuthority(String _name, String _location, String _executiveDirector, BigInteger _defaultCostOfIssuingCertificate) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_UPDATECERTIFICATIONAUTHORITY, 
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name), 
+                new org.web3j.abi.datatypes.Utf8String(_location), 
+                new org.web3j.abi.datatypes.Utf8String(_executiveDirector), 
                 new org.web3j.abi.datatypes.generated.Uint256(_defaultCostOfIssuingCertificate)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
@@ -400,7 +408,13 @@ public class ICertificationAuthorityContract extends Contract {
     }
 
     public static class CertificationAuthorityRecord extends DynamicStruct {
+        public String id;
+
         public String name;
+
+        public String location;
+
+        public String executiveDirector;
 
         public BigInteger defaultCostOfIssuingCertificate;
 
@@ -408,17 +422,23 @@ public class ICertificationAuthorityContract extends Contract {
 
         public Boolean isExist;
 
-        public CertificationAuthorityRecord(String name, BigInteger defaultCostOfIssuingCertificate, Boolean isEnabled, Boolean isExist) {
-            super(new org.web3j.abi.datatypes.Utf8String(name),new org.web3j.abi.datatypes.generated.Uint256(defaultCostOfIssuingCertificate),new org.web3j.abi.datatypes.Bool(isEnabled),new org.web3j.abi.datatypes.Bool(isExist));
+        public CertificationAuthorityRecord(String id, String name, String location, String executiveDirector, BigInteger defaultCostOfIssuingCertificate, Boolean isEnabled, Boolean isExist) {
+            super(new org.web3j.abi.datatypes.Utf8String(id),new org.web3j.abi.datatypes.Utf8String(name),new org.web3j.abi.datatypes.Utf8String(location),new org.web3j.abi.datatypes.Utf8String(executiveDirector),new org.web3j.abi.datatypes.generated.Uint256(defaultCostOfIssuingCertificate),new org.web3j.abi.datatypes.Bool(isEnabled),new org.web3j.abi.datatypes.Bool(isExist));
+            this.id = id;
             this.name = name;
+            this.location = location;
+            this.executiveDirector = executiveDirector;
             this.defaultCostOfIssuingCertificate = defaultCostOfIssuingCertificate;
             this.isEnabled = isEnabled;
             this.isExist = isExist;
         }
 
-        public CertificationAuthorityRecord(Utf8String name, Uint256 defaultCostOfIssuingCertificate, Bool isEnabled, Bool isExist) {
-            super(name,defaultCostOfIssuingCertificate,isEnabled,isExist);
+        public CertificationAuthorityRecord(Utf8String id, Utf8String name, Utf8String location, Utf8String executiveDirector, Uint256 defaultCostOfIssuingCertificate, Bool isEnabled, Bool isExist) {
+            super(id,name,location,executiveDirector,defaultCostOfIssuingCertificate,isEnabled,isExist);
+            this.id = id.getValue();
             this.name = name.getValue();
+            this.location = location.getValue();
+            this.executiveDirector = executiveDirector.getValue();
             this.defaultCostOfIssuingCertificate = defaultCostOfIssuingCertificate.getValue();
             this.isEnabled = isEnabled.getValue();
             this.isExist = isExist.getValue();
@@ -441,13 +461,15 @@ public class ICertificationAuthorityContract extends Contract {
         public String _address;
 
         public String _name;
-
-        public BigInteger _defaultCostOfIssuingCertificate;
     }
 
     public static class OnNewCertificationAuthorityCreatedEventResponse extends BaseEventResponse {
         public String _address;
 
-        public String name;
+        public String _name;
+
+        public String _location;
+
+        public String _executiveDirector;
     }
 }

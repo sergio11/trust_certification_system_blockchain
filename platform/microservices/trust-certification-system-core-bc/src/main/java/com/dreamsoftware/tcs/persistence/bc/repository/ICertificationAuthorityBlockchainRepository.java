@@ -22,10 +22,12 @@ public interface ICertificationAuthorityBlockchainRepository extends IBlockchain
      * Register new Certification Authority
      *
      * @param name
+     * @param location
+     * @param executiveDirector
      * @param walletHash
      * @throws com.dreamsoftware.tcs.persistence.exception.RepositoryException
      */
-    void register(final String name, final String walletHash) throws RepositoryException;
+    void register(final String name, final String location, final String executiveDirector, final String walletHash) throws RepositoryException;
 
     /**
      * Get Detail
