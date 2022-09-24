@@ -85,7 +85,7 @@ public class UserServiceImpl implements IUserService {
                 break;
         }
         if (event.getUserType() == UserTypeEnum.CA) {
-            certificationAuthorityBlockchainRepository.register(event.getName(), event.getWalletHash());
+            certificationAuthorityBlockchainRepository.register(event.getName(), "", "", event.getWalletHash());
         }
     }
 

@@ -22,6 +22,16 @@ public class CertificationAuthorityEntity {
     private String name;
 
     /**
+     * Location
+     */
+    private String location;
+
+    /**
+     * Executive Director
+     */
+    private String executiveDirector;
+
+    /**
      * Default cost of issuing certificate
      */
     private BigInteger defaultCostOfIssuingCertificate;

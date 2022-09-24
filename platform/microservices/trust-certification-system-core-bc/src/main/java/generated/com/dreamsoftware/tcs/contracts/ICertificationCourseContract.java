@@ -470,6 +470,8 @@ public class ICertificationCourseContract extends Contract {
     }
 
     public static class CertificationCourseRecord extends DynamicStruct {
+        public String id;
+
         public String name;
 
         public BigInteger costOfIssuingCertificate;
@@ -488,8 +490,9 @@ public class ICertificationCourseContract extends Contract {
 
         public Boolean isExist;
 
-        public CertificationCourseRecord(String name, BigInteger costOfIssuingCertificate, BigInteger costOfRenewingCertificate, String certificationAuthority, BigInteger durationInHours, BigInteger expirationInDays, Boolean canBeRenewed, Boolean isEnabled, Boolean isExist) {
-            super(new org.web3j.abi.datatypes.Utf8String(name),new org.web3j.abi.datatypes.generated.Uint256(costOfIssuingCertificate),new org.web3j.abi.datatypes.generated.Uint256(costOfRenewingCertificate),new org.web3j.abi.datatypes.Address(certificationAuthority),new org.web3j.abi.datatypes.generated.Uint256(durationInHours),new org.web3j.abi.datatypes.generated.Uint256(expirationInDays),new org.web3j.abi.datatypes.Bool(canBeRenewed),new org.web3j.abi.datatypes.Bool(isEnabled),new org.web3j.abi.datatypes.Bool(isExist));
+        public CertificationCourseRecord(String id, String name, BigInteger costOfIssuingCertificate, BigInteger costOfRenewingCertificate, String certificationAuthority, BigInteger durationInHours, BigInteger expirationInDays, Boolean canBeRenewed, Boolean isEnabled, Boolean isExist) {
+            super(new org.web3j.abi.datatypes.Utf8String(id),new org.web3j.abi.datatypes.Utf8String(name),new org.web3j.abi.datatypes.generated.Uint256(costOfIssuingCertificate),new org.web3j.abi.datatypes.generated.Uint256(costOfRenewingCertificate),new org.web3j.abi.datatypes.Address(certificationAuthority),new org.web3j.abi.datatypes.generated.Uint256(durationInHours),new org.web3j.abi.datatypes.generated.Uint256(expirationInDays),new org.web3j.abi.datatypes.Bool(canBeRenewed),new org.web3j.abi.datatypes.Bool(isEnabled),new org.web3j.abi.datatypes.Bool(isExist));
+            this.id = id;
             this.name = name;
             this.costOfIssuingCertificate = costOfIssuingCertificate;
             this.costOfRenewingCertificate = costOfRenewingCertificate;
@@ -501,8 +504,9 @@ public class ICertificationCourseContract extends Contract {
             this.isExist = isExist;
         }
 
-        public CertificationCourseRecord(Utf8String name, Uint256 costOfIssuingCertificate, Uint256 costOfRenewingCertificate, Address certificationAuthority, Uint256 durationInHours, Uint256 expirationInDays, Bool canBeRenewed, Bool isEnabled, Bool isExist) {
-            super(name,costOfIssuingCertificate,costOfRenewingCertificate,certificationAuthority,durationInHours,expirationInDays,canBeRenewed,isEnabled,isExist);
+        public CertificationCourseRecord(Utf8String id, Utf8String name, Uint256 costOfIssuingCertificate, Uint256 costOfRenewingCertificate, Address certificationAuthority, Uint256 durationInHours, Uint256 expirationInDays, Bool canBeRenewed, Bool isEnabled, Bool isExist) {
+            super(id,name,costOfIssuingCertificate,costOfRenewingCertificate,certificationAuthority,durationInHours,expirationInDays,canBeRenewed,isEnabled,isExist);
+            this.id = id.getValue();
             this.name = name.getValue();
             this.costOfIssuingCertificate = costOfIssuingCertificate.getValue();
             this.costOfRenewingCertificate = costOfRenewingCertificate.getValue();

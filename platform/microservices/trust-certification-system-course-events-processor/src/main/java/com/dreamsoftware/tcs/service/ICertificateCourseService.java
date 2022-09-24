@@ -18,12 +18,12 @@ public interface ICertificateCourseService {
      * @return
      * @throws RepositoryException
      */
-    CertificationCourseModelEntity register(final CourseCertificateRegistrationRequestEvent event) throws RepositoryException;
+    CertificationCourseModelEntity onRegisterNewCertificateCourse(final CourseCertificateRegistrationRequestEvent event) throws RepositoryException;
 
     /**
      *
      * @param event
      * @return
      */
-    CertificationCourseEntity register(final CertificationCourseRegisteredEvent event);
+    CertificationCourseEntity onNewCertificateCourseRegistered(final CertificationCourseRegisteredEvent event);
 }

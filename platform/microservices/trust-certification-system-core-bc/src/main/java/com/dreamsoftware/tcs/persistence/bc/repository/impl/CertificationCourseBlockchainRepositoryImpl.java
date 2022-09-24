@@ -55,6 +55,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
                     BigInteger.valueOf(expirationInDays), canBeRenewed, BigInteger.valueOf(costOfRenewingCertificate)).send();
             final List<CertificationCourseContract.OnNewCertificationCourseCreatedEventResponse> events = certificationCourseContract.getOnNewCertificationCourseCreatedEvents(transactionReceipt);
             final String courseId = events.get(0)._id;
+            log.debug("Certification Course registered with id: " + courseId + " CALLED!");
             return getCertificationCourseDetail(certificationCourseContract, courseId);
         } catch (final Exception ex) {
             log.debug("ERROR: register new certification course ex -> " + ex.getMessage());

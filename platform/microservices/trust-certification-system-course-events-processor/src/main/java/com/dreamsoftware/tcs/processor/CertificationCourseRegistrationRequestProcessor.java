@@ -27,7 +27,7 @@ public class CertificationCourseRegistrationRequestProcessor implements Function
         log.debug("CertificationCourseRegistrationRequestProcessor CALLED!");
         CertificationCourseRegisteredEvent nextEvent = null;
         try {
-            final CertificationCourseModelEntity certificationCourseEntity = certificateCourseService.register(event);
+            final CertificationCourseModelEntity certificationCourseEntity = certificateCourseService.onRegisterNewCertificateCourse(event);
             nextEvent = new CertificationCourseRegisteredEvent(certificationCourseEntity, event.getCaWalletHash());
         } catch (final RepositoryException ex) {
             log.debug("Ex Message -> " + ex.getMessage());

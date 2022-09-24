@@ -47,8 +47,9 @@ public class CertificateCourseServiceImpl implements ICertificateCourseService {
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseModelEntity register(CourseCertificateRegistrationRequestEvent event) throws RepositoryException {
+    public CertificationCourseModelEntity onRegisterNewCertificateCourse(CourseCertificateRegistrationRequestEvent event) throws RepositoryException {
         Assert.notNull(event, "event can not be null");
+        log.debug("onRegisterNewCertificateCourse " + event.getName() + " CALLED!");
         return certificationCourseBlockchainRepository.register(event.getCaWalletHash(), event.getName(),
                 event.getCostOfIssuingCertificate(), event.getDurationInHours(), event.getExpirationInDays(), event.getCanBeRenewed(), event.getCostOfRenewingCertificate());
     }
@@ -58,7 +59,7 @@ public class CertificateCourseServiceImpl implements ICertificateCourseService {
      * @param event
      */
     @Override
-    public CertificationCourseEntity register(final CertificationCourseRegisteredEvent event) {
+    public CertificationCourseEntity onNewCertificateCourseRegistered(final CertificationCourseRegisteredEvent event) {
         Assert.notNull(event, "event can not be null");
         Assert.notNull(event.getCaWalletHash(), "caWalletHash can not be null");
         Assert.notNull(event.getCertificationCourse().getId(), "courseId can not be null");

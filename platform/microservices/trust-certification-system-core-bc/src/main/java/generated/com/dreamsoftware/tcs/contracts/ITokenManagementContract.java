@@ -29,6 +29,8 @@ import org.web3j.tx.gas.ContractGasProvider;
 public class ITokenManagementContract extends Contract {
     public static final String BINARY = "";
 
+    public static final String FUNC_ADDTOKENS = "addTokens";
+
     public static final String FUNC_BALANCEOF = "balanceOf";
 
     public static final String FUNC_BUYTOKENS = "buyTokens";
@@ -61,6 +63,15 @@ public class ITokenManagementContract extends Contract {
 
     protected ITokenManagementContract(String contractAddress, Web3j web3j, TransactionManager transactionManager, ContractGasProvider contractGasProvider) {
         super(BINARY, contractAddress, web3j, transactionManager, contractGasProvider);
+    }
+
+    public RemoteFunctionCall<TransactionReceipt> addTokens(String _recipient, BigInteger _amount) {
+        final Function function = new Function(
+                FUNC_ADDTOKENS, 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _recipient), 
+                new org.web3j.abi.datatypes.generated.Uint256(_amount)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
     }
 
     public RemoteFunctionCall<BigInteger> balanceOf() {
@@ -100,28 +111,28 @@ public class ITokenManagementContract extends Contract {
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
-    public RemoteFunctionCall<BigInteger> getTokens(String client) {
+    public RemoteFunctionCall<BigInteger> getTokens(String _client) {
         final Function function = new Function(FUNC_GETTOKENS, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, client)), 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _client)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> sendInitialTokenFundsTo(String account, BigInteger clientType) {
+    public RemoteFunctionCall<TransactionReceipt> sendInitialTokenFundsTo(String _account, BigInteger _clientType) {
         final Function function = new Function(
                 FUNC_SENDINITIALTOKENFUNDSTO, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, account), 
-                new org.web3j.abi.datatypes.generated.Uint8(clientType)), 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _account), 
+                new org.web3j.abi.datatypes.generated.Uint8(_clientType)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> transfer(String client, String recipient, BigInteger amount) {
+    public RemoteFunctionCall<TransactionReceipt> transfer(String _client, String _recipient, BigInteger _amount) {
         final Function function = new Function(
                 FUNC_TRANSFER, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, client), 
-                new org.web3j.abi.datatypes.Address(160, recipient), 
-                new org.web3j.abi.datatypes.generated.Uint256(amount)), 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _client), 
+                new org.web3j.abi.datatypes.Address(160, _recipient), 
+                new org.web3j.abi.datatypes.generated.Uint256(_amount)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }

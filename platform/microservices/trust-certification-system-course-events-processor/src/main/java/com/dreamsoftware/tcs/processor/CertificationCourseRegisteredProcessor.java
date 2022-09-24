@@ -24,7 +24,7 @@ public class CertificationCourseRegisteredProcessor implements Function<Certific
     @Override
     public CertificationCourseRegisteredNotificationEvent apply(CertificationCourseRegisteredEvent event) {
         log.debug("CertificationCourseRegisteredProcessor CALLED!");
-        final CertificationCourseEntity certificationCourseEntity = certificateCourseService.register(event);
+        final CertificationCourseEntity certificationCourseEntity = certificateCourseService.onNewCertificateCourseRegistered(event);
         return new CertificationCourseRegisteredNotificationEvent(certificationCourseEntity.getCourseId(), event.getCertificationCourse().getName());
     }
 }
