@@ -32,5 +32,28 @@ Students or third parties can confirm the authenticity of the certificates immed
 
 The student or professional is the sovereign owner of the information and decides with whom to share it. The unequivocal identification of the individual or the products is guaranteed without the possibility of the information being falsified.
 
+## Benefits for students, certification authorities and third parties
+
+### Students
+
+* Comfortable system to share and validate certificates
+
+### Certificate Authorities
+
+* Eliminate the possibility of forging certificates.
+* Fast certification process.
+* Cheaper process, we use our own monetary system based on ERC 20 tokens.
+* It stick off as an innovative and avant-garde institution.
+* Provides greater value for students.
+* Preserves the prestige of the school by ensuring the veracity of the certificates.
+
+### Third parties such as companies or other verification institutions.
+
+* Ability to verify candidates' qualifications through a secure, fast and free system for the verifier.
+* Safer selection processes that enable economic savings derived from hiring errors.
 
 ## Architecture Overview
+
+
+
+
