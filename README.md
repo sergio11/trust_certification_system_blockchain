@@ -55,5 +55,30 @@ The student or professional is the sovereign owner of the information and decide
 ## Architecture Overview
 
 
+## Used technology.
+
+* Spring Cloud Starter Config.
+* Spring Cloud Starter Netflix Eureka Client.
+* Spring Cloud Stream.
+* Spring Cloud Starter Stream Kafka.
+* Spring Boot Jasypt.
+* Spring Boot Starter Actuator.
+* Spring Cloud Config Monitor.
+* Spring Vault Core.
+* Spring Ldap Core.
+* Spring Boot Starter Data MongoDB.
+* Spring Boot Starter Data Redis.
+* Spring Boot Starter Web.
+* Spring Boot Starter Security.
+* Spring Boot Starter Mail.
+* Spring Boot Starter Thymeleaf.
+* Apache POI / PdfBox / Docx4j.
+* Web3j.
+* PayPal Checkout Sdk.
+* Java IPFS Http Client.
+
+## Running Applications as Docker containers.
+
+## Some screenshots.
 
 
