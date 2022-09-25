@@ -81,4 +81,37 @@ The student or professional is the sovereign owner of the information and decide
 
 ## Some screenshots.
 
+As follow, I include some images that help us to understand how each part of the system works.
+
+<img width="auto" src="./doc/screenshots/ethereum_netstats_2.PNG" />
+<img width="auto" src="./doc/screenshots/ethreum_block_explorer.PNG" />
+<img width="auto" src="./doc/screenshots/ethreum_miner.PNG" />
+<img width="auto" src="./doc/screenshots/ethreum_platform.PNG" />
+<img width="auto" src="./doc/screenshots/ethreum_remix.PNG" />
+<img width="auto" src="./doc/screenshots/ethreum_remix_2.PNG" />
+<img width="auto" src="./doc/screenshots/event_logs.PNG" />
+<img width="auto" src="./doc/screenshots/ipfs_platform.PNG" />
+<img width="auto" src="./doc/screenshots/ipfs_webui.PNG" />
+<img width="auto" src="./doc/screenshots/ipfs_webui_2.PNG" />
+<img width="auto" src="./doc/screenshots/kafka_image.PNG" />
+<img width="auto" src="./doc/screenshots/kafka_image_2.PNG" />
+<img width="auto" src="./doc/screenshots/kafka_image_3.PNG" />
+<img width="auto" src="./doc/screenshots/platform_containers.PNG" />
+<img width="auto" src="./doc/screenshots/spring_eureka.PNG" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
