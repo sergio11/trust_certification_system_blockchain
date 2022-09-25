@@ -4,7 +4,16 @@
 
 TCS uses Blockchain technology in order to provide inviolability, immutability and easy verification for all your certificates. This platform guarantees students and certificate authorities the possibility of issuein a digital and unforgeable version of their certificates and it is guaranteed that any interested third party can verify their integrity.
 
+<img  align="left" src="https://img.shields.io/badge/Solidity-2E8B57?style=for-the-badge&logo=solidity&logoColor=white" />
+<img  align="left" src="https://img.shields.io/badge/Ethereum-8B0000?style=for-the-badge&logo=Ethereum&logoColor=white" />
+<img  align="left" src="https://img.shields.io/badge/-Spring%20Boot-2E8B57?style=for-the-badge&logo=spring&logoColor=white" />
+<img  align="left" src="https://img.shields.io/badge/-Spring%20Cloud-2E8B57?style=for-the-badge&logo=spring&logoColor=white" />
+<img  align="left" src="https://img.shields.io/badge/-Mongo%20DB-2E8B57?style=for-the-badge&logo=mongodb&logoColor=white" />
+<img  align="left" src="https://img.shields.io/badge/-Redis%20DB-8B0000?style=for-the-badge&logo=redis&logoColor=white" />
+<img  src="https://img.shields.io/badge/-IPFS-3e5f8a?style=for-the-badge&logo=ipfs&logoColor=white" />
+
 A Certification Authority and a Student reach an agreement in order to issue a certificate on the platform, this certificate is generated, signed and stored using cryptographic techniques. Later, the Student can go to any other institution and share their certificate, whose veracity can be verified directly on the platform without having to contact the institution that issued it again.
+
 
 ## Why Blockchain Technology?
 
