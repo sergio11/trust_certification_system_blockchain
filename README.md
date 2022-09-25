@@ -14,14 +14,15 @@ TCS uses Blockchain technology in order to provide inviolability, immutability a
 
 A Certification Authority and a Student reach an agreement in order to issue a certificate on the platform, this certificate is generated, signed and stored using cryptographic techniques. Later, the Student can go to any other institution and share their certificate, whose veracity can be verified directly on the platform without having to contact the institution that issued it again.
 
-
 ## Why Blockchain Technology?
 
 The Blockchain technology is a new technology that appeared in 2008 that allows information to be recorded with guarantees of originality and security never possible before. It is based on a cryptographic system that allows the issuers to be irrefutably identified and that guarantees the immutability of the information.
 
 The application of this technology in this context makes it possible to create a new sort of qualification that is more reliable, transparent, economical and faster. Its ability to guarantee the identity of the certification authority of the certificate represents a paradigm shift that is already beginning to revolutionize the sector.
 
-The implementation of the private blockchain network means that there are many copies of the information, all of them necessary and absolutely identical. This makes fraud impossible, and also guarantees the survival of the certificates issued by the certification authority, even though that said Institution disappears. The certificates thus issued are perennial and immutable.
+The implementation of the blockchain network means that there are many copies of the information, all of them necessary and absolutely identical. This makes fraud impossible, and also guarantees the survival of the certificates issued by the certification authority, even though that said Institution disappears. The certificates thus issued are perennial and immutable.
+
+Taking into account all of this, blockchain technology can hasten the end of the paper certification system. Until now, the use of digital certificates had been paralyzed due to the ease with which they could be forged. Blockchain provides organizations with a way to issue digital certificates that are unalterable and valid in perpetuity, since their authenticity can be checked against the system itself. Certificates are transferred as a token on the blockchain and are always available. These advantages over current systems significantly increase the value proposition of digital certificates, possibly leading to their widespread use.
 
 ## Advantages of the Trust Certification System.
 
