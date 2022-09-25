@@ -1,4 +1,4 @@
-# Trust certification System Blockchain
+# Trust Certification System powered by Blockchain Technology.
 
 <img width="auto" align="left" src="./tcs_logo.jpg" />
 
