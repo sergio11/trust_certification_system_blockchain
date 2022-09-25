@@ -1,5 +1,9 @@
 # Trust certification System Blockchain
-Trust certification System Blockchain
+
+<img width="auto" align="left" src="./tcs_logo.jpg" />
+
+TrustCertificationSystem uses Blockchain technology in order to provide inviolability, immutability and easy verification for all your certificates.
+
 
 ## Architecture Overview
 
