@@ -88,6 +88,53 @@ The student or professional is the sovereign owner of the information and decide
 
 ## Running Applications as Docker containers.
 
+### Rake Tasks
+
+The available tasks are detailed below (rake --task)
+
+| Task | Description |
+| ------ | ------ |
+| tcs:check_docker_task | Check Docker and Docker Compose Task |
+| tcs:cleaning_environment_task | Cleaning Evironment Task |
+| tcs:deploy | Deploys Trust certification System Blockchain and launches all services and daemons needed to properly work |
+| tcs:ethereum:check_network_deployment_file | Check Private Ethereum Network Deployment File |
+| tcs:ethereum:start | Start Private Ethereum Network |
+| tcs:ethereum:stop | Stop Private Ethereum Network |
+| tcs:ethereum:undeploy | UnDeploy Private Ethereum Network |
+| tcs:ipfs:check_cluster_deployment_file | Check IPFS Cluster Deployment File |
+| tcs:ipfs:start | Start IPFS Cluster |
+| tcs:ipfs:stop | Stop IPFS Cluster |
+| tcs:ipfs:undeploy | UnDeploy IPFS Cluster |
+| tcs:login | Authenticating with existing credentials |
+| tcs:platform:check_deployment_file | Check Platform Deployment File |
+| tcs:platform:compile | Compile Project |
+| tcs:platform:init_ldap_backup | Load initial ldap backup |
+| tcs:platform:package | Build Docker Images |
+| tcs:platform:start | Start Platform |
+| tcs:platform:stop | Stop Platform |
+| tcs:platform:undeploy | UnDeploy Platform |
+| tcs:start | Start Trust certification System Blockchain |
+| tcs:status | Status Containers |
+| tcs:stop | Stop Containers |
+| tcs:undeploy | UnDeploy Trust certification System Blockchain |
+
+
+To start the platform make sure you have Ruby installed, go to the root directory of the project and run the `rake deploy` task, this task will carry out a series of preliminary checks, discard images and volumes that are no longer necessary and also proceed to download all the images and the initialization of the containers.
+
+### Containers Ports
+
+In this table you can view the ports assigned to each service to access to the Web tools or something else you can use to monitoring the flow.
+
+| Container | Port |
+| ------ | ------ |
+| Ethereum Lite Explorer | localhost:3001 |
+| Ethereum Netstats | localhost:3000 |
+| Kafka Topics UI | localhost:8088 |
+| MongoDB Express | localhost:8083 |
+| Swagger UI API Gateway | localhost:8080 |
+| IPFS WebUI | localhost:5001/webui |
+
+
 ## Some screenshots.
 
 As follow, I include some images that help us to understand how each part of the system works.
