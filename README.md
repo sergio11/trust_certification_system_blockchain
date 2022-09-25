@@ -4,6 +4,7 @@
 
 TrustCertificationSystem uses Blockchain technology in order to provide inviolability, immutability and easy verification for all your certificates.
 
+A Certification Authority and a Student reach an agreement in order to issue a certificate on the platform, this certificate is generated, signed and stored using cryptographic techniques. Later, the Student can go to any other institution and share their certificate, whose veracity can be verified directly on the platform without having to contact the institution that issued it again.
 
 ## Architecture Overview
 
