@@ -12,13 +12,16 @@ TrustCertificationSystem uses Blockchain technology in order to provide inviolab
 
 ### Security
 
-Los certificados digitales no pueden ser alterados o manipulados. They are generated and securely stored on a private blockchain network.
+Digital certificates cannot be altered or manipulated. They are generated and securely stored on a private blockchain network. Nothing and no one can change the information registered in the Blockchain.
 
 ### Integrity
 
-They assure in the face of third parties the authenticity of the identity and the information they contained.
+They assure in the face of third parties the authenticity of the identity and the information they contained. The registered information can be verified by third parties, such as companies, selection committees, etc.
 
 ### Simplicity
 
 Students or third parties can confirm the authenticity of the certificates immediately, using only the mobile phone.
 
+### Ownership
+
+The student or professional is the sovereign owner of the information and decides with whom to share it. Se garantiza la Identificación inequívoca del individuo o de los productos sin la posibilidad de que la información sea falsificada.
