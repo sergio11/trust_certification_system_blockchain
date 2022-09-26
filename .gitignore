@@ -11,6 +11,7 @@ platform/microservices/trust-certification-system-core-bc/src/main/java/generate
 platform/.env
 ipfs_cluster/data
 platform/microservices/trust-certification-system-gateway-api/resources/client_secret.json
+platform/microservices/trust-certification-system-testing
 ### STS ###
 .apt_generated
 .classpath

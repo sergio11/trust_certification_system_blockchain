@@ -54,7 +54,7 @@ public class QRCodeGeneratorImpl implements IQRCodeGenerator {
         final QRCodeWriter qrCodeWriter = new QRCodeWriter();
         final BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
         final ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
-        final MatrixToImageConfig con = new MatrixToImageConfig(0xFF000002, 0xFFFFC041);
+        final MatrixToImageConfig con = new MatrixToImageConfig();
         MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream, con);
         return pngOutputStream.toByteArray();
     }

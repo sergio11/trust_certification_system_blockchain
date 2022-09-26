@@ -41,6 +41,10 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 public class CertificateGeneratorServiceImpl implements ICertificateGeneratorService {
 
     private final static Integer DEFAULT_DPI = 600;
+    private final static Integer DEFAULT_QR_CODE_WIDTH = 130;
+    private final static Integer DEFAULT_QR_CODE_HEIGHT = 130;
+    private final static Integer DEFAULT_QR_POSITION_X = 24;
+    private final static Integer DEFAULT_QR_POSITION_Y = 150;
 
     /**
      * Properties
@@ -96,6 +100,7 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
      */
     private File getCertificateTemplate() {
         final File certificateTemplate = new File(certificateGeneratorProperties.getBaseFolder(), certificateGeneratorProperties.getTemplateFile());
+        log.debug("certificateTemplate -> " + certificateTemplate.getAbsolutePath());
         if (!certificateTemplate.exists() || !certificateTemplate.canRead()) {
             throw new IllegalStateException("Certification Template can not be found");
         }
@@ -109,6 +114,7 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
      */
     private File getCertificateWatermarkFile() {
         final File certificateWatermark = new File(certificateGeneratorProperties.getBaseFolder(), certificateGeneratorProperties.getWatermarkFile());
+        log.debug("certificateWatermark -> " + certificateWatermark.getAbsolutePath());
         if (!certificateWatermark.exists() || !certificateWatermark.canRead()) {
             throw new IllegalStateException("Certification Watermark can not be found");
         }
@@ -182,15 +188,17 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
      * @throws IOException
      */
     private void configureQRCode(final File destFile, final UUID certificateId) throws IOException, WriterException {
-        try (
-                final PDDocument doc = PDDocument.load(destFile);
-                final PDPageContentStream contents = new PDPageContentStream(doc, doc.getPage(0))) {
-            final String certificateQrDataEncrypted = cryptService.encrypt(certificateId.toString());
-            log.debug("issueCertificate - QR data: " + certificateId.toString());
-            log.debug("issueCertificate - QR data encrypted: " + certificateQrDataEncrypted);
-            // Generate QR Code
-            final PDImageXObject qrCodeImage = PDImageXObject.createFromByteArray(doc, qrCodeGenerator.getQRCodeImage(cryptService.encrypt(certificateQrDataEncrypted)), "CertificationQRCode");
-            contents.drawImage(qrCodeImage, 70, 250);
+        try (final PDDocument doc = PDDocument.load(destFile)) {
+            try (PDPageContentStream contents = new PDPageContentStream(doc, doc.getPage(0), PDPageContentStream.AppendMode.APPEND, true)) {
+                final String certificateQrDataEncrypted = cryptService.encrypt(certificateId.toString());
+                log.debug("issueCertificate - QR data: " + certificateId.toString());
+                log.debug("issueCertificate - QR data encrypted: " + certificateQrDataEncrypted);
+                final byte[] qrCodeData = qrCodeGenerator.getQRCodeImage(cryptService.encrypt(certificateQrDataEncrypted), DEFAULT_QR_CODE_WIDTH, DEFAULT_QR_CODE_HEIGHT);
+                final PDImageXObject qrCodeImage = PDImageXObject.createFromByteArray(doc, qrCodeData, "CertificationQRCode");
+                qrCodeImage.setWidth(DEFAULT_QR_CODE_WIDTH);
+                qrCodeImage.setHeight(DEFAULT_QR_CODE_HEIGHT);
+                contents.drawImage(qrCodeImage, DEFAULT_QR_POSITION_X, DEFAULT_QR_POSITION_Y);
+            }
             doc.save(destFile);
         }
     }
