@@ -24,10 +24,22 @@ public class CertificateGeneratorProperties {
     private String baseFolder;
 
     /**
-     * Watermark File
+     * Background innovate
      */
-    @Value("${certificateGenerator.watermark-file}")
-    private String watermarkFile;
+    @Value("${certificateGenerator.background.innovate}")
+    private String backgroundInnovate;
+
+    /**
+     * Background Professional
+     */
+    @Value("${certificateGenerator.background.professional}")
+    private String backgroundProfessional;
+
+    /**
+     * Background Standard
+     */
+    @Value("${certificateGenerator.background.standard}")
+    private String backgroundStandard;
 
     /**
      * Template File
@@ -115,8 +127,10 @@ public class CertificateGeneratorProperties {
 
     @PostConstruct
     protected void onPostConstruct() {
-        log.debug("watermarkFile: " + baseFolder);
-        log.debug("watermarkFile: " + watermarkFile);
+        log.debug("baseFolder: " + baseFolder);
+        log.debug("backgroundInnovate: " + backgroundInnovate);
+        log.debug("backgroundProfessional: " + backgroundProfessional);
+        log.debug("backgroundStandard: " + backgroundStandard);
         log.debug("templateFile: " + templateFile);
         log.debug("timestampAuthority: " + timestampAuthority);
         log.debug("caNamePlaceholder: " + caNamePlaceholder);
