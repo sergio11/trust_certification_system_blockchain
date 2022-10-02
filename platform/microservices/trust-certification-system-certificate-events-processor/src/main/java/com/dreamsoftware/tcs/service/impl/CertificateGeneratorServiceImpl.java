@@ -21,6 +21,8 @@ import com.dreamsoftware.tcs.service.ICryptService;
 import com.dreamsoftware.tcs.service.IQRCodeGenerator;
 import com.google.zxing.WriterException;
 import java.awt.image.BufferedImage;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
@@ -41,10 +43,10 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 public class CertificateGeneratorServiceImpl implements ICertificateGeneratorService {
 
     private final static Integer DEFAULT_DPI = 600;
-    private final static Integer DEFAULT_QR_CODE_WIDTH = 130;
-    private final static Integer DEFAULT_QR_CODE_HEIGHT = 130;
-    private final static Integer DEFAULT_QR_POSITION_X = 24;
-    private final static Integer DEFAULT_QR_POSITION_Y = 150;
+    private final static Integer DEFAULT_QR_CODE_WIDTH = 150;
+    private final static Integer DEFAULT_QR_CODE_HEIGHT = 150;
+    private final static Integer DEFAULT_QR_POSITION_X = 50;
+    private final static Integer DEFAULT_QR_POSITION_Y = 34;
 
     /**
      * Properties
@@ -79,7 +81,7 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
         final File certificateTemplate = getCertificateTemplate();
         final File certificateFileConfigured = replaceCertificatePlaceholders(certificateTemplate, request);
         final File certificatePdfFile = convertToPdf(certificateFileConfigured);
-        configureWatermark(certificatePdfFile);
+        configureBackground(certificatePdfFile);
         configureQRCode(certificatePdfFile, certificateId);
         signCertificate(certificatePdfFile);
         final File certificateImageFile = generateCertificateImage(certificatePdfFile);
@@ -108,17 +110,17 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
     }
 
     /**
-     * Get Certificate Watermark File
+     * Get Certificate Background File
      *
      * @return
      */
-    private File getCertificateWatermarkFile() {
-        final File certificateWatermark = new File(certificateGeneratorProperties.getBaseFolder(), certificateGeneratorProperties.getWatermarkFile());
-        log.debug("certificateWatermark -> " + certificateWatermark.getAbsolutePath());
-        if (!certificateWatermark.exists() || !certificateWatermark.canRead()) {
-            throw new IllegalStateException("Certification Watermark can not be found");
+    private File getCertificateBackgroundFile() {
+        final File certificateBackground = new File(certificateGeneratorProperties.getBaseFolder(), certificateGeneratorProperties.getBackgroundInnovate());
+        log.debug("certificateBackground -> " + certificateBackground.getAbsolutePath());
+        if (!certificateBackground.exists() || !certificateBackground.canRead()) {
+            throw new IllegalStateException("Certification Background can not be found");
         }
-        return certificateWatermark;
+        return certificateBackground;
     }
 
     /**
@@ -136,7 +138,8 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
         wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCaNamePlaceholder(), request.getCaName());
         wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), request.getStudentName());
         wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCourseNamePlaceholder(), request.getCourseName());
-        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentNamePlaceholder(), request.getQualification().toString());
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getStudentQualificationPlaceholder(), request.getQualification().toString());
+        wordReplacer.replaceWordsInText(certificateGeneratorProperties.getCertificateDatePlaceholder(), new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
         final File tempFile = File.createTempFile("tcs--", ".tmp");
         return wordReplacer.saveAndGetModdedFile(tempFile);
     }
@@ -161,15 +164,15 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
     }
 
     /**
-     * Configure Watermark
+     * Configure Background
      *
      * @param destFile
      * @throws IOException
      */
-    private void configureWatermark(final File destFile) throws IOException {
+    private void configureBackground(final File destFile) throws IOException {
         try (final PDDocument doc = PDDocument.load(destFile)) {
             HashMap<Integer, String> overlayGuide = new HashMap<>();
-            final File certificateBackground = getCertificateWatermarkFile();
+            final File certificateBackground = getCertificateBackgroundFile();
             for (int i = 0; i < doc.getNumberOfPages(); i++) {
                 overlayGuide.put(i + 1, certificateBackground.getAbsolutePath());
             }
