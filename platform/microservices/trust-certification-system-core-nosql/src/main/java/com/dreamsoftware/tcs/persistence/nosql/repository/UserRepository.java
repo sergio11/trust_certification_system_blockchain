@@ -54,7 +54,7 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId> {
      * @param confirmationToken
      * @return
      */
-    Optional<UserEntity> findOneByConfirmationToken(String confirmationToken);
+    Optional<UserEntity> findOneByConfirmationToken(final String confirmationToken);
 
     /**
      *

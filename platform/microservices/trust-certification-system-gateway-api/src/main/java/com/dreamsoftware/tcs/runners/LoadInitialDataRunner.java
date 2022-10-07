@@ -31,8 +31,8 @@ public class LoadInitialDataRunner implements CommandLineRunner {
 
             final List<AuthorityEntity> authorityEntityList = new ArrayList<>();
             authorityEntityList.add(AuthorityEntity.builder()
-                    .type(AuthorityEnum.ROLE_CA)
-                    .description("Certification Authority Role")
+                    .type(AuthorityEnum.ROLE_CA_MEMBER)
+                    .description("Certification Authority Member Role")
                     .build());
             authorityEntityList.add(AuthorityEntity.builder()
                     .type(AuthorityEnum.ROLE_ADMIN)
@@ -41,6 +41,14 @@ public class LoadInitialDataRunner implements CommandLineRunner {
             authorityEntityList.add(AuthorityEntity.builder()
                     .type(AuthorityEnum.ROLE_STUDENT)
                     .description("Student Role")
+                    .build());
+            authorityEntityList.add(AuthorityEntity.builder()
+                    .type(AuthorityEnum.ROLE_CA_ADMIN)
+                    .description("Certification Authority Admin Role")
+                    .build());
+            authorityEntityList.add(AuthorityEntity.builder()
+                    .type(AuthorityEnum.ROLE_CHECKER)
+                    .description("Checker Role")
                     .build());
             authorityRepository.saveAll(authorityEntityList);
         }

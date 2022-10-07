@@ -18,6 +18,7 @@ import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInUserExternalProviderDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignUpExternalProviderDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignupAsCaAdminDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
 import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
@@ -66,7 +67,7 @@ public class AccountsController extends SupportController {
     /**
      * Accounts Service
      */
-    private final IAccountsService authenticationService;
+    private final IAccountsService accountsService;
 
     /**
      * Create Authentication Token
@@ -100,7 +101,7 @@ public class AccountsController extends SupportController {
             signInUserDTO.setRemoteAddr(request.getRemoteAddr());
             // Configure User Agent
             signInUserDTO.setUserAgent(userAgent);
-            final AuthenticationDTO authenticationDTO = authenticationService.signin(signInUserDTO, device);
+            final AuthenticationDTO authenticationDTO = accountsService.signin(signInUserDTO, device);
             return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_SUCCESS,
                     HttpStatus.OK, authenticationDTO);
         } catch (final ConstraintViolationException ex) {
@@ -141,7 +142,7 @@ public class AccountsController extends SupportController {
             // Configure remote addr
             signInAdminUserDTO.setRemoteAddr(request.getRemoteAddr());
             signInAdminUserDTO.setUserAgent(userAgent);
-            final AuthenticationDTO authenticationDTO = authenticationService.signin(signInAdminUserDTO, device);
+            final AuthenticationDTO authenticationDTO = accountsService.signin(signInAdminUserDTO, device);
             return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNIN_ADMIN_SUCCESS,
                     HttpStatus.OK, authenticationDTO);
         } catch (final ConstraintViolationException ex) {
@@ -182,7 +183,7 @@ public class AccountsController extends SupportController {
         try {
             externalProviderAuthRequest.setRemoteAddr(request.getRemoteAddr());
             externalProviderAuthRequest.setUserAgent(userAgent);
-            final AuthenticationDTO authenticationDTO = authenticationService.signin(externalProviderAuthRequest, device);
+            final AuthenticationDTO authenticationDTO = accountsService.signin(externalProviderAuthRequest, device);
             return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGN_IN_EXTERNAL_ACCOUNT_SUCCESS,
                     HttpStatus.OK, authenticationDTO);
         } catch (final ConstraintViolationException ex) {
@@ -212,7 +213,7 @@ public class AccountsController extends SupportController {
                     required = true, schema = @Schema(implementation = RefreshTokenDTO.class))
             @Valid RefreshTokenDTO refreshTokenDTO) {
         try {
-            final AuthenticationDTO authenticationDTO = authenticationService.refresh(refreshTokenDTO.getToken());
+            final AuthenticationDTO authenticationDTO = accountsService.refresh(refreshTokenDTO.getToken());
             return responseHelper.createAndSendResponse(
                     AccountsResponseCodeEnum.REFRESH_TOKEN, HttpStatus.OK, authenticationDTO);
         } catch (final ConstraintViolationException ex) {
@@ -254,7 +255,7 @@ public class AccountsController extends SupportController {
             }
             // Configure User Agent from HTTP Header
             user.setUserAgent(userAgent);
-            final SimpleUserDTO userSaved = authenticationService.signup(user);
+            final SimpleUserDTO userSaved = accountsService.signup(user);
             return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_SUCCESS,
                     HttpStatus.OK, userSaved);
         } catch (final ConstraintViolationException ex) {
@@ -293,7 +294,7 @@ public class AccountsController extends SupportController {
             user.setUserAgent(userAgent);
             user.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
             // Configure User Agent from HTTP Header
-            final SimpleUserDTO userSaved = authenticationService.signup(user);
+            final SimpleUserDTO userSaved = accountsService.signup(user);
             return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_EXTERNAL_ACCOUNT_SUCCESS,
                     HttpStatus.OK, userSaved);
         } catch (final ConstraintViolationException ex) {
@@ -302,6 +303,49 @@ public class AccountsController extends SupportController {
             ex.printStackTrace();
             log.debug("signup exception: " + ex);
             throw new SignUpExternalProviderException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * @param ca
+     * @param userAgent
+     * @param locale
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "SIGN_UP_CA_ADMIN - Registering an administrator user of a Certification Authority", description = "Registering an administrator user of a Certification Authority.", tags = {"accounts"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sign Up Success",
+                content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
+        @ApiResponse(responseCode = "500", description = "Sign up fail",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @SecurityRequirements
+    @RequestMapping(value = "/signup/ca", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<SimpleUserDTO>> signup(
+            @Parameter(name = "ca", description = "New User data. Cannot null or empty.",
+                    required = true, schema = @Schema(implementation = SignupAsCaAdminDTO.class))
+            @Validated(ICommonSequence.class) SignupAsCaAdminDTO ca,
+            @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
+            @Parameter(hidden = true) Locale locale) throws Throwable {
+
+        try {
+
+            // Configure ISO3 Language
+            if (StringUtils.isBlank(ca.getAdmin().getLanguage())) {
+                ca.getAdmin().setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
+            }
+            // Configure User Agent from HTTP Header
+            ca.getAdmin().setUserAgent(userAgent);
+            final SimpleUserDTO userSaved = accountsService.signup(ca);
+            return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_AS_CA_ADMIN_SUCCESS,
+                    HttpStatus.OK, userSaved);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Exception ex) {
+            log.debug("signup exception: " + ex);
+            throw new SignUpException(ex.getMessage(), ex);
         }
     }
 
@@ -323,7 +367,7 @@ public class AccountsController extends SupportController {
     public ResponseEntity<APIResponse<SimpleUserDTO>> activate(
             @RequestParam(name = "token") final String token) {
         try {
-            final SimpleUserDTO userActivated = authenticationService.activate(token);
+            final SimpleUserDTO userActivated = accountsService.activate(token);
             return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.ACTIVATE_SUCCESS, HttpStatus.OK, userActivated);
         } catch (final ConstraintViolationException ex) {
             throw ex;
@@ -357,7 +401,7 @@ public class AccountsController extends SupportController {
 
         try {
             log.debug("resetPassword for -> " + resetPasswordRequestDTO.getEmail());
-            authenticationService.resetPassword(resetPasswordRequestDTO.getEmail());
+            accountsService.resetPassword(resetPasswordRequestDTO.getEmail());
             return responseHelper.<String>createAndSendResponse(
                     AccountsResponseCodeEnum.RESET_PASSWORD_REQUEST_SUCCESS,
                     HttpStatus.OK, resolveString("user_password_request_reset_success", request));
