@@ -58,12 +58,6 @@ public class SignUpUserDTO {
     protected String confirmPassword;
 
     /**
-     * Register as CA
-     */
-    @JsonProperty("registerAsCA")
-    private boolean registerAsCA;
-
-    /**
      * User Agent
      */
     @JsonIgnore

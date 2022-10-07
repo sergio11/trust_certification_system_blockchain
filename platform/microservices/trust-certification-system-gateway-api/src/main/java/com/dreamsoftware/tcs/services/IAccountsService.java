@@ -5,6 +5,7 @@ import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInUserExternalProviderDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignUpExternalProviderDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignupAsCaAdminDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationProviderDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
@@ -68,6 +69,14 @@ public interface IAccountsService {
      * @return
      */
     SimpleUserDTO signup(final SignUpUserDTO user);
+
+    /**
+     * Signup as Certification Authority Admin
+     *
+     * @param ca
+     * @return
+     */
+    SimpleUserDTO signup(final SignupAsCaAdminDTO ca);
 
     /**
      * Signup SignUpExternalProviderDTO

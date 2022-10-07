@@ -46,12 +46,6 @@ public class UserEntity {
     private String email;
 
     /**
-     * User Type
-     */
-    @Field("type")
-    private UserTypeEnum type;
-
-    /**
      * Password
      */
     @Field("password")
@@ -71,10 +65,10 @@ public class UserEntity {
     private UserStateEnum state = UserStateEnum.PENDING_ACTIVATE;
 
     /**
-     * User Agent
+     * User Type
      */
-    @Field("user_agent")
-    private String userAgent;
+    @Field("type")
+    private UserTypeEnum type;
 
     /**
      * Language
@@ -99,6 +93,12 @@ public class UserEntity {
      */
     @Field("last_password_reset")
     private Date lastPasswordReset;
+
+    /**
+     * Certification Authority
+     */
+    @DBRef
+    private CertificationAuthorityEntity ca;
 
     /**
      * Authority

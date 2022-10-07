@@ -12,12 +12,14 @@ import com.dreamsoftware.tcs.mapper.UserLdapAccountMapper;
 import com.dreamsoftware.tcs.persistence.ldap.repository.IUserLdapRepository;
 import com.dreamsoftware.tcs.persistence.nosql.entity.AuthenticationProviderTypeEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.AuthorityEnum;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationAuthorityEntity;
 import com.dreamsoftware.tcs.stream.events.user.OnNewUserRegistrationEvent;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserLoginEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserLoginPlatformEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.AuthenticationProviderRepository;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationAuthorityRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserLoginRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IWalletService;
@@ -49,6 +51,7 @@ import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignInUserExternalProviderDTO;
 import com.dreamsoftware.tcs.web.dto.request.SignUpExternalProviderDTO;
+import com.dreamsoftware.tcs.web.dto.request.SignupAsCaAdminDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationProviderDTO;
 import com.dreamsoftware.tcs.web.dto.response.SignUpSocialUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleSocialUserDTO;
@@ -56,6 +59,7 @@ import com.dreamsoftware.tcs.web.dto.response.SimpleUserLoginDTO;
 import com.dreamsoftware.tcs.web.security.provider.social.SocialProviderAuthenticationToken;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +82,6 @@ public class AccountsServiceImpl implements IAccountsService {
     private final UserDetailsMapper userDetailsMapper;
     private final SignUpUserMapper signUpUserMapper;
     private final SimpleUserMapper simpleUserMapper;
-    private final ISecurityTokenGeneratorService tokenGeneratorService;
     private final IWalletService walletService;
     private final StreamBridge streamBridge;
     private final StreamChannelsProperties streamChannelsProperties;
@@ -99,6 +102,7 @@ public class AccountsServiceImpl implements IAccountsService {
     private final AuthenticationManager adminAuthenticationManager;
     private final IUserLdapRepository userLdapRepository;
     private final UserLdapAccountMapper userLdapAccountMapper;
+    private final CertificationAuthorityRepository certificationAuthorityRepository;
 
     /**
      *
@@ -213,7 +217,7 @@ public class AccountsServiceImpl implements IAccountsService {
                 ICommonUserDetailsAware<String> userDetails = null;
                 final String sub = jwtTokenHelper.getSubFromToken(token);
                 final Collection<String> authorities = jwtTokenHelper.getAuthoritiesFromToken(token);
-                if (authorities.contains(AuthorityEnum.ROLE_STUDENT.name()) || authorities.contains(AuthorityEnum.ROLE_CA.name())) {
+                if (authorities.contains(AuthorityEnum.ROLE_STUDENT.name()) || authorities.contains(AuthorityEnum.ROLE_CA_MEMBER.name())) {
                     log.debug("Restore User Details into security context for user id -> " + sub);
                     userDetails = userRepository.findById(new ObjectId(sub))
                             .map(userEntity -> userDetailsMapper.entityToDTO(userEntity))
@@ -243,10 +247,7 @@ public class AccountsServiceImpl implements IAccountsService {
     public SimpleUserDTO signup(final SignUpUserDTO user) {
         Assert.notNull(user, "user can not be null");
         // Map to user entity
-        final UserEntity userToSave = signUpUserMapper.signUpUserDTOToUserEntity(user);
-        // Configure confirmation token
-        final String confirmationToken = tokenGeneratorService.generateToken(userToSave.getFullName());
-        userToSave.setConfirmationToken(confirmationToken);
+        final UserEntity userToSave = signUpUserMapper.signUpUserDTOToUserEntity(user, AuthorityEnum.ROLE_STUDENT);
         final UserEntity userEntitySaved = userRepository.save(userToSave);
         final SimpleUserDTO simpleUserDTO = simpleUserMapper.entityToDTO(userEntitySaved);
         if (simpleUserDTO.getState().equals(SimpleUserDTO.PENDING_ACTIVATE_STATE)) {
@@ -280,6 +281,33 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
+     *
+     * @param ca
+     * @return
+     */
+    @Override
+    public SimpleUserDTO signup(final SignupAsCaAdminDTO ca) {
+        Assert.notNull(ca, "ca can not be null");
+        final UserEntity userToSave = signUpUserMapper.signUpUserDTOToUserEntity(ca.getAdmin(), AuthorityEnum.ROLE_CA_ADMIN);
+        final CertificationAuthorityEntity caEntity = CertificationAuthorityEntity
+                .builder()
+                .creationDate(new Date())
+                .executiveDirector(ca.getExecutiveDirector())
+                .location(ca.getLocation())
+                .name(ca.getName())
+                .defaultCostOfIssuingCertificate(ca.getDefaultCostOfIssuingCertificate())
+                .build();
+        final CertificationAuthorityEntity caSaved = certificationAuthorityRepository.save(caEntity);
+        userToSave.setCa(caSaved);
+        final UserEntity userEntitySaved = userRepository.save(userToSave);
+        final SimpleUserDTO simpleUserDTO = simpleUserMapper.entityToDTO(userEntitySaved);
+        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), UserPendingValidationNotificationEvent.builder()
+                .userId(simpleUserDTO.getIdentity())
+                .build());
+        return simpleUserDTO;
+    }
+
+    /**
      * Activate Account
      *
      * @param confirmationToken
@@ -301,8 +329,8 @@ public class AccountsServiceImpl implements IAccountsService {
         final UserEntity userActivated = userRepository.save(userToActivate);
         streamBridge.send(streamChannelsProperties.getNewUserRegistration(), OnNewUserRegistrationEvent.builder()
                 .name(userActivated.getFullName())
-                .userType(userActivated.getType())
                 .walletHash(userActivated.getWalletHash())
+                .userType(userActivated.getType())
                 .build());
         return simpleUserMapper.entityToDTO(userActivated);
     }
@@ -397,7 +425,6 @@ public class AccountsServiceImpl implements IAccountsService {
         }
         streamBridge.send(streamChannelsProperties.getNewUserRegistration(), OnNewUserRegistrationEvent.builder()
                 .name(userEntitySaved.getFullName())
-                .userType(userEntitySaved.getType())
                 .walletHash(userEntitySaved.getWalletHash())
                 .build());
         return simpleUserMapper.entityToDTO(userEntitySaved);
@@ -485,4 +512,5 @@ public class AccountsServiceImpl implements IAccountsService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return (ICommonUserDetailsAware<String>) authentication.getPrincipal();
     }
+
 }
