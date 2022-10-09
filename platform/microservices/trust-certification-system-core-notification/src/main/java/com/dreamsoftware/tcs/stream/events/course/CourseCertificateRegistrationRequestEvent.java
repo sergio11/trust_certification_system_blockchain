@@ -17,9 +17,9 @@ import lombok.NoArgsConstructor;
 public class CourseCertificateRegistrationRequestEvent {
 
     /**
-     * Course Name
+     * Course Id
      */
-    private String name;
+    private String id;
 
     /**
      * Cost of issuing certificate

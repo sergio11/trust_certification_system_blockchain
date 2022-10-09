@@ -16,13 +16,6 @@ public interface CertificationCourseRepository extends MongoRepository<Certifica
     /**
      *
      * @param courseId
-     * @return
-     */
-    Optional<CertificationCourseEntity> findOneByCourseId(final String courseId);
-
-    /**
-     *
-     * @param courseId
      * @param caId
      * @return
      */

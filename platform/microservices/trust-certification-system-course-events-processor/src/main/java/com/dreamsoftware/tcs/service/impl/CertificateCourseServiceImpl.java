@@ -1,19 +1,17 @@
 package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.stream.events.course.CertificationCourseRegisteredEvent;
-import com.dreamsoftware.tcs.stream.events.course.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
-import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.ICertificateCourseService;
-import java.util.Date;
+import com.dreamsoftware.tcs.stream.events.course.CertificationCourseRegisteredEvent;
+import com.dreamsoftware.tcs.stream.events.course.CourseCertificateRegistrationRequestEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -32,11 +30,6 @@ public class CertificateCourseServiceImpl implements ICertificateCourseService {
     private final CertificationCourseRepository certificationCourseRepository;
 
     /**
-     * User Repository
-     */
-    private final UserRepository userRepository;
-
-    /**
      * Certification Course Blockchain Repository
      */
     private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
@@ -49,8 +42,8 @@ public class CertificateCourseServiceImpl implements ICertificateCourseService {
     @Override
     public CertificationCourseModelEntity onRegisterNewCertificateCourse(CourseCertificateRegistrationRequestEvent event) throws RepositoryException {
         Assert.notNull(event, "event can not be null");
-        log.debug("onRegisterNewCertificateCourse " + event.getName() + " CALLED!");
-        return certificationCourseBlockchainRepository.addCertificationCourse(event.getCaWalletHash(), event.getName(),
+        log.debug("onRegisterNewCertificateCourse courseId: " + event.getId() + " CALLED!");
+        return certificationCourseBlockchainRepository.addCertificationCourse(event.getCaWalletHash(), event.getId(),
                 event.getCostOfIssuingCertificate(), event.getDurationInHours(), event.getExpirationInDays(), event.getCanBeRenewed(), event.getCostOfRenewingCertificate());
     }
 
@@ -66,14 +59,6 @@ public class CertificateCourseServiceImpl implements ICertificateCourseService {
         final String caWalletHash = event.getCaWalletHash();
         final String courseId = event.getCertificationCourse().getId();
         log.debug("register: caWalletHash: " + caWalletHash + " courseId: " + courseId + " CALLED!");
-        final UserEntity caUser = userRepository.findOneByWalletHash(caWalletHash).orElseThrow(() -> new IllegalStateException("CA Wallet Hash not found"));
-        final CertificationCourseEntity certificationCourseEntity = CertificationCourseEntity
-                .builder()
-                .ca(caUser)
-                .createdAt(new Date())
-                .status(CertificationCourseStateEnum.ENABLED)
-                .courseId(courseId)
-                .build();
-        return certificationCourseRepository.save(certificationCourseEntity);
+        return certificationCourseRepository.updateStatus(new ObjectId(courseId), CertificationCourseStateEnum.ENABLED);
     }
 }

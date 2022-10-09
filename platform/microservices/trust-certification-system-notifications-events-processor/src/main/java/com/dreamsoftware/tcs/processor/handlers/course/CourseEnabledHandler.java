@@ -9,6 +9,7 @@ import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
 import com.dreamsoftware.tcs.stream.events.notifications.course.CourseEnabledNotificationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,7 @@ public class CourseEnabledHandler extends AbstractNotificationHandler<CourseEnab
     public void onHandle(final CourseEnabledNotificationEvent notification) {
         Assert.notNull(notification, "Notification can not be null");
         log.debug("CourseEnabledEvent handled!");
-        certificationCourseRepository.findOneByCourseId(notification.getId()).ifPresent((courseEntity) -> {
+        certificationCourseRepository.findById(new ObjectId(notification.getId())).ifPresent((courseEntity) -> {
             final UserEntity caAdmin = courseEntity.getCa().getAdmin();
             mailClientService.sendMail(CourseEnabledMailRequestDTO
                     .builder()
