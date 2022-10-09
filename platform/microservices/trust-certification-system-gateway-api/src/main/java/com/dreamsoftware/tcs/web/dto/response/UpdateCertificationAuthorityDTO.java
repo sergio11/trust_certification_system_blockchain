@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class UpdateCertificationAuthorityDTO {
 
     /**
-     * Name
+     * Certification Authority Name
      */
     @JsonProperty("name")
     private String name;
@@ -28,4 +28,23 @@ public class UpdateCertificationAuthorityDTO {
      */
     @JsonProperty("defaultCostOfIssuingCertificate")
     private BigInteger defaultCostOfIssuingCertificate;
+
+    /**
+     * Certification Authority Location
+     */
+    @JsonProperty("location")
+    private String location;
+
+    /**
+     * Certification Authority Director
+     */
+    @JsonProperty("executive_director")
+    private String executiveDirector;
+
+    /**
+     * Support Mail
+     */
+    @JsonProperty("support_mail")
+    private String supportMail;
+
 }

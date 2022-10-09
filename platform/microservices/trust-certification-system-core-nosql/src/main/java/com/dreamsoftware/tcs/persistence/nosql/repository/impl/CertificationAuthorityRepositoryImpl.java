@@ -27,6 +27,9 @@ public class CertificationAuthorityRepositoryImpl implements CertificationAuthor
                 new Query(Criteria.where("id").is(caId)),
                 new Update()
                         .set("name", certificationAuthorityEntity.getName())
+                        .set("location", certificationAuthorityEntity.getLocation())
+                        .set("executive_director", certificationAuthorityEntity.getExecutiveDirector())
+                        .set("support_mail", certificationAuthorityEntity.getSupportMail())
                         .set("default_cost_of_issuing_certificate", certificationAuthorityEntity.getDefaultCostOfIssuingCertificate()), CertificationAuthorityEntity.class);
         return mongoTemplate.findOne(new Query(Criteria.where("id").is(caId)), CertificationAuthorityEntity.class);
     }

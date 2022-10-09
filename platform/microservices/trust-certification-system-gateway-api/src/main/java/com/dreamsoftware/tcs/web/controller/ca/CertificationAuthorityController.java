@@ -319,9 +319,12 @@ public class CertificationAuthorityController extends SupportController {
             @PathVariable("id") String caId,
             @Parameter(name = "member", description = "CA Member data. Cannot null or empty.",
                     required = true, schema = @Schema(implementation = AddCaMemberDTO.class))
-            @Validated(ICommonSequence.class) AddCaMemberDTO user) throws Throwable {
+            @Validated(ICommonSequence.class) AddCaMemberDTO caMember) throws Throwable {
         try {
-            return null;
+            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.addMember(caId, caMember);
+            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+                    CertificationAuthorityResponseCodeEnum.ADD_CA_MEMBER_SUCCESSFULLY,
+                    HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
             throw new AddCaMemberException(ex.getMessage(), ex);
         }
@@ -337,9 +340,9 @@ public class CertificationAuthorityController extends SupportController {
      */
     @Operation(summary = "REMOVE_CA_MEMBER - Remove member from certification authority", description = "Remove member from certification authority", tags = {"CA"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "CA Member removed succesfully",
+        @ApiResponse(responseCode = "200", description = "CA Member removed successfully",
                 content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
-        @ApiResponse(responseCode = "500", description = "An error ocurred when removing CA member",
+        @ApiResponse(responseCode = "500", description = "An error occurred when removing CA member",
                 content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @RequestMapping(value = "/{caId}/member/{memberId}/remove", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -353,7 +356,10 @@ public class CertificationAuthorityController extends SupportController {
             @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}")
             @PathVariable("memberId") String memberId) throws Throwable {
         try {
-            return null;
+            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.removeMember(caId, memberId);
+            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+                    CertificationAuthorityResponseCodeEnum.REMOVE_CA_MEMBER_SUCCESSFULLY,
+                    HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
             throw new RemoveCaMemberException(ex.getMessage(), ex);
         }
