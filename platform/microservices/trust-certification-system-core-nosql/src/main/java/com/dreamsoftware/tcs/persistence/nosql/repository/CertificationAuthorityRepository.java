@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
  * @author ssanchez
  */
 @Repository
-public interface CertificationAuthorityRepository extends MongoRepository<CertificationAuthorityEntity, ObjectId> {
+public interface CertificationAuthorityRepository extends MongoRepository<CertificationAuthorityEntity, ObjectId>, CertificationAuthorityRepositoryCustom {
 
 }

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CertificationAuthorityDetailDTO {
+public class SimpleCertificationAuthorityDetailDTO {
 
     /**
      * Id

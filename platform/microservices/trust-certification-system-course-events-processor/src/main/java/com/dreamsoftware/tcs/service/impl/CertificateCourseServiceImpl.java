@@ -50,7 +50,7 @@ public class CertificateCourseServiceImpl implements ICertificateCourseService {
     public CertificationCourseModelEntity onRegisterNewCertificateCourse(CourseCertificateRegistrationRequestEvent event) throws RepositoryException {
         Assert.notNull(event, "event can not be null");
         log.debug("onRegisterNewCertificateCourse " + event.getName() + " CALLED!");
-        return certificationCourseBlockchainRepository.register(event.getCaWalletHash(), event.getName(),
+        return certificationCourseBlockchainRepository.addCertificationCourse(event.getCaWalletHash(), event.getName(),
                 event.getCostOfIssuingCertificate(), event.getDurationInHours(), event.getExpirationInDays(), event.getCanBeRenewed(), event.getCostOfRenewingCertificate());
     }
 

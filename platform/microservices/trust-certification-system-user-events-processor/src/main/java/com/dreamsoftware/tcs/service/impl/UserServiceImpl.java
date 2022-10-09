@@ -72,12 +72,20 @@ public class UserServiceImpl implements IUserService {
         }
         // Add ETH funds
         etherFaucetBlockchainRepository.addSeedFunds(event.getWalletHash());
+
         // Add initial TCS ERC-20 funds
-        if (event.getUserType() == UserTypeEnum.CA_ADMIN || event.getUserType() == UserTypeEnum.CA_MEMBER) {
-            tokenManagementBlockchainRepository.configureInitialTokenFundsToCa(event.getWalletHash());
-            certificationAuthorityBlockchainRepository.register(event.getName(), "", "", event.getWalletHash());
-        } else if (event.getUserType() == UserTypeEnum.STUDENT) {
-            tokenManagementBlockchainRepository.configureInitialTokenFundsToStudent(event.getWalletHash());
+        switch (event.getUserType()) {
+            case STUDENT:
+                tokenManagementBlockchainRepository.configureInitialTokenFundsToStudent(event.getWalletHash());
+                break;
+            case CA_ADMIN:
+                tokenManagementBlockchainRepository.configureInitialTokenFundsToCa(event.getWalletHash());
+                certificationAuthorityBlockchainRepository.addCertificationAuthority(event.getUserId(), event.getWalletHash());
+                break;
+            case CA_MEMBER:
+                //certificationAuthorityBlockchainRepository.addCertificationAuthority(event.getUserId(), event.getWalletHash());
+                break;
+
         }
     }
 

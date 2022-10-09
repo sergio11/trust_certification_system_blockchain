@@ -20,7 +20,7 @@ public class OnNewUserRegistrationEvent {
     /**
      * User Name
      */
-    private String name;
+    private String userId;
 
     /**
      * Wallet Hash

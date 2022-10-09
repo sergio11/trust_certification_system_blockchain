@@ -1,6 +1,5 @@
 package com.dreamsoftware.tcs.persistence.bc.repository.entity;
 
-import java.math.BigInteger;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,27 +13,12 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CertificationAuthorityEntity {
+public class CertificationAuthorityBcEntity {
 
     /**
-     * Name
+     * Id
      */
-    private String name;
-
-    /**
-     * Location
-     */
-    private String location;
-
-    /**
-     * Executive Director
-     */
-    private String executiveDirector;
-
-    /**
-     * Default cost of issuing certificate
-     */
-    private BigInteger defaultCostOfIssuingCertificate;
+    private String id;
 
     /**
      * Is Enabled

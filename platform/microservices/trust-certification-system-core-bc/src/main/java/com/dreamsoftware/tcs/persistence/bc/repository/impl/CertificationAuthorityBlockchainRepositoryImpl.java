@@ -2,11 +2,10 @@ package com.dreamsoftware.tcs.persistence.bc.repository.impl;
 
 import com.dreamsoftware.tcs.contracts.CertificationAuthorityContract;
 import com.dreamsoftware.tcs.contracts.CertificationAuthorityContract.CertificationAuthorityRecord;
-import com.dreamsoftware.tcs.contracts.CertificationCourseContract;
 import com.dreamsoftware.tcs.exception.LoadWalletException;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.core.SupportBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityBcEntity;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityEventEntity;
 import com.dreamsoftware.tcs.persistence.bc.repository.mapper.CertificationAuthorityEntityMapper;
 import com.dreamsoftware.tcs.persistence.bc.repository.mapper.CertificationAuthorityEventEntityMapper;
@@ -38,7 +37,7 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
      * @return @throws RepositoryException
      */
     @Override
-    public Iterable<CertificationAuthorityEntity> getAll() throws RepositoryException {
+    public Iterable<CertificationAuthorityBcEntity> getAll() throws RepositoryException {
         log.debug("get All certification authorities ");
         try {
             final CertificationAuthorityContract caContract = loadCAContractAsRoot();
@@ -50,43 +49,37 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
     }
 
     /**
-     * Register Certification Authority
-     *
-     * @param name
-     * @param location
-     * @param executiveDirector
-     * @param walletHash
-     * @throws RepositoryException
-     */
-    @Override
-    public void register(final String name, final String location, final String executiveDirector, final String walletHash) throws RepositoryException {
-        Assert.notNull(name, "name ca not be null");
-        Assert.notNull(location, "location ca not be null");
-        Assert.notNull(executiveDirector, "executiveDirector ca not be null");
-        Assert.notNull(walletHash, "walletHash ca not be null");
-        try {
-            log.debug("registerCertificationAuthority address: " + properties.getCertificationAuthorityContractAddress());
-            final CertificationAuthorityContract caContract = loadCAContract(walletHash);
-            caContract.addCertificationAuthority(name, location, executiveDirector).send();
-            caContract.getCertificateAuthorityDetail().send();
-        } catch (final Exception ex) {
-            throw new RepositoryException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
      * Get Detail
      *
+     * @param caId
+     * @throws RepositoryException
+     */
+    @Override
+    public CertificationAuthorityBcEntity getDetail(final String caId) throws RepositoryException {
+        Assert.notNull(caId, "caId ca not be null");
+        try {
+            log.debug("Get Certification Authority Detail: " + caId);
+            return getCertificationAuthorityDetail(caId);
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Add Certification Authority
+     *
+     * @param id
      * @param walletHash
      * @throws RepositoryException
      */
     @Override
-    public CertificationAuthorityEntity getDetail(final String walletHash) throws RepositoryException {
-        Assert.notNull(walletHash, "Wallet ca not be null");
+    public void addCertificationAuthority(final String id, final String walletHash) throws RepositoryException {
+        Assert.notNull(id, "CA id can not be null");
+        Assert.notNull(walletHash, "walletHash ca not be null");
         try {
-            log.debug("Get Certification Authority Detail with walletHash: " + walletHash);
+            log.debug("addCertificationAuthority address: " + properties.getCertificationAuthorityContractAddress());
             final CertificationAuthorityContract caContract = loadCAContract(walletHash);
-            return getCertificationAuthorityDetail(caContract);
+            caContract.addCertificationAuthority(id).send();
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
@@ -94,18 +87,75 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
 
     /**
      *
-     * @param caWallet
+     * @param id
+     * @throws RepositoryException
+     */
+    @Override
+    public void removeCertificationAuthority(final String id) throws RepositoryException {
+        Assert.notNull(id, "CA id can not be null");
+        try {
+
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Add Certification Authority Member
+     *
+     * @param caId
+     * @param memberWalletHash
+     * @param adminWalletHash
+     * @throws RepositoryException
+     */
+    @Override
+    public void addCertificationAuthorityMember(final String caId, final String memberWalletHash, final String adminWalletHash) throws RepositoryException {
+        Assert.notNull(caId, "CA id can not be null");
+        Assert.notNull(memberWalletHash, "Member Wallet Hash can not be null");
+        Assert.notNull(adminWalletHash, "Admin Wallet Hash can not be null");
+        try {
+            log.debug("addCertificationAuthorityMember caId: " + caId + " , memberWalletHash: " + memberWalletHash);
+            final CertificationAuthorityContract caContract = loadCAContract(adminWalletHash);
+            caContract.addMember(caId, memberWalletHash).send();
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param caId
+     * @param memberWalletHash
+     * @param adminWalletHash
+     * @throws RepositoryException
+     */
+    @Override
+    public void removeCertificationAuthorityMember(final String caId, final String memberWalletHash, final String adminWalletHash) throws RepositoryException {
+        Assert.notNull(caId, "CA id can not be null");
+        Assert.notNull(memberWalletHash, "Member Wallet Hash can not be null");
+        Assert.notNull(adminWalletHash, "Admin Wallet Hash can not be null");
+        try {
+            log.debug("removeCertificationAuthorityMember caId: " + caId + " , memberWalletHash: " + memberWalletHash);
+            final CertificationAuthorityContract caContract = loadCAContract(adminWalletHash);
+            caContract.removeMember(caId, memberWalletHash).send();
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param caId
      * @return
      * @throws RepositoryException
      */
     @Override
-    public CertificationAuthorityEntity enable(final String caWallet) throws RepositoryException {
-        Assert.notNull(caWallet, "Ca Wallet can not be null");
+    public CertificationAuthorityBcEntity enable(final String caId) throws RepositoryException {
+        Assert.notNull(caId, "Ca Id can not be null");
         try {
             final CertificationAuthorityContract caContract = loadCAContractAsRoot();
-            final Credentials caCredentials = walletService.loadCredentials(caWallet);
-            caContract.enableCertificationAuthority(caCredentials.getAddress()).send();
-            return getCertificationAuthorityDetail(caContract, caCredentials.getAddress());
+            caContract.enableCertificationAuthority(caId).send();
+            return getCertificationAuthorityDetail(caContract, caId);
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
@@ -113,18 +163,17 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
 
     /**
      *
-     * @param caWallet
+     * @param caId
      * @return
      * @throws RepositoryException
      */
     @Override
-    public CertificationAuthorityEntity disable(final String caWallet) throws RepositoryException {
-        Assert.notNull(caWallet, "Ca Wallet can not be null");
+    public CertificationAuthorityBcEntity disable(final String caId) throws RepositoryException {
+        Assert.notNull(caId, "Ca Id can not be null");
         try {
             final CertificationAuthorityContract caContract = loadCAContractAsRoot();
-            final Credentials caCredentials = walletService.loadCredentials(caWallet);
-            caContract.disableCertificationAuthority(caCredentials.getAddress()).send();
-            return getCertificationAuthorityDetail(caContract, caCredentials.getAddress());
+            caContract.disableCertificationAuthority(caId).send();
+            return getCertificationAuthorityDetail(caContract, caId);
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
@@ -132,22 +181,41 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
 
     /**
      *
-     * @param caWallet
-     * @param caEntity
-     * @return
+     * @param caId
+     * @param memberWalletHash
+     * @param adminWalletHash
      * @throws RepositoryException
      */
     @Override
-    public CertificationAuthorityEntity update(final String caWallet, final CertificationAuthorityEntity caEntity) throws RepositoryException {
-        Assert.notNull(caWallet, "Ca Wallet can not be null");
-        Assert.notNull(caEntity, "CA Entity can not be null");
+    public void enableMember(final String caId, final String memberWalletHash, final String adminWalletHash) throws RepositoryException {
+        Assert.notNull(caId, "Ca Id can not be null");
+        Assert.notNull(memberWalletHash, "memberWalletHash can not be null");
+        Assert.notNull(adminWalletHash, "adminWalletHash can not be null");
         try {
-            final Credentials caCredentials = walletService.loadCredentials(caWallet);
-            final CertificationAuthorityContract caContract = loadCAContract(caCredentials);
-            caContract.updateCertificationAuthority(caEntity.getName(), caEntity.getLocation(), caEntity.getExecutiveDirector(),
-                    caEntity.getDefaultCostOfIssuingCertificate()
-            ).send();
-            return getCertificationAuthorityDetail(caContract, caCredentials.getAddress());
+            log.debug("enableMember caId: " + caId + " , memberWalletHash: " + memberWalletHash);
+            final CertificationAuthorityContract caContract = loadCAContract(adminWalletHash);
+            caContract.enableMember(caId, memberWalletHash).send();
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param caId
+     * @param memberWalletHash
+     * @param adminWalletHash
+     * @throws RepositoryException
+     */
+    @Override
+    public void disableMember(final String caId, final String memberWalletHash, final String adminWalletHash) throws RepositoryException {
+        Assert.notNull(caId, "Ca Id can not be null");
+        Assert.notNull(memberWalletHash, "memberWalletHash can not be null");
+        Assert.notNull(adminWalletHash, "adminWalletHash can not be null");
+        try {
+            log.debug("disableMember caId: " + caId + " , memberWalletHash: " + memberWalletHash);
+            final CertificationAuthorityContract caContract = loadCAContract(adminWalletHash);
+            caContract.disableMember(caId, memberWalletHash).send();
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
@@ -166,7 +234,11 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
                     caContract.onCertificationAuthorityDisabledEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity),
                     caContract.onCertificationAuthorityEnabledEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity),
                     caContract.onCertificationAuthorityRemovedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity),
-                    caContract.onNewCertificationAuthorityCreatedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity)
+                    caContract.onNewCertificationAuthorityCreatedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity),
+                    caContract.onNewCertificationAuthorityMemberAddedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity),
+                    caContract.onCertificationAuthorityMemberRemovedEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity),
+                    caContract.onCertificationAuthorityMemberEnabledEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity),
+                    caContract.onCertificationAuthorityMemberDisabledEventFlowable(DefaultBlockParameterName.LATEST, DefaultBlockParameterName.LATEST).map(certificationAuthorityEventEntityMapper::mapEventToEntity)
             ));
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
@@ -178,24 +250,25 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
      */
     /**
      *
-     * @param certificationAuthorityContract
+     * @param caId
      * @return
      * @throws Exception
      */
-    private CertificationAuthorityEntity getCertificationAuthorityDetail(final CertificationAuthorityContract certificationAuthorityContract) throws Exception {
-        final CertificationAuthorityRecord caRecord = certificationAuthorityContract.getCertificateAuthorityDetail().send();
+    private CertificationAuthorityBcEntity getCertificationAuthorityDetail(final String caId) throws Exception {
+        final CertificationAuthorityContract caContract = loadCAContractAsRoot();
+        final CertificationAuthorityRecord caRecord = caContract.getCertificateAuthorityDetail(caId).send();
         return certificationAuthorityEntityMapper.caRecordToCaEntity(caRecord);
     }
 
     /**
      *
-     * @param certificationAuthorityContract
-     * @param caAddress
+     * @param caContract
+     * @param caId
      * @return
      * @throws Exception
      */
-    private CertificationAuthorityEntity getCertificationAuthorityDetail(final CertificationAuthorityContract certificationAuthorityContract, final String caAddress) throws Exception {
-        final CertificationAuthorityRecord caRecord = certificationAuthorityContract.getCertificateAuthorityDetail(caAddress).send();
+    private CertificationAuthorityBcEntity getCertificationAuthorityDetail(final CertificationAuthorityContract caContract, final String caId) throws Exception {
+        final CertificationAuthorityRecord caRecord = caContract.getCertificateAuthorityDetail(caId).send();
         return certificationAuthorityEntityMapper.caRecordToCaEntity(caRecord);
     }
 
@@ -232,4 +305,5 @@ public class CertificationAuthorityBlockchainRepositoryImpl extends SupportBlock
         return CertificationAuthorityContract.load(properties.getCertificationAuthorityContractAddress(),
                 web3j, rootTxManager, properties.gas());
     }
+
 }

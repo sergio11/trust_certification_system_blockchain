@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.persistence.bc.repository.mapper;
 
 import com.dreamsoftware.tcs.contracts.CertificationAuthorityContract.CertificationAuthorityRecord;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityBcEntity;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mappings;
@@ -22,7 +22,7 @@ public abstract class CertificationAuthorityEntityMapper {
      */
     @Mappings({})
     @Named("caRecordToCaEntity")
-    public abstract CertificationAuthorityEntity caRecordToCaEntity(CertificationAuthorityRecord caRecord);
+    public abstract CertificationAuthorityBcEntity caRecordToCaEntity(CertificationAuthorityRecord caRecord);
 
     /**
      *
@@ -30,6 +30,6 @@ public abstract class CertificationAuthorityEntityMapper {
      * @return
      */
     @IterableMapping(qualifiedByName = "caRecordToCaEntity")
-    public abstract Iterable<CertificationAuthorityEntity> caRecordToCaEntity(Iterable<CertificationAuthorityRecord> caRecord);
+    public abstract Iterable<CertificationAuthorityBcEntity> caRecordToCaEntity(Iterable<CertificationAuthorityRecord> caRecord);
 
 }

@@ -34,6 +34,12 @@ public class CertificationCourseEntity {
     private ObjectId id;
 
     /**
+     * Course Name
+     */
+    @Field("name")
+    private String name;
+
+    /**
      * Course Id
      */
     @Field("course_id")
@@ -55,5 +61,5 @@ public class CertificationCourseEntity {
      * CA
      */
     @DBRef
-    private UserEntity ca;
+    private CertificationAuthorityEntity ca;
 }

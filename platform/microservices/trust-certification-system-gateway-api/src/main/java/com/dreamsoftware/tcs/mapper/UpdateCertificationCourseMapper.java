@@ -13,7 +13,7 @@ import org.mapstruct.Named;
  * @author ssanchez
  */
 @Mapper(unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
-public abstract class UpdateCertificationCourselMapper {
+public abstract class UpdateCertificationCourseMapper {
 
     /**
      * @param entity
@@ -30,7 +30,6 @@ public abstract class UpdateCertificationCourselMapper {
      * @return
      */
     @Mappings({
-        @Mapping(source = "model.name", target = "name"),
         @Mapping(source = "model.costOfIssuingCertificate", target = "costOfIssuingCertificate"),
         @Mapping(source = "model.costOfRenewingCertificate", target = "costOfRenewingCertificate"),
         @Mapping(source = "model.durationInHours", target = "durationInHours"),

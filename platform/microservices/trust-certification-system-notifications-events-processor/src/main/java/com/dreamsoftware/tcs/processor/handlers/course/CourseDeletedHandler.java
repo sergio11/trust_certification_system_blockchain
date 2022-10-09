@@ -37,14 +37,14 @@ public class CourseDeletedHandler extends AbstractNotificationHandler<CourseDele
         Assert.notNull(notification, "Notification can not be null");
         log.debug("CourseDeletedEvent handled!");
         certificationCourseRepository.findOneByCourseId(notification.getId()).ifPresent((courseEntity) -> {
-            final UserEntity caEntity = courseEntity.getCa();
+            final UserEntity caAdmin = courseEntity.getCa().getAdmin();
             mailClientService.sendMail(CourseDeletedMailRequestDTO
                     .builder()
                     .id(notification.getId())
                     .courseName(notification.getName())
-                    .caName(caEntity.getFullName())
-                    .locale(i18nService.parseLocaleOrDefault(caEntity.getLanguage()))
-                    .email(caEntity.getEmail())
+                    .caName(caAdmin.getFullName())
+                    .locale(i18nService.parseLocaleOrDefault(caAdmin.getLanguage()))
+                    .email(caAdmin.getEmail())
                     .build());
         });
     }

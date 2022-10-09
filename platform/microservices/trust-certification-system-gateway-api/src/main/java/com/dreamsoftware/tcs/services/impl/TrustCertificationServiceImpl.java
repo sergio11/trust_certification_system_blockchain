@@ -184,7 +184,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
         Assert.notNull(issueCertificate.getQualification(), "qualification can not be null");
         final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.findOneByCourseId(issueCertificate.getCertificateCourseId())
                 .orElseThrow(() -> new IllegalStateException("Course not found"));
-        final UserEntity caEntity = certificationCourseEntity.getCa();
+        final UserEntity caEntity = certificationCourseEntity.getCa().getAdmin();
         final UserEntity studentEntity = userRepository.findOneByWalletHash(issueCertificate.getStudentWalletHash())
                 .orElseThrow(() -> new IllegalStateException("Student not found"));
         final CertificateIssuanceRequestEntity certificateRequest = CertificateIssuanceRequestEntity

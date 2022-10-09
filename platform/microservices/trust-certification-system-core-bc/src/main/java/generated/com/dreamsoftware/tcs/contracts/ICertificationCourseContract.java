@@ -56,7 +56,7 @@ public class ICertificationCourseContract extends Contract {
 
     public static final String FUNC_GETALLCERTIFICATIONCOURSES = "getAllCertificationCourses";
 
-    public static final String FUNC_GETCERTIFICATEAUTHORITYFORCOURSE = "getCertificateAuthorityForCourse";
+    public static final String FUNC_GETCERTIFICATEAUTHORITYADMINFORCOURSE = "getCertificateAuthorityAdminForCourse";
 
     public static final String FUNC_GETCERTIFICATECOURSEDETAIL = "getCertificateCourseDetail";
 
@@ -271,20 +271,20 @@ public class ICertificationCourseContract extends Contract {
         return onNewCertificationCourseCreatedEventFlowable(filter);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> addCertificationCourse(String _name, BigInteger _costOfIssuingCertificate, BigInteger _durationInHours) {
+    public RemoteFunctionCall<TransactionReceipt> addCertificationCourse(String _id, BigInteger _costOfIssuingCertificate, BigInteger _durationInHours) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_addCertificationCourse, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name), 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_id), 
                 new org.web3j.abi.datatypes.generated.Uint256(_costOfIssuingCertificate), 
                 new org.web3j.abi.datatypes.generated.Uint256(_durationInHours)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> addCertificationCourse(String _name, BigInteger _costOfIssuingCertificate, BigInteger _durationInHours, BigInteger _expirationInDays, Boolean _canBeRenewed, BigInteger _costOfRenewingCertificate) {
+    public RemoteFunctionCall<TransactionReceipt> addCertificationCourse(String _id, BigInteger _costOfIssuingCertificate, BigInteger _durationInHours, BigInteger _expirationInDays, Boolean _canBeRenewed, BigInteger _costOfRenewingCertificate) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_addCertificationCourse, 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_name), 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_id), 
                 new org.web3j.abi.datatypes.generated.Uint256(_costOfIssuingCertificate), 
                 new org.web3j.abi.datatypes.generated.Uint256(_durationInHours), 
                 new org.web3j.abi.datatypes.generated.Uint256(_expirationInDays), 
@@ -339,8 +339,8 @@ public class ICertificationCourseContract extends Contract {
                 });
     }
 
-    public RemoteFunctionCall<String> getCertificateAuthorityForCourse(String _id) {
-        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETCERTIFICATEAUTHORITYFORCOURSE, 
+    public RemoteFunctionCall<String> getCertificateAuthorityAdminForCourse(String _id) {
+        final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(FUNC_GETCERTIFICATEAUTHORITYADMINFORCOURSE, 
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_id)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Address>() {}));
         return executeRemoteCallSingleValueReturn(function, String.class);
@@ -419,11 +419,10 @@ public class ICertificationCourseContract extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<TransactionReceipt> updateCertificationCourse(String _id, String _name, BigInteger _costOfIssuingCertificate, BigInteger _durationInHours, BigInteger _expirationInDays, Boolean _canBeRenewed, BigInteger _costOfRenewingCertificate) {
+    public RemoteFunctionCall<TransactionReceipt> updateCertificationCourse(String _id, BigInteger _costOfIssuingCertificate, BigInteger _durationInHours, BigInteger _expirationInDays, Boolean _canBeRenewed, BigInteger _costOfRenewingCertificate) {
         final org.web3j.abi.datatypes.Function function = new org.web3j.abi.datatypes.Function(
                 FUNC_UPDATECERTIFICATIONCOURSE, 
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(_id), 
-                new org.web3j.abi.datatypes.Utf8String(_name), 
                 new org.web3j.abi.datatypes.generated.Uint256(_costOfIssuingCertificate), 
                 new org.web3j.abi.datatypes.generated.Uint256(_durationInHours), 
                 new org.web3j.abi.datatypes.generated.Uint256(_expirationInDays), 
@@ -472,8 +471,6 @@ public class ICertificationCourseContract extends Contract {
     public static class CertificationCourseRecord extends DynamicStruct {
         public String id;
 
-        public String name;
-
         public BigInteger costOfIssuingCertificate;
 
         public BigInteger costOfRenewingCertificate;
@@ -490,10 +487,9 @@ public class ICertificationCourseContract extends Contract {
 
         public Boolean isExist;
 
-        public CertificationCourseRecord(String id, String name, BigInteger costOfIssuingCertificate, BigInteger costOfRenewingCertificate, String certificationAuthority, BigInteger durationInHours, BigInteger expirationInDays, Boolean canBeRenewed, Boolean isEnabled, Boolean isExist) {
-            super(new org.web3j.abi.datatypes.Utf8String(id),new org.web3j.abi.datatypes.Utf8String(name),new org.web3j.abi.datatypes.generated.Uint256(costOfIssuingCertificate),new org.web3j.abi.datatypes.generated.Uint256(costOfRenewingCertificate),new org.web3j.abi.datatypes.Address(certificationAuthority),new org.web3j.abi.datatypes.generated.Uint256(durationInHours),new org.web3j.abi.datatypes.generated.Uint256(expirationInDays),new org.web3j.abi.datatypes.Bool(canBeRenewed),new org.web3j.abi.datatypes.Bool(isEnabled),new org.web3j.abi.datatypes.Bool(isExist));
+        public CertificationCourseRecord(String id, BigInteger costOfIssuingCertificate, BigInteger costOfRenewingCertificate, String certificationAuthority, BigInteger durationInHours, BigInteger expirationInDays, Boolean canBeRenewed, Boolean isEnabled, Boolean isExist) {
+            super(new org.web3j.abi.datatypes.Utf8String(id),new org.web3j.abi.datatypes.generated.Uint256(costOfIssuingCertificate),new org.web3j.abi.datatypes.generated.Uint256(costOfRenewingCertificate),new org.web3j.abi.datatypes.Utf8String(certificationAuthority),new org.web3j.abi.datatypes.generated.Uint256(durationInHours),new org.web3j.abi.datatypes.generated.Uint256(expirationInDays),new org.web3j.abi.datatypes.Bool(canBeRenewed),new org.web3j.abi.datatypes.Bool(isEnabled),new org.web3j.abi.datatypes.Bool(isExist));
             this.id = id;
-            this.name = name;
             this.costOfIssuingCertificate = costOfIssuingCertificate;
             this.costOfRenewingCertificate = costOfRenewingCertificate;
             this.certificationAuthority = certificationAuthority;
@@ -504,10 +500,9 @@ public class ICertificationCourseContract extends Contract {
             this.isExist = isExist;
         }
 
-        public CertificationCourseRecord(Utf8String id, Utf8String name, Uint256 costOfIssuingCertificate, Uint256 costOfRenewingCertificate, Address certificationAuthority, Uint256 durationInHours, Uint256 expirationInDays, Bool canBeRenewed, Bool isEnabled, Bool isExist) {
-            super(id,name,costOfIssuingCertificate,costOfRenewingCertificate,certificationAuthority,durationInHours,expirationInDays,canBeRenewed,isEnabled,isExist);
+        public CertificationCourseRecord(Utf8String id, Uint256 costOfIssuingCertificate, Uint256 costOfRenewingCertificate, Utf8String certificationAuthority, Uint256 durationInHours, Uint256 expirationInDays, Bool canBeRenewed, Bool isEnabled, Bool isExist) {
+            super(id,costOfIssuingCertificate,costOfRenewingCertificate,certificationAuthority,durationInHours,expirationInDays,canBeRenewed,isEnabled,isExist);
             this.id = id.getValue();
-            this.name = name.getValue();
             this.costOfIssuingCertificate = costOfIssuingCertificate.getValue();
             this.costOfRenewingCertificate = costOfRenewingCertificate.getValue();
             this.certificationAuthority = certificationAuthority.getValue();

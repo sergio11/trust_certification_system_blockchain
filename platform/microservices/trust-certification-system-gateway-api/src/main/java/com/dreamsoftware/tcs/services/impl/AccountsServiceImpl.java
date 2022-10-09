@@ -41,7 +41,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
 import com.dreamsoftware.tcs.services.IFacebookService;
 import com.dreamsoftware.tcs.services.IGoogleService;
 import com.dreamsoftware.tcs.services.IUploadImagesService;
@@ -291,14 +290,14 @@ public class AccountsServiceImpl implements IAccountsService {
         final UserEntity userToSave = signUpUserMapper.signUpUserDTOToUserEntity(ca.getAdmin(), AuthorityEnum.ROLE_CA_ADMIN);
         final CertificationAuthorityEntity caEntity = CertificationAuthorityEntity
                 .builder()
-                .creationDate(new Date())
+                .createdDate(new Date())
                 .executiveDirector(ca.getExecutiveDirector())
                 .location(ca.getLocation())
                 .name(ca.getName())
                 .defaultCostOfIssuingCertificate(ca.getDefaultCostOfIssuingCertificate())
                 .build();
-        final CertificationAuthorityEntity caSaved = certificationAuthorityRepository.save(caEntity);
-        userToSave.setCa(caSaved);
+        userToSave.setCa(caEntity);
+        caEntity.setAdmin(userToSave);
         final UserEntity userEntitySaved = userRepository.save(userToSave);
         final SimpleUserDTO simpleUserDTO = simpleUserMapper.entityToDTO(userEntitySaved);
         streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), UserPendingValidationNotificationEvent.builder()
@@ -328,7 +327,6 @@ public class AccountsServiceImpl implements IAccountsService {
         userToActivate.setWalletHash(walletHash);
         final UserEntity userActivated = userRepository.save(userToActivate);
         streamBridge.send(streamChannelsProperties.getNewUserRegistration(), OnNewUserRegistrationEvent.builder()
-                .name(userActivated.getFullName())
                 .walletHash(userActivated.getWalletHash())
                 .userType(userActivated.getType())
                 .build());
@@ -424,7 +422,6 @@ public class AccountsServiceImpl implements IAccountsService {
             uploadUserAvatarService.uploadFromUrl(userEntitySaved.getId(), signUpSocialUser.getAvatarUrl());
         }
         streamBridge.send(streamChannelsProperties.getNewUserRegistration(), OnNewUserRegistrationEvent.builder()
-                .name(userEntitySaved.getFullName())
                 .walletHash(userEntitySaved.getWalletHash())
                 .build());
         return simpleUserMapper.entityToDTO(userEntitySaved);

@@ -2,29 +2,26 @@ package com.dreamsoftware.tcs.service.impl;
 
 import com.dreamsoftware.tcs.model.CertificateGenerated;
 import com.dreamsoftware.tcs.model.CertificationGenerationRequest;
-import com.dreamsoftware.tcs.stream.events.certificate.OnNewCertificateIssuedEvent;
-import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
-import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityEntity;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateStatusEnum;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.*;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
 import com.dreamsoftware.tcs.service.ITrustCertificateService;
 import com.dreamsoftware.tcs.service.IipfsGateway;
-import java.util.Date;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
-import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
+import com.dreamsoftware.tcs.stream.events.certificate.OnNewCertificateIssuedEvent;
+import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
+import java.util.Date;
 
 /**
  *
@@ -41,14 +38,9 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
     private final ICertificateGeneratorService certificateGenerator;
 
     /**
-     * Certification Course Blockchain Repository
+     * Certification Course Repository
      */
-    private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
-
-    /**
-     * Certification Authority Blockchain Repository
-     */
-    private final ICertificationAuthorityBlockchainRepository certificationAuthorityBlockchainRepository;
+    private final CertificationCourseRepository certificationCourseRepository;
 
     /**
      * User Repository
@@ -81,8 +73,10 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
         log.debug("issueCertificate - CA Wallet: " + event.getCaWalletHash());
         log.debug("issueCertificate - Student Wallet: " + event.getStudentWalletHash());
         log.debug("issueCertificate - Course ID: " + event.getCourseId());
-        final CertificationCourseModelEntity certificationCourseModelEntity = certificationCourseBlockchainRepository.get(event.getCourseId());
-        final CertificationAuthorityEntity certificationAuthorityEntity = certificationAuthorityBlockchainRepository.getDetail(event.getCaWalletHash());
+
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.findById(new ObjectId(event.getCourseId()))
+                .orElseThrow(() -> new IllegalStateException("Course not found"));
+        final CertificationAuthorityEntity certificationAuthorityEntity = certificationCourseEntity.getCa();
         final String studentName = userRepository.findOneByWalletHash(event.getStudentWalletHash()).map(UserEntity::getFullName).orElseThrow(() -> new IllegalStateException("Student not found"));
         // Generate new certificate using the data provide by event
         final CertificateGenerated certificateGenerated = certificateGenerator.generate(CertificationGenerationRequest.builder()
@@ -90,20 +84,20 @@ public class TrustCertificateServiceImpl implements ITrustCertificateService {
                 .caWalletHash(event.getCaWalletHash())
                 .studentName(studentName)
                 .studentWalletHash(event.getStudentWalletHash())
-                .courseName(certificationCourseModelEntity.getName())
+                .courseName(certificationCourseEntity.getName())
                 .courseId(event.getCourseId())
                 .qualification(event.getQualification())
                 .build());
         // Save Certificate in IPFS node
         final String fileCertificateCid = ipfsService.save(certificateGenerated.getFile(), true);
         // Save Certificate Image in IPFS node
-        final String iamgeCertificateCid = ipfsService.save(certificateGenerated.getImage(), true);
+        final String imageCertificateCid = ipfsService.save(certificateGenerated.getImage(), true);
         // Generate SHA 256 from file
         String fileCertificateHash = Files.asByteSource(certificateGenerated.getFile()).hash(Hashing.sha256()).toString();
         // Generate SHA 256 from image
         String imageCertificateHash = Files.asByteSource(certificateGenerated.getImage()).hash(Hashing.sha256()).toString();
         return trustCertificationBlockchainRepository.issueCertificate(certificateGenerated.getId(), event.getCaWalletHash(), event.getStudentWalletHash(), event.getCourseId(),
-                event.getQualification(), fileCertificateCid, fileCertificateHash, iamgeCertificateCid, imageCertificateHash);
+                event.getQualification(), fileCertificateCid, fileCertificateHash, imageCertificateCid, imageCertificateHash);
     }
 
     /**

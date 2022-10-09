@@ -1,21 +1,29 @@
 package com.dreamsoftware.tcs.web.controller.ca;
 
 import com.dreamsoftware.tcs.services.ICertificationAuthorityService;
+import com.dreamsoftware.tcs.web.controller.ca.error.exception.AddCaMemberException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.DisableCertificationAuthorityException;
+import com.dreamsoftware.tcs.web.controller.ca.error.exception.DisableCertificationAuthorityMemberException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.EnableCertificationAuthorityException;
+import com.dreamsoftware.tcs.web.controller.ca.error.exception.EnableCertificationAuthorityMemberException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.GetAllCertificationAuthoritiesException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.GetCertificationAuthorityException;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.PartialUpdateCAException;
+import com.dreamsoftware.tcs.web.controller.ca.error.exception.RemoveCaMemberException;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.converter.mediatype.PatchMediaType;
+import com.dreamsoftware.tcs.web.dto.request.AddCaMemberDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationAuthorityDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.SimpleCertificationAuthorityDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationAuthorityDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdmin;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
+import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCaAdmin;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
+import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
 import com.dreamsoftware.tcs.web.validation.constraints.ShouldBeAValidObjectId;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -60,20 +68,19 @@ public class CertificationAuthorityController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_ALL - Get All certification authorities have been registered (only ADMIN)", description = "Get All certification authorities have been registered", tags = {"CA"})
+    @Operation(summary = "GET_ALL - Get All certification authorities have been registered", description = "Get All certification authorities have been registered", tags = {"CA"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "All CAs registered",
-                content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
+                content = @Content(schema = @Schema(implementation = SimpleCertificationAuthorityDetailDTO.class))),
         @ApiResponse(responseCode = "404", description = "User Not Found",
                 content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @RequestMapping(value = "/all", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @OnlyAccessForAdmin
-    public ResponseEntity<APIResponse<Iterable<CertificationAuthorityDetailDTO>>> getAll() throws Throwable {
+    public ResponseEntity<APIResponse<Iterable<SimpleCertificationAuthorityDetailDTO>>> getAll() throws Throwable {
         try {
-            final Iterable<CertificationAuthorityDetailDTO> caListDTO = certificationAuthorityService.getAll();
-            return responseHelper.<Iterable<CertificationAuthorityDetailDTO>>createAndSendResponse(
+            final Iterable<SimpleCertificationAuthorityDetailDTO> caListDTO = certificationAuthorityService.getAll();
+            return responseHelper.<Iterable<SimpleCertificationAuthorityDetailDTO>>createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.ALL_CERTIFICATION_AUTHORITIES_SUCCESS,
                     HttpStatus.OK, caListDTO);
         } catch (final Exception ex) {
@@ -90,19 +97,17 @@ public class CertificationAuthorityController extends SupportController {
      */
     @Operation(summary = "GET_CA_DETAIL - Get Certification Authority Detail", description = "Get Certification Authority Detail", tags = {"CA"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Simple Profile Detail",
+        @ApiResponse(responseCode = "200", description = "CA Detail",
                 content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
-        @ApiResponse(responseCode = "404", description = "User Not Found",
+        @ApiResponse(responseCode = "404", description = "Ca Not Found",
                 content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @OnlyAccessForAdmin
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> getDetailById(
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}") @PathVariable("id") String id
+            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @PathVariable("id") String id
     ) throws Throwable {
-
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.getDetail(id);
             return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
@@ -110,34 +115,6 @@ public class CertificationAuthorityController extends SupportController {
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
             throw new GetCertificationAuthorityException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     *
-     * @param selfUser
-     * @param mergePatchDocument
-     * @return
-     */
-    @Operation(summary = "PARTIAL_UPDATE_CA", description = "Update CA")
-    @RequestMapping(value = "/", method = RequestMethod.PATCH,
-            consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @OnlyAccessForCA
-    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> partialUpdateCertificationCourse(
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
-            @RequestBody JsonMergePatch mergePatchDocument) {
-
-        try {
-            final CertificationAuthorityDetailDTO certificationAuthorityDetailDTO = certificationAuthorityService.editByWalletHash(selfUser.getWalletHash())
-                    .map(updateCertificationAuthority -> patchHelper.mergePatch(mergePatchDocument, updateCertificationAuthority, UpdateCertificationAuthorityDTO.class))
-                    .map(updateCertificationAuthority -> certificationAuthorityService.update(selfUser.getWalletHash(), updateCertificationAuthority).orElseThrow(GetCertificationAuthorityException::new))
-                    .orElseThrow(GetCertificationAuthorityException::new);
-            return responseHelper.createAndSendResponse(CertificationAuthorityResponseCodeEnum.PARTIAL_CERTIFICATION_AUTHORITY_UPDATE, HttpStatus.OK, certificationAuthorityDetailDTO);
-        } catch (final ConstraintViolationException ex) {
-            throw ex;
-        } catch (final Throwable ex) {
-            throw new PartialUpdateCAException(ex.getMessage(), ex);
         }
     }
 
@@ -150,18 +127,16 @@ public class CertificationAuthorityController extends SupportController {
      */
     @Operation(summary = "GET_CA_DETAIL - Get Current Certification Authority Detail", description = "Get Certification Authority Detail", tags = {"CA"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Simple Profile Detail",
+        @ApiResponse(responseCode = "200", description = "CA Detail",
                 content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
-        @ApiResponse(responseCode = "404", description = "User Not Found",
+        @ApiResponse(responseCode = "404", description = "Ca Not Found",
                 content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = "/", method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> getDetail(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
-
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.getDetail(selfUser.getUserId());
             return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
@@ -173,28 +148,92 @@ public class CertificationAuthorityController extends SupportController {
     }
 
     /**
+     *
+     * @param selfUser
+     * @param id
+     * @param mergePatchDocument
+     * @return
+     */
+    @Operation(summary = "PARTIAL_UPDATE_CA", description = "Update CA")
+    @RequestMapping(value = "/{id}", method = RequestMethod.PATCH,
+            consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCaAdmin
+    public ResponseEntity<APIResponse<SimpleCertificationAuthorityDetailDTO>> partialUpdateCertificationCourse(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
+            @Parameter(name = "id", description = "CA Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @PathVariable("id") String id,
+            @RequestBody JsonMergePatch mergePatchDocument) {
+
+        try {
+            final SimpleCertificationAuthorityDetailDTO certificationAuthorityDetailDTO = certificationAuthorityService.editById(id)
+                    .map(updateCertificationAuthority -> patchHelper.mergePatch(mergePatchDocument, updateCertificationAuthority, UpdateCertificationAuthorityDTO.class))
+                    .map(updateCertificationAuthority -> certificationAuthorityService.update(selfUser.getWalletHash(), updateCertificationAuthority).orElseThrow(GetCertificationAuthorityException::new))
+                    .orElseThrow(GetCertificationAuthorityException::new);
+            return responseHelper.createAndSendResponse(CertificationAuthorityResponseCodeEnum.PARTIAL_CERTIFICATION_AUTHORITY_UPDATE, HttpStatus.OK, certificationAuthorityDetailDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new PartialUpdateCAException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Enable Certification Authority
      *
      * @param id
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "ENABLE_CA - Enable Certification Authority", description = "Enable Certification Authority Detail", tags = {"CA"})
+    @Operation(summary = "ENABLE_CA - Enable Certification Authority", description = "Enable Certification Authority", tags = {"CA"})
     @RequestMapping(value = "/{id}/enable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> enable(
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}") @PathVariable("id") String id
+            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}")
+            @PathVariable("id") String id
     ) throws Throwable {
         try {
-
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.enable(id);
             return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_ENABLED,
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
             throw new EnableCertificationAuthorityException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Enable Certification Authority Member
+     *
+     * @param selfUser
+     * @param caId
+     * @param memberId
+     * @return
+     * @throws java.lang.Throwable
+     */
+    @Operation(summary = "ENABLE_CA_MEMBER - Enable Certification Authority Member", description = "Enable Certification Authority Member", tags = {"CA"})
+    @RequestMapping(value = "/{caId}/member/{memberId}/enable", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCaAdmin
+    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> enableMember(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
+            @Parameter(name = "caId", description = "Certification Authority Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @PathVariable("caId") String caId,
+            @Parameter(name = "memberId", description = "Member Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "{member_id_not_valid}")
+            @PathVariable("memberId") String memberId
+    ) throws Throwable {
+        try {
+            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.enableMember(caId, memberId, selfUser.getUserId());
+            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+                    CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_MEMBER_ENABLED,
+                    HttpStatus.OK, caDetailDTO);
+        } catch (final Exception ex) {
+            throw new EnableCertificationAuthorityMemberException(ex.getMessage(), ex);
         }
     }
 
@@ -220,6 +259,103 @@ public class CertificationAuthorityController extends SupportController {
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
             throw new DisableCertificationAuthorityException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Disable Certification Authority Member
+     *
+     * @param selfUser
+     * @param caId
+     * @param memberId
+     * @return
+     * @throws java.lang.Throwable
+     */
+    @Operation(summary = "DISABLE_CA_MEMBER - Disable Certification Authority Member", description = "Disable Certification Authority Member", tags = {"CA"})
+    @RequestMapping(value = "/{caId}/member/{memberId}/disable", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCaAdmin
+    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> disableMember(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
+            @Parameter(name = "caId", description = "Certification Authority Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @PathVariable("caId") String caId,
+            @Parameter(name = "memberId", description = "Member Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "{member_id_not_valid}")
+            @PathVariable("memberId") String memberId
+    ) throws Throwable {
+        try {
+            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.disableMember(caId, memberId, selfUser.getUserId());
+            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+                    CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_MEMBER_DISABLED,
+                    HttpStatus.OK, caDetailDTO);
+        } catch (final Exception ex) {
+            throw new DisableCertificationAuthorityMemberException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param selfUser
+     * @param caId
+     * @param user
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "ADD_CA_MEMBER - Add member to certification authority", description = "Add member to certification authority", tags = {"CA"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "CA Member added succesfully",
+                content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
+        @ApiResponse(responseCode = "500", description = "An error ocurred when adding CA member",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = "/{id}/member/add", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCaAdmin
+    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> addCaMember(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
+            @Parameter(name = "id", description = "Certification Authority Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @PathVariable("id") String caId,
+            @Parameter(name = "member", description = "CA Member data. Cannot null or empty.",
+                    required = true, schema = @Schema(implementation = AddCaMemberDTO.class))
+            @Validated(ICommonSequence.class) AddCaMemberDTO user) throws Throwable {
+        try {
+            return null;
+        } catch (final Exception ex) {
+            throw new AddCaMemberException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param selfUser
+     * @param caId
+     * @param memberId
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "REMOVE_CA_MEMBER - Remove member from certification authority", description = "Remove member from certification authority", tags = {"CA"})
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "CA Member removed succesfully",
+                content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
+        @ApiResponse(responseCode = "500", description = "An error ocurred when removing CA member",
+                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = "/{caId}/member/{memberId}/remove", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForCaAdmin
+    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> removeCaMember(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
+            @Parameter(name = "caId", description = "Certification Authority Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @PathVariable("caId") String caId,
+            @Parameter(name = "memberId", description = "CA Member Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}")
+            @PathVariable("memberId") String memberId) throws Throwable {
+        try {
+            return null;
+        } catch (final Exception ex) {
+            throw new RemoveCaMemberException(ex.getMessage(), ex);
         }
     }
 }

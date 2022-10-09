@@ -13,7 +13,7 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
     /**
      *
      * @param walletHash
-     * @param name
+     * @param id
      * @param costOfIssuingCertificate
      * @param durationInHours
      * @param expirationInDays
@@ -22,7 +22,7 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
      * @return
      * @throws RepositoryException
      */
-    CertificationCourseModelEntity register(final String walletHash, final String name, final Long costOfIssuingCertificate,
+    CertificationCourseModelEntity addCertificationCourse(final String walletHash, final String id, final Long costOfIssuingCertificate,
             final Long durationInHours, final Long expirationInDays, final Boolean canBeRenewed, final Long costOfRenewingCertificate) throws RepositoryException;
 
     /**

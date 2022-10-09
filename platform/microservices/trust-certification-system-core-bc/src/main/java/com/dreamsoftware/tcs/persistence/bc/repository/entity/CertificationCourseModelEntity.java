@@ -21,11 +21,6 @@ public class CertificationCourseModelEntity {
     private String id;
 
     /**
-     * Course Name
-     */
-    private String name;
-
-    /**
      * Cost of issuing certificate
      */
     private Long costOfIssuingCertificate;
