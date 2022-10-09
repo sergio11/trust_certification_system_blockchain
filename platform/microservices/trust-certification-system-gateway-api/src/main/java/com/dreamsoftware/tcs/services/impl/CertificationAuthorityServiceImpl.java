@@ -5,11 +5,9 @@ import com.dreamsoftware.tcs.mapper.CertificationAuthorityDetailMapper;
 import com.dreamsoftware.tcs.mapper.SimpleCertificationAuthorityDetailMapper;
 import com.dreamsoftware.tcs.mapper.UpdateCertificationAuthorityMapper;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationAuthorityEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationAuthorityRepository;
 import com.dreamsoftware.tcs.services.ICertificationAuthorityService;
-import com.dreamsoftware.tcs.utils.Unthrow;
 import com.dreamsoftware.tcs.web.dto.request.AddCaMemberDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationAuthorityDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleCertificationAuthorityDetailDTO;
@@ -20,7 +18,6 @@ import org.bson.types.ObjectId;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -67,7 +64,6 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
                 .orElseThrow(() -> {
                     throw new IllegalStateException("Certification Authority Not Found");
                 });
-
         return certificationAuthorityDetailMapper.entityToDTO(caEntity);
     }
 
