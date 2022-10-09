@@ -1,12 +1,8 @@
 package com.dreamsoftware.tcs.mapper;
 
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationAuthorityEntity;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationAuthorityDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Mappings;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 
 /**
  *

@@ -97,4 +97,88 @@ public abstract class CertificationAuthorityEventEntityMapper {
     })
     @Named("mapEventToEntity")
     public abstract CertificationAuthorityEventEntity mapEventToEntity(CertificationAuthorityContract.OnCertificationAuthorityDisabledEventResponse event);
+
+    /**
+     *
+     * @param event
+     * @return
+     */
+    @Mappings({
+        @Mapping(source = "event.log.address", target = "address"),
+        @Mapping(source = "event.log.blockHash", target = "blockHash"),
+        @Mapping(source = "event.log.blockNumber", target = "blockNumber"),
+        @Mapping(source = "event.log.blockNumberRaw", target = "blockNumberRaw"),
+        @Mapping(source = "event.log.data", target = "data"),
+        @Mapping(source = "event.log.logIndex", target = "logIndex"),
+        @Mapping(source = "event.log.logIndexRaw", target = "logIndexRaw"),
+        @Mapping(source = "event.log.transactionHash", target = "transactionHash"),
+        @Mapping(source = "event.log.transactionIndex", target = "transactionIndex"),
+        @Mapping(source = "event.log.transactionIndexRaw", target = "transactionIndexRaw"),
+        @Mapping(expression = "java(com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityEventTypeEnum.CA_MEMBER_ADDED)", target = "type")
+    })
+    @Named("mapEventToEntity")
+    public abstract CertificationAuthorityEventEntity mapEventToEntity(CertificationAuthorityContract.OnNewCertificationAuthorityMemberAddedEventResponse event);
+
+    /**
+     *
+     * @param event
+     * @return
+     */
+    @Mappings({
+        @Mapping(source = "event.log.address", target = "address"),
+        @Mapping(source = "event.log.blockHash", target = "blockHash"),
+        @Mapping(source = "event.log.blockNumber", target = "blockNumber"),
+        @Mapping(source = "event.log.blockNumberRaw", target = "blockNumberRaw"),
+        @Mapping(source = "event.log.data", target = "data"),
+        @Mapping(source = "event.log.logIndex", target = "logIndex"),
+        @Mapping(source = "event.log.logIndexRaw", target = "logIndexRaw"),
+        @Mapping(source = "event.log.transactionHash", target = "transactionHash"),
+        @Mapping(source = "event.log.transactionIndex", target = "transactionIndex"),
+        @Mapping(source = "event.log.transactionIndexRaw", target = "transactionIndexRaw"),
+        @Mapping(expression = "java(com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityEventTypeEnum.CA_MEMBER_REMOVED)", target = "type")
+    })
+    @Named("mapEventToEntity")
+    public abstract CertificationAuthorityEventEntity mapEventToEntity(CertificationAuthorityContract.OnCertificationAuthorityMemberRemovedEventResponse event);
+
+    /**
+     *
+     * @param event
+     * @return
+     */
+    @Mappings({
+        @Mapping(source = "event.log.address", target = "address"),
+        @Mapping(source = "event.log.blockHash", target = "blockHash"),
+        @Mapping(source = "event.log.blockNumber", target = "blockNumber"),
+        @Mapping(source = "event.log.blockNumberRaw", target = "blockNumberRaw"),
+        @Mapping(source = "event.log.data", target = "data"),
+        @Mapping(source = "event.log.logIndex", target = "logIndex"),
+        @Mapping(source = "event.log.logIndexRaw", target = "logIndexRaw"),
+        @Mapping(source = "event.log.transactionHash", target = "transactionHash"),
+        @Mapping(source = "event.log.transactionIndex", target = "transactionIndex"),
+        @Mapping(source = "event.log.transactionIndexRaw", target = "transactionIndexRaw"),
+        @Mapping(expression = "java(com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityEventTypeEnum.CA_MEMBER_ENABLED)", target = "type")
+    })
+    @Named("mapEventToEntity")
+    public abstract CertificationAuthorityEventEntity mapEventToEntity(CertificationAuthorityContract.OnCertificationAuthorityMemberEnabledEventResponse event);
+
+    /**
+     *
+     * @param event
+     * @return
+     */
+    @Mappings({
+        @Mapping(source = "event.log.address", target = "address"),
+        @Mapping(source = "event.log.blockHash", target = "blockHash"),
+        @Mapping(source = "event.log.blockNumber", target = "blockNumber"),
+        @Mapping(source = "event.log.blockNumberRaw", target = "blockNumberRaw"),
+        @Mapping(source = "event.log.data", target = "data"),
+        @Mapping(source = "event.log.logIndex", target = "logIndex"),
+        @Mapping(source = "event.log.logIndexRaw", target = "logIndexRaw"),
+        @Mapping(source = "event.log.transactionHash", target = "transactionHash"),
+        @Mapping(source = "event.log.transactionIndex", target = "transactionIndex"),
+        @Mapping(source = "event.log.transactionIndexRaw", target = "transactionIndexRaw"),
+        @Mapping(expression = "java(com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationAuthorityEventTypeEnum.CA_MEMBER_DISABLED)", target = "type")
+    })
+    @Named("mapEventToEntity")
+    public abstract CertificationAuthorityEventEntity mapEventToEntity(CertificationAuthorityContract.OnCertificationAuthorityMemberDisabledEventResponse event);
 }

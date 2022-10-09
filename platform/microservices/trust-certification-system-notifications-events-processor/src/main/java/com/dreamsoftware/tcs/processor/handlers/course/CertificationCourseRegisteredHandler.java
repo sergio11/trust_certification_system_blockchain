@@ -39,12 +39,12 @@ public class CertificationCourseRegisteredHandler extends AbstractNotificationHa
         Assert.notNull(notification, "Notification can not be null");
         certificationCourseRepository.findOneByCourseId(notification.getCourseId()).ifPresent((certificationCourseEntitySaved) -> {
             notificationService.onCACertificationCourseRegistered(certificationCourseEntitySaved);
-            final UserEntity caUser = certificationCourseEntitySaved.getCa();
+            final UserEntity caAdmin = certificationCourseEntitySaved.getCa().getAdmin();
             mailClientService.sendMail(CertificationCourseRegisteredMailRequestDTO.builder()
                     .courseId(certificationCourseEntitySaved.getCourseId())
                     .courseName(notification.getCourseName())
-                    .email(caUser.getEmail())
-                    .locale(i18nService.parseLocaleOrDefault(caUser.getLanguage()))
+                    .email(caAdmin.getEmail())
+                    .locale(i18nService.parseLocaleOrDefault(caAdmin.getLanguage()))
                     .build());
         });
     }

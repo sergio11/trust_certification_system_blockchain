@@ -53,10 +53,16 @@ public class CertificationAuthorityEntity {
     private String executiveDirector;
 
     /**
+     * Support Mail
+     */
+    @Field("support_mail")
+    private String supportMail;
+
+    /**
      * Creation Date
      */
-    @Field("activation_date")
-    private Date creationDate;
+    @Field("created_date")
+    private Date createdDate;
 
     /**
      * Default Cost of issuing certificate

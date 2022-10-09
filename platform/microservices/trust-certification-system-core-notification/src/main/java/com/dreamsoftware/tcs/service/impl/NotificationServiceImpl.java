@@ -77,7 +77,7 @@ public class NotificationServiceImpl implements INotificationService {
     @Override
     public void onCACertificationCourseRegistered(final CertificationCourseEntity certificationCourseEntity) {
         Assert.notNull(certificationCourseEntity, "Certification course can not be null");
-        saveNotification("ca_certification_course_registered_title", "ca_certification_course_registered_message", certificationCourseEntity.getCa());
+        saveNotification("ca_certification_course_registered_title", "ca_certification_course_registered_message", certificationCourseEntity.getCa().getAdmin());
     }
 
     /**

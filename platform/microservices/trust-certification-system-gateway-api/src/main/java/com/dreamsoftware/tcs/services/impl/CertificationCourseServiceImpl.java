@@ -2,7 +2,7 @@ package com.dreamsoftware.tcs.services.impl;
 
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.CertificationCourseDetailMapper;
-import com.dreamsoftware.tcs.mapper.UpdateCertificationCourselMapper;
+import com.dreamsoftware.tcs.mapper.UpdateCertificationCourseMapper;
 import com.dreamsoftware.tcs.stream.events.course.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
@@ -37,7 +37,7 @@ import org.springframework.util.Assert;
 public class CertificationCourseServiceImpl implements ICertificationCourseService {
 
     private final CertificationCourseDetailMapper certificationCourseDetailMapper;
-    private final UpdateCertificationCourselMapper updateCertificationCourselMapper;
+    private final UpdateCertificationCourseMapper updateCertificationCourselMapper;
     private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
     private final CertificationCourseRepository certificationCourseRepository;
     private final StreamBridge streamBridge;

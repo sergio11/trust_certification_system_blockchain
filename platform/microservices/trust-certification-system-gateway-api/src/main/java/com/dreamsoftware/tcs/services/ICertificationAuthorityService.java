@@ -1,6 +1,8 @@
 package com.dreamsoftware.tcs.services;
 
+import com.dreamsoftware.tcs.web.dto.request.AddCaMemberDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationAuthorityDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.SimpleCertificationAuthorityDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationAuthorityDTO;
 import java.util.Optional;
 
@@ -16,7 +18,7 @@ public interface ICertificationAuthorityService {
      * @return
      * @throws java.lang.Throwable
      */
-    Iterable<CertificationAuthorityDetailDTO> getAll() throws Throwable;
+    Iterable<SimpleCertificationAuthorityDetailDTO> getAll() throws Throwable;
 
     /**
      * Get Detail
@@ -37,6 +39,17 @@ public interface ICertificationAuthorityService {
     CertificationAuthorityDetailDTO enable(final String id) throws Throwable;
 
     /**
+     * Enable Certification Authority Member
+     *
+     * @param caId
+     * @param memberId
+     * @param adminId
+     * @return
+     * @throws Throwable
+     */
+    CertificationAuthorityDetailDTO enableMember(final String caId, final String memberId, final String adminId) throws Throwable;
+
+    /**
      * Disable Certification Authority
      *
      * @param id
@@ -46,18 +59,49 @@ public interface ICertificationAuthorityService {
     CertificationAuthorityDetailDTO disable(final String id) throws Throwable;
 
     /**
+     * Disable Certification Authority Member
      *
-     * @param walletHash
+     * @param caId
+     * @param memberId
+     * @param adminId
      * @return
+     * @throws Throwable
      */
-    Optional<UpdateCertificationAuthorityDTO> editByWalletHash(final String walletHash);
+    CertificationAuthorityDetailDTO disableMember(final String caId, final String memberId, final String adminId) throws Throwable;
+
+    /**
+     * Add Certification Authority Member
+     *
+     * @param id
+     * @param member
+     * @return
+     * @throws Throwable
+     */
+    CertificationAuthorityDetailDTO addMember(final String id, final AddCaMemberDTO member) throws Throwable;
+
+    /**
+     * Add Certification Authority Member
+     *
+     * @param id
+     * @param memberId
+     * @return
+     * @throws Throwable
+     */
+    CertificationAuthorityDetailDTO removeMember(final String id, final String memberId) throws Throwable;
 
     /**
      *
-     * @param walletHash
+     * @param id
+     * @return
+     */
+    Optional<UpdateCertificationAuthorityDTO> editById(final String id);
+
+    /**
+     *
+     * @param id
      * @param model
      * @return
      */
-    Optional<CertificationAuthorityDetailDTO> update(final String walletHash, final UpdateCertificationAuthorityDTO model);
+    Optional<SimpleCertificationAuthorityDetailDTO> update(final String id, final UpdateCertificationAuthorityDTO model);
 
 }
