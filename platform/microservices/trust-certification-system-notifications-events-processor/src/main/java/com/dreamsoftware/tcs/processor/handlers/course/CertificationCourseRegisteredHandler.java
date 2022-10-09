@@ -10,6 +10,7 @@ import com.dreamsoftware.tcs.service.INotificationService;
 import com.dreamsoftware.tcs.stream.events.notifications.course.CertificationCourseRegisteredNotificationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -37,11 +38,11 @@ public class CertificationCourseRegisteredHandler extends AbstractNotificationHa
     @Override
     public void onHandle(final CertificationCourseRegisteredNotificationEvent notification) {
         Assert.notNull(notification, "Notification can not be null");
-        certificationCourseRepository.findOneByCourseId(notification.getCourseId()).ifPresent((certificationCourseEntitySaved) -> {
+        certificationCourseRepository.findById(new ObjectId(notification.getCourseId())).ifPresent((certificationCourseEntitySaved) -> {
             notificationService.onCACertificationCourseRegistered(certificationCourseEntitySaved);
             final UserEntity caAdmin = certificationCourseEntitySaved.getCa().getAdmin();
             mailClientService.sendMail(CertificationCourseRegisteredMailRequestDTO.builder()
-                    .courseId(certificationCourseEntitySaved.getCourseId())
+                    .courseId(certificationCourseEntitySaved.getId().toString())
                     .courseName(notification.getCourseName())
                     .email(caAdmin.getEmail())
                     .locale(i18nService.parseLocaleOrDefault(caAdmin.getLanguage()))

@@ -40,16 +40,22 @@ public class CertificationCourseEntity {
     private String name;
 
     /**
-     * Course Id
+     * Course Description
      */
-    @Field("course_id")
-    private String courseId;
+    @Field("description")
+    private String description;
 
     /**
      * Created At
      */
     @Field("created_at")
     private Date createdAt;
+
+    /**
+     * Updated At
+     */
+    @Field("updated_at")
+    private Date updatedAt;
 
     /**
      * Status

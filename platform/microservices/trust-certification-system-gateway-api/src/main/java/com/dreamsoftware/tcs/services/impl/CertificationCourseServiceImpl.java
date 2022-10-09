@@ -3,6 +3,7 @@ package com.dreamsoftware.tcs.services.impl;
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.CertificationCourseDetailMapper;
 import com.dreamsoftware.tcs.mapper.UpdateCertificationCourseMapper;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import com.dreamsoftware.tcs.stream.events.course.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
@@ -56,8 +57,8 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         log.debug("Enable course -> " + courseId + " CALLED!");
-        final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.enable(caWalletHash, courseId);
-        certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.ENABLED);
+        certificationCourseBlockchainRepository.enable(caWalletHash, courseId);
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.updateStatus(new ObjectId(courseId), CertificationCourseStateEnum.ENABLED);
         final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
         streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CourseEnabledNotificationEvent.builder()
                 .id(certificationCourseDetailDTO.getId())
@@ -79,8 +80,8 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         log.debug("Disable course -> " + courseId + " CALLED!");
-        final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.disable(caWalletHash, courseId);
-        certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.DISABLED);
+        certificationCourseBlockchainRepository.disable(caWalletHash, courseId);
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.updateStatus(new ObjectId(courseId), CertificationCourseStateEnum.DISABLED);
         final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
         streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CourseDisabledNotificationEvent.builder()
                 .id(certificationCourseDetailDTO.getId())
@@ -98,7 +99,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public void save(final SaveCertificationCourseDTO model) {
         Assert.notNull(model, "model can not be null");
         streamBridge.send(streamChannelsProperties.getNewCertificationCourseRegistration(), CourseCertificateRegistrationRequestEvent.builder()
-                .name(model.getName())
+                .id(model.getName())
                 .costOfIssuingCertificate(model.getCostOfIssuingCertificate())
                 .caWalletHash(model.getCaWalletHash())
                 .durationInHours(model.getDurationInHours())
@@ -122,8 +123,8 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         Assert.notNull(caWalletHash, "CA wallet can not be null");
         Assert.notNull(courseId, "Course ID can not be null");
         log.debug("remove certification course " + courseId + " CALLED!");
-        final CertificationCourseModelEntity certificationCourseEntity = certificationCourseBlockchainRepository.remove(caWalletHash, courseId);
-        certificationCourseRepository.updateStatus(courseId, CertificationCourseStateEnum.REMOVED);
+        certificationCourseBlockchainRepository.remove(caWalletHash, courseId);
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.updateStatus(new ObjectId(courseId), CertificationCourseStateEnum.REMOVED);
         final CertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseDetailMapper.entityToDTO(certificationCourseEntity);
         streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CourseDeletedNotificationEvent.builder()
                 .id(certificationCourseDetailDTO.getId())

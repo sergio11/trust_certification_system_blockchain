@@ -25,6 +25,6 @@ public class CertificationCourseRegisteredProcessor implements Function<Certific
     public CertificationCourseRegisteredNotificationEvent apply(CertificationCourseRegisteredEvent event) {
         log.debug("CertificationCourseRegisteredProcessor CALLED!");
         final CertificationCourseEntity certificationCourseEntity = certificateCourseService.onNewCertificateCourseRegistered(event);
-        return new CertificationCourseRegisteredNotificationEvent(certificationCourseEntity.getCourseId(), event.getCertificationCourse().getName());
+        return new CertificationCourseRegisteredNotificationEvent(certificationCourseEntity.getId().toString(), certificationCourseEntity.getName());
     }
 }

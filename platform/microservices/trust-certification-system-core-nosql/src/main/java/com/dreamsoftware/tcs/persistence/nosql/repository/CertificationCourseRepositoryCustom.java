@@ -1,6 +1,8 @@
 package com.dreamsoftware.tcs.persistence.nosql.repository;
 
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
+import org.bson.types.ObjectId;
 
 /**
  *
@@ -10,9 +12,10 @@ public interface CertificationCourseRepositoryCustom {
 
     /**
      *
-     * @param courseId
+     * @param id
      * @param newStatus
+     * @return
      */
-    void updateStatus(String courseId, CertificationCourseStateEnum newStatus);
+    CertificationCourseEntity updateStatus(ObjectId id, CertificationCourseStateEnum newStatus);
 
 }

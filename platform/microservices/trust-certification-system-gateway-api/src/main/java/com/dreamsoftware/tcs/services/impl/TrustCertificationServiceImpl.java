@@ -182,7 +182,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
         Assert.notNull(issueCertificate.getStudentWalletHash(), "Student Wallet Hash can not be null");
         Assert.notNull(issueCertificate.getCertificateCourseId(), "certificateCourseId can not be null");
         Assert.notNull(issueCertificate.getQualification(), "qualification can not be null");
-        final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.findOneByCourseId(issueCertificate.getCertificateCourseId())
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.findById(new ObjectId(issueCertificate.getCertificateCourseId()))
                 .orElseThrow(() -> new IllegalStateException("Course not found"));
         final UserEntity caEntity = certificationCourseEntity.getCa().getAdmin();
         final UserEntity studentEntity = userRepository.findOneByWalletHash(issueCertificate.getStudentWalletHash())
@@ -216,7 +216,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
         final OnNewIssueCertificateRequestEvent event = OnNewIssueCertificateRequestEvent
                 .builder()
                 .caWalletHash(certificate.getCa().getWalletHash())
-                .courseId(certificate.getCourse().getCourseId())
+                .courseId(certificate.getCourse().getId().toString())
                 .qualification(certificate.getQualification())
                 .studentWalletHash(certificate.getStudent().getWalletHash())
                 .build();
