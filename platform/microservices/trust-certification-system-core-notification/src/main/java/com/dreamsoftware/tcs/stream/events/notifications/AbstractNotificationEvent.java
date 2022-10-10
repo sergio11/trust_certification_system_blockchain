@@ -63,11 +63,11 @@ public abstract class AbstractNotificationEvent {
      *
      * @return
      */
-    public Class getEntityType() {
-        final Class aClass = this.getClass();
+    public Class<? extends AbstractNotificationEvent> getEntityType() {
+        final Class<? extends AbstractNotificationEvent> aClass = this.getClass();
         final EntityAnnotation ne = AnnotationUtils.findAnnotation(aClass, EntityAnnotation.class);
-        Class entityClass = null;
-        if (ne != null) {
+        Class<? extends AbstractNotificationEvent> entityClass = null;
+        if (ne != null && ne.entityClass() != null) {
             entityClass = ne.entityClass();
         }
         return entityClass;

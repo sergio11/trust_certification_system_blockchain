@@ -1,11 +1,12 @@
 package com.dreamsoftware.tcs.processor;
 
+import com.dreamsoftware.tcs.service.IUserRegistrationService;
 import com.dreamsoftware.tcs.stream.events.user.OnUserRegisteredEvent;
-import com.dreamsoftware.tcs.stream.events.user.OnNewUserRegistrationEvent;
 import com.dreamsoftware.tcs.service.IUserService;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,12 +17,12 @@ import org.springframework.stereotype.Component;
 @Component("newUserRegistrationProcessor")
 @RequiredArgsConstructor
 @Slf4j
-public class NewUserRegistrationProcessor implements Function<OnNewUserRegistrationEvent, OnUserRegisteredEvent> {
+public class NewUserRegistrationProcessor implements Function<GenericMessage<String>, OnUserRegisteredEvent> {
 
     /**
-     * User Service
+     * User Registration Service
      */
-    private final IUserService userService;
+    private final IUserRegistrationService userRegistrationService;
 
     /**
      *
@@ -29,12 +30,12 @@ public class NewUserRegistrationProcessor implements Function<OnNewUserRegistrat
      * @return
      */
     @Override
-    public OnUserRegisteredEvent apply(final OnNewUserRegistrationEvent event) {
+    public OnUserRegisteredEvent apply(final GenericMessage<String> event) {
         log.debug("NewUserRegistrationProcessor CALLED!");
         OnUserRegisteredEvent registeredEvent = null;
         try {
-            userService.register(event);
-            registeredEvent = new OnUserRegisteredEvent(event.getWalletHash());
+            final String userWalletHash = userRegistrationService.handle(event);
+            registeredEvent = new OnUserRegisteredEvent(userWalletHash);
         } catch (final Exception ex) {
             log.debug("Ex Message -> " + ex.getMessage());
         }

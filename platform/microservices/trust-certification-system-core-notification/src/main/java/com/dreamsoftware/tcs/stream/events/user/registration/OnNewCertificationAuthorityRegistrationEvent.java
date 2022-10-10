@@ -1,6 +1,5 @@
-package com.dreamsoftware.tcs.stream.events.user;
+package com.dreamsoftware.tcs.stream.events.user.registration;
 
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,20 +14,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OnNewUserRegistrationEvent {
+public class OnNewCertificationAuthorityRegistrationEvent extends AbstractRegistrationEvent {
 
     /**
-     * User Name
+     * Certification Authority Id
      */
-    private String userId;
+    private String caId;
 
     /**
      * Wallet Hash
      */
     private String walletHash;
-
-    /**
-     * User Type
-     */
-    private UserTypeEnum userType;
 }

@@ -1,8 +1,8 @@
 package com.dreamsoftware.tcs.processor;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderEntity;
+import com.dreamsoftware.tcs.service.IUserOrdersService;
 import com.dreamsoftware.tcs.stream.events.user.OnTokensOrderCompletedEvent;
-import com.dreamsoftware.tcs.service.IUserService;
 import com.dreamsoftware.tcs.stream.events.notifications.users.OrderCompletedNotificationEvent;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class TokensOrderCompletedProcessor implements Function<OnTokensOrderComp
     /**
      * User Service
      */
-    private final IUserService userService;
+    private final IUserOrdersService userOrdersService;
 
     /**
      *
@@ -32,7 +32,7 @@ public class TokensOrderCompletedProcessor implements Function<OnTokensOrderComp
     @Override
     public OrderCompletedNotificationEvent apply(final OnTokensOrderCompletedEvent event) {
         log.debug("TokensOrderCompletedProcessor called!");
-        final CreatedOrderEntity orderEntity = userService.completeOrder(event);
+        final CreatedOrderEntity orderEntity = userOrdersService.completeOrder(event);
         return new OrderCompletedNotificationEvent(orderEntity.getId().toString());
     }
 
