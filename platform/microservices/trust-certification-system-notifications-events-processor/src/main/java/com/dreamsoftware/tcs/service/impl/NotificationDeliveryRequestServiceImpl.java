@@ -50,7 +50,7 @@ public class NotificationDeliveryRequestServiceImpl implements INotificationDeli
     private <T extends AbstractNotificationEvent> AbstractNotificationHandler<T> getNotificationHandler(Class<T> clazz) {
         log.debug("getNotificationHandler -> " + clazz.getCanonicalName());
         ResolvableType type = ResolvableType.forClassWithGenerics(AbstractNotificationHandler.class, clazz);
-        return (AbstractNotificationHandler<T>) applicationContext.getBeanProvider(type).getObject();
+        return applicationContext.<AbstractNotificationHandler<T>>getBeanProvider(type).getObject();
     }
 
 }

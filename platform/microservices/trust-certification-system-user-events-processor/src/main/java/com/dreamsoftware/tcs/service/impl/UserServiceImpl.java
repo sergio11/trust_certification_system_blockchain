@@ -1,25 +1,15 @@
 package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.stream.events.user.NewTokensOrderApprovedEvent;
-import com.dreamsoftware.tcs.stream.events.user.OnNewUserRegistrationEvent;
-import com.dreamsoftware.tcs.stream.events.user.OnTokensOrderCompletedEvent;
-import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.bc.repository.IEtherFaucetBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
-import com.dreamsoftware.tcs.persistence.nosql.repository.CreatedOrderRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IUserService;
-import java.math.BigInteger;
-import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.util.Date;
 
 /**
  *
@@ -31,63 +21,9 @@ import org.springframework.util.Assert;
 public class UserServiceImpl implements IUserService {
 
     /**
-     * Certification Authority Blockchain Repository
-     */
-    private final ICertificationAuthorityBlockchainRepository certificationAuthorityBlockchainRepository;
-
-    /**
-     * Ether Faucet Blockchain Repository
-     */
-    private final IEtherFaucetBlockchainRepository etherFaucetBlockchainRepository;
-
-    /**
-     * Token Management Blockchain Repository
-     */
-    private final ITokenManagementBlockchainRepository tokenManagementBlockchainRepository;
-
-    /**
      * User Repository
      */
     private final UserRepository userRepository;
-
-    /**
-     * Created order repository
-     */
-    private final CreatedOrderRepository createdOrderRepository;
-
-    /**
-     *
-     * @param event
-     */
-    @Override
-    public void register(OnNewUserRegistrationEvent event) throws Exception {
-        Assert.notNull(event, "Event can not be null");
-        log.debug("register -> " + event.getWalletHash() + " CALLED!");
-        final BigInteger initialAmount = etherFaucetBlockchainRepository.getInitialAmount();
-        final BigInteger currentBalance = etherFaucetBlockchainRepository.getBalance();
-        log.debug("initialAmount -> " + initialAmount + " Current Balance Contract -> " + currentBalance);
-        if (currentBalance.compareTo(initialAmount) == -1) {
-            log.debug("depositFunds ...");
-            etherFaucetBlockchainRepository.depositFunds(initialAmount.multiply(BigInteger.TEN));
-        }
-        // Add ETH funds
-        etherFaucetBlockchainRepository.addSeedFunds(event.getWalletHash());
-
-        // Add initial TCS ERC-20 funds
-        switch (event.getUserType()) {
-            case STUDENT:
-                tokenManagementBlockchainRepository.configureInitialTokenFundsToStudent(event.getWalletHash());
-                break;
-            case CA_ADMIN:
-                tokenManagementBlockchainRepository.configureInitialTokenFundsToCa(event.getWalletHash());
-                certificationAuthorityBlockchainRepository.addCertificationAuthority(event.getUserId(), event.getWalletHash());
-                break;
-            case CA_MEMBER:
-                //certificationAuthorityBlockchainRepository.addCertificationAuthority(event.getUserId(), event.getWalletHash());
-                break;
-
-        }
-    }
 
     /**
      *
@@ -102,38 +38,6 @@ public class UserServiceImpl implements IUserService {
         userEntity.setActivationDate(new Date());
         userEntity.setState(UserStateEnum.VALIDATED);
         return userRepository.save(userEntity);
-    }
-
-    /**
-     *
-     * @param event
-     */
-    @Override
-    public Long addTokensToWallet(final NewTokensOrderApprovedEvent event) throws Exception {
-        Assert.notNull(event, "event can not be null");
-        log.debug("Add tokens to wallet, order id " + event.getOrderId());
-        final CreatedOrderEntity createdOrder = createdOrderRepository.findById(event.getOrderId()).orElseThrow(() -> new IllegalStateException("Order not found"));
-        final String targetWalletHash = createdOrder.getUser().getWalletHash();
-        final Long amountWei = createdOrder.getAmountWEI();
-        etherFaucetBlockchainRepository.sendFunds(targetWalletHash, amountWei);
-        tokenManagementBlockchainRepository.addTokens(targetWalletHash, createdOrder.getTokens());
-        return tokenManagementBlockchainRepository.getMyTokens(targetWalletHash);
-    }
-
-    /**
-     *
-     * @param event
-     */
-    @Override
-    public CreatedOrderEntity completeOrder(final OnTokensOrderCompletedEvent event) {
-        Assert.notNull(event, "event can not be null");
-        log.debug("Complete Order id: " + event.getOrderId());
-
-        final CreatedOrderEntity orderEntity = createdOrderRepository.findById(event.getOrderId())
-                .orElseThrow(() -> new IllegalStateException("Order not found"));
-        orderEntity.setCompletedAt(new Date());
-        orderEntity.setStatus(CreatedOrderStateEnum.COMPLETED);
-        return createdOrderRepository.save(orderEntity);
     }
 
     /**

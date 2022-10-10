@@ -13,7 +13,7 @@ import com.dreamsoftware.tcs.persistence.ldap.repository.IUserLdapRepository;
 import com.dreamsoftware.tcs.persistence.nosql.entity.AuthenticationProviderTypeEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.AuthorityEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationAuthorityEntity;
-import com.dreamsoftware.tcs.stream.events.user.OnNewUserRegistrationEvent;
+import com.dreamsoftware.tcs.stream.events.user.registration.OnNewStudentRegistrationEvent;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserLoginEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserLoginPlatformEnum;
@@ -326,9 +326,8 @@ public class AccountsServiceImpl implements IAccountsService {
         userToActivate.setConfirmationToken(null);
         userToActivate.setWalletHash(walletHash);
         final UserEntity userActivated = userRepository.save(userToActivate);
-        streamBridge.send(streamChannelsProperties.getNewUserRegistration(), OnNewUserRegistrationEvent.builder()
+        streamBridge.send(streamChannelsProperties.getNewUserRegistration(), OnNewStudentRegistrationEvent.builder()
                 .walletHash(userActivated.getWalletHash())
-                .userType(userActivated.getType())
                 .build());
         return simpleUserMapper.entityToDTO(userActivated);
     }
@@ -421,7 +420,7 @@ public class AccountsServiceImpl implements IAccountsService {
         if (StringUtils.isNoneEmpty(signUpSocialUser.getAvatarUrl())) {
             uploadUserAvatarService.uploadFromUrl(userEntitySaved.getId(), signUpSocialUser.getAvatarUrl());
         }
-        streamBridge.send(streamChannelsProperties.getNewUserRegistration(), OnNewUserRegistrationEvent.builder()
+        streamBridge.send(streamChannelsProperties.getNewUserRegistration(), OnNewStudentRegistrationEvent.builder()
                 .walletHash(userEntitySaved.getWalletHash())
                 .build());
         return simpleUserMapper.entityToDTO(userEntitySaved);
