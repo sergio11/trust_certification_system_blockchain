@@ -183,4 +183,9 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
                 .map(simpleCertificationAuthorityDetailMapper::entityToDTO);
     }
 
+    @Override
+    public void remove(String caId) {
+
+    }
+
 }

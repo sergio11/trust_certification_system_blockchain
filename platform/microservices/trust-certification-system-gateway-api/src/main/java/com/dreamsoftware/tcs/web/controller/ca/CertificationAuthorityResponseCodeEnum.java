@@ -25,7 +25,9 @@ public enum CertificationAuthorityResponseCodeEnum implements IResponseCodeTypes
     ADD_CA_MEMBER_FAILED(214L),
     REMOVE_CA_MEMBER_FAILED(215L),
     ADD_CA_MEMBER_SUCCESSFULLY(216L),
-    REMOVE_CA_MEMBER_SUCCESSFULLY(217L);
+    REMOVE_CA_MEMBER_SUCCESSFULLY(217L),
+    REMOVE_CA_SUCCESSFULLY(218L),
+    REMOVE_CA_FAILED(219L);
 
     private final Long code;
     public static final String CATEGORY_NAME = "CERTIFICATION_AUTHORITY";

@@ -1,8 +1,9 @@
 package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.processor.handlers.AbstractRegistrationHandler;
+import com.dreamsoftware.tcs.processor.handlers.AbstractUserManagementHandler;
 import com.dreamsoftware.tcs.service.IUserRegistrationService;
-import com.dreamsoftware.tcs.stream.events.user.registration.AbstractRegistrationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.user.AbstractUserManagementEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +27,10 @@ public class UserRegistrationServiceImpl implements IUserRegistrationService {
      * @throws Exception
      */
     @Override
-    public String handle(GenericMessage<String> event) throws Exception {
+    public AbstractNotificationEvent handle(GenericMessage<String> event) throws Exception {
         log.debug("Event payload -> " + event.getPayload());
-        final AbstractRegistrationEvent registrationEvent = objectMapper.readValue(event.getPayload(), AbstractRegistrationEvent.class);
-        final AbstractRegistrationHandler eventHandler = getRegistrationHandler(registrationEvent.getEntityType());
+        final AbstractUserManagementEvent registrationEvent = objectMapper.readValue(event.getPayload(), AbstractUserManagementEvent.class);
+        final AbstractUserManagementHandler eventHandler = getRegistrationHandler(registrationEvent.getEntityType());
         return eventHandler.onHandle(registrationEvent);
     }
 
@@ -39,9 +40,9 @@ public class UserRegistrationServiceImpl implements IUserRegistrationService {
      * @return
      * @param <T>
      */
-    private <T extends AbstractRegistrationEvent> AbstractRegistrationHandler<T> getRegistrationHandler(Class<T> clazz) {
+    private <T extends AbstractUserManagementEvent> AbstractUserManagementHandler<T> getRegistrationHandler(Class<T> clazz) {
         log.debug("getRegistrationHandler -> " + clazz.getCanonicalName());
-        ResolvableType type = ResolvableType.forClassWithGenerics(AbstractRegistrationHandler.class, clazz);
-        return applicationContext.<AbstractRegistrationHandler<T>>getBeanProvider(type).getObject();
+        ResolvableType type = ResolvableType.forClassWithGenerics(AbstractUserManagementHandler.class, clazz);
+        return applicationContext.<AbstractUserManagementHandler<T>>getBeanProvider(type).getObject();
     }
 }

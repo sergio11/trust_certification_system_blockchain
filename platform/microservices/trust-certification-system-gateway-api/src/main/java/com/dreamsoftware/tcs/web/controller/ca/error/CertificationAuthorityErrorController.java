@@ -1,15 +1,7 @@
 package com.dreamsoftware.tcs.web.controller.ca.error;
 
 import com.dreamsoftware.tcs.web.controller.ca.CertificationAuthorityResponseCodeEnum;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.AddCaMemberException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.DisableCertificationAuthorityException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.DisableCertificationAuthorityMemberException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.EnableCertificationAuthorityException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.EnableCertificationAuthorityMemberException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.GetAllCertificationAuthoritiesException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.GetCertificationAuthorityException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.PartialUpdateCAException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.RemoveCaMemberException;
+import com.dreamsoftware.tcs.web.controller.ca.error.exception.*;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
@@ -129,6 +121,22 @@ public class CertificationAuthorityErrorController extends SupportController {
         return responseHelper.createAndSendErrorResponse(CertificationAuthorityResponseCodeEnum.REMOVE_CA_MEMBER_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("remove_ca_member_failed", request));
     }
+
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(RemoveCaException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleRemoveCaException(final RemoveCaException ex, final HttpServletRequest request) {
+        log.error("Handler for RemoveCaException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationAuthorityResponseCodeEnum.REMOVE_CA_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("remove_ca_failed", request));
+    }
+
 
     /**
      *
