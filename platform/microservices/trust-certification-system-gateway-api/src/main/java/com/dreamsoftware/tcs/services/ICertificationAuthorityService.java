@@ -36,7 +36,7 @@ public interface ICertificationAuthorityService {
      * @return
      * @throws Throwable
      */
-    CertificationAuthorityDetailDTO enable(final String id) throws Throwable;
+    void enable(final String id) throws Throwable;
 
     /**
      * Enable Certification Authority Member
@@ -47,7 +47,7 @@ public interface ICertificationAuthorityService {
      * @return
      * @throws Throwable
      */
-    CertificationAuthorityDetailDTO enableMember(final String caId, final String memberId, final String adminId) throws Throwable;
+    void enableMember(final String caId, final String memberId, final String adminId) throws Throwable;
 
     /**
      * Disable Certification Authority
@@ -56,7 +56,7 @@ public interface ICertificationAuthorityService {
      * @return
      * @throws Throwable
      */
-    CertificationAuthorityDetailDTO disable(final String id) throws Throwable;
+    void disable(final String id) throws Throwable;
 
     /**
      * Disable Certification Authority Member
@@ -67,7 +67,7 @@ public interface ICertificationAuthorityService {
      * @return
      * @throws Throwable
      */
-    CertificationAuthorityDetailDTO disableMember(final String caId, final String memberId, final String adminId) throws Throwable;
+    void disableMember(final String caId, final String memberId, final String adminId) throws Throwable;
 
     /**
      * Add Certification Authority Member
@@ -80,14 +80,14 @@ public interface ICertificationAuthorityService {
     CertificationAuthorityDetailDTO addMember(final String id, final AddCaMemberDTO member) throws Throwable;
 
     /**
-     * Add Certification Authority Member
-     *
-     * @param id
+     * Remove Certification Authority Member
+     * @param caId
      * @param memberId
+     * @param adminId
      * @return
      * @throws Throwable
      */
-    CertificationAuthorityDetailDTO removeMember(final String id, final String memberId) throws Throwable;
+    void removeMember(final String caId, final String memberId, final String adminId) throws Throwable;
 
     /**
      *
