@@ -4,10 +4,10 @@ import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.CertificationAuthorityDetailMapper;
 import com.dreamsoftware.tcs.mapper.SimpleCertificationAuthorityDetailMapper;
 import com.dreamsoftware.tcs.mapper.UpdateCertificationAuthorityMapper;
-import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationAuthorityEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationAuthorityRepository;
 import com.dreamsoftware.tcs.services.ICertificationAuthorityService;
+import com.dreamsoftware.tcs.stream.events.user.*;
 import com.dreamsoftware.tcs.web.dto.request.AddCaMemberDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationAuthorityDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleCertificationAuthorityDetailDTO;
@@ -18,11 +18,11 @@ import org.bson.types.ObjectId;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author ssanchez
  */
 @Slf4j
@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 public class CertificationAuthorityServiceImpl implements ICertificationAuthorityService {
 
     private final CertificationAuthorityRepository certificationAuthorityRepository;
-    private final ICertificationAuthorityBlockchainRepository caBlockchainRepository;
     private final SimpleCertificationAuthorityDetailMapper simpleCertificationAuthorityDetailMapper;
     private final CertificationAuthorityDetailMapper certificationAuthorityDetailMapper;
     private final UpdateCertificationAuthorityMapper updateCertificationAuthorityMapper;
@@ -39,7 +38,6 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     private final StreamBridge streamBridge;
 
     /**
-     *
      * @return @throws Throwable
      */
     @Override
@@ -68,7 +66,6 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     }
 
     /**
-     *
      * @param caId
      * @param memberId
      * @param adminId
@@ -76,16 +73,18 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
      * @throws Throwable
      */
     @Override
-    public CertificationAuthorityDetailDTO enableMember(final String caId, final String memberId, final String adminId) throws Throwable {
+    public void enableMember(final String caId, final String memberId, final String adminId) throws Throwable {
         Assert.notNull(caId, "Ca ID can not be null");
         Assert.notNull(memberId, "Id can not be null");
         Assert.notNull(adminId, "Id can not be null");
-
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        streamBridge.send(streamChannelsProperties.getUserManagement(), EnableCertificationAuthorityMemberEvent.builder()
+                .adminId(adminId)
+                .memberId(memberId)
+                .caId(caId)
+                .build());
     }
 
     /**
-     *
      * @param caId
      * @param memberId
      * @param adminId
@@ -93,15 +92,18 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
      * @throws Throwable
      */
     @Override
-    public CertificationAuthorityDetailDTO disableMember(final String caId, final String memberId, final String adminId) throws Throwable {
+    public void disableMember(final String caId, final String memberId, final String adminId) throws Throwable {
         Assert.notNull(caId, "Ca ID can not be null");
         Assert.notNull(memberId, "Id can not be null");
         Assert.notNull(adminId, "Id can not be null");
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        streamBridge.send(streamChannelsProperties.getUserManagement(), DisableCertificationAuthorityMemberEvent.builder()
+                .adminId(adminId)
+                .memberId(memberId)
+                .caId(caId)
+                .build());
     }
 
     /**
-     *
      * @param id
      * @param member
      * @return
@@ -116,40 +118,47 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
 
     /**
      *
-     * @param id
+     * @param caId
      * @param memberId
-     * @return
+     * @param adminId
      * @throws Throwable
      */
     @Override
-    public CertificationAuthorityDetailDTO removeMember(String id, String memberId) throws Throwable {
-        Assert.notNull(id, "Id can not be null");
+    public void removeMember(final String caId, final String memberId, final String adminId) throws Throwable {
+        Assert.notNull(caId, "caId can not be null");
         Assert.notNull(memberId, "member can not be null");
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Assert.notNull(adminId, "adminId can not be null");
+        streamBridge.send(streamChannelsProperties.getUserManagement(), RemoveCertificationAuthorityMemberEvent.builder()
+                .caId(caId)
+                .memberId(memberId)
+                .adminId(adminId)
+                .build());
     }
 
     /**
-     *
      * @param id
      * @return
      * @throws Throwable
      */
     @Override
-    public CertificationAuthorityDetailDTO enable(String id) throws Throwable {
+    public void enable(final String id) throws Throwable {
         Assert.notNull(id, "Id can not be null");
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        streamBridge.send(streamChannelsProperties.getUserManagement(), EnableCertificationAuthorityEvent.builder()
+                .caId(id)
+                .build());
     }
 
     /**
-     *
      * @param id
      * @return
      * @throws Throwable
      */
     @Override
-    public CertificationAuthorityDetailDTO disable(String id) throws Throwable {
+    public void disable(final String id) throws Throwable {
         Assert.notNull(id, "Id can not be null");
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        streamBridge.send(streamChannelsProperties.getUserManagement(), DisableCertificationAuthorityEvent.builder()
+                .caId(id)
+                .build());
     }
 
     /**
@@ -168,7 +177,6 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     }
 
     /**
-     *
      * @param id
      * @param model
      * @return
@@ -183,9 +191,15 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
                 .map(simpleCertificationAuthorityDetailMapper::entityToDTO);
     }
 
+    /**
+     * @param caId
+     */
     @Override
-    public void remove(String caId) {
-
+    public void remove(final String caId) {
+        Assert.notNull(caId, "caId can not be null");
+        streamBridge.send(streamChannelsProperties.getUserManagement(), RemoveCertificationAuthorityEvent.builder()
+                .caId(caId)
+                .build());
     }
 
 }

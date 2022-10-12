@@ -27,9 +27,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import javax.json.JsonMergePatch;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +42,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- *
  * @author ssanchez
  */
 @RestController
@@ -62,10 +64,10 @@ public class CertificationAuthorityController extends SupportController {
      */
     @Operation(summary = "GET_ALL - Get All certification authorities have been registered", description = "Get All certification authorities have been registered", tags = {"CA"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "All CAs registered",
-                content = @Content(schema = @Schema(implementation = SimpleCertificationAuthorityDetailDTO.class))),
-        @ApiResponse(responseCode = "404", description = "User Not Found",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "All CAs registered",
+                    content = @Content(schema = @Schema(implementation = SimpleCertificationAuthorityDetailDTO.class))),
+            @ApiResponse(responseCode = "404", description = "User Not Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @RequestMapping(value = "/all", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -89,10 +91,10 @@ public class CertificationAuthorityController extends SupportController {
      */
     @Operation(summary = "GET_CA_DETAIL - Get Certification Authority Detail", description = "Get Certification Authority Detail", tags = {"CA"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "CA Detail",
-                content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
-        @ApiResponse(responseCode = "404", description = "Ca Not Found",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "CA Detail",
+                    content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Ca Not Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> getDetailById(
@@ -105,6 +107,8 @@ public class CertificationAuthorityController extends SupportController {
             return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_DETAIL,
                     HttpStatus.OK, caDetailDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             throw new GetCertificationAuthorityException(ex.getMessage(), ex);
         }
@@ -119,10 +123,10 @@ public class CertificationAuthorityController extends SupportController {
      */
     @Operation(summary = "GET_CA_DETAIL - Get Current Certification Authority Detail", description = "Get Certification Authority Detail", tags = {"CA"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "CA Detail",
-                content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
-        @ApiResponse(responseCode = "404", description = "Ca Not Found",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "CA Detail",
+                    content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Ca Not Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
@@ -140,7 +144,6 @@ public class CertificationAuthorityController extends SupportController {
     }
 
     /**
-     *
      * @param selfUser
      * @param id
      * @param mergePatchDocument
@@ -182,16 +185,19 @@ public class CertificationAuthorityController extends SupportController {
     @RequestMapping(value = "/{id}/enable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForAdmin
-    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> enable(
+    public ResponseEntity<APIResponse<String>> enable(
             @Parameter(name = "id", description = "CA Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}")
-            @PathVariable("id") String id
+            @PathVariable("id") String id,
+            @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
         try {
-            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.enable(id);
+            certificationAuthorityService.enable(id);
             return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_ENABLED,
-                    HttpStatus.OK, caDetailDTO);
+                    HttpStatus.OK, resolveString("ca_enabled_successfully", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             throw new EnableCertificationAuthorityException(ex.getMessage(), ex);
         }
@@ -210,20 +216,23 @@ public class CertificationAuthorityController extends SupportController {
     @RequestMapping(value = "/{caId}/member/{memberId}/enable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCaAdmin
-    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> enableMember(
+    public ResponseEntity<APIResponse<String>> enableMember(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "caId", description = "Certification Authority Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
             @PathVariable("caId") String caId,
             @Parameter(name = "memberId", description = "Member Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{member_id_not_valid}")
-            @PathVariable("memberId") String memberId
+            @PathVariable("memberId") String memberId,
+            @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
         try {
-            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.enableMember(caId, memberId, selfUser.getUserId());
+            certificationAuthorityService.enableMember(caId, memberId, selfUser.getUserId());
             return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_MEMBER_ENABLED,
-                    HttpStatus.OK, caDetailDTO);
+                    HttpStatus.OK, resolveString("ca_member_enabled_successfully", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             throw new EnableCertificationAuthorityMemberException(ex.getMessage(), ex);
         }
@@ -240,15 +249,18 @@ public class CertificationAuthorityController extends SupportController {
     @RequestMapping(value = "/{id}/disable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForAdmin
-    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> disable(
+    public ResponseEntity<APIResponse<String>> disable(
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}") @PathVariable("id") String id
+            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}") @PathVariable("id") String id,
+            @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
         try {
-            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.disable(id);
+            certificationAuthorityService.disable(id);
             return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_DISABLED,
-                    HttpStatus.OK, caDetailDTO);
+                    HttpStatus.OK, resolveString("ca_disabled_successfully", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             throw new DisableCertificationAuthorityException(ex.getMessage(), ex);
         }
@@ -267,20 +279,23 @@ public class CertificationAuthorityController extends SupportController {
     @RequestMapping(value = "/{caId}/member/{memberId}/disable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCaAdmin
-    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> disableMember(
+    public ResponseEntity<APIResponse<String>> disableMember(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "caId", description = "Certification Authority Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
             @PathVariable("caId") String caId,
             @Parameter(name = "memberId", description = "Member Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{member_id_not_valid}")
-            @PathVariable("memberId") String memberId
+            @PathVariable("memberId") String memberId,
+            @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
         try {
-            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.disableMember(caId, memberId, selfUser.getUserId());
+            certificationAuthorityService.disableMember(caId, memberId, selfUser.getUserId());
             return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_MEMBER_DISABLED,
-                    HttpStatus.OK, caDetailDTO);
+                    HttpStatus.OK, resolveString("ca_member_disabled_successfully", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             throw new DisableCertificationAuthorityMemberException(ex.getMessage(), ex);
         }
@@ -288,6 +303,7 @@ public class CertificationAuthorityController extends SupportController {
 
     /**
      * Add Certification Authority Member
+     *
      * @param selfUser
      * @param caId
      * @return
@@ -295,10 +311,10 @@ public class CertificationAuthorityController extends SupportController {
      */
     @Operation(summary = "ADD_CA_MEMBER - Add member to certification authority", description = "Add member to certification authority", tags = {"CA"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "CA Member added succesfully",
-                content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
-        @ApiResponse(responseCode = "500", description = "An error ocurred when adding CA member",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "CA Member added succesfully",
+                    content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
+            @ApiResponse(responseCode = "500", description = "An error ocurred when adding CA member",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @RequestMapping(value = "/{id}/member/add", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -316,6 +332,8 @@ public class CertificationAuthorityController extends SupportController {
             return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.ADD_CA_MEMBER_SUCCESSFULLY,
                     HttpStatus.OK, caDetailDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             throw new AddCaMemberException(ex.getMessage(), ex);
         }
@@ -323,6 +341,7 @@ public class CertificationAuthorityController extends SupportController {
 
     /**
      * Remove Certification Authority Member
+     *
      * @param selfUser
      * @param caId
      * @param memberId
@@ -331,26 +350,29 @@ public class CertificationAuthorityController extends SupportController {
      */
     @Operation(summary = "REMOVE_CA_MEMBER - Remove member from certification authority", description = "Remove member from certification authority", tags = {"CA"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "CA Member removed successfully",
-                content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
-        @ApiResponse(responseCode = "500", description = "An error occurred when removing CA member",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "CA Member removed successfully",
+                    content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
+            @ApiResponse(responseCode = "500", description = "An error occurred when removing CA member",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @RequestMapping(value = "/{caId}/member/{memberId}/remove", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCaAdmin
-    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> removeCaMember(
+    public ResponseEntity<APIResponse<String>> removeCaMember(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "caId", description = "Certification Authority Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
             @PathVariable("caId") String caId,
             @Parameter(name = "memberId", description = "CA Member Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}")
-            @PathVariable("memberId") String memberId) throws Throwable {
+            @PathVariable("memberId") String memberId,
+            @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
         try {
-            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.removeMember(caId, memberId);
+            certificationAuthorityService.removeMember(caId, memberId, selfUser.getUserId());
             return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.REMOVE_CA_MEMBER_SUCCESSFULLY,
-                    HttpStatus.OK, caDetailDTO);
+                    HttpStatus.OK, resolveString("ca_member_removed_successfully", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             throw new RemoveCaMemberException(ex.getMessage(), ex);
         }
@@ -358,6 +380,7 @@ public class CertificationAuthorityController extends SupportController {
 
     /**
      * Remove Certification Authority
+     *
      * @param caId
      * @return
      * @throws Throwable
@@ -374,12 +397,15 @@ public class CertificationAuthorityController extends SupportController {
     public ResponseEntity<APIResponse<String>> removeCa(
             @Parameter(name = "caId", description = "Certification Authority Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
-            @PathVariable("caId") String caId) throws Throwable {
+            @PathVariable("caId") String caId,
+            @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
         try {
             certificationAuthorityService.remove(caId);
             return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.REMOVE_CA_SUCCESSFULLY,
-                    HttpStatus.OK, "");
+                    HttpStatus.OK, resolveString("ca_removed_successfully", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
         } catch (final Exception ex) {
             throw new RemoveCaException(ex.getMessage(), ex);
         }
