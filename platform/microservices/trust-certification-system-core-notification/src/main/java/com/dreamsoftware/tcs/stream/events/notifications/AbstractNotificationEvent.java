@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.stream.events.notifications;
 
-import com.dreamsoftware.tcs.stream.events.notifications.users.UserPendingValidationNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.users.*;
 import com.dreamsoftware.tcs.stream.events.notifications.ca.CADisabledNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.ca.CAEnabledNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateDisabledNotificationEvent;
@@ -16,9 +16,6 @@ import com.dreamsoftware.tcs.stream.events.notifications.course.CourseDeletedNot
 import com.dreamsoftware.tcs.stream.events.notifications.course.CourseDisabledNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.course.CourseEnabledNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.course.NewCourseRegistrationRequestedNotificationEvent;
-import com.dreamsoftware.tcs.stream.events.notifications.users.OrderCompletedNotificationEvent;
-import com.dreamsoftware.tcs.stream.events.notifications.users.PasswordResetNotificationEvent;
-import com.dreamsoftware.tcs.stream.events.notifications.users.UserRegisteredNotificationEvent;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -28,7 +25,6 @@ import lombok.Getter;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
- *
  * @author ssanchez
  */
 @Getter
@@ -36,25 +32,31 @@ import org.springframework.core.annotation.AnnotationUtils;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
 @JsonSubTypes({
-    @JsonSubTypes.Type(UserPendingValidationNotificationEvent.class),
-    @JsonSubTypes.Type(PasswordResetNotificationEvent.class),
-    @JsonSubTypes.Type(CAEnabledNotificationEvent.class),
-    @JsonSubTypes.Type(CADisabledNotificationEvent.class),
-    @JsonSubTypes.Type(CertificateDisabledNotificationEvent.class),
-    @JsonSubTypes.Type(CertificateEnabledNotificationEvent.class),
-    @JsonSubTypes.Type(CertificateRenewedNotificationEvent.class),
-    @JsonSubTypes.Type(CertificateRequestAcceptedNotificationEvent.class),
-    @JsonSubTypes.Type(CertificateRequestRejectedNotificationEvent.class),
-    @JsonSubTypes.Type(CertificateVisibilityChangedNotificationEvent.class),
-    @JsonSubTypes.Type(IssueCertificateRequestedNotificationEvent.class),
-    @JsonSubTypes.Type(CourseDeletedNotificationEvent.class),
-    @JsonSubTypes.Type(CourseDisabledNotificationEvent.class),
-    @JsonSubTypes.Type(CourseEnabledNotificationEvent.class),
-    @JsonSubTypes.Type(NewCourseRegistrationRequestedNotificationEvent.class),
-    @JsonSubTypes.Type(OrderCompletedNotificationEvent.class),
-    @JsonSubTypes.Type(UserRegisteredNotificationEvent.class),
-    @JsonSubTypes.Type(CertificationCourseRegisteredNotificationEvent.class),
-    @JsonSubTypes.Type(CertificateIssuedNotificationEvent.class)
+        @JsonSubTypes.Type(UserPendingValidationNotificationEvent.class),
+        @JsonSubTypes.Type(PasswordResetNotificationEvent.class),
+        @JsonSubTypes.Type(CAEnabledNotificationEvent.class),
+        @JsonSubTypes.Type(CADisabledNotificationEvent.class),
+        @JsonSubTypes.Type(CertificateDisabledNotificationEvent.class),
+        @JsonSubTypes.Type(CertificateEnabledNotificationEvent.class),
+        @JsonSubTypes.Type(CertificateRenewedNotificationEvent.class),
+        @JsonSubTypes.Type(CertificateRequestAcceptedNotificationEvent.class),
+        @JsonSubTypes.Type(CertificateRequestRejectedNotificationEvent.class),
+        @JsonSubTypes.Type(CertificateVisibilityChangedNotificationEvent.class),
+        @JsonSubTypes.Type(IssueCertificateRequestedNotificationEvent.class),
+        @JsonSubTypes.Type(CourseDeletedNotificationEvent.class),
+        @JsonSubTypes.Type(CourseDisabledNotificationEvent.class),
+        @JsonSubTypes.Type(CourseEnabledNotificationEvent.class),
+        @JsonSubTypes.Type(NewCourseRegistrationRequestedNotificationEvent.class),
+        @JsonSubTypes.Type(OrderCompletedNotificationEvent.class),
+        @JsonSubTypes.Type(UserRegisteredNotificationEvent.class),
+        @JsonSubTypes.Type(CertificationCourseRegisteredNotificationEvent.class),
+        @JsonSubTypes.Type(CertificateIssuedNotificationEvent.class),
+        @JsonSubTypes.Type(CertificationAuthorityDisabledNotificationEvent.class),
+        @JsonSubTypes.Type(CertificationAuthorityEnabledNotificationEvent.class),
+        @JsonSubTypes.Type(CertificationAuthorityMemberDisabledNotificationEvent.class),
+        @JsonSubTypes.Type(CertificationAuthorityMemberEnabledNotificationEvent.class),
+        @JsonSubTypes.Type(CertificationAuthorityMemberRemovedNotificationEvent.class),
+        @JsonSubTypes.Type(CertificationAuthorityRemovedNotificationEvent.class)
 })
 public abstract class AbstractNotificationEvent {
 

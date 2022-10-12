@@ -40,9 +40,9 @@ public class UserRegistrationServiceImpl implements IUserRegistrationService {
      * @return
      * @param <T>
      */
-    private <T extends AbstractUserManagementEvent> AbstractUserManagementHandler<T> getRegistrationHandler(Class<T> clazz) {
+    private <T extends AbstractUserManagementEvent> AbstractUserManagementHandler<T, ? extends AbstractNotificationEvent> getRegistrationHandler(Class<T> clazz) {
         log.debug("getRegistrationHandler -> " + clazz.getCanonicalName());
         ResolvableType type = ResolvableType.forClassWithGenerics(AbstractUserManagementHandler.class, clazz);
-        return applicationContext.<AbstractUserManagementHandler<T>>getBeanProvider(type).getObject();
+        return applicationContext.<AbstractUserManagementHandler<T, ? extends AbstractNotificationEvent>>getBeanProvider(type).getObject();
     }
 }

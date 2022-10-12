@@ -5,8 +5,6 @@ import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchai
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
-import com.dreamsoftware.tcs.processor.handlers.AbstractUserManagementHandler;
-import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.users.UserRegisteredNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.user.NewCertificationAuthorityEvent;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +18,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class NewCertificationAuthorityHandler extends AbstractUserManagementHandler<NewCertificationAuthorityEvent> {
+public class NewCertificationAuthorityHandler extends SupportUserRegistrationHandler<NewCertificationAuthorityEvent> {
 
     /**
      * Certification Authority Blockchain Repository
@@ -38,7 +36,7 @@ public class NewCertificationAuthorityHandler extends AbstractUserManagementHand
     private final UserRepository userRepository;
 
     @Override
-    public AbstractNotificationEvent onHandle(final NewCertificationAuthorityEvent event) throws RepositoryException {
+    public UserRegisteredNotificationEvent onHandle(final NewCertificationAuthorityEvent event) throws RepositoryException {
         Assert.notNull(event, "Event can not be null");
         // Add Seed funds
         addSeedFunds(event.getWalletHash());

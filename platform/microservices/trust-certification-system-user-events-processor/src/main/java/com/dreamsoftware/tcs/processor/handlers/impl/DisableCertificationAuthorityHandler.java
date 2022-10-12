@@ -5,7 +5,7 @@ import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserAccountStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractUserManagementHandler;
-import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.users.CertificationAuthorityDisabledNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.user.DisableCertificationAuthorityEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class DisableCertificationAuthorityHandler extends AbstractUserManagementHandler<DisableCertificationAuthorityEvent> {
+public class DisableCertificationAuthorityHandler extends AbstractUserManagementHandler<DisableCertificationAuthorityEvent, CertificationAuthorityDisabledNotificationEvent> {
 
     /**
      * Certification Authority Blockchain Repository
@@ -31,11 +31,11 @@ public class DisableCertificationAuthorityHandler extends AbstractUserManagement
     private final UserRepository userRepository;
 
     @Override
-    public AbstractNotificationEvent onHandle(final DisableCertificationAuthorityEvent event) throws RepositoryException {
+    public CertificationAuthorityDisabledNotificationEvent onHandle(final DisableCertificationAuthorityEvent event) throws RepositoryException {
         Assert.notNull(event, "Event can not be null");
         certificationAuthorityBlockchainRepository.disable(event.getCaId());
         // Disable all users belong to this CA
         userRepository.updateAccountStateByCaId(event.getCaId(), UserAccountStateEnum.DISABLED);
-        return null;
+        return new CertificationAuthorityDisabledNotificationEvent(event.getCaId());
     }
 }
