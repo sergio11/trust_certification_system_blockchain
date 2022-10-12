@@ -32,6 +32,8 @@ public class UserDetailsImpl<T> implements ICommonUserDetailsAware<T> {
     private String language;
     private UserStateEnum state;
     private UserAccountStateEnum accountState;
+
+    private Boolean hasCredentialsExpired;
     private String walletHash;
     private Set<GrantedAuthority> grantedAuthorities;
 
@@ -52,7 +54,7 @@ public class UserDetailsImpl<T> implements ICommonUserDetailsAware<T> {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return !hasCredentialsExpired;
     }
 
     @Override

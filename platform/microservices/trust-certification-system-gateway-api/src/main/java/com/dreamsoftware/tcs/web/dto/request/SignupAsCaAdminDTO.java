@@ -1,7 +1,10 @@
 package com.dreamsoftware.tcs.web.dto.request;
 
+import com.dreamsoftware.tcs.web.validation.constraints.EmailShouldBeUnique;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,6 +51,15 @@ public class SignupAsCaAdminDTO {
     @Schema(name = "default_cost_of_issuing_certificate", description = "Certification Authority Default Cost of issuing certificate", required = true)
     @JsonProperty("default_cost_of_issuing_certificate")
     private Integer defaultCostOfIssuingCertificate;
+
+    /**
+     * Email
+     */
+    @JsonProperty("support_mail")
+    @NotBlank(message = "{support_mail_email_not_null}")
+    @Email(message = "{support_mail_email_invalid}")
+    @EmailShouldBeUnique(message = "{support_mail_email_unique}")
+    private String supportMail;
 
     /**
      * Certification Authority Admin
