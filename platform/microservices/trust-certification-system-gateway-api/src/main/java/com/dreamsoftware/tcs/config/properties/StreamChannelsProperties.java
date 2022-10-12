@@ -18,12 +18,6 @@ import org.springframework.context.annotation.Configuration;
 public class StreamChannelsProperties {
 
     /**
-     * New User Registration Channel
-     */
-    @Value("${channels.new-user-registration}")
-    private String newUserRegistration;
-
-    /**
      * User Management Channel
      */
     @Value("${channels.user-management}")
@@ -61,7 +55,6 @@ public class StreamChannelsProperties {
 
     @PostConstruct
     public void onPostConstruct() {
-        log.debug("newUserRegistration -> " + newUserRegistration);
         log.debug("userManagement -> " + userManagement);
         log.debug("newCertificationCourseRegistration -> " + newCertificationCourseRegistration);
         log.debug("newCertificationRequest -> " + newCertificationRequest);

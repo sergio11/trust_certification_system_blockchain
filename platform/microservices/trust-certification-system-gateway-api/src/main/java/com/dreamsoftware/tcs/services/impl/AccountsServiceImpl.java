@@ -1,69 +1,41 @@
 package com.dreamsoftware.tcs.services.impl;
 
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
-import com.dreamsoftware.tcs.mapper.AuthProviderMapper;
-import com.dreamsoftware.tcs.mapper.SignUpSocialUserMapper;
-import com.dreamsoftware.tcs.mapper.SignUpUserMapper;
-import com.dreamsoftware.tcs.mapper.SimpleSocialUserMapper;
-import com.dreamsoftware.tcs.mapper.SimpleUserLoginMapper;
-import com.dreamsoftware.tcs.mapper.SimpleUserMapper;
-import com.dreamsoftware.tcs.mapper.UserDetailsMapper;
-import com.dreamsoftware.tcs.mapper.UserLdapAccountMapper;
+import com.dreamsoftware.tcs.mapper.*;
 import com.dreamsoftware.tcs.persistence.ldap.repository.IUserLdapRepository;
-import com.dreamsoftware.tcs.persistence.nosql.entity.AuthenticationProviderTypeEnum;
-import com.dreamsoftware.tcs.persistence.nosql.entity.AuthorityEnum;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationAuthorityEntity;
-import com.dreamsoftware.tcs.stream.events.user.NewStudentEvent;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserLoginEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserLoginPlatformEnum;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
+import com.dreamsoftware.tcs.persistence.nosql.entity.*;
 import com.dreamsoftware.tcs.persistence.nosql.repository.AuthenticationProviderRepository;
-import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationAuthorityRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserLoginRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IWalletService;
-import com.dreamsoftware.tcs.services.IAccountsService;
-import com.dreamsoftware.tcs.services.IPasswordResetTokenService;
-import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
-import com.dreamsoftware.tcs.web.dto.response.AccessTokenDTO;
-import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
-import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
+import com.dreamsoftware.tcs.services.*;
+import com.dreamsoftware.tcs.stream.events.notifications.users.PasswordResetNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.users.UserPendingValidationNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.user.NewStudentEvent;
+import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
+import com.dreamsoftware.tcs.web.dto.request.*;
+import com.dreamsoftware.tcs.web.dto.response.*;
+import com.dreamsoftware.tcs.web.security.provider.social.SocialProviderAuthenticationToken;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import com.dreamsoftware.tcs.web.security.utils.JwtTokenHelper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.mobile.device.Device;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import com.dreamsoftware.tcs.services.IFacebookService;
-import com.dreamsoftware.tcs.services.IGoogleService;
-import com.dreamsoftware.tcs.services.IUploadImagesService;
-import com.dreamsoftware.tcs.stream.events.notifications.users.PasswordResetNotificationEvent;
-import com.dreamsoftware.tcs.stream.events.notifications.users.UserPendingValidationNotificationEvent;
-import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignInUserExternalProviderDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignUpExternalProviderDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignupAsCaAdminDTO;
-import com.dreamsoftware.tcs.web.dto.response.AuthenticationProviderDTO;
-import com.dreamsoftware.tcs.web.dto.response.SignUpSocialUserDTO;
-import com.dreamsoftware.tcs.web.dto.response.SimpleSocialUserDTO;
-import com.dreamsoftware.tcs.web.dto.response.SimpleUserLoginDTO;
-import com.dreamsoftware.tcs.web.security.provider.social.SocialProviderAuthenticationToken;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
-import org.apache.commons.lang3.StringUtils;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.authentication.AuthenticationManager;
 
 /**
  *
@@ -101,7 +73,6 @@ public class AccountsServiceImpl implements IAccountsService {
     private final AuthenticationManager adminAuthenticationManager;
     private final IUserLdapRepository userLdapRepository;
     private final UserLdapAccountMapper userLdapAccountMapper;
-    private final CertificationAuthorityRepository certificationAuthorityRepository;
 
     /**
      *
@@ -326,7 +297,7 @@ public class AccountsServiceImpl implements IAccountsService {
         userToActivate.setConfirmationToken(null);
         userToActivate.setWalletHash(walletHash);
         final UserEntity userActivated = userRepository.save(userToActivate);
-        streamBridge.send(streamChannelsProperties.getNewUserRegistration(), NewStudentEvent.builder()
+        streamBridge.send(streamChannelsProperties.getUserManagement(), NewStudentEvent.builder()
                 .walletHash(userActivated.getWalletHash())
                 .build());
         return simpleUserMapper.entityToDTO(userActivated);
@@ -341,7 +312,7 @@ public class AccountsServiceImpl implements IAccountsService {
         Assert.notNull(email, "Email can not be null");
         final PasswordResetTokenDTO resetPasswordToken = Optional.ofNullable(passwordResetTokenService.getPasswordResetTokenForUserWithEmail(email))
                 .orElseGet(() -> passwordResetTokenService.createPasswordResetTokenForUserWithEmail(email));
-        streamBridge.send(streamChannelsProperties.getNewUserRegistration(),
+        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(),
                 PasswordResetNotificationEvent.builder()
                         .email(resetPasswordToken.getEmail())
                         .expiryDate(resetPasswordToken.getExpiryDate())
@@ -420,7 +391,7 @@ public class AccountsServiceImpl implements IAccountsService {
         if (StringUtils.isNoneEmpty(signUpSocialUser.getAvatarUrl())) {
             uploadUserAvatarService.uploadFromUrl(userEntitySaved.getId(), signUpSocialUser.getAvatarUrl());
         }
-        streamBridge.send(streamChannelsProperties.getNewUserRegistration(), NewStudentEvent.builder()
+        streamBridge.send(streamChannelsProperties.getUserManagement(), NewStudentEvent.builder()
                 .walletHash(userEntitySaved.getWalletHash())
                 .build());
         return simpleUserMapper.entityToDTO(userEntitySaved);
