@@ -3,6 +3,7 @@ package com.dreamsoftware.tcs.services;
 import com.dreamsoftware.tcs.web.dto.request.AddCaMemberDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationAuthorityDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleCertificationAuthorityDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationAuthorityDTO;
 import java.util.Optional;
 
@@ -71,13 +72,13 @@ public interface ICertificationAuthorityService {
 
     /**
      * Add Certification Authority Member
-     *
-     * @param id
+     * @param caId
      * @param member
+     * @param adminWalletHash
      * @return
      * @throws Throwable
      */
-    CertificationAuthorityDetailDTO addMember(final String id, final AddCaMemberDTO member) throws Throwable;
+    SimpleUserDTO addMember(final String caId, final AddCaMemberDTO member, final String adminWalletHash) throws Throwable;
 
     /**
      * Remove Certification Authority Member

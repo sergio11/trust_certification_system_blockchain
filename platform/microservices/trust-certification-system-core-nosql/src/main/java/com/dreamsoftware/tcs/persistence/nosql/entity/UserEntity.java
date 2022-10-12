@@ -101,6 +101,12 @@ public class UserEntity {
     private Date lastPasswordReset;
 
     /**
+     * Has Credentials Expired
+     */
+    @Field("has_credentials_expired")
+    private Boolean hasCredentialsExpired = false;
+
+    /**
      * Certification Authority
      */
     @DBRef

@@ -9,6 +9,7 @@ import com.dreamsoftware.tcs.web.converter.mediatype.PatchMediaType;
 import com.dreamsoftware.tcs.web.dto.request.AddCaMemberDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationAuthorityDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleCertificationAuthorityDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationAuthorityDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdmin;
@@ -319,7 +320,7 @@ public class CertificationAuthorityController extends SupportController {
     @RequestMapping(value = "/{id}/member/add", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCaAdmin
-    public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> addCaMember(
+    public ResponseEntity<APIResponse<SimpleUserDTO>> addCaMember(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "id", description = "Certification Authority Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
@@ -328,10 +329,10 @@ public class CertificationAuthorityController extends SupportController {
                     required = true, schema = @Schema(implementation = AddCaMemberDTO.class))
             @Validated(ICommonSequence.class) AddCaMemberDTO caMember) throws Throwable {
         try {
-            final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.addMember(caId, caMember);
+            final SimpleUserDTO caMemberDTO = certificationAuthorityService.addMember(caId, caMember, selfUser.getWalletHash());
             return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.ADD_CA_MEMBER_SUCCESSFULLY,
-                    HttpStatus.OK, caDetailDTO);
+                    HttpStatus.OK, caMemberDTO);
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Exception ex) {

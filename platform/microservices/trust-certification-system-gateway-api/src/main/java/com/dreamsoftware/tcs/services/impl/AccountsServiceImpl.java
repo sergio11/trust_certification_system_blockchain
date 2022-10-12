@@ -11,6 +11,7 @@ import com.dreamsoftware.tcs.service.IWalletService;
 import com.dreamsoftware.tcs.services.*;
 import com.dreamsoftware.tcs.stream.events.notifications.users.PasswordResetNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.users.UserPendingValidationNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.user.NewCertificationAuthorityEvent;
 import com.dreamsoftware.tcs.stream.events.user.NewStudentEvent;
 import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
 import com.dreamsoftware.tcs.web.dto.request.*;
@@ -38,7 +39,6 @@ import java.util.Date;
 import java.util.Optional;
 
 /**
- *
  * @author ssanchez
  */
 @Service
@@ -75,7 +75,6 @@ public class AccountsServiceImpl implements IAccountsService {
     private final UserLdapAccountMapper userLdapAccountMapper;
 
     /**
-     *
      * @param dto
      * @param device
      * @return
@@ -96,7 +95,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param dto
      * @param device
      * @return
@@ -118,7 +116,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param dto
      * @param device
      * @return
@@ -155,7 +152,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param token
      * @return
      */
@@ -171,7 +167,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param token
      * @param clientAddr
      * @param clientUserAgent
@@ -209,7 +204,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param user
      * @return
      */
@@ -229,7 +223,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param user
      * @return
      */
@@ -251,7 +244,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param ca
      * @return
      */
@@ -266,6 +258,7 @@ public class AccountsServiceImpl implements IAccountsService {
                 .location(ca.getLocation())
                 .name(ca.getName())
                 .defaultCostOfIssuingCertificate(ca.getDefaultCostOfIssuingCertificate())
+                .supportMail(ca.getSupportMail())
                 .build();
         userToSave.setCa(caEntity);
         caEntity.setAdmin(userToSave);
@@ -297,14 +290,20 @@ public class AccountsServiceImpl implements IAccountsService {
         userToActivate.setConfirmationToken(null);
         userToActivate.setWalletHash(walletHash);
         final UserEntity userActivated = userRepository.save(userToActivate);
-        streamBridge.send(streamChannelsProperties.getUserManagement(), NewStudentEvent.builder()
-                .walletHash(userActivated.getWalletHash())
-                .build());
+        if (userToActivate.getType() == UserTypeEnum.STUDENT) {
+            streamBridge.send(streamChannelsProperties.getUserManagement(), NewStudentEvent.builder()
+                    .walletHash(userActivated.getWalletHash())
+                    .build());
+        } else if (userToActivate.getType() == UserTypeEnum.CA_ADMIN) {
+            streamBridge.send(streamChannelsProperties.getUserManagement(), NewCertificationAuthorityEvent.builder()
+                    .caId(userToActivate.getCa().getId().toString())
+                    .walletHash(userToActivate.getWalletHash())
+                    .build());
+        }
         return simpleUserMapper.entityToDTO(userActivated);
     }
 
     /**
-     *
      * @param email
      */
     @Override
@@ -324,7 +323,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param key
      * @return
      */
@@ -335,7 +333,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param dto
      * @return
      */
@@ -351,7 +348,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param dto
      * @return
      */
@@ -368,7 +364,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param socialUser
      * @param userAgent
      * @param defaultLanguage
@@ -399,7 +394,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param authenticationRequest
      * @param latitude
      * @param longitude
@@ -466,7 +460,6 @@ public class AccountsServiceImpl implements IAccountsService {
     }
 
     /**
-     *
      * @param authenticationManager
      * @param authenticationRequest
      * @return

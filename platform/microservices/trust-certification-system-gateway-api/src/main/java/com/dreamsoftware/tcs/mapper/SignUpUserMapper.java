@@ -3,6 +3,7 @@ package com.dreamsoftware.tcs.mapper;
 import com.dreamsoftware.tcs.persistence.nosql.entity.AuthorityEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.AuthorityEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.AuthorityRepository;
 import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
 import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
@@ -15,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 
 /**
- *
  * @author ssanchez
  */
 @Mapper(unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
@@ -47,9 +47,10 @@ public abstract class SignUpUserMapper {
      * @return
      */
     @Mappings({
-        @Mapping(expression = "java(passwordEncoder.encode(user.getPasswordClear()))", target = "password"),
-        @Mapping(expression = "java(getUserAuthority(authorityType))", target = "authority"),
-        @Mapping(expression = "java(tokenGeneratorService.generateToken(user.getFullName()))", target = "confirmationToken")
+            @Mapping(expression = "java(passwordEncoder.encode(user.getPasswordClear()))", target = "password"),
+            @Mapping(expression = "java(getUserAuthority(authorityType))", target = "authority"),
+            @Mapping(expression = "java(getUserType(authorityType))", target = "type"),
+            @Mapping(expression = "java(tokenGeneratorService.generateToken(user.getFullName()))", target = "confirmationToken")
     })
     @Named("signUpUserDTOToUserEntity")
     public abstract UserEntity signUpUserDTOToUserEntity(final SignUpUserDTO user, final AuthorityEnum authorityType);
@@ -65,4 +66,24 @@ public abstract class SignUpUserMapper {
         return authorityRepository.findOneByType(authorityType).orElse(null);
     }
 
+    /**
+     *
+     * @param authorityType
+     * @return
+     */
+    protected UserTypeEnum getUserType(final AuthorityEnum authorityType) {
+        Assert.notNull(authorityType, "Authority Type can not be null");
+        switch (authorityType) {
+            case ROLE_STUDENT:
+                return UserTypeEnum.STUDENT;
+            case ROLE_CA_ADMIN:
+                return UserTypeEnum.CA_ADMIN;
+            case ROLE_CA_MEMBER:
+                return UserTypeEnum.CA_MEMBER;
+            case ROLE_CHECKER:
+                return UserTypeEnum.CHECKER;
+            default:
+                return null;
+        }
+    }
 }

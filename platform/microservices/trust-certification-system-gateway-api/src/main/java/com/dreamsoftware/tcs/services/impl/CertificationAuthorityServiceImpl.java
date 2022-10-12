@@ -1,16 +1,19 @@
 package com.dreamsoftware.tcs.services.impl;
 
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
-import com.dreamsoftware.tcs.mapper.CertificationAuthorityDetailMapper;
-import com.dreamsoftware.tcs.mapper.SimpleCertificationAuthorityDetailMapper;
-import com.dreamsoftware.tcs.mapper.UpdateCertificationAuthorityMapper;
+import com.dreamsoftware.tcs.mapper.*;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationAuthorityEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationAuthorityRepository;
+import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.tcs.service.IWalletService;
 import com.dreamsoftware.tcs.services.ICertificationAuthorityService;
 import com.dreamsoftware.tcs.stream.events.user.*;
 import com.dreamsoftware.tcs.web.dto.request.AddCaMemberDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationAuthorityDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleCertificationAuthorityDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationAuthorityDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +39,10 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     private final UpdateCertificationAuthorityMapper updateCertificationAuthorityMapper;
     private final StreamChannelsProperties streamChannelsProperties;
     private final StreamBridge streamBridge;
+    private final AddCaMemberMapper addCaMemberMapper;
+    private final UserRepository userRepository;
+    private final SimpleUserMapper simpleUserMapper;
+    private final IWalletService walletService;
 
     /**
      * @return @throws Throwable
@@ -104,16 +111,31 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     }
 
     /**
-     * @param id
+     * Add Certification Authority Member
+     * @param caId
      * @param member
+     * @param adminWalletHash
      * @return
      * @throws Throwable
      */
     @Override
-    public CertificationAuthorityDetailDTO addMember(final String id, final AddCaMemberDTO member) throws Throwable {
-        Assert.notNull(id, "Id can not be null");
+    public SimpleUserDTO addMember(final String caId, final AddCaMemberDTO member, final String adminWalletHash) throws Throwable {
+        Assert.notNull(caId, "caId can not be null");
         Assert.notNull(member, "member can not be null");
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Assert.notNull(adminWalletHash, "adminWalletHash can not be null");
+        final UserEntity caMemberEntity = addCaMemberMapper.dtoToEntity(member);
+        // Generate Wallet
+        final String walletHash = walletService.generateWallet();
+        log.debug("Wallet created with hash: " + walletHash);
+        caMemberEntity.setState(UserStateEnum.PENDING_VALIDATE);
+        caMemberEntity.setWalletHash(walletHash);
+        final UserEntity userEntitySaved = userRepository.save(caMemberEntity);
+        streamBridge.send(streamChannelsProperties.getUserManagement(), NewCertificationAuthorityMemberEvent.builder()
+                        .caId(caId)
+                        .adminWalletHash(adminWalletHash)
+                        .memberWalletHash(userEntitySaved.getWalletHash())
+                .build());
+        return simpleUserMapper.entityToDTO(userEntitySaved);
     }
 
     /**
