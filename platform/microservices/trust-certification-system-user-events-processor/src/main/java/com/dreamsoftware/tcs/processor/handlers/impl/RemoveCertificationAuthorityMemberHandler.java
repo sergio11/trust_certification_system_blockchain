@@ -6,7 +6,7 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.UserAccountStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractUserManagementHandler;
-import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.users.CertificationAuthorityMemberRemovedNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.user.RemoveCertificationAuthorityMemberEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class RemoveCertificationAuthorityMemberHandler extends AbstractUserManagementHandler<RemoveCertificationAuthorityMemberEvent> {
+public class RemoveCertificationAuthorityMemberHandler extends AbstractUserManagementHandler<RemoveCertificationAuthorityMemberEvent, CertificationAuthorityMemberRemovedNotificationEvent> {
 
     /**
      * Certification Authority Blockchain Repository
@@ -33,7 +33,7 @@ public class RemoveCertificationAuthorityMemberHandler extends AbstractUserManag
     private final UserRepository userRepository;
 
     @Override
-    public AbstractNotificationEvent onHandle(final RemoveCertificationAuthorityMemberEvent event) throws RepositoryException {
+    public CertificationAuthorityMemberRemovedNotificationEvent onHandle(final RemoveCertificationAuthorityMemberEvent event) throws RepositoryException {
         Assert.notNull(event, "Event can not be null");
         final UserEntity caMember = userRepository.findById(new ObjectId(event.getMemberId()))
                 .orElseThrow(() -> new IllegalStateException("CA member not found"));
@@ -41,6 +41,6 @@ public class RemoveCertificationAuthorityMemberHandler extends AbstractUserManag
                 .orElseThrow(() -> new IllegalStateException("CA Admin not found"));
         certificationAuthorityBlockchainRepository.removeCertificationAuthorityMember(event.getCaId(), caMember.getWalletHash(), caAdmin.getWalletHash());
         userRepository.updateAccountStateByWalletHash(caMember.getWalletHash(), UserAccountStateEnum.REMOVED);
-        return null;
+        return new CertificationAuthorityMemberRemovedNotificationEvent(caMember.getWalletHash());
     }
 }
