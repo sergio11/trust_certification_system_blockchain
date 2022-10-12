@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.web.security.userdetails.impl;
 
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserAccountStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import java.util.Collection;
@@ -30,6 +31,7 @@ public class UserDetailsImpl<T> implements ICommonUserDetailsAware<T> {
     private String email;
     private String language;
     private UserStateEnum state;
+    private UserAccountStateEnum accountState;
     private String walletHash;
     private Set<GrantedAuthority> grantedAuthorities;
 
@@ -40,12 +42,12 @@ public class UserDetailsImpl<T> implements ICommonUserDetailsAware<T> {
 
     @Override
     public boolean isAccountNonExpired() {
-        return state != UserStateEnum.EXPIRED;
+        return accountState != UserAccountStateEnum.REMOVED;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return state != UserStateEnum.LOCKED;
+        return state == UserStateEnum.VALIDATED && accountState == UserAccountStateEnum.ENABLED;
     }
 
     @Override
@@ -55,7 +57,7 @@ public class UserDetailsImpl<T> implements ICommonUserDetailsAware<T> {
 
     @Override
     public boolean isEnabled() {
-        return state == UserStateEnum.VALIDATED;
+        return state == UserStateEnum.VALIDATED && accountState == UserAccountStateEnum.ENABLED;
     }
 
     @Override
@@ -76,6 +78,11 @@ public class UserDetailsImpl<T> implements ICommonUserDetailsAware<T> {
     @Override
     public String getSurname() {
         return surname;
+    }
+
+    @Override
+    public UserAccountStateEnum getAccountState() {
+        return accountState;
     }
 
     @Override

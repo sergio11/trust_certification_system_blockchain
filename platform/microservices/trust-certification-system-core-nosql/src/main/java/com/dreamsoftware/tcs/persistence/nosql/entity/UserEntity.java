@@ -65,6 +65,12 @@ public class UserEntity {
     private UserStateEnum state = UserStateEnum.PENDING_ACTIVATE;
 
     /**
+     * Account State
+     */
+    @Field("account_state")
+    private UserAccountStateEnum accountState = UserAccountStateEnum.DISABLED;
+
+    /**
      * User Type
      */
     @Field("type")

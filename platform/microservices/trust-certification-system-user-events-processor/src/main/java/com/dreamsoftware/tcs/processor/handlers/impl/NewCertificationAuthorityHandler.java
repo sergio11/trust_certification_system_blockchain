@@ -3,8 +3,12 @@ package com.dreamsoftware.tcs.processor.handlers.impl;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITokenManagementBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
-import com.dreamsoftware.tcs.processor.handlers.AbstractRegistrationHandler;
-import com.dreamsoftware.tcs.stream.events.user.registration.OnNewCertificationAuthorityRegistrationEvent;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
+import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.tcs.processor.handlers.AbstractUserManagementHandler;
+import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.users.UserRegisteredNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.user.NewCertificationAuthorityEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -16,7 +20,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class NewCertificationAuthorityRegistrationHandler extends AbstractRegistrationHandler<OnNewCertificationAuthorityRegistrationEvent> {
+public class NewCertificationAuthorityHandler extends AbstractUserManagementHandler<NewCertificationAuthorityEvent> {
 
     /**
      * Certification Authority Blockchain Repository
@@ -28,14 +32,22 @@ public class NewCertificationAuthorityRegistrationHandler extends AbstractRegist
      */
     private final ITokenManagementBlockchainRepository tokenManagementBlockchainRepository;
 
+    /**
+     * User Repository
+     */
+    private final UserRepository userRepository;
+
     @Override
-    public String onHandle(final OnNewCertificationAuthorityRegistrationEvent event) throws RepositoryException {
+    public AbstractNotificationEvent onHandle(final NewCertificationAuthorityEvent event) throws RepositoryException {
         Assert.notNull(event, "Event can not be null");
         // Add Seed funds
         addSeedFunds(event.getWalletHash());
         // Add initial TCS ERC-20 funds
         tokenManagementBlockchainRepository.configureInitialTokenFundsToCa(event.getWalletHash());
+        // Register Certification Authority into Blockchain
         certificationAuthorityBlockchainRepository.addCertificationAuthority(event.getCaId(), event.getWalletHash());
-        return event.getWalletHash();
+        // Validate Account
+        userRepository.updateStatusAsValidatedByWalletHash(event.getWalletHash());
+        return new UserRegisteredNotificationEvent(event.getWalletHash(), UserTypeEnum.CA_ADMIN);
     }
 }

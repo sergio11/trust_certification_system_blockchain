@@ -1,15 +1,7 @@
 package com.dreamsoftware.tcs.web.controller.ca;
 
 import com.dreamsoftware.tcs.services.ICertificationAuthorityService;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.AddCaMemberException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.DisableCertificationAuthorityException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.DisableCertificationAuthorityMemberException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.EnableCertificationAuthorityException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.EnableCertificationAuthorityMemberException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.GetAllCertificationAuthoritiesException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.GetCertificationAuthorityException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.PartialUpdateCAException;
-import com.dreamsoftware.tcs.web.controller.ca.error.exception.RemoveCaMemberException;
+import com.dreamsoftware.tcs.web.controller.ca.error.exception.*;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
@@ -80,7 +72,7 @@ public class CertificationAuthorityController extends SupportController {
     public ResponseEntity<APIResponse<Iterable<SimpleCertificationAuthorityDetailDTO>>> getAll() throws Throwable {
         try {
             final Iterable<SimpleCertificationAuthorityDetailDTO> caListDTO = certificationAuthorityService.getAll();
-            return responseHelper.<Iterable<SimpleCertificationAuthorityDetailDTO>>createAndSendResponse(
+            return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.ALL_CERTIFICATION_AUTHORITIES_SUCCESS,
                     HttpStatus.OK, caListDTO);
         } catch (final Exception ex) {
@@ -110,7 +102,7 @@ public class CertificationAuthorityController extends SupportController {
     ) throws Throwable {
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.getDetail(id);
-            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+            return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_DETAIL,
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
@@ -139,7 +131,7 @@ public class CertificationAuthorityController extends SupportController {
     ) throws Throwable {
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.getDetail(selfUser.getUserId());
-            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+            return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_DETAIL,
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
@@ -197,7 +189,7 @@ public class CertificationAuthorityController extends SupportController {
     ) throws Throwable {
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.enable(id);
-            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+            return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_ENABLED,
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
@@ -229,7 +221,7 @@ public class CertificationAuthorityController extends SupportController {
     ) throws Throwable {
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.enableMember(caId, memberId, selfUser.getUserId());
-            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+            return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_MEMBER_ENABLED,
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
@@ -254,7 +246,7 @@ public class CertificationAuthorityController extends SupportController {
     ) throws Throwable {
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.disable(id);
-            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+            return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_DISABLED,
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
@@ -286,7 +278,7 @@ public class CertificationAuthorityController extends SupportController {
     ) throws Throwable {
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.disableMember(caId, memberId, selfUser.getUserId());
-            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+            return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.CERTIFICATION_AUTHORITY_MEMBER_DISABLED,
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
@@ -295,10 +287,9 @@ public class CertificationAuthorityController extends SupportController {
     }
 
     /**
-     *
+     * Add Certification Authority Member
      * @param selfUser
      * @param caId
-     * @param user
      * @return
      * @throws Throwable
      */
@@ -322,7 +313,7 @@ public class CertificationAuthorityController extends SupportController {
             @Validated(ICommonSequence.class) AddCaMemberDTO caMember) throws Throwable {
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.addMember(caId, caMember);
-            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+            return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.ADD_CA_MEMBER_SUCCESSFULLY,
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
@@ -331,7 +322,7 @@ public class CertificationAuthorityController extends SupportController {
     }
 
     /**
-     *
+     * Remove Certification Authority Member
      * @param selfUser
      * @param caId
      * @param memberId
@@ -357,11 +348,40 @@ public class CertificationAuthorityController extends SupportController {
             @PathVariable("memberId") String memberId) throws Throwable {
         try {
             final CertificationAuthorityDetailDTO caDetailDTO = certificationAuthorityService.removeMember(caId, memberId);
-            return responseHelper.<CertificationAuthorityDetailDTO>createAndSendResponse(
+            return responseHelper.createAndSendResponse(
                     CertificationAuthorityResponseCodeEnum.REMOVE_CA_MEMBER_SUCCESSFULLY,
                     HttpStatus.OK, caDetailDTO);
         } catch (final Exception ex) {
             throw new RemoveCaMemberException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Remove Certification Authority
+     * @param caId
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "REMOVE_CA - Remove Certification authority (Only ADMIN)", description = "Remove  certification authority", tags = {"CA"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "CA removed successfully",
+                    content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "500", description = "An error occurred when removing CA",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = "/{caId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdmin
+    public ResponseEntity<APIResponse<String>> removeCa(
+            @Parameter(name = "caId", description = "Certification Authority Id", required = true)
+            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @PathVariable("caId") String caId) throws Throwable {
+        try {
+            certificationAuthorityService.remove(caId);
+            return responseHelper.createAndSendResponse(
+                    CertificationAuthorityResponseCodeEnum.REMOVE_CA_SUCCESSFULLY,
+                    HttpStatus.OK, "");
+        } catch (final Exception ex) {
+            throw new RemoveCaException(ex.getMessage(), ex);
         }
     }
 }

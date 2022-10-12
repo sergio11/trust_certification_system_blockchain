@@ -104,4 +104,10 @@ public interface ICertificationAuthorityService {
      */
     Optional<SimpleCertificationAuthorityDetailDTO> update(final String id, final UpdateCertificationAuthorityDTO model);
 
+    /**
+     *
+     * @param caId
+     */
+    void remove(final String caId);
+
 }

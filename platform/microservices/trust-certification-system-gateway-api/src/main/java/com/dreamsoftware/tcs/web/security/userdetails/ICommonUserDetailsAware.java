@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.web.security.userdetails;
 
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserAccountStateEnum;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
 
@@ -30,6 +31,8 @@ public interface ICommonUserDetailsAware<T> extends UserDetails {
     String getLanguage();
 
     UserStateEnum getState();
+
+    UserAccountStateEnum getAccountState();
 
     String getEmail();
 
