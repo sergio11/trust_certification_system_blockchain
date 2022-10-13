@@ -1,11 +1,12 @@
 package com.dreamsoftware.tcs.web.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 /**
  *
@@ -58,5 +59,12 @@ public class CertificationAuthorityDetailDTO {
      */
     @JsonProperty("created_date")
     private Date createdDate;
+
+    /**
+     * Members
+     */
+    @JsonProperty("members")
+    private Iterable<SimpleCertificationAuthorityMemberDTO> members;
+
 
 }
