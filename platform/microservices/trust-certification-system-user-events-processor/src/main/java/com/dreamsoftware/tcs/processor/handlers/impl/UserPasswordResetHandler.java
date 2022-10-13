@@ -38,6 +38,11 @@ public class UserPasswordResetHandler extends AbstractUserManagementHandler<User
         final String resetToken = Optional.ofNullable(passwordResetTokenService.getPasswordResetTokenForUserWithEmail(event.getEmail()))
                 .orElseGet(() -> passwordResetTokenService.createPasswordResetTokenForUserWithEmail(event.getEmail()));
         final UserEntity userEntity = userRepository.updateLastPasswordReset(event.getEmail(), resetToken);
-        return new UserPasswordResetNotificationEvent(userEntity.getEmail(), userEntity.getFullName(), userEntity.getConfirmationToken());
+        return UserPasswordResetNotificationEvent.builder()
+                .email(userEntity.getEmail())
+                .fullName(userEntity.getFullName())
+                .confirmationToken(userEntity.getConfirmationToken())
+                .locale(userEntity.getLanguage())
+                .build();
     }
 }

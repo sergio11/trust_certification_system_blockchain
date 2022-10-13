@@ -30,4 +30,9 @@ public class UserPasswordResetNotificationEvent extends AbstractNotificationEven
      * Confirmation Token
      */
     private String confirmationToken;
+
+    /**
+     * Locale
+     */
+    private String locale;
 }
