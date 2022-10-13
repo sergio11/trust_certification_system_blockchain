@@ -1,6 +1,5 @@
 package com.dreamsoftware.tcs.mail.model;
 
-import com.dreamsoftware.tcs.persistence.nosql.entity.EmailTypeEnum;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import java.util.Locale;
 import lombok.Builder;
@@ -45,15 +44,6 @@ public class CertificateRequestAcceptedMailRequestDTO extends AbstractMailReques
         this.certificateId = certificateId;
         this.name = name;
         this.qualification = qualification;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public EmailTypeEnum getType() {
-        return EmailTypeEnum.CERTIFICATE_REQUEST_ACCEPTED;
     }
 
 }

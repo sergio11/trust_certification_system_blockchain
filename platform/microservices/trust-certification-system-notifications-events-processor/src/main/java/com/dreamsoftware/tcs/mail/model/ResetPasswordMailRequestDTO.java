@@ -1,6 +1,5 @@
 package com.dreamsoftware.tcs.mail.model;
 
-import com.dreamsoftware.tcs.persistence.nosql.entity.EmailTypeEnum;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import java.util.Locale;
 import lombok.Builder;
@@ -45,14 +44,5 @@ public class ResetPasswordMailRequestDTO extends AbstractMailRequestDTO {
         this.id = id;
         this.name = name;
         this.token = token;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public EmailTypeEnum getType() {
-        return EmailTypeEnum.RESET_PASSWORD;
     }
 }

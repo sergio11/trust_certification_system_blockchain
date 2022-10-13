@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.mail.content.impl;
 
 import com.dreamsoftware.tcs.mail.content.AbstractMailContentBuilder;
-import com.dreamsoftware.tcs.mail.model.CADisabledMailRequestDTO;
+import com.dreamsoftware.tcs.mail.model.CertificationAuthorityDisabledMailRequestDTO;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -16,7 +16,7 @@ import org.thymeleaf.context.Context;
  */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class CADisabledMailContentBuilder extends AbstractMailContentBuilder<CADisabledMailRequestDTO> {
+public class CADisabledMailContentBuilder extends AbstractMailContentBuilder<CertificationAuthorityDisabledMailRequestDTO> {
 
     /**
      *
@@ -25,7 +25,7 @@ public class CADisabledMailContentBuilder extends AbstractMailContentBuilder<CAD
      * @throws MessagingException
      */
     @Override
-    public MimeMessage buildContent(final CADisabledMailRequestDTO request) throws MessagingException {
+    public MimeMessage buildContent(final CertificationAuthorityDisabledMailRequestDTO request) throws MessagingException {
         Assert.notNull(request, "Request can not be null");
         Assert.notNull(mailContentProperties.getCaDisabledMailTemplate(), "Mail Template can not be null");
         Assert.hasLength(mailContentProperties.getCaDisabledMailTemplate(), "Mail Template can not be empty");

@@ -1,6 +1,5 @@
 package com.dreamsoftware.tcs.mail.model;
 
-import com.dreamsoftware.tcs.persistence.nosql.entity.EmailTypeEnum;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import java.util.Locale;
 import lombok.Builder;
@@ -38,14 +37,5 @@ public class UserActivatedEventMailRequestDTO extends AbstractMailRequestDTO {
         super(email, locale);
         this.id = id;
         this.name = name;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public EmailTypeEnum getType() {
-        return EmailTypeEnum.USER_ACTIVATED;
     }
 }

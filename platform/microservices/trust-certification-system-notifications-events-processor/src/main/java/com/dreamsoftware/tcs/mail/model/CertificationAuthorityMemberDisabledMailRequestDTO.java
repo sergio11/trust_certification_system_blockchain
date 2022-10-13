@@ -1,10 +1,11 @@
 package com.dreamsoftware.tcs.mail.model;
 
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
-import java.util.Locale;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+
+import java.util.Locale;
 
 /**
  *
@@ -12,13 +13,13 @@ import lombok.Getter;
  */
 @Getter
 @EqualsAndHashCode(callSuper = false)
-@EntityAnnotation(entityClass = CertificateRenewedMailRequestDTO.class)
-public class CertificateRenewedMailRequestDTO extends AbstractMailRequestDTO {
+@EntityAnnotation(entityClass = CertificationAuthorityMemberDisabledMailRequestDTO.class)
+public class CertificationAuthorityMemberDisabledMailRequestDTO extends AbstractMailRequestDTO {
 
     /**
      * Id
      */
-    private final String certificateId;
+    private final String id;
 
     /**
      * Name
@@ -27,16 +28,15 @@ public class CertificateRenewedMailRequestDTO extends AbstractMailRequestDTO {
 
     /**
      *
-     * @param certificateId
+     * @param id
      * @param name
      * @param email
      * @param locale
      */
     @Builder
-    public CertificateRenewedMailRequestDTO(final String certificateId, final String name, final String email, final Locale locale) {
+    public CertificationAuthorityMemberDisabledMailRequestDTO(final String id, final String name, final String email, final Locale locale) {
         super(email, locale);
-        this.certificateId = certificateId;
+        this.id = id;
         this.name = name;
     }
-
 }

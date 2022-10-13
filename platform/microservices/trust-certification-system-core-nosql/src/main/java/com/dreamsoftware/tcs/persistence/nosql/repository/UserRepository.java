@@ -2,6 +2,8 @@ package com.dreamsoftware.tcs.persistence.nosql.repository;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
+
+import java.util.List;
 import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -20,13 +22,6 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId> , 
      * @return
      */
     Optional<UserEntity> findOneByEmail(final String email);
-
-    /**
-     *
-     * @param fullName
-     * @return
-     */
-    Optional<UserEntity> findOneByFullName(final String fullName);
 
     /**
      *
@@ -62,4 +57,11 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId> , 
      * @return
      */
     Long deleteByState(final UserStateEnum state);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    List<UserEntity> findAllByCaId(final ObjectId id);
 }
