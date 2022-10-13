@@ -95,9 +95,10 @@ public class MailClientServiceImpl implements IMailClientService {
 
     /**
      *
-     * @param <T>
-     * @param ex
+     * @param emailId
+     * @param errorMessage
      * @param request
+     * @param <T>
      */
     private <T extends AbstractMailRequestDTO> void saveFailedEmail(final ObjectId emailId, final String errorMessage, final T request) {
 
@@ -117,7 +118,6 @@ public class MailClientServiceImpl implements IMailClientService {
                 emailEntity = EmailEntity
                         .builder()
                         .user(userRepository.findOneByEmail(request.getEmail()).orElse(null))
-                        .type(request.getType())
                         .lastChance(new Date())
                         .error(errorMessage)
                         .payload(objectMapper.writeValueAsString(request))
@@ -149,6 +149,6 @@ public class MailClientServiceImpl implements IMailClientService {
      */
     private <T extends AbstractMailRequestDTO> AbstractMailContentBuilder<T> getMailContentBuilder(Class<T> clazz) {
         ResolvableType type = ResolvableType.forClassWithGenerics(AbstractMailContentBuilder.class, clazz);
-        return (AbstractMailContentBuilder<T>) applicationContext.getBeanProvider(type).getObject();
+        return applicationContext.<AbstractMailContentBuilder<T>>getBeanProvider(type).getObject();
     }
 }

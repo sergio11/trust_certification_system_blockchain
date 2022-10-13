@@ -78,8 +78,6 @@ public abstract class SignUpUserMapper {
                 return UserTypeEnum.STUDENT;
             case ROLE_CA_ADMIN:
                 return UserTypeEnum.CA_ADMIN;
-            case ROLE_CA_MEMBER:
-                return UserTypeEnum.CA_MEMBER;
             case ROLE_CHECKER:
                 return UserTypeEnum.CHECKER;
             default:

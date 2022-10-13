@@ -38,11 +38,6 @@ public class EmailEntity {
     @Field("error")
     private String error;
 
-    /**
-     * Type
-     */
-    @Field("type")
-    private EmailTypeEnum type;
 
     /**
      * Last Chance

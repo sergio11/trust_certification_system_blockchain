@@ -9,6 +9,7 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationAuthority
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IWalletService;
 import com.dreamsoftware.tcs.services.ICertificationAuthorityService;
+import com.dreamsoftware.tcs.services.IPasswordResetTokenService;
 import com.dreamsoftware.tcs.stream.events.user.*;
 import com.dreamsoftware.tcs.web.dto.request.AddCaMemberDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationAuthorityDetailDTO;
@@ -22,6 +23,7 @@ import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,6 +45,8 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     private final UserRepository userRepository;
     private final SimpleUserMapper simpleUserMapper;
     private final IWalletService walletService;
+
+    private final IPasswordResetTokenService passwordResetTokenService;
 
     /**
      * @return @throws Throwable
@@ -112,6 +116,7 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
 
     /**
      * Add Certification Authority Member
+     *
      * @param caId
      * @param member
      * @param adminWalletHash
@@ -129,17 +134,18 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
         log.debug("Wallet created with hash: " + walletHash);
         caMemberEntity.setState(UserStateEnum.PENDING_VALIDATE);
         caMemberEntity.setWalletHash(walletHash);
+        caMemberEntity.setHasCredentialsExpired(true);
+        caMemberEntity.setLastPasswordReset(new Date());
         final UserEntity userEntitySaved = userRepository.save(caMemberEntity);
         streamBridge.send(streamChannelsProperties.getUserManagement(), NewCertificationAuthorityMemberEvent.builder()
-                        .caId(caId)
-                        .adminWalletHash(adminWalletHash)
-                        .memberWalletHash(userEntitySaved.getWalletHash())
+                .caId(caId)
+                .adminWalletHash(adminWalletHash)
+                .memberWalletHash(userEntitySaved.getWalletHash())
                 .build());
         return simpleUserMapper.entityToDTO(userEntitySaved);
     }
 
     /**
-     *
      * @param caId
      * @param memberId
      * @param adminId

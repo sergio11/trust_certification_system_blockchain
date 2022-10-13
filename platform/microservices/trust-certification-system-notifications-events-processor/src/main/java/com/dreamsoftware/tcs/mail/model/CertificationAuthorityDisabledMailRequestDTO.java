@@ -12,13 +12,13 @@ import lombok.Getter;
  */
 @Getter
 @EqualsAndHashCode(callSuper = false)
-@EntityAnnotation(entityClass = CertificateRenewedMailRequestDTO.class)
-public class CertificateRenewedMailRequestDTO extends AbstractMailRequestDTO {
+@EntityAnnotation(entityClass = CertificationAuthorityDisabledMailRequestDTO.class)
+public class CertificationAuthorityDisabledMailRequestDTO extends AbstractMailRequestDTO {
 
     /**
      * Id
      */
-    private final String certificateId;
+    private final String id;
 
     /**
      * Name
@@ -27,16 +27,15 @@ public class CertificateRenewedMailRequestDTO extends AbstractMailRequestDTO {
 
     /**
      *
-     * @param certificateId
+     * @param id
      * @param name
      * @param email
      * @param locale
      */
     @Builder
-    public CertificateRenewedMailRequestDTO(final String certificateId, final String name, final String email, final Locale locale) {
+    public CertificationAuthorityDisabledMailRequestDTO(final String id, final String name, final String email, final Locale locale) {
         super(email, locale);
-        this.certificateId = certificateId;
+        this.id = id;
         this.name = name;
     }
-
 }

@@ -1,6 +1,5 @@
 package com.dreamsoftware.tcs.mail.model;
 
-import com.dreamsoftware.tcs.persistence.nosql.entity.EmailTypeEnum;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -13,7 +12,6 @@ import lombok.Getter;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
- *
  * @author ssanchez
  */
 @Getter
@@ -21,20 +19,24 @@ import org.springframework.core.annotation.AnnotationUtils;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = Id.NAME)
 @JsonSubTypes({
-    @Type(CADisabledMailRequestDTO.class),
-    @Type(CAEnabledMailRequestDTO.class),
-    @Type(CertificateDisabledMailRequestDTO.class),
-    @Type(CertificateEnabledMailRequestDTO.class),
-    @Type(CertificateRenewedMailRequestDTO.class),
-    @Type(CertificateRequestAcceptedMailRequestDTO.class),
-    @Type(CertificateRequestRejectedMailRequestDTO.class),
-    @Type(CertificateVisibilityChangedMailRequestDTO.class),
-    @Type(CourseDisabledMailRequestDTO.class),
-    @Type(CourseEnabledMailRequestDTO.class),
-    @Type(IssueCertificateRequestMailRequestDTO.class),
-    @Type(NewCourseRegistrationRequestedMailRequestDTO.class),
-    @Type(UserActivatedEventMailRequestDTO.class),
-    @Type(UserPendingValidationMailRequestDTO.class)
+        @Type(CertificationAuthorityDisabledMailRequestDTO.class),
+        @Type(CertificationAuthorityEnabledMailRequestDTO.class),
+        @Type(CertificationAuthorityMemberDisabledMailRequestDTO.class),
+        @Type(CertificationAuthorityMemberEnabledMailRequestDTO.class),
+        @Type(CertificateDisabledMailRequestDTO.class),
+        @Type(CertificateEnabledMailRequestDTO.class),
+        @Type(CertificateRenewedMailRequestDTO.class),
+        @Type(CertificateRequestAcceptedMailRequestDTO.class),
+        @Type(CertificateRequestRejectedMailRequestDTO.class),
+        @Type(CertificateVisibilityChangedMailRequestDTO.class),
+        @Type(CourseDisabledMailRequestDTO.class),
+        @Type(CourseEnabledMailRequestDTO.class),
+        @Type(IssueCertificateRequestMailRequestDTO.class),
+        @Type(NewCourseRegistrationRequestedMailRequestDTO.class),
+        @Type(UserActivatedEventMailRequestDTO.class),
+        @Type(UserPendingValidationMailRequestDTO.class),
+        @Type(CertificationAuthorityMemberRemovedMailRequestDTO.class),
+        @Type(CertificationAuthorityRemovedMailRequestDTO.class)
 })
 public abstract class AbstractMailRequestDTO {
 
@@ -49,14 +51,6 @@ public abstract class AbstractMailRequestDTO {
     private final Locale locale;
 
     /**
-     * Get Type
-     *
-     * @return
-     */
-    public abstract EmailTypeEnum getType();
-
-    /**
-     *
      * @return
      */
     public Class getEntityType() {
