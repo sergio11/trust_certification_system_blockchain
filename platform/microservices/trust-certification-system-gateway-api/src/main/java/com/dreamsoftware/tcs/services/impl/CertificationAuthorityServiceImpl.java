@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -45,8 +46,6 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
     private final UserRepository userRepository;
     private final SimpleUserMapper simpleUserMapper;
     private final IWalletService walletService;
-
-    private final IPasswordResetTokenService passwordResetTokenService;
 
     /**
      * @return @throws Throwable
@@ -73,7 +72,8 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
                 .orElseThrow(() -> {
                     throw new IllegalStateException("Certification Authority Not Found");
                 });
-        return certificationAuthorityDetailMapper.entityToDTO(caEntity);
+        final List<UserEntity> caMembers = userRepository.findAllByCaId(new ObjectId(id));
+        return certificationAuthorityDetailMapper.entityToDTO(caEntity, caMembers);
     }
 
     /**

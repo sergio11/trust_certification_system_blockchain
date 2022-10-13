@@ -14,29 +14,42 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SimpleCertificationAuthorityDetailDTO {
+public class SimpleCertificationAuthorityMemberDTO {
 
     /**
-     * Id
+     * User Identity
      */
     @JsonProperty("identity")
-    private String id;
+    private String identity;
 
     /**
-     * Name
+     * User name
      */
     @JsonProperty("name")
     private String name;
 
     /**
-     * Location
+     * User Type
      */
-    @JsonProperty("location")
-    private String location;
+    @JsonProperty("type")
+    private String type;
 
     /**
-     * Executive Director
+     * User Email
      */
-    @JsonProperty("executive_director")
-    private String executiveDirector;
+    @JsonProperty("email")
+    private String email;
+
+    /**
+     * Wallet Hash
+     */
+    @JsonProperty("wallet_hash")
+    private String walletHash;
+
+    /**
+     * User State
+     */
+    @JsonProperty("state")
+    private String state;
+
 }
