@@ -9,7 +9,6 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationAuthority
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IWalletService;
 import com.dreamsoftware.tcs.services.ICertificationAuthorityService;
-import com.dreamsoftware.tcs.services.IPasswordResetTokenService;
 import com.dreamsoftware.tcs.stream.events.user.*;
 import com.dreamsoftware.tcs.web.dto.request.AddCaMemberDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationAuthorityDetailDTO;

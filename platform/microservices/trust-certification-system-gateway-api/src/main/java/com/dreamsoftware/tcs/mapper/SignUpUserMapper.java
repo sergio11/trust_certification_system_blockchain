@@ -40,20 +40,70 @@ public abstract class SignUpUserMapper {
     protected ISecurityTokenGeneratorService tokenGeneratorService;
 
     /**
-     * Sign Up User DTO to User Entity
      *
      * @param user
-     * @param authorityType
      * @return
      */
     @Mappings({
             @Mapping(expression = "java(passwordEncoder.encode(user.getPasswordClear()))", target = "password"),
-            @Mapping(expression = "java(getUserAuthority(authorityType))", target = "authority"),
-            @Mapping(expression = "java(getUserType(authorityType))", target = "type"),
+            @Mapping(expression = "java(getStudentAuthority())", target = "authority"),
+            @Mapping(expression = "java(com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum.STUDENT)", target = "type"),
             @Mapping(expression = "java(tokenGeneratorService.generateToken(user.getFullName()))", target = "confirmationToken")
     })
-    @Named("signUpUserDTOToUserEntity")
-    public abstract UserEntity signUpUserDTOToUserEntity(final SignUpUserDTO user, final AuthorityEnum authorityType);
+    @Named("signUpUserDTOToStudentUserEntity")
+    public abstract UserEntity signUpUserDTOToStudentUserEntity(final SignUpUserDTO user);
+
+    /**
+     *
+     * @param user
+     * @return
+     */
+    @Mappings({
+            @Mapping(expression = "java(passwordEncoder.encode(user.getPasswordClear()))", target = "password"),
+            @Mapping(expression = "java(getCaAdminAuthority())", target = "authority"),
+            @Mapping(expression = "java(com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum.CA_ADMIN)", target = "type"),
+            @Mapping(expression = "java(tokenGeneratorService.generateToken(user.getFullName()))", target = "confirmationToken")
+    })
+    @Named("signUpUserDTOToStudentUserEntity")
+    public abstract UserEntity signUpUserDTOToCaAdminUserEntity(final SignUpUserDTO user);
+
+    /**
+     *
+     * @param user
+     * @return
+     */
+    @Mappings({
+            @Mapping(expression = "java(passwordEncoder.encode(user.getPasswordClear()))", target = "password"),
+            @Mapping(expression = "java(getCheckerAuthority())", target = "authority"),
+            @Mapping(expression = "java(com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum.CHECKER)", target = "type"),
+            @Mapping(expression = "java(tokenGeneratorService.generateToken(user.getFullName()))", target = "confirmationToken")
+    })
+    @Named("signUpUserDTOToStudentUserEntity")
+    public abstract UserEntity signUpUserDTOToCheckerUserEntity(final SignUpUserDTO user);
+
+    /**
+     * Get Checker Authority
+     * @return
+     */
+    protected AuthorityEntity getCheckerAuthority() {
+        return getUserAuthority(AuthorityEnum.ROLE_CHECKER);
+    }
+
+    /**
+     * Get CA Admin Authority
+     * @return
+     */
+    protected AuthorityEntity getCaAdminAuthority() {
+        return getUserAuthority(AuthorityEnum.ROLE_CA_ADMIN);
+    }
+
+    /**
+     * Get Student Authority
+     * @return
+     */
+    protected AuthorityEntity getStudentAuthority() {
+        return getUserAuthority(AuthorityEnum.ROLE_STUDENT);
+    }
 
     /**
      * Get User Authority
@@ -64,24 +114,5 @@ public abstract class SignUpUserMapper {
     protected AuthorityEntity getUserAuthority(final AuthorityEnum authorityType) {
         Assert.notNull(authorityType, "Authority Type can not be null");
         return authorityRepository.findOneByType(authorityType).orElse(null);
-    }
-
-    /**
-     *
-     * @param authorityType
-     * @return
-     */
-    protected UserTypeEnum getUserType(final AuthorityEnum authorityType) {
-        Assert.notNull(authorityType, "Authority Type can not be null");
-        switch (authorityType) {
-            case ROLE_STUDENT:
-                return UserTypeEnum.STUDENT;
-            case ROLE_CA_ADMIN:
-                return UserTypeEnum.CA_ADMIN;
-            case ROLE_CHECKER:
-                return UserTypeEnum.CHECKER;
-            default:
-                return null;
-        }
     }
 }

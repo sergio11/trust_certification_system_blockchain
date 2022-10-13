@@ -21,7 +21,8 @@ import org.springframework.core.annotation.AnnotationUtils;
         @JsonSubTypes.Type(EnableCertificationAuthorityEvent.class),
         @JsonSubTypes.Type(EnableCertificationAuthorityMemberEvent.class),
         @JsonSubTypes.Type(RemoveCertificationAuthorityEvent.class),
-        @JsonSubTypes.Type(RemoveCertificationAuthorityMemberEvent.class)
+        @JsonSubTypes.Type(RemoveCertificationAuthorityMemberEvent.class),
+        @JsonSubTypes.Type(UserPasswordResetEvent.class)
 })
 public abstract class AbstractUserManagementEvent {
 

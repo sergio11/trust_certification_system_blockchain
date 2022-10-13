@@ -8,12 +8,14 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.AuthenticationProvider
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserLoginRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IWalletService;
-import com.dreamsoftware.tcs.services.*;
-import com.dreamsoftware.tcs.stream.events.notifications.users.PasswordResetNotificationEvent;
+import com.dreamsoftware.tcs.services.IAccountsService;
+import com.dreamsoftware.tcs.services.IFacebookService;
+import com.dreamsoftware.tcs.services.IGoogleService;
+import com.dreamsoftware.tcs.services.IUploadImagesService;
 import com.dreamsoftware.tcs.stream.events.notifications.users.UserPendingValidationNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.user.NewCertificationAuthorityEvent;
 import com.dreamsoftware.tcs.stream.events.user.NewStudentEvent;
-import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
+import com.dreamsoftware.tcs.stream.events.user.UserPasswordResetEvent;
 import com.dreamsoftware.tcs.web.dto.request.*;
 import com.dreamsoftware.tcs.web.dto.response.*;
 import com.dreamsoftware.tcs.web.security.provider.social.SocialProviderAuthenticationToken;
@@ -56,7 +58,6 @@ public class AccountsServiceImpl implements IAccountsService {
     private final IWalletService walletService;
     private final StreamBridge streamBridge;
     private final StreamChannelsProperties streamChannelsProperties;
-    private final IPasswordResetTokenService passwordResetTokenService;
     private final UserLoginRepository userLoginRepository;
     private final SimpleUserLoginMapper simpleUserLoginMapper;
     private final IFacebookService facebookService;
@@ -185,12 +186,12 @@ public class AccountsServiceImpl implements IAccountsService {
                 if (authorities.contains(AuthorityEnum.ROLE_STUDENT.name()) || authorities.contains(AuthorityEnum.ROLE_CA_MEMBER.name())) {
                     log.debug("Restore User Details into security context for user id -> " + sub);
                     userDetails = userRepository.findById(new ObjectId(sub))
-                            .map(userEntity -> userDetailsMapper.entityToDTO(userEntity))
+                            .map(userDetailsMapper::entityToDTO)
                             .orElse(null);
                 } else if (authorities.contains(AuthorityEnum.ROLE_ADMIN.name())) {
                     log.debug("Restore User Details into security context for user id -> " + sub);
                     userDetails = userLdapRepository.findOneByUid(sub)
-                            .map(userEntity -> userLdapAccountMapper.entityToDTO(userEntity))
+                            .map(userLdapAccountMapper::entityToDTO)
                             .orElse(null);
                 }
                 if (userDetails != null) {
@@ -211,7 +212,7 @@ public class AccountsServiceImpl implements IAccountsService {
     public SimpleUserDTO signup(final SignUpUserDTO user) {
         Assert.notNull(user, "user can not be null");
         // Map to user entity
-        final UserEntity userToSave = signUpUserMapper.signUpUserDTOToUserEntity(user, AuthorityEnum.ROLE_STUDENT);
+        final UserEntity userToSave = signUpUserMapper.signUpUserDTOToStudentUserEntity(user);
         final UserEntity userEntitySaved = userRepository.save(userToSave);
         final SimpleUserDTO simpleUserDTO = simpleUserMapper.entityToDTO(userEntitySaved);
         if (simpleUserDTO.getState().equals(SimpleUserDTO.PENDING_ACTIVATE_STATE)) {
@@ -250,7 +251,7 @@ public class AccountsServiceImpl implements IAccountsService {
     @Override
     public SimpleUserDTO signup(final SignupAsCaAdminDTO ca) {
         Assert.notNull(ca, "ca can not be null");
-        final UserEntity userToSave = signUpUserMapper.signUpUserDTOToUserEntity(ca.getAdmin(), AuthorityEnum.ROLE_CA_ADMIN);
+        final UserEntity userToSave = signUpUserMapper.signUpUserDTOToCaAdminUserEntity(ca.getAdmin());
         final CertificationAuthorityEntity caEntity = CertificationAuthorityEntity
                 .builder()
                 .createdDate(new Date())
@@ -309,16 +310,9 @@ public class AccountsServiceImpl implements IAccountsService {
     @Override
     public void resetPassword(final String email) {
         Assert.notNull(email, "Email can not be null");
-        final PasswordResetTokenDTO resetPasswordToken = Optional.ofNullable(passwordResetTokenService.getPasswordResetTokenForUserWithEmail(email))
-                .orElseGet(() -> passwordResetTokenService.createPasswordResetTokenForUserWithEmail(email));
-        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(),
-                PasswordResetNotificationEvent.builder()
-                        .email(resetPasswordToken.getEmail())
-                        .expiryDate(resetPasswordToken.getExpiryDate())
-                        .id(resetPasswordToken.getId())
-                        .locale(resetPasswordToken.getLocale())
-                        .token(resetPasswordToken.getToken())
-                        .name(resetPasswordToken.getName())
+        streamBridge.send(streamChannelsProperties.getUserManagement(),
+                UserPasswordResetEvent.builder()
+                        .email(email)
                         .build());
     }
 

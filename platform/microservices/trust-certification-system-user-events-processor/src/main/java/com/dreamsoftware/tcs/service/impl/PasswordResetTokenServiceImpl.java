@@ -1,12 +1,10 @@
-package com.dreamsoftware.tcs.services.impl;
+package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.mapper.PasswordResetTokenMapper;
 import com.dreamsoftware.tcs.persistence.nosql.entity.PasswordResetTokenEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.PasswordResetTokenRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
-import com.dreamsoftware.tcs.services.IPasswordResetTokenService;
+import com.dreamsoftware.tcs.service.IPasswordResetTokenService;
 import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
-import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
 import java.util.Calendar;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +23,6 @@ public class PasswordResetTokenServiceImpl implements IPasswordResetTokenService
 
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final ISecurityTokenGeneratorService tokenGeneratorService;
-    private final PasswordResetTokenMapper passwordResetTokenMapper;
     private final UserRepository userRepository;
 
     /**
@@ -34,7 +31,7 @@ public class PasswordResetTokenServiceImpl implements IPasswordResetTokenService
      * @return
      */
     @Override
-    public PasswordResetTokenDTO createPasswordResetTokenForUserWithEmail(final String email) {
+    public String createPasswordResetTokenForUserWithEmail(final String email) {
         Assert.notNull(email, "User Email can not be null");
         Assert.hasLength(email, "User Email can not be empty");
         return userRepository.findOneByEmail(email).map(userEntity -> {
@@ -43,7 +40,7 @@ public class PasswordResetTokenServiceImpl implements IPasswordResetTokenService
                     .user(userEntity)
                     .token(tokenGeneratorService.generateToken(String.valueOf(userEntity.getId())))
                     .build());
-            return passwordResetTokenMapper.passwordResetTokenEntityToPasswordResetTokenDTO(resetTokenToSaved);
+            return resetTokenToSaved.getToken();
         }).orElse(null);
     }
 
@@ -53,9 +50,8 @@ public class PasswordResetTokenServiceImpl implements IPasswordResetTokenService
      * @return
      */
     @Override
-    public PasswordResetTokenDTO getPasswordResetTokenForUserWithEmail(final String email) {
-        return passwordResetTokenMapper.passwordResetTokenEntityToPasswordResetTokenDTO(
-                passwordResetTokenRepository.findByUserEmail(email));
+    public String getPasswordResetTokenForUserWithEmail(final String email) {
+        return passwordResetTokenRepository.findByUserEmail(email).getToken();
     }
 
     /**
