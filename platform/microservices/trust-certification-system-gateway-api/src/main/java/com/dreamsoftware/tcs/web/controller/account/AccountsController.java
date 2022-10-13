@@ -402,7 +402,7 @@ public class AccountsController extends SupportController {
         try {
             log.debug("resetPassword for -> " + resetPasswordRequestDTO.getEmail());
             accountsService.resetPassword(resetPasswordRequestDTO.getEmail());
-            return responseHelper.<String>createAndSendResponse(
+            return responseHelper.createAndSendResponse(
                     AccountsResponseCodeEnum.RESET_PASSWORD_REQUEST_SUCCESS,
                     HttpStatus.OK, resolveString("user_password_request_reset_success", request));
 

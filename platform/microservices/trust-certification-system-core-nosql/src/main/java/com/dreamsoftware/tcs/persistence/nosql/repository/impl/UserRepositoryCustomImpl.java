@@ -21,16 +21,20 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
     private MongoTemplate mongoTemplate;
 
     /**
-     * @param walletHash
-     * @param date
+     *
+     * @param email
+     * @param token
      */
     @Override
-    public void updateLastPasswordReset(final String walletHash, final Date date) {
-        Assert.notNull(walletHash, "Wallet Has can not be null");
-        Assert.notNull(date, "date can not be null");
+    public UserEntity updateLastPasswordReset(final String email, final String token) {
+        Assert.notNull(email, "email Has can not be null");
+        Assert.notNull(token, "token can not be null");
         mongoTemplate.updateFirst(
-                new Query(Criteria.where("wallet_hash").is(walletHash)),
-                Update.update("last_password_reset", date), UserEntity.class);
+                new Query(Criteria.where("email").is(email)),
+                new Update()
+                        .set("last_password_reset", new Date())
+                        .set("confirmation_token", token), UserEntity.class);
+        return mongoTemplate.findOne(new Query(Criteria.where("email").is(email)), UserEntity.class);
     }
 
     /**

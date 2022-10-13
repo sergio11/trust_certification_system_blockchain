@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.persistence.nosql.repository;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserAccountStateEnum;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 
 import java.util.Date;
 
@@ -12,10 +13,10 @@ public interface UserRepositoryCustom {
 
     /**
      *
-     * @param walletHash
-     * @param date
+     * @param email
+     * @param token
      */
-    void updateLastPasswordReset(final String walletHash, final Date date);
+    UserEntity updateLastPasswordReset(final String email, final String token);
 
     /**
      *

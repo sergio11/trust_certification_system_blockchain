@@ -17,7 +17,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class NewStudentUserManagementHandler extends SupportUserRegistrationHandler<NewStudentEvent> {
+public class NewStudentHandler extends SupportUserRegistrationHandler<NewStudentEvent> {
 
     /**
      * Token Management Blockchain Repository

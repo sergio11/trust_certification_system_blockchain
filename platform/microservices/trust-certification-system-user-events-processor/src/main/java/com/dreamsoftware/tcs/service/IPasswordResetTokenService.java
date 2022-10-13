@@ -1,6 +1,5 @@
-package com.dreamsoftware.tcs.services;
+package com.dreamsoftware.tcs.service;
 
-import com.dreamsoftware.tcs.web.dto.internal.PasswordResetTokenDTO;
 
 /**
  * Password Reset Token Service Interface
@@ -15,7 +14,7 @@ public interface IPasswordResetTokenService {
      * @param email
      * @return
      */
-    PasswordResetTokenDTO createPasswordResetTokenForUserWithEmail(final String email);
+    String createPasswordResetTokenForUserWithEmail(final String email);
 
     /**
      * Get Password Reset Token For User with email
@@ -23,7 +22,7 @@ public interface IPasswordResetTokenService {
      * @param email
      * @return
      */
-    PasswordResetTokenDTO getPasswordResetTokenForUserWithEmail(final String email);
+    String getPasswordResetTokenForUserWithEmail(final String email);
 
     /**
      * Is Valid

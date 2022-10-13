@@ -41,7 +41,8 @@ import org.springframework.core.annotation.AnnotationUtils;
         @JsonSubTypes.Type(CertificationAuthorityMemberDisabledNotificationEvent.class),
         @JsonSubTypes.Type(CertificationAuthorityMemberEnabledNotificationEvent.class),
         @JsonSubTypes.Type(CertificationAuthorityMemberRemovedNotificationEvent.class),
-        @JsonSubTypes.Type(CertificationAuthorityRemovedNotificationEvent.class)
+        @JsonSubTypes.Type(CertificationAuthorityRemovedNotificationEvent.class),
+        @JsonSubTypes.Type(UserPasswordResetNotificationEvent.class)
 })
 public abstract class AbstractNotificationEvent {
 

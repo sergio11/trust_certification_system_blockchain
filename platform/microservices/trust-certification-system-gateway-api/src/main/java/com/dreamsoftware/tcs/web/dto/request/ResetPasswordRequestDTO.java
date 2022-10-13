@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResetPasswordRequestDTO {
 
-    @Schema(description = "The email of the user who wants to reset their password", required = false)
+    @Schema(description = "The email of the user who wants to reset their password", required = true)
     @NotBlank(message = "{user_email_not_null}")
     @Email(message = "{user_email_invalid}", groups = IValidEmail.class)
     @UserWithEmailShouldExists(message = "{user_email_not_exists}", groups = IEmailShouldExist.class)
