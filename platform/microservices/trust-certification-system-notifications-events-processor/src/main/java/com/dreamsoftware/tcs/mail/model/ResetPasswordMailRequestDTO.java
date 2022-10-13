@@ -16,11 +16,6 @@ import lombok.Getter;
 public class ResetPasswordMailRequestDTO extends AbstractMailRequestDTO {
 
     /**
-     * Id
-     */
-    private final String id;
-
-    /**
      * Name
      */
     private final String name;
@@ -32,16 +27,14 @@ public class ResetPasswordMailRequestDTO extends AbstractMailRequestDTO {
 
     /**
      *
-     * @param id
      * @param name
      * @param token
      * @param email
      * @param locale
      */
     @Builder
-    public ResetPasswordMailRequestDTO(final String id, final String name, final String token, final String email, final Locale locale) {
+    public ResetPasswordMailRequestDTO(final String name, final String token, final String email, final Locale locale) {
         super(email, locale);
-        this.id = id;
         this.name = name;
         this.token = token;
     }

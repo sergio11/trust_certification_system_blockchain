@@ -20,7 +20,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
 @JsonSubTypes({
         @JsonSubTypes.Type(UserPendingValidationNotificationEvent.class),
-        @JsonSubTypes.Type(PasswordResetNotificationEvent.class),
         @JsonSubTypes.Type(CertificateDisabledNotificationEvent.class),
         @JsonSubTypes.Type(CertificateEnabledNotificationEvent.class),
         @JsonSubTypes.Type(CertificateRenewedNotificationEvent.class),
