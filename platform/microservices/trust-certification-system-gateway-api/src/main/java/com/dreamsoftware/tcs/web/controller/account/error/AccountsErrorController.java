@@ -1,15 +1,11 @@
 package com.dreamsoftware.tcs.web.controller.account.error;
 
 import com.dreamsoftware.tcs.web.controller.account.AccountsResponseCodeEnum;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.RefreshTokenException;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.*;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAccountException;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInException;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInExternalProviderException;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpExternalProviderException;
+
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -116,5 +112,20 @@ public class AccountsErrorController extends SupportController {
         return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.SIGNUP_EXTERNAL_ACCOUNT_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("sign_up_external_provider_failed", request));
     }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(ChangePasswordRequestException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleChangePasswordRequestException(final ChangePasswordRequestException ex, final HttpServletRequest request) {
+        log.error("Handler for ChangePasswordRequestException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(AccountsResponseCodeEnum.CHANGE_PASSWORD_REQUEST_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("change_user_password_failed", request));
+    }
+
 
 }

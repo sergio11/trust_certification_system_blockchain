@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.processor;
 
-import com.dreamsoftware.tcs.service.IUserRegistrationService;
+import com.dreamsoftware.tcs.service.IUserService;
 import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import java.util.function.Function;
 public class UserManagementProcessor implements Function<GenericMessage<String>, AbstractNotificationEvent> {
 
 
-    private final IUserRegistrationService userRegistrationService;
+    private final IUserService userRegistrationService;
 
     /**
      * @param event
