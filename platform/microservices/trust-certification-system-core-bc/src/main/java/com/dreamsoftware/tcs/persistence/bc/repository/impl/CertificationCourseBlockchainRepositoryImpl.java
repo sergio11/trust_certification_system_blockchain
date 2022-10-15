@@ -5,7 +5,7 @@ import com.dreamsoftware.tcs.contracts.CertificationCourseContract.Certification
 import com.dreamsoftware.tcs.exception.LoadWalletException;
 import com.dreamsoftware.tcs.persistence.bc.core.SupportBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseBcEntity;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseEventEntity;
 import com.dreamsoftware.tcs.persistence.bc.repository.mapper.CertificationCourseEntityMapper;
 import com.dreamsoftware.tcs.persistence.bc.repository.mapper.CertificationCourseEventEntityMapper;
@@ -47,7 +47,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseModelEntity addCertificationCourse(final String walletHash, final String id, final Long costOfIssuingCertificate, final Long durationInHours, final Long expirationInDays, final Boolean canBeRenewed, final Long costOfRenewingCertificate) throws RepositoryException {
+    public CertificationCourseBcEntity addCertificationCourse(final String walletHash, final String id, final Long costOfIssuingCertificate, final Long durationInHours, final Long expirationInDays, final Boolean canBeRenewed, final Long costOfRenewingCertificate) throws RepositoryException {
         try {
             log.debug("register new certification course CALLED!");
             final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(walletHash);
@@ -69,7 +69,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseModelEntity enable(final String caWallet, final String courseId) throws RepositoryException {
+    public CertificationCourseBcEntity enable(final String caWallet, final String courseId) throws RepositoryException {
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         Assert.notNull(courseId, "Course Id can not be null");
         try {
@@ -89,7 +89,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseModelEntity disable(final String caWallet, final String courseId) throws RepositoryException {
+    public CertificationCourseBcEntity disable(final String caWallet, final String courseId) throws RepositoryException {
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         Assert.notNull(courseId, "Course Id can not be null");
         try {
@@ -110,7 +110,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseModelEntity get(final String caWallet, final String courseId) throws RepositoryException {
+    public CertificationCourseBcEntity get(final String caWallet, final String courseId) throws RepositoryException {
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         Assert.notNull(courseId, "Course Id can not be null");
         try {
@@ -126,7 +126,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @return @throws RepositoryException
      */
     @Override
-    public Iterable<CertificationCourseModelEntity> getAll() throws RepositoryException {
+    public Iterable<CertificationCourseBcEntity> getAll() throws RepositoryException {
         try {
             final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract();
             final List<CertificationCourseRecord> caCourses = certificationCourseContract.getAllCertificationCourses().send();
@@ -143,7 +143,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public Iterable<CertificationCourseModelEntity> getAllByCa(final String caWallet) throws RepositoryException {
+    public Iterable<CertificationCourseBcEntity> getAllByCa(final String caWallet) throws RepositoryException {
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         try {
             final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(caWallet);
@@ -161,7 +161,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseModelEntity get(final String courseId) throws RepositoryException {
+    public CertificationCourseBcEntity get(final String courseId) throws RepositoryException {
         Assert.notNull(courseId, "Course Id can not be null");
         try {
             final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract();
@@ -219,7 +219,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseModelEntity remove(String caWallet, String courseId) throws RepositoryException {
+    public CertificationCourseBcEntity remove(String caWallet, String courseId) throws RepositoryException {
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         Assert.notNull(courseId, "Course Id can not be null");
         try {
@@ -261,7 +261,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseModelEntity update(final String caWallet, final CertificationCourseModelEntity model) throws RepositoryException {
+    public CertificationCourseBcEntity update(final String caWallet, final CertificationCourseBcEntity model) throws RepositoryException {
         Assert.notNull(caWallet, "Ca Wallet can not be null");
         Assert.notNull(model, "Course Id can not be null");
         try {
@@ -284,7 +284,7 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      * @return
      * @throws Exception
      */
-    private CertificationCourseModelEntity getCertificationCourseDetail(final CertificationCourseContract certificationCourseContract, final String courseId) throws Exception {
+    private CertificationCourseBcEntity getCertificationCourseDetail(final CertificationCourseContract certificationCourseContract, final String courseId) throws Exception {
         final CertificationCourseRecord certificationCourseDetail = certificationCourseContract.getCertificateCourseDetail(courseId).send();
         return certificationCourseEntityMapper.courseRecordToCertificationCourseEntity(certificationCourseDetail);
     }

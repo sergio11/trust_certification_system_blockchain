@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.services;
 
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.SimpleCertificationCourseDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationCourseDTO;
 import java.util.Optional;
 import org.bson.types.ObjectId;
@@ -14,23 +15,19 @@ public interface ICertificationCourseService {
 
     /**
      * Enable Certification Course
-     *
      * @param caWalletHash
      * @param courseId
-     * @return
      * @throws Throwable
      */
-    CertificationCourseDetailDTO enable(final String caWalletHash, final String courseId) throws Throwable;
+    void enable(final String caWalletHash, final String courseId) throws Throwable;
 
     /**
      * Disable Certification Course
-     *
      * @param caWalletHash
      * @param courseId
-     * @return
      * @throws Throwable
      */
-    CertificationCourseDetailDTO disable(final String caWalletHash, final String courseId) throws Throwable;
+    void disable(final String caWalletHash, final String courseId) throws Throwable;
 
     /**
      * Save Model
@@ -41,13 +38,11 @@ public interface ICertificationCourseService {
 
     /**
      * Remove Certificacion course
-     *
      * @param caWalletHash
      * @param courseId
-     * @return
-     * @throws java.lang.Throwable
+     * @throws Throwable
      */
-    CertificationCourseDetailDTO remove(final String caWalletHash, final String courseId) throws Throwable;
+    void remove(final String caWalletHash, final String courseId) throws Throwable;
 
     /**
      * Check if can be issued
@@ -83,7 +78,7 @@ public interface ICertificationCourseService {
      *
      * @return @throws Throwable
      */
-    Iterable<CertificationCourseDetailDTO> getAll() throws Throwable;
+    Iterable<SimpleCertificationCourseDetailDTO> getAll() throws Throwable;
 
     /**
      *
@@ -91,7 +86,7 @@ public interface ICertificationCourseService {
      * @return
      * @throws Throwable
      */
-    Iterable<CertificationCourseDetailDTO> getAllByCA(final String caWalletHash) throws Throwable;
+    Iterable<SimpleCertificationCourseDetailDTO> getAllByCA(final String caWalletHash) throws Throwable;
 
     /**
      *
@@ -115,5 +110,5 @@ public interface ICertificationCourseService {
      * @param caWalletHash
      * @return
      */
-    Optional<CertificationCourseDetailDTO> update(final String courseId, final UpdateCertificationCourseDTO model, final String caWalletHash);
+    Optional<SimpleCertificationCourseDetailDTO> update(final String courseId, final UpdateCertificationCourseDTO model, final String caWalletHash);
 }

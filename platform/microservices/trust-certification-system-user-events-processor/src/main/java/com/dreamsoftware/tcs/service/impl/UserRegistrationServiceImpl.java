@@ -30,7 +30,7 @@ public class UserRegistrationServiceImpl implements IUserRegistrationService {
     public AbstractNotificationEvent handle(GenericMessage<String> event) throws Exception {
         log.debug("Event payload -> " + event.getPayload());
         final AbstractUserManagementEvent registrationEvent = objectMapper.readValue(event.getPayload(), AbstractUserManagementEvent.class);
-        final AbstractUserManagementHandler eventHandler = getRegistrationHandler(registrationEvent.getEntityType());
+        final AbstractUserManagementHandler eventHandler = getHandler(registrationEvent.getEntityType());
         return eventHandler.onHandle(registrationEvent);
     }
 
@@ -40,8 +40,8 @@ public class UserRegistrationServiceImpl implements IUserRegistrationService {
      * @return
      * @param <T>
      */
-    private <T extends AbstractUserManagementEvent> AbstractUserManagementHandler<T, ? extends AbstractNotificationEvent> getRegistrationHandler(Class<T> clazz) {
-        log.debug("getRegistrationHandler -> " + clazz.getCanonicalName());
+    private <T extends AbstractUserManagementEvent> AbstractUserManagementHandler<T, ? extends AbstractNotificationEvent> getHandler(Class<T> clazz) {
+        log.debug("getHandler -> " + clazz.getCanonicalName());
         ResolvableType type = ResolvableType.forClassWithGenerics(AbstractUserManagementHandler.class, clazz);
         return applicationContext.<AbstractUserManagementHandler<T, ? extends AbstractNotificationEvent>>getBeanProvider(type).getObject();
     }

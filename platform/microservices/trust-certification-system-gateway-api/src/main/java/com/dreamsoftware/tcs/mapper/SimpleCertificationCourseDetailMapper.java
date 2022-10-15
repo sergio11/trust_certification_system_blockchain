@@ -2,7 +2,7 @@ package com.dreamsoftware.tcs.mapper;
 
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseBcEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
-import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.SimpleCertificationCourseDetailDTO;
 import org.apache.commons.lang3.tuple.Pair;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author ssanchez
  */
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public abstract class CertificationCourseDetailMapper {
+@Mapper(unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
+public abstract class SimpleCertificationCourseDetailMapper {
 
     @Autowired
     protected SimpleCertificationAuthorityDetailMapper simpleCertificationAuthorityDetailMapper;
@@ -36,7 +36,7 @@ public abstract class CertificationCourseDetailMapper {
             @Mapping(expression = "java(entity.getRight().getCanBeRenewed())", target = "canBeRenewed"),
     })
     @Named("entityToDTO")
-    public abstract CertificationCourseDetailDTO entityToDTO(Pair<CertificationCourseEntity, CertificationCourseBcEntity> entity);
+    public abstract SimpleCertificationCourseDetailDTO entityToDTO(Pair<CertificationCourseEntity, CertificationCourseBcEntity> entity);
 
     /**
      *
@@ -44,5 +44,5 @@ public abstract class CertificationCourseDetailMapper {
      * @return
      */
     @IterableMapping(qualifiedByName = "entityToDTO")
-    public abstract Iterable<CertificationCourseDetailDTO> entityListToDTOList(Iterable<Pair<CertificationCourseEntity, CertificationCourseBcEntity>> entity);
+    public abstract Iterable<SimpleCertificationCourseDetailDTO> entityListToDTOList(Iterable<Pair<CertificationCourseEntity, CertificationCourseBcEntity>> entity);
 }

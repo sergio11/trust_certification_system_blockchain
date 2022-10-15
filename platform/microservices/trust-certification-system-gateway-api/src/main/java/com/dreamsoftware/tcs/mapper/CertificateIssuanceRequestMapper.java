@@ -17,11 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class CertificateIssuanceRequestMapper {
 
     @Autowired
-    protected CertificationCourseDetailMapper certificationCourseDetailMapper;
+    protected SimpleCertificationCourseDetailMapper certificationCourseDetailMapper;
 
     @Mappings({
         @Mapping(expression = "java(entity.getId().toString())", target = "id"),
-        @Mapping(expression = "java(certificationCourseDetailMapper.entityToDTO(entity.getCourse()))", target = "course"),
         @Mapping(expression = "java(entity.getStatus().name())", target = "status"),
         @Mapping(expression = "java(entity.getStudent().getId().toString())", target = "studentWalletHash"),
         @Mapping(expression = "java(entity.getCa().getId().toString())", target = "caWalletHash")

@@ -37,8 +37,8 @@ public class CertificateIssuanceRequestDTO {
     /**
      * Course
      */
-    @JsonProperty("course")
-    private CertificationCourseDetailDTO course;
+    //@JsonProperty("course")
+    //private SimpleCertificationCourseDetailDTO course;
 
     /**
      * Student Wallet Hash

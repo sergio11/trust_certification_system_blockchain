@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.persistence.bc.repository.mapper;
 
 import com.dreamsoftware.tcs.contracts.CertificationCourseContract.CertificationCourseRecord;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseBcEntity;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mappings;
@@ -22,7 +22,7 @@ public abstract class CertificationCourseEntityMapper {
      */
     @Mappings({})
     @Named("courseRecordToCertificationCourseEntity")
-    public abstract CertificationCourseModelEntity courseRecordToCertificationCourseEntity(CertificationCourseRecord caRecord);
+    public abstract CertificationCourseBcEntity courseRecordToCertificationCourseEntity(CertificationCourseRecord caRecord);
 
     /**
      *
@@ -30,5 +30,5 @@ public abstract class CertificationCourseEntityMapper {
      * @return
      */
     @IterableMapping(qualifiedByName = "courseRecordToCertificationCourseEntity")
-    public abstract Iterable<CertificationCourseModelEntity> courseRecordToCertificationCourseEntity(Iterable<CertificationCourseRecord> caRecord);
+    public abstract Iterable<CertificationCourseBcEntity> courseRecordToCertificationCourseEntity(Iterable<CertificationCourseRecord> caRecord);
 }
