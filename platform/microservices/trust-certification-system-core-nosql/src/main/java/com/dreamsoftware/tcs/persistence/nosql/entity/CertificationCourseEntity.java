@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.persistence.nosql.entity;
 
 import java.util.Date;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Builder;
@@ -62,6 +63,12 @@ public class CertificationCourseEntity {
      */
     @Field("status")
     private CertificationCourseStateEnum status;
+
+    /**
+     * Editions
+     */
+    @DBRef
+    private List<CertificationCourseEditionEntity> editions;
 
     /**
      * CA
