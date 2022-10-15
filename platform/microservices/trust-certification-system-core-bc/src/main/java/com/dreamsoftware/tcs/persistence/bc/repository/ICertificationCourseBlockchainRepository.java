@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.persistence.bc.repository;
 
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseBcEntity;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseEventEntity;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 
@@ -22,8 +22,8 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
      * @return
      * @throws RepositoryException
      */
-    CertificationCourseModelEntity addCertificationCourse(final String walletHash, final String id, final Long costOfIssuingCertificate,
-            final Long durationInHours, final Long expirationInDays, final Boolean canBeRenewed, final Long costOfRenewingCertificate) throws RepositoryException;
+    CertificationCourseBcEntity addCertificationCourse(final String walletHash, final String id, final Long costOfIssuingCertificate,
+                                                       final Long durationInHours, final Long expirationInDays, final Boolean canBeRenewed, final Long costOfRenewingCertificate) throws RepositoryException;
 
     /**
      * Enable Certification Course
@@ -33,7 +33,7 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
      * @return
      * @throws RepositoryException
      */
-    CertificationCourseModelEntity enable(final String caWallet, final String courseId) throws RepositoryException;
+    CertificationCourseBcEntity enable(final String caWallet, final String courseId) throws RepositoryException;
 
     /**
      * Disable Certification Course
@@ -43,7 +43,7 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
      * @return
      * @throws RepositoryException
      */
-    CertificationCourseModelEntity disable(final String caWallet, final String courseId) throws RepositoryException;
+    CertificationCourseBcEntity disable(final String caWallet, final String courseId) throws RepositoryException;
 
     /**
      * Remove Certification Course
@@ -53,7 +53,7 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
      * @return
      * @throws RepositoryException
      */
-    CertificationCourseModelEntity remove(final String caWallet, final String courseId) throws RepositoryException;
+    CertificationCourseBcEntity remove(final String caWallet, final String courseId) throws RepositoryException;
 
     /**
      * Get Certification Course
@@ -63,13 +63,13 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
      * @return
      * @throws RepositoryException
      */
-    CertificationCourseModelEntity get(final String caWallet, final String courseId) throws RepositoryException;
+    CertificationCourseBcEntity get(final String caWallet, final String courseId) throws RepositoryException;
 
     /**
      *
      * @return @throws RepositoryException
      */
-    Iterable<CertificationCourseModelEntity> getAll() throws RepositoryException;
+    Iterable<CertificationCourseBcEntity> getAll() throws RepositoryException;
 
     /**
      *
@@ -77,7 +77,7 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
      * @return
      * @throws RepositoryException
      */
-    Iterable<CertificationCourseModelEntity> getAllByCa(final String caWallet) throws RepositoryException;
+    Iterable<CertificationCourseBcEntity> getAllByCa(final String caWallet) throws RepositoryException;
 
     /**
      * Get Certification Course
@@ -86,7 +86,7 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
      * @return
      * @throws RepositoryException
      */
-    CertificationCourseModelEntity get(final String courseId) throws RepositoryException;
+    CertificationCourseBcEntity get(final String courseId) throws RepositoryException;
 
     /**
      * Can be issued
@@ -115,6 +115,6 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
      * @return
      * @throws RepositoryException
      */
-    CertificationCourseModelEntity update(final String caWallet, final CertificationCourseModelEntity model) throws RepositoryException;
+    CertificationCourseBcEntity update(final String caWallet, final CertificationCourseBcEntity model) throws RepositoryException;
 
 }

@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.mapper;
 
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseModelEntity;
+import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseBcEntity;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationCourseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -21,7 +21,7 @@ public abstract class UpdateCertificationCourseMapper {
      */
     @Mappings({})
     @Named("entityToDTO")
-    public abstract UpdateCertificationCourseDTO entityToDTO(final CertificationCourseModelEntity entity);
+    public abstract UpdateCertificationCourseDTO entityToDTO(final CertificationCourseBcEntity entity);
 
     /**
      *
@@ -36,5 +36,5 @@ public abstract class UpdateCertificationCourseMapper {
         @Mapping(source = "model.expirationInDays", target = "expirationInDays"),
         @Mapping(source = "model.canBeRenewed", target = "canBeRenewed")
     })
-    public abstract CertificationCourseModelEntity update(@MappingTarget CertificationCourseModelEntity entity, UpdateCertificationCourseDTO model);
+    public abstract CertificationCourseBcEntity update(@MappingTarget CertificationCourseBcEntity entity, UpdateCertificationCourseDTO model);
 }
