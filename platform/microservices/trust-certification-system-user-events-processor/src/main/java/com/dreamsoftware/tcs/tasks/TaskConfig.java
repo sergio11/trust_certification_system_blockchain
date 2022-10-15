@@ -1,7 +1,8 @@
 package com.dreamsoftware.tcs.tasks;
 
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
+import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IPasswordResetTokenService;
-import com.dreamsoftware.tcs.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class TaskConfig {
 
-    private final IUserService userService;
+    private final UserRepository userRepository;
     private final IPasswordResetTokenService passwordResetTokenService;
 
     /**
@@ -27,7 +28,7 @@ public class TaskConfig {
     @SchedulerLock(name = "configureDeleteUnactivatedAccountsTask")
     public void configureDeleteUnactivatedAccountsTask() {
         log.debug("configureDeleteUnactivatedAccountsTask CALLED");
-        userService.deleteUnactivatedAccounts();
+        userRepository.deleteByState(UserStateEnum.PENDING_ACTIVATE);
     }
 
     /**

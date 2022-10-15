@@ -38,6 +38,21 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
     }
 
     /**
+     *
+     * @param password
+     * @param token
+     */
+    @Override
+    public void updatePasswordByConfirmationToken(final String password, final String token) {
+        Assert.notNull(password, "password has can not be null");
+        Assert.notNull(token, "token can not be null");
+        mongoTemplate.updateFirst(
+                new Query(Criteria.where("confirmationToken").is(token)),
+                new Update()
+                        .set("password", password), UserEntity.class);
+    }
+
+    /**
      * @param walletHash
      */
     @Override

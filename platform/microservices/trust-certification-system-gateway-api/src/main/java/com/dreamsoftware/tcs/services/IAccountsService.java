@@ -1,11 +1,6 @@
 package com.dreamsoftware.tcs.services;
 
-import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignInUserExternalProviderDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignUpExternalProviderDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignupAsCaAdminDTO;
+import com.dreamsoftware.tcs.web.dto.request.*;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationProviderDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
@@ -101,6 +96,12 @@ public interface IAccountsService {
      * @param email
      */
     void resetPassword(final String email);
+
+    /**
+     *
+     * @param changePasswordRequestDTO
+     */
+    void changePassword(final ChangePasswordRequestDTO changePasswordRequestDTO);
 
     /**
      * Find Auth Provider By Key

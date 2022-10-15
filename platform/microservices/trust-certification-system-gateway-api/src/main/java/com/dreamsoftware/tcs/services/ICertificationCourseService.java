@@ -37,7 +37,7 @@ public interface ICertificationCourseService {
     void save(final SaveCertificationCourseDTO model);
 
     /**
-     * Remove Certificacion course
+     * Remove Certification course
      * @param caWalletHash
      * @param courseId
      * @throws Throwable

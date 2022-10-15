@@ -1,24 +1,11 @@
 package com.dreamsoftware.tcs.web.controller.account;
 
 import com.dreamsoftware.tcs.services.IAccountsService;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.RefreshTokenException;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpException;
+import com.dreamsoftware.tcs.web.controller.account.error.exception.*;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.ActivateAccountException;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.ResetPasswordRequestException;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInException;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.SignInExternalProviderException;
-import com.dreamsoftware.tcs.web.controller.account.error.exception.SignUpExternalProviderException;
-import com.dreamsoftware.tcs.web.dto.request.RefreshTokenDTO;
-import com.dreamsoftware.tcs.web.dto.request.ResetPasswordRequestDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignInAdminUserDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignInUserDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignInUserExternalProviderDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignUpUserDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignUpExternalProviderDTO;
-import com.dreamsoftware.tcs.web.dto.request.SignupAsCaAdminDTO;
+import com.dreamsoftware.tcs.web.dto.request.*;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
 import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
@@ -33,11 +20,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.text.MessageFormat;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+
 import org.springframework.http.MediaType;
 import org.springframework.mobile.device.Device;
 import org.springframework.validation.annotation.Validated;
@@ -81,10 +70,10 @@ public class AccountsController extends SupportController {
      */
     @Operation(summary = "SIGN_IN - Create Access Token (JWT format)", description = "Create Access Token (JWT format)", tags = {"accounts"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Authentication Success",
-                content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
-        @ApiResponse(responseCode = "400", description = "Bad Credentials",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Authentication Success",
+                    content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Credentials",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @SecurityRequirements
     @RequestMapping(value = "/signin", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -123,10 +112,10 @@ public class AccountsController extends SupportController {
      */
     @Operation(summary = "SIGN_IN_ADMIN - Create Access Token for an Admin user (JWT format)", description = "Create Access Token for an Admin user (JWT format)", tags = {"accounts"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Authentication Success",
-                content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
-        @ApiResponse(responseCode = "400", description = "Bad Credentials",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Authentication Success",
+                    content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Bad Credentials",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @SecurityRequirements
     @RequestMapping(value = "/signin/admin", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -153,7 +142,6 @@ public class AccountsController extends SupportController {
     }
 
     /**
-     *
      * @param externalProviderAuthRequest
      * @param userAgent
      * @param locale
@@ -164,10 +152,10 @@ public class AccountsController extends SupportController {
      */
     @Operation(summary = "SIGN_IN_EXTERNAL_ACCOUNT - Get Authorization Token through external social account", description = "Get Authorization Token through external social account, The user account is automatically validated", tags = {"accounts"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Sign in through external social account Success",
-                content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
-        @ApiResponse(responseCode = "500", description = "Sign in through external social account fail",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Sign in through external social account Success",
+                    content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Sign in through external social account fail",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @SecurityRequirements
     @RequestMapping(value = "/signin/external", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -194,16 +182,15 @@ public class AccountsController extends SupportController {
     }
 
     /**
-     *
      * @param refreshTokenDTO
      * @return
      */
     @Operation(summary = "REFRESH - Refresh Access Token (JWT format)", description = "Refresh Access Token (JWT format)", tags = {"accounts"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Refresh Token Success",
-                content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
-        @ApiResponse(responseCode = "500", description = "Refresh Token Fail",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Refresh Token Success",
+                    content = @Content(schema = @Schema(implementation = AuthenticationDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Refresh Token Fail",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @SecurityRequirements
     @RequestMapping(value = "/refresh", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -232,10 +219,10 @@ public class AccountsController extends SupportController {
      */
     @Operation(summary = "SIGN_UP - Create user into platform", description = "Create user into platform, It is necessary to verify the account through the email sent.", tags = {"accounts"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Sign Up Success",
-                content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
-        @ApiResponse(responseCode = "500", description = "Sign up fail",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Sign Up Success",
+                    content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Sign up fail",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @SecurityRequirements
     @RequestMapping(value = "/signup", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -276,10 +263,10 @@ public class AccountsController extends SupportController {
      */
     @Operation(summary = "SIGN_UP_EXTERNAL_ACCOUNT - Create user into platform through external social account", description = "Create user into platform through external social account.", tags = {"accounts"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Sign Up Success",
-                content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
-        @ApiResponse(responseCode = "500", description = "Sign up fail",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Sign Up Success",
+                    content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Sign up fail",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @SecurityRequirements
     @RequestMapping(value = "/signup/external", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -315,10 +302,10 @@ public class AccountsController extends SupportController {
      */
     @Operation(summary = "SIGN_UP_CA_ADMIN - Registering an administrator user of a Certification Authority", description = "Registering an administrator user of a Certification Authority.", tags = {"accounts"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Sign Up Success",
-                content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
-        @ApiResponse(responseCode = "500", description = "Sign up fail",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Sign Up Success",
+                    content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Sign up fail",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @SecurityRequirements
     @RequestMapping(value = "/signup/ca", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -357,10 +344,10 @@ public class AccountsController extends SupportController {
      */
     @Operation(summary = "ACTIVATE - Activate user into platform", description = "Activate user into platform, It is necessary to verify the account through the email sent.", tags = {"accounts"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Activate Success",
-                content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
-        @ApiResponse(responseCode = "500", description = "Activate fail",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Activate Success",
+                    content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Activate fail",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @SecurityRequirements
     @RequestMapping(value = "/activate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -385,10 +372,10 @@ public class AccountsController extends SupportController {
      */
     @Operation(summary = "RESET_PASSWORD - Reset Password", description = "Reset Password", tags = {"accounts"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Reset Password Success",
-                content = @Content(schema = @Schema(implementation = String.class))),
-        @ApiResponse(responseCode = "500", description = "Reset Password fail",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Reset Password Success",
+                    content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "500", description = "Reset Password fail",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @SecurityRequirements
     @RequestMapping(value = "/reset-password", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -405,13 +392,39 @@ public class AccountsController extends SupportController {
             return responseHelper.createAndSendResponse(
                     AccountsResponseCodeEnum.RESET_PASSWORD_REQUEST_SUCCESS,
                     HttpStatus.OK, resolveString("user_password_request_reset_success", request));
-
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Exception ex) {
             throw new ResetPasswordRequestException(ex.getMessage(), ex.getCause());
         }
+    }
 
+
+    @Operation(summary = "CHANGE_PASSWORD - Change Password", description = "Change Password", tags = {"accounts"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Change Password Success",
+                    content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "500", description = "Change Password fail",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @SecurityRequirements
+    @RequestMapping(value = "/change-password", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<String>> changePassword(
+            @Parameter(name = "change_password_request", description = "Change Password Request. Cannot null or empty.",
+                    required = true, schema = @Schema(implementation = ChangePasswordRequestDTO.class))
+            @Validated(ICommonSequence.class) ChangePasswordRequestDTO changePasswordRequestDTO,
+            @Parameter(hidden = true) HttpServletRequest request) {
+        try {
+            accountsService.changePassword(changePasswordRequestDTO);
+            return responseHelper.createAndSendResponse(
+                    AccountsResponseCodeEnum.CHANGE_PASSWORD_REQUEST_SUCCESS,
+                    HttpStatus.OK, resolveString("change_user_password_success", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Exception ex) {
+            throw new ChangePasswordRequestException(ex.getMessage(), ex.getCause());
+        }
     }
 
 }

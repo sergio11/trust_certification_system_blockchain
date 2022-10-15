@@ -32,6 +32,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -74,6 +75,8 @@ public class AccountsServiceImpl implements IAccountsService {
     private final AuthenticationManager adminAuthenticationManager;
     private final IUserLdapRepository userLdapRepository;
     private final UserLdapAccountMapper userLdapAccountMapper;
+
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * @param dto
@@ -314,6 +317,16 @@ public class AccountsServiceImpl implements IAccountsService {
                 UserPasswordResetEvent.builder()
                         .email(email)
                         .build());
+    }
+
+    /**
+     *
+     * @param changePasswordRequestDTO
+     */
+    @Override
+    public void changePassword(final ChangePasswordRequestDTO changePasswordRequestDTO) {
+        Assert.notNull(changePasswordRequestDTO, "changePasswordRequestDTO can not be null");
+        userRepository.updatePasswordByConfirmationToken(passwordEncoder.encode(changePasswordRequestDTO.getPasswordClear()), changePasswordRequestDTO.getConfirmationToken());
     }
 
     /**
