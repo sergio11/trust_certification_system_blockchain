@@ -16,7 +16,8 @@ import org.springframework.core.annotation.AnnotationUtils;
         @JsonSubTypes.Type(CourseCertificateRegistrationRequestEvent.class),
         @JsonSubTypes.Type(DisableCertificationCourseEvent.class),
         @JsonSubTypes.Type(EnableCertificationCourseEvent.class),
-        @JsonSubTypes.Type(RemoveCertificationCourseEvent.class)
+        @JsonSubTypes.Type(RemoveCertificationCourseEvent.class),
+        @JsonSubTypes.Type(RemoveCertificationCourseEditionEvent.class)
 })
 public abstract class AbstractCourseManagementEvent {
 

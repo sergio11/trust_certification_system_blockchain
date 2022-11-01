@@ -1,21 +1,12 @@
 package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseBcEntity;
-import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
-import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractCourseManagementHandler;
 import com.dreamsoftware.tcs.service.ICertificateCourseService;
 import com.dreamsoftware.tcs.stream.events.course.AbstractCourseManagementEvent;
-import com.dreamsoftware.tcs.stream.events.course.CourseCertificateRegistrationRequestEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
-import com.dreamsoftware.tcs.stream.events.user.AbstractUserManagementEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ResolvableType;
 import org.springframework.messaging.support.GenericMessage;

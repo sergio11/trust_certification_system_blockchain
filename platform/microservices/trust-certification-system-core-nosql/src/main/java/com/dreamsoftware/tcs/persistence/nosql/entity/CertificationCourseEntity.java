@@ -1,7 +1,8 @@
 package com.dreamsoftware.tcs.persistence.nosql.entity;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Builder;
@@ -50,7 +51,7 @@ public class CertificationCourseEntity {
      * Created At
      */
     @Field("created_at")
-    private Date createdAt;
+    private Date createdAt = new Date();
 
     /**
      * Updated At
@@ -65,10 +66,22 @@ public class CertificationCourseEntity {
     private CertificationCourseStateEnum status;
 
     /**
+     * Cost of issuing certificate
+     */
+    @Field("cost_issue_certificate")
+    private Long costOfIssuingCertificate;
+
+    /**
+     * Cost of renewing certificate
+     */
+    @Field("cost_renew_certificate")
+    private Long costOfRenewingCertificate;
+
+    /**
      * Editions
      */
     @DBRef
-    private List<CertificationCourseEditionEntity> editions;
+    private Set<CertificationCourseEditionEntity> editions;
 
     /**
      * CA

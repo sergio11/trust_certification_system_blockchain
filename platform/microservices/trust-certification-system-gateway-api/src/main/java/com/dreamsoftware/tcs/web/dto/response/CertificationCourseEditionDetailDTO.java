@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.Set;
 
 /**
  *
@@ -17,7 +16,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CertificationCourseDetailDTO {
+public class CertificationCourseEditionDetailDTO {
 
     /**
      * Identity
@@ -32,10 +31,16 @@ public class CertificationCourseDetailDTO {
     private String name;
 
     /**
-     * Description
+     * Start At
      */
-    @JsonProperty("description")
-    private String description;
+    @JsonProperty("start_at")
+    private Date startAt;
+
+    /**
+     * End Date
+     */
+    @JsonProperty("end_at")
+    private Date endAt;
 
     /**
      * Created At
@@ -50,12 +55,6 @@ public class CertificationCourseDetailDTO {
     private String status;
 
     /**
-     * Certification Authority
-     */
-    @JsonProperty("certification_authority")
-    private SimpleCertificationAuthorityDetailDTO ca;
-
-    /**
      * Cost of Issuing Certificate
      */
     @JsonProperty("cost_issuing_certificate")
@@ -68,8 +67,20 @@ public class CertificationCourseDetailDTO {
     private Long costOfRenewingCertificate;
 
     /**
-     * Certification Course Editions
+     * Duration in hours
      */
-    @JsonProperty("editions")
-    private Iterable<CertificationCourseEditionDetailDTO> editions;
+    @JsonProperty("duration_in_hours")
+    private Long durationInHours;
+
+    /**
+     * Expiration in days
+     */
+    @JsonProperty("expiration_in_days")
+    private Long expirationInDays;
+
+    /**
+     * Can be renewed
+     */
+    @JsonProperty("can_be_renewed")
+    private Boolean canBeRenewed;
 }

@@ -1,12 +1,8 @@
 package com.dreamsoftware.tcs.mapper;
 
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificationCourseBcEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationCourseDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Mappings;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 
 /**
  *
@@ -21,7 +17,7 @@ public abstract class UpdateCertificationCourseMapper {
      */
     @Mappings({})
     @Named("entityToDTO")
-    public abstract UpdateCertificationCourseDTO entityToDTO(final CertificationCourseBcEntity entity);
+    public abstract UpdateCertificationCourseDTO entityToDTO(final CertificationCourseEntity entity);
 
     /**
      *
@@ -32,9 +28,8 @@ public abstract class UpdateCertificationCourseMapper {
     @Mappings({
         @Mapping(source = "model.costOfIssuingCertificate", target = "costOfIssuingCertificate"),
         @Mapping(source = "model.costOfRenewingCertificate", target = "costOfRenewingCertificate"),
-        @Mapping(source = "model.durationInHours", target = "durationInHours"),
-        @Mapping(source = "model.expirationInDays", target = "expirationInDays"),
-        @Mapping(source = "model.canBeRenewed", target = "canBeRenewed")
+        @Mapping(source = "model.description", target = "description"),
+        @Mapping(source = "model.name", target = "name")
     })
-    public abstract CertificationCourseBcEntity update(@MappingTarget CertificationCourseBcEntity entity, UpdateCertificationCourseDTO model);
+    public abstract CertificationCourseEntity update(@MappingTarget CertificationCourseEntity entity, UpdateCertificationCourseDTO model);
 }

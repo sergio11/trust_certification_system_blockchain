@@ -1,23 +1,14 @@
 package com.dreamsoftware.tcs.web.controller.course;
 
 import com.dreamsoftware.tcs.services.ICertificationCourseService;
+import com.dreamsoftware.tcs.web.controller.course.error.exception.*;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.CertificationCourseNotFoundException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.DeleteCertificationCourseException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.DisableCertificationCourseException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.EnableCertificationCourseException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.GetAllCertificationCoursesException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.GetAllCoursesByCaException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.GetCertificationCourseDetailException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.PartialUpdateCertificationCourseException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.SaveCertificationCourseException;
 import com.dreamsoftware.tcs.web.converter.mediatype.PatchMediaType;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
-import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
-import com.dreamsoftware.tcs.web.dto.response.SimpleCertificationCourseDetailDTO;
-import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationCourseDTO;
+import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseEditionDTO;
+import com.dreamsoftware.tcs.web.dto.response.*;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdminOrCourseOwner;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
@@ -63,9 +54,10 @@ public class CertificationCourseController extends SupportController {
 
     /**
      *
-     * @return @throws Throwable
+     * @return
+     * @throws Throwable
      */
-    @Operation(summary = "GET_ALL_COURSES - Get All courses (Only Access For Admin)", description = "Get All courses", tags = {"COURSE"})
+    @Operation(summary = "GET_ALL_COURSES - Get All courses", description = "Get All courses", tags = {"COURSE"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Course Detail",
                 content = @Content(schema = @Schema(implementation = SimpleCertificationCourseDetailDTO.class))),
@@ -77,8 +69,7 @@ public class CertificationCourseController extends SupportController {
     public ResponseEntity<APIResponse<Iterable<SimpleCertificationCourseDetailDTO>>> getAllCourses() throws Throwable {
         try {
             final Iterable<SimpleCertificationCourseDetailDTO> courseList = certificationCourseService.getAll();
-            return responseHelper.createAndSendResponse(
-                    CertificationCourseResponseCodeEnum.GET_ALL_CERTIFICATION_COURSES,
+            return responseHelper.createAndSendResponse(CertificationCourseResponseCodeEnum.GET_ALL_CERTIFICATION_COURSES,
                     HttpStatus.OK, courseList);
         } catch (final ConstraintViolationException ex) {
             throw ex;
@@ -89,8 +80,7 @@ public class CertificationCourseController extends SupportController {
 
     /**
      * Get Certification Course Detail
-     *
-     * @param id
+     * @param courseId
      * @param selfUser
      * @return
      * @throws Throwable
@@ -102,17 +92,16 @@ public class CertificationCourseController extends SupportController {
             @ApiResponse(responseCode = "404", description = "Course Not Found",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/{id}"}, method = RequestMethod.GET,
+    @RequestMapping(value = {"/{courseId}"}, method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> getDetailById(
-            @Parameter(name = "id", description = "Course Id", required = true)
-            @PathVariable("id") String id,
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @PathVariable("courseId") String courseId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
-            final CertificationCourseDetailDTO courseDetailDTO = certificationCourseService.getDetail(selfUser.getWalletHash(), id);
-            return responseHelper.createAndSendResponse(
-                    CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DETAIL,
+            final CertificationCourseDetailDTO courseDetailDTO = certificationCourseService.getDetail(selfUser.getWalletHash(), courseId);
+            return responseHelper.createAndSendResponse(CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DETAIL,
                     HttpStatus.OK, courseDetailDTO);
         } catch (final ConstraintViolationException ex) {
             throw ex;
@@ -136,12 +125,11 @@ public class CertificationCourseController extends SupportController {
     })
     @RequestMapping(value = {"/"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
-    public ResponseEntity<APIResponse<Iterable<SimpleCertificationCourseDetailDTO>>> getAllByCA(
+    public ResponseEntity<APIResponse<Iterable<CertificationCourseDetailDTO>>> getAllByCA(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser) throws Throwable {
         try {
-            final Iterable<SimpleCertificationCourseDetailDTO> courseListByCa = certificationCourseService.getAllByCA(selfUser.getWalletHash());
-            return responseHelper.createAndSendResponse(
-                    CertificationCourseResponseCodeEnum.GET_CERTIFICATION_COURSES_BY_CA,
+            final Iterable<CertificationCourseDetailDTO> courseListByCa = certificationCourseService.getAllByCA(selfUser.getWalletHash());
+            return responseHelper.createAndSendResponse(CertificationCourseResponseCodeEnum.GET_CERTIFICATION_COURSES_BY_CA,
                     HttpStatus.OK, courseListByCa);
         } catch (final ConstraintViolationException ex) {
             throw ex;
@@ -152,7 +140,6 @@ public class CertificationCourseController extends SupportController {
 
     /**
      * Save Certification Course
-     *
      * @param certificationCourse
      * @param selfUser
      * @param request
@@ -190,27 +177,25 @@ public class CertificationCourseController extends SupportController {
 
     /**
      * Partial Update Certification Course
-     *
      * @param selfUser
-     * @param id
+     * @param courseId
      * @param mergePatchDocument
      * @return
      */
     @Operation(summary = "PARTIAL_UPDATE_CERTIFICATION_COURSE", description = "Update Certification Course")
-    @RequestMapping(value = "/{id}", method = RequestMethod.PATCH,
+    @RequestMapping(value = "/{courseId}", method = RequestMethod.PATCH,
             consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @OnlyAccessForCA
+    @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<SimpleCertificationCourseDetailDTO>> partialUpdateCertificationCourse(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
-            @Parameter(name = "id", description = "Course Id", required = true)
-            @PathVariable("id") String id,
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @PathVariable("courseId") String courseId,
             @RequestBody JsonMergePatch mergePatchDocument) {
-
         try {
-            final SimpleCertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseService.editById(id)
+            final SimpleCertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseService.editCertificationCourseById(courseId)
                     .map(updateCertificationCourse -> patchHelper.mergePatch(mergePatchDocument, updateCertificationCourse, UpdateCertificationCourseDTO.class))
-                    .map(updateCertificationCourse -> certificationCourseService.update(id, updateCertificationCourse, selfUser.getWalletHash()).orElseThrow(CertificationCourseNotFoundException::new))
+                    .map(updateCertificationCourse -> certificationCourseService.update(courseId, updateCertificationCourse, selfUser.getWalletHash()).orElseThrow(CertificationCourseNotFoundException::new))
                     .orElseThrow(CertificationCourseNotFoundException::new);
             return responseHelper.createAndSendResponse(CertificationCourseResponseCodeEnum.PARTIAL_CERTIFICATION_COURSE_UPDATE, HttpStatus.OK, certificationCourseDetailDTO);
         } catch (final ConstraintViolationException ex) {
@@ -222,24 +207,24 @@ public class CertificationCourseController extends SupportController {
 
     /**
      * Enable Certification Course
-     *
-     * @param id
+     * @param courseId
      * @param selfUser
+     * @param request
      * @return
-     * @throws java.lang.Throwable
+     * @throws Throwable
      */
     @Operation(summary = "ENABLE_COURSE - Enable Certification Course", description = "Enable Certification Course", tags = {"COURSE"})
-    @RequestMapping(value = "/{id}/enable", method = RequestMethod.PUT,
+    @RequestMapping(value = "/{courseId}/enable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @OnlyAccessForCA
+    @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<String>> enable(
-            @Parameter(name = "id", description = "Course Id", required = true)
-            @PathVariable("id") String id,
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @PathVariable("courseId") String courseId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
         try {
-           certificationCourseService.enable(selfUser.getWalletHash(), id);
+           certificationCourseService.enable(selfUser.getWalletHash(), courseId);
             return responseHelper.createAndSendResponse(CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_ENABLED,
                     HttpStatus.OK, resolveString("enable_certification_course_success", request));
         } catch (final ConstraintViolationException ex) {
@@ -251,24 +236,24 @@ public class CertificationCourseController extends SupportController {
 
     /**
      * Disable Certification Course
-     *
-     * @param id
+     * @param courseId
      * @param selfUser
+     * @param request
      * @return
      * @throws Throwable
      */
     @Operation(summary = "DISABLE_COURSE - Disable Certification Course", description = "Disable Certification Course", tags = {"COURSE"})
-    @RequestMapping(value = "/{id}/disable", method = RequestMethod.PUT,
+    @RequestMapping(value = "/{courseId}/disable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @OnlyAccessForCA
+    @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<String>> disable(
-            @Parameter(name = "id", description = "Course Id", required = true)
-            @PathVariable("id") String id,
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @PathVariable("courseId") String courseId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
         try {
-            certificationCourseService.disable(selfUser.getWalletHash(), id);
+            certificationCourseService.disable(selfUser.getWalletHash(), courseId);
             return responseHelper.createAndSendResponse(
                     CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DISABLED,
                     HttpStatus.OK, resolveString("disable_certification_course_success", request));
@@ -276,6 +261,217 @@ public class CertificationCourseController extends SupportController {
             throw ex;
         } catch (final Throwable ex) {
             throw new DisableCertificationCourseException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param courseId
+     * @param selfUser
+     * @param request
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "DELETE_CERTIFICATION_COURSE - Delete Certification Course (Only Access For Admin Or Course Owner)", description = "Delete Certification Course", tags = {"COURSE"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Certification Course Deleted",
+                    content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "404", description = "Certification Course Not Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/{courseId}"}, method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdminOrCourseOwner
+    public ResponseEntity<APIResponse<String>> deleteById(
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @PathVariable("courseId") String courseId,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
+            @Parameter(hidden = true) HttpServletRequest request
+    ) throws Throwable {
+        try {
+            certificationCourseService.remove(selfUser.getWalletHash(), courseId);
+            return responseHelper.createAndSendResponse(
+                    CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DELETED,
+                    HttpStatus.OK, resolveString("delete_certification_course_success", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new DeleteCertificationCourseException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Save Certification Course Edition
+     * @param courseId
+     * @param certificationCourseEdition
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "SAVE_CERTIFICATION_COURSE_EDITION - Save Certification Course Edition (only access for CA users)", description = "Save Certification Course Editions", tags = {"course"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Certification Course Edition Detail",
+                    content = @Content(schema = @Schema(implementation = CertificationCourseEditionDetailDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Save Certification Course Edition exception",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = "/{courseId}/editions", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdminOrCourseOwner
+    public ResponseEntity<APIResponse<CertificationCourseEditionDetailDTO>> save(
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @PathVariable("courseId") String courseId,
+            @Parameter(name = "certification_course_edition", description = "Certification Course Data. Cannot null or empty.",
+                    required = true, schema = @Schema(implementation = SaveCertificationCourseEditionDTO.class))
+            @Validated(ICommonSequence.class) SaveCertificationCourseEditionDTO certificationCourseEdition,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser) throws Throwable {
+        try {
+            certificationCourseEdition.setCaWalletHash(selfUser.getWalletHash());
+            certificationCourseEdition.setCertificationCourseId(courseId);
+            final CertificationCourseEditionDetailDTO certificationCourseEditionDetailDTO = certificationCourseService.save(certificationCourseEdition);
+            return responseHelper.createAndSendResponse(CertificationCourseResponseCodeEnum.SAVE_CERTIFICATION_COURSE_EDITION_SUCCESSFULLY, HttpStatus.OK,
+                    certificationCourseEditionDetailDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new SaveCertificationCourseEditionException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Partial Update Certification Course Edition
+     *
+     * @param selfUser
+     * @param courseId
+     * @param mergePatchDocument
+     * @return
+     */
+    @Operation(summary = "PARTIAL_UPDATE_CERTIFICATION_COURSE_EDITION", description = "Update Certification Course Edition")
+    @RequestMapping(value = "/{courseId}/editions/{editionId}", method = RequestMethod.PATCH,
+            consumes = PatchMediaType.APPLICATION_MERGE_PATCH_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdminOrCourseOwner
+    public ResponseEntity<APIResponse<CertificationCourseEditionDetailDTO>> partialUpdateCertificationCourseEdition(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @PathVariable("courseId") String courseId,
+            @Parameter(name = "editionId", description = "Edition Id", required = true)
+            @PathVariable("editionId") String editionId,
+            @RequestBody JsonMergePatch mergePatchDocument) {
+        try {
+            final CertificationCourseEditionDetailDTO certificationCourseDetailDTO = certificationCourseService.editCertificationCourseEditionById(editionId)
+                    .map(updateCertificationCourseEdition -> patchHelper.mergePatch(mergePatchDocument, updateCertificationCourseEdition, UpdateCertificationCourseEditionDTO.class))
+                    .map(updateCertificationCourseEdition -> certificationCourseService.update(courseId, editionId, updateCertificationCourseEdition, selfUser.getWalletHash()).orElseThrow(CertificationCourseEditionNotFoundException::new))
+                    .orElseThrow(CertificationCourseEditionNotFoundException::new);
+            return responseHelper.createAndSendResponse(CertificationCourseResponseCodeEnum.PARTIAL_CERTIFICATION_COURSE_EDITION_UPDATED, HttpStatus.OK, certificationCourseDetailDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new PartialUpdateCertificationCourseEditionException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Enable Certification Course Edition
+     * @param courseId
+     * @param editionId
+     * @param selfUser
+     * @param request
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "ENABLE_COURSE_EDITION - Enable Certification Course Edition", description = "Enable Certification Course Edition", tags = {"COURSE"})
+    @RequestMapping(value = "/{courseId}/editions/{editionId}/enable", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdminOrCourseOwner
+    public ResponseEntity<APIResponse<String>> enable(
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @PathVariable("courseId") String courseId,
+            @Parameter(name = "editionId", description = "Edition Id", required = true)
+            @PathVariable("editionId") String editionId,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
+            @Parameter(hidden = true) HttpServletRequest request
+    ) throws Throwable {
+        try {
+            certificationCourseService.enable(selfUser.getWalletHash(), courseId, editionId);
+            return responseHelper.createAndSendResponse(CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_EDITION_ENABLED,
+                    HttpStatus.OK, resolveString("enable_certification_course_edition_success", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new EnableCertificationCourseEditionException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Disable Certification Course Edition Edition
+     *
+     * @param courseId
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "DISABLE_COURSE_EDITION - Disable Certification Course Edition", description = "Disable Certification Course Edition", tags = {"COURSE"})
+    @RequestMapping(value = "/{courseId}/editions/{editionId}/disable", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdminOrCourseOwner
+    public ResponseEntity<APIResponse<String>> disable(
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @PathVariable("courseId") String courseId,
+            @Parameter(name = "editionId", description = "Edition Id", required = true)
+            @PathVariable("editionId") String editionId,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
+            @Parameter(hidden = true) HttpServletRequest request
+    ) throws Throwable {
+        try {
+            certificationCourseService.disable(selfUser.getWalletHash(), courseId, editionId);
+            return responseHelper.createAndSendResponse(
+                    CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_EDITION_DISABLED,
+                    HttpStatus.OK, resolveString("disable_certification_course_edition_success", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new DisableCertificationCourseEditionException(ex.getMessage(), ex);
+        }
+    }
+
+
+    /**
+     *
+     * @param courseId
+     * @param editionId
+     * @param selfUser
+     * @param request
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "DELETE_CERTIFICATION_COURSE_EDITION - Delete Certification Course Edition (Only Access For Admin Or Course Owner)", description = "Delete Certification Course Edition", tags = {"COURSE"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Certification Course Edition Deleted",
+                    content = @Content(schema = @Schema(implementation = String.class))),
+            @ApiResponse(responseCode = "404", description = "Certification Course Edition Not Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/{courseId}/editions/{editionId}"}, method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForAdminOrCourseOwner
+    public ResponseEntity<APIResponse<String>> deleteById(
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @PathVariable("courseId") String courseId,
+            @Parameter(name = "editionId", description = "Edition Id", required = true)
+            @PathVariable("editionId") String editionId,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
+            @Parameter(hidden = true) HttpServletRequest request
+    ) throws Throwable {
+        try {
+            certificationCourseService.remove(selfUser.getWalletHash(), courseId, editionId);
+            return responseHelper.createAndSendResponse(
+                    CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_EDITION_DELETED,
+                    HttpStatus.OK, resolveString("delete_certification_course_edition_success", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new DeleteCertificationCourseEditionException(ex.getMessage(), ex);
         }
     }
 
@@ -289,10 +485,10 @@ public class CertificationCourseController extends SupportController {
      */
     @Operation(summary = "CERTIFICATE_COURSE_CAN_BE_ISSUED - Certificate Course Can be issued", description = "Certificate Course Can be issued", tags = {"COURSE"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Course Detail",
-                content = @Content(schema = @Schema(implementation = SimpleCertificationCourseDetailDTO.class))),
-        @ApiResponse(responseCode = "404", description = "Course Not Found",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Course Detail",
+                    content = @Content(schema = @Schema(implementation = SimpleCertificationCourseDetailDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Course Not Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     @RequestMapping(value = {"/{id}/canBeIssued"}, method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -312,41 +508,6 @@ public class CertificationCourseController extends SupportController {
             throw ex;
         } catch (final Throwable ex) {
             throw new GetCertificationCourseDetailException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     *
-     * @param id
-     * @param selfUser
-     * @return
-     * @throws Throwable
-     */
-    @Operation(summary = "DELETE_CERTIFICATION_COURSE - Delete Certification Course (Only Access For Admin Or Course Owner)", description = "Delete Certification Course", tags = {"COURSE"})
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Certification Course Deleted",
-                content = @Content(schema = @Schema(implementation = String.class))),
-        @ApiResponse(responseCode = "404", description = "Certification Course Not Found",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
-    })
-    @RequestMapping(value = {"/{id}"}, method = RequestMethod.DELETE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @OnlyAccessForAdminOrCourseOwner
-    public ResponseEntity<APIResponse<String>> deleteById(
-            @Parameter(name = "id", description = "Course Id", required = true)
-            @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
-            @Parameter(hidden = true) HttpServletRequest request
-    ) throws Throwable {
-        try {
-            certificationCourseService.remove(selfUser.getWalletHash(), id);
-            return responseHelper.createAndSendResponse(
-                    CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_DELETED,
-                    HttpStatus.OK, resolveString("delete_certification_course_success", request));
-        } catch (final ConstraintViolationException ex) {
-            throw ex;
-        } catch (final Throwable ex) {
-            throw new DeleteCertificationCourseException(ex.getMessage(), ex);
         }
     }
 }

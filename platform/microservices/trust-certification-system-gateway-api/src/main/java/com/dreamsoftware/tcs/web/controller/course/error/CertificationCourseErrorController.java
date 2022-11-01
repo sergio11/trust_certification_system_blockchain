@@ -2,14 +2,7 @@ package com.dreamsoftware.tcs.web.controller.course.error;
 
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.course.CertificationCourseResponseCodeEnum;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.DeleteCertificationCourseException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.DisableCertificationCourseException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.EnableCertificationCourseException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.GetAllCertificationCoursesException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.GetAllCoursesByCaException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.GetCertificationCourseDetailException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.PartialUpdateCertificationCourseException;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.SaveCertificationCourseException;
+import com.dreamsoftware.tcs.web.controller.course.error.exception.*;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import javax.servlet.http.HttpServletRequest;
@@ -83,7 +76,7 @@ public class CertificationCourseErrorController extends SupportController {
     @ResponseBody
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSaveCertificationCourseException(final SaveCertificationCourseException ex, final HttpServletRequest request) {
         log.error("Handler for SaveCertificationCourseException -> " + ex.getMessage());
-        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.SAVE_CERTIFICATION_COURSE_FAIL,
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.SAVE_CERTIFICATION_COURSE_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("save_certification_course_failed", request));
     }
 
@@ -97,7 +90,7 @@ public class CertificationCourseErrorController extends SupportController {
     @ResponseBody
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetCertificationCourseDetailException(final GetCertificationCourseDetailException ex, final HttpServletRequest request) {
         log.error("Handler for GetCertificationCourseDetailException -> " + ex.getMessage());
-        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.GET_CERTIFICATION_COURSE_DETAIL_FAIL,
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.GET_CERTIFICATION_COURSE_DETAIL_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_certification_course_detail_failed", request));
     }
 
@@ -141,5 +134,76 @@ public class CertificationCourseErrorController extends SupportController {
         log.error("Handler for GetAllCoursesByCaException -> " + ex.getMessage());
         return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.GET_CERTIFICATION_COURSES_BY_CA_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_certification_courses_by_ca_failed", request));
+    }
+
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(DeleteCertificationCourseEditionException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleDeleteCertificationCourseEditionException(final DeleteCertificationCourseEditionException ex, final HttpServletRequest request) {
+        log.error("Handler for DeleteCertificationCourseEditionException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.DELETE_CERTIFICATION_COURSE_EDITION_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("delete_certification_course_edition_failed", request));
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(DisableCertificationCourseEditionException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleDisableCertificationCourseEditionException(final DisableCertificationCourseEditionException ex, final HttpServletRequest request) {
+        log.error("Handler for DisableCertificationCourseEditionException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.DISABLE_CERTIFICATION_COURSE_EDITION_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("disable_certification_course_edition_failed", request));
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(EnableCertificationCourseEditionException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleEnableCertificationCourseEditionException(final EnableCertificationCourseEditionException ex, final HttpServletRequest request) {
+        log.error("Handler for EnableCertificationCourseEditionException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.ENABLE_CERTIFICATION_COURSE_EDITION_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("enable_certification_course_edition_failed", request));
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(SaveCertificationCourseEditionException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSaveCertificationCourseEditionException(final SaveCertificationCourseEditionException ex, final HttpServletRequest request) {
+        log.error("Handler for SaveCertificationCourseEditionException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.SAVE_CERTIFICATION_COURSE_EDITION_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("save_certification_course_edition_failed", request));
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(PartialUpdateCertificationCourseEditionException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handlePartialUpdateCertificationCourseEditionException(final PartialUpdateCertificationCourseEditionException ex, final HttpServletRequest request) {
+        log.error("Handler for PartialUpdateCertificationCourseEditionException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.PARTIAL_CERTIFICATION_COURSE_EDITION_UPDATE_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("partial_update_certification_course_edition_failed", request));
     }
 }
