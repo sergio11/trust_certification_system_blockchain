@@ -52,34 +52,4 @@ public class SimpleCertificationCourseDetailDTO {
      */
     @JsonProperty("certification_authority")
     private SimpleCertificationAuthorityDetailDTO ca;
-
-    /**
-     * Cost of Issuing Certificate
-     */
-    @JsonProperty("cost_issuing_certificate")
-    private Long costOfIssuingCertificate;
-
-    /**
-     * Cost of renewing certificate
-     */
-    @JsonProperty("cost_renewing_certificate")
-    private Long costOfRenewingCertificate;
-
-    /**
-     * Duration in hours
-     */
-    @JsonProperty("duration_in_hours")
-    private Long durationInHours;
-
-    /**
-     * Expiration in days
-     */
-    @JsonProperty("expiration_in_days")
-    private Long expirationInDays;
-
-    /**
-     * Can be renewed
-     */
-    @JsonProperty("can_be_renewed")
-    private Boolean canBeRenewed;
 }

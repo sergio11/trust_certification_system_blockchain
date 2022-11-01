@@ -1,9 +1,9 @@
 package com.dreamsoftware.tcs.services;
 
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
-import com.dreamsoftware.tcs.web.dto.response.CertificationCourseDetailDTO;
-import com.dreamsoftware.tcs.web.dto.response.SimpleCertificationCourseDetailDTO;
-import com.dreamsoftware.tcs.web.dto.response.UpdateCertificationCourseDTO;
+import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseEditionDTO;
+import com.dreamsoftware.tcs.web.dto.response.*;
+
 import java.util.Optional;
 import org.bson.types.ObjectId;
 
@@ -22,6 +22,15 @@ public interface ICertificationCourseService {
     void enable(final String caWalletHash, final String courseId) throws Throwable;
 
     /**
+     * Enable Certification Course Edition
+     * @param caWalletHash
+     * @param courseId
+     * @param editionId
+     * @throws Throwable
+     */
+    void enable(final String caWalletHash, final String courseId, final String editionId) throws Throwable;
+
+    /**
      * Disable Certification Course
      * @param caWalletHash
      * @param courseId
@@ -30,11 +39,27 @@ public interface ICertificationCourseService {
     void disable(final String caWalletHash, final String courseId) throws Throwable;
 
     /**
-     * Save Model
+     * Disable Certification Course Edition
+     * @param caWalletHash
+     * @param courseId
+     * @param editionId
+     * @throws Throwable
+     */
+    void disable(final String caWalletHash, final String courseId, final String editionId) throws Throwable;
+
+    /**
      *
      * @param model
+     * @return
      */
-    void save(final SaveCertificationCourseDTO model);
+    SimpleCertificationCourseDetailDTO save(final SaveCertificationCourseDTO model);
+
+    /**
+     *
+     * @param model
+     * @return
+     */
+    CertificationCourseEditionDetailDTO save(final SaveCertificationCourseEditionDTO model);
 
     /**
      * Remove Certification course
@@ -43,6 +68,15 @@ public interface ICertificationCourseService {
      * @throws Throwable
      */
     void remove(final String caWalletHash, final String courseId) throws Throwable;
+
+    /**
+     * Remove Certification course edition
+     * @param caWalletHash
+     * @param courseId
+     * @param editionId
+     * @throws Throwable
+     */
+    void remove(final String caWalletHash, final String courseId, final String editionId) throws Throwable;
 
     /**
      * Check if can be issued
@@ -86,7 +120,7 @@ public interface ICertificationCourseService {
      * @return
      * @throws Throwable
      */
-    Iterable<SimpleCertificationCourseDetailDTO> getAllByCA(final String caWalletHash) throws Throwable;
+    Iterable<CertificationCourseDetailDTO> getAllByCA(final String caWalletHash) throws Throwable;
 
     /**
      *
@@ -101,7 +135,15 @@ public interface ICertificationCourseService {
      * @param courseId
      * @return
      */
-    Optional<UpdateCertificationCourseDTO> editById(final String courseId);
+    Optional<UpdateCertificationCourseDTO> editCertificationCourseById(final String courseId);
+
+    /**
+     *
+     * @param editionId
+     * @return
+     */
+    Optional<UpdateCertificationCourseEditionDTO> editCertificationCourseEditionById(final String editionId);
+
 
     /**
      *
@@ -111,4 +153,14 @@ public interface ICertificationCourseService {
      * @return
      */
     Optional<SimpleCertificationCourseDetailDTO> update(final String courseId, final UpdateCertificationCourseDTO model, final String caWalletHash);
+
+    /**
+     *
+     * @param courseId
+     * @param editionId
+     * @param model
+     * @param caWalletHash
+     * @return
+     */
+    Optional<CertificationCourseEditionDetailDTO> update(final String courseId, final String editionId, final UpdateCertificationCourseEditionDTO model, final String caWalletHash);
 }

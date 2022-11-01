@@ -15,7 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@PreAuthorize("@authorizationService.isAdmin() || @certificationCourseService.isTheOwner(#id, #selfUser.getUserId())")
+@PreAuthorize("@authorizationService.isAdmin() || @certificationCourseService.isTheOwner(#courseId, #selfUser.getUserId())")
 public @interface OnlyAccessForAdminOrCourseOwner {
 
 }
