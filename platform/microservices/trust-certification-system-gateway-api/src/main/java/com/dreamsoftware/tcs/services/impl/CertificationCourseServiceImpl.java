@@ -317,6 +317,20 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     }
 
     /**
+     *
+     * @param term
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Iterable<SimpleCertificationCourseDetailDTO> searchCourses(final String term) throws Throwable {
+        Assert.notNull(term, "query term can not be null");
+        Assert.isTrue(!term.isBlank(), "query term can not be empty");
+        final Iterable<CertificationCourseEntity> certificationCourseList = certificationCourseRepository.searchByTerm(term);
+        return simpleCertificationCourseDetailMapper.entityListToDTOList(certificationCourseList);
+    }
+
+    /**
      * @param caWalletHash
      * @return
      * @throws Throwable

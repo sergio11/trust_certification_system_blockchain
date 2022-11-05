@@ -79,6 +79,35 @@ public class CertificationCourseController extends SupportController {
     }
 
     /**
+     *
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "SEARCH_COURSES - Searching courses by term", description = "Searching courses by term", tags = {"COURSE"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Course Detail",
+                    content = @Content(schema = @Schema(implementation = SimpleCertificationCourseDetailDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Course Not Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/{term}"}, method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<Iterable<SimpleCertificationCourseDetailDTO>>> searchCourses(
+            @Parameter(name = "term", description = "Query term", required = true)
+            @PathVariable("term") String term
+    ) throws Throwable {
+        try {
+            final Iterable<SimpleCertificationCourseDetailDTO> courseList = certificationCourseService.searchCourses(term);
+            return responseHelper.createAndSendResponse(CertificationCourseResponseCodeEnum.SEARCH_CERTIFICATION_COURSES_SUCCESSFULLY,
+                    HttpStatus.OK, courseList);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new SearchCertificationCoursesException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Get Certification Course Detail
      * @param courseId
      * @param selfUser
