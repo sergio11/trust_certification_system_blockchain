@@ -7,7 +7,7 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
 import com.dreamsoftware.tcs.service.INotificationService;
-import com.dreamsoftware.tcs.stream.events.notifications.course.CertificationCourseRegisteredNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.course.CourseEditionRegisteredNotificationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -24,7 +24,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class CertificationCourseRegisteredHandler extends AbstractNotificationHandler<CertificationCourseRegisteredNotificationEvent> {
+public class CertificationCourseRegisteredHandler extends AbstractNotificationHandler<CourseEditionRegisteredNotificationEvent> {
 
     private final CertificationCourseRepository certificationCourseRepository;
     private final IMailClientService mailClientService;
@@ -36,7 +36,7 @@ public class CertificationCourseRegisteredHandler extends AbstractNotificationHa
      * @param notification
      */
     @Override
-    public void onHandle(final CertificationCourseRegisteredNotificationEvent notification) {
+    public void onHandle(final CourseEditionRegisteredNotificationEvent notification) {
         Assert.notNull(notification, "Notification can not be null");
         certificationCourseRepository.findById(new ObjectId(notification.getCourseId())).ifPresent((certificationCourseEntitySaved) -> {
             notificationService.onCACertificationCourseRegistered(certificationCourseEntitySaved);

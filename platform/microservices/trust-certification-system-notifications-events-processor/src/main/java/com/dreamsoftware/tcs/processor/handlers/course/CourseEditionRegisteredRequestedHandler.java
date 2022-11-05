@@ -5,7 +5,7 @@ import com.dreamsoftware.tcs.mail.model.NewCourseRegistrationRequestedMailReques
 import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
-import com.dreamsoftware.tcs.stream.events.notifications.course.NewCourseRegistrationRequestedNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.course.CourseEditionRegisteredNotificationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class NewCourseRegistrationRequestedHandler extends AbstractNotificationHandler<NewCourseRegistrationRequestedNotificationEvent> {
+public class CourseEditionRegisteredRequestedHandler extends AbstractNotificationHandler<CourseEditionRegisteredNotificationEvent> {
 
     private final IMailClientService mailClientService;
     private final I18NService i18nService;
@@ -32,7 +32,7 @@ public class NewCourseRegistrationRequestedHandler extends AbstractNotificationH
      * @param notification
      */
     @Override
-    public void onHandle(final NewCourseRegistrationRequestedNotificationEvent notification) {
+    public void onHandle(final CourseEditionRegisteredNotificationEvent notification) {
         Assert.notNull(notification, "Notification can not be null");
         Assert.notNull(notification.getCaWalletHash(), "CA Wallet hash can not be null");
         log.debug("NewCourseRegistrationRequestedEvent handled!");

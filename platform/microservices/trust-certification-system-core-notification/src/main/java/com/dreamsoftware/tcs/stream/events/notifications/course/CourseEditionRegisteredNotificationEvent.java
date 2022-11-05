@@ -17,10 +17,28 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityAnnotation(entityClass = NewCourseRegistrationRequestedNotificationEvent.class)
-public class NewCourseRegistrationRequestedNotificationEvent extends AbstractNotificationEvent {
+@EntityAnnotation(entityClass = CourseEditionRegisteredNotificationEvent.class)
+public class CourseEditionRegisteredNotificationEvent extends AbstractNotificationEvent {
 
-    private String caWalletHash;
+    /**
+     * Course Id
+     */
+    private String courseId;
+
+    /**
+     * Edition Id
+     */
+    private String editionId;
+
+    /**
+     * Course Name
+     */
     private String courseName;
+
+    /**
+     * CA Member Wallet Hash
+     */
+    private String caWalletHash;
+
 
 }

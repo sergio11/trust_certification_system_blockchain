@@ -5,11 +5,12 @@ import com.dreamsoftware.tcs.mapper.*;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEditionEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseEditionRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
+import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.services.ICertificationCourseService;
 import com.dreamsoftware.tcs.stream.events.course.*;
-import com.dreamsoftware.tcs.stream.events.notifications.course.NewCourseRegistrationRequestedNotificationEvent;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseEditionDTO;
 import com.dreamsoftware.tcs.web.dto.response.*;
@@ -42,6 +43,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
     private final CertificationCourseRepository certificationCourseRepository;
     private final CertificationCourseEditionRepository certificationCourseEditionRepository;
+    private final UserRepository userRepository;
     private final StreamBridge streamBridge;
     private final StreamChannelsProperties streamChannelsProperties;
 
@@ -139,7 +141,6 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     }
 
     /**
-     *
      * @param model
      * @return
      */
@@ -147,19 +148,11 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public CertificationCourseEditionDetailDTO save(SaveCertificationCourseEditionDTO model) {
         Assert.notNull(model, "model can not be null");
         final CertificationCourseEditionEntity certificationCourseEditionEntity = saveCertificationCourseEditionMapper.dtoToEntity(model);
-        certificationCourseEditionRepository.save(certificationCourseEditionEntity);
-        streamBridge.send(streamChannelsProperties.getCourseManagement(), CourseCertificateRegistrationRequestEvent.builder()
-                .id(model.getName())
-                .costOfIssuingCertificate(model.getCostOfIssuingCertificate())
+        final CertificationCourseEditionEntity certificationCourseEditionEntitySaved = certificationCourseEditionRepository.save(certificationCourseEditionEntity);
+        streamBridge.send(streamChannelsProperties.getCourseManagement(), NewCertificationCourseEditionRegistrationRequestEvent.builder()
+                .courseId(certificationCourseEditionEntitySaved.getCourse().getId().toString())
+                .courseEditionId(certificationCourseEditionEntitySaved.getId().toString())
                 .caWalletHash(model.getCaWalletHash())
-                .durationInHours(model.getDurationInHours())
-                .expirationInDays(model.getExpirationInDays())
-                .canBeRenewed(model.getCanBeRenewed())
-                .costOfRenewingCertificate(model.getCostOfRenewingCertificate())
-                .build());
-        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), NewCourseRegistrationRequestedNotificationEvent.builder()
-                .caWalletHash(model.getCaWalletHash())
-                .courseName(model.getName())
                 .build());
         return certificationCourseEditionDetailMapper.entityToDTO(certificationCourseEditionEntity);
     }
@@ -268,7 +261,6 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     }
 
     /**
-     *
      * @param editionId
      * @return
      */
@@ -297,20 +289,22 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
 
     @Override
     public Optional<CertificationCourseEditionDetailDTO> update(String courseId, String editionId, UpdateCertificationCourseEditionDTO model, String caWalletHash) {
-
-
-        /*try {
-            return Optional.ofNullable(certificationCourseBlockchainRepository.get(courseId))
-                    .map(certificationCourseEntity -> updateCertificationCourseMapper.update(certificationCourseEntity, model))
-                    .map(certificationCourseEntity -> Unthrow.wrap(() -> certificationCourseBlockchainRepository.update(caWalletHash, certificationCourseEntity)))
-                    .map(certificationCourseEntity  -> Pair.of(certificationCourseRepository.findById(new ObjectId(certificationCourseEntity.getId()))
-                            .orElseThrow(() -> new IllegalStateException("Course not found")), certificationCourseEntity))
-                    .map(simpleCertificationCourseDetailMapper::entityToDTO);
-        } catch (final RepositoryException e) {
-            log.debug("editById RepositoryException -> " + e.getMessage());
-            return Optional.empty();
-        }*/
-        return null;
+        Assert.notNull(courseId, "Course Id can not be null");
+        Assert.notNull(editionId, "Edition Id can not be null");
+        Assert.notNull(model, "model can not be null");
+        Assert.notNull(caWalletHash, "CA Wallet can not be null");
+        final Optional<CertificationCourseEditionDetailDTO> certificationCourseEditionDetailDTO = certificationCourseEditionRepository.findById(new ObjectId(editionId))
+                .map(certificationCourseEditionEntity -> updateCertificationCourseEditionMapper.update(certificationCourseEditionEntity, model))
+                .map(certificationCourseEditionRepository::save)
+                .map(certificationCourseEditionDetailMapper::entityToDTO);
+        certificationCourseEditionDetailDTO.ifPresent(edition -> {
+            streamBridge.send(streamChannelsProperties.getCourseManagement(), UpdateCertificationCourseEditionRequestEvent.builder()
+                    .courseEditionId(editionId)
+                    .courseId(courseId)
+                    .caWalletHash(caWalletHash)
+                    .build());
+        });
+        return certificationCourseEditionDetailDTO;
     }
 
     /**
@@ -330,10 +324,9 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     @Override
     public Iterable<CertificationCourseDetailDTO> getAllByCA(final String caWalletHash) throws Throwable {
         Assert.notNull(caWalletHash, "CA wallet hash");
-       /* final Iterable<Pair<CertificationCourseEntity, CertificationCourseBcEntity>> certificationCoursesByCA = StreamSupport.stream(certificationCourseBlockchainRepository.getAllByCa(caWalletHash).spliterator(), true).map(certificationCourseBcEntity ->
-                Pair.of(certificationCourseRepository.findById(new ObjectId(certificationCourseBcEntity.getId()))
-                        .orElseThrow(() -> new IllegalStateException("Course not found")), certificationCourseBcEntity)).collect(Collectors.toList());
-        return simpleCertificationCourseDetailMapper.entityListToDTOList(certificationCoursesByCA);*/
-        return null;
+        final UserEntity caMemberEntity = userRepository.findOneByWalletHash(caWalletHash)
+                .orElseThrow(() -> new IllegalStateException("CA not found"));
+        final Iterable<CertificationCourseEntity> certificationCoursesByCA = certificationCourseRepository.findAllByCa(caMemberEntity.getCa());
+        return certificationCourseDetailMapper.entityListToDTOList(certificationCoursesByCA);
     }
 }

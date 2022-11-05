@@ -255,20 +255,25 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
 
     /**
      *
-     * @param caWallet
-     * @param model
+     * @param walletHash
+     * @param id
+     * @param costOfIssuingCertificate
+     * @param durationInHours
+     * @param expirationInDays
+     * @param canBeRenewed
+     * @param costOfRenewingCertificate
      * @return
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseBcEntity update(final String caWallet, final CertificationCourseBcEntity model) throws RepositoryException {
-        Assert.notNull(caWallet, "Ca Wallet can not be null");
-        Assert.notNull(model, "Course Id can not be null");
+    public CertificationCourseBcEntity update(final String walletHash, final String id, final Long costOfIssuingCertificate, final Long durationInHours, final Long expirationInDays, final Boolean canBeRenewed, final Long costOfRenewingCertificate) throws RepositoryException {
+        Assert.notNull(walletHash, "Ca Wallet can not be null");
+        Assert.notNull(id, "Course Id can not be null");
         try {
-            final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(caWallet);
-            certificationCourseContract.updateCertificationCourse(model.getId(), BigInteger.valueOf(model.getCostOfIssuingCertificate()),
-                    BigInteger.valueOf(model.getDurationInHours()), BigInteger.valueOf(model.getExpirationInDays()), model.getCanBeRenewed(), BigInteger.valueOf(model.getCostOfRenewingCertificate())).send();
-            return getCertificationCourseDetail(certificationCourseContract, model.getId());
+            final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(walletHash);
+            certificationCourseContract.updateCertificationCourse(id, BigInteger.valueOf(costOfIssuingCertificate),
+                    BigInteger.valueOf(durationInHours), BigInteger.valueOf(expirationInDays), canBeRenewed, BigInteger.valueOf(costOfRenewingCertificate)).send();
+            return getCertificationCourseDetail(certificationCourseContract, id);
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }

@@ -20,6 +20,13 @@ import lombok.NoArgsConstructor;
 @EntityAnnotation(entityClass = CourseDeletedNotificationEvent.class)
 public class CourseDeletedNotificationEvent extends AbstractNotificationEvent {
 
+    /**
+     * Course Id
+     */
     private String id;
+
+    /**
+     * Course Name
+     */
     private String name;
 }

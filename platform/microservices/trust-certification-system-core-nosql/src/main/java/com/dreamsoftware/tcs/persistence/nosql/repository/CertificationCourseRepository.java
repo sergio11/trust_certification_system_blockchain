@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.persistence.nosql.repository;
 
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationAuthorityEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import java.util.Optional;
 import org.bson.types.ObjectId;
@@ -20,4 +21,12 @@ public interface CertificationCourseRepository extends MongoRepository<Certifica
      * @return
      */
     Long countByIdAndCaId(final ObjectId courseId, final ObjectId caId);
+
+    /**
+     *
+     * @param ca
+     * @return
+     */
+    Iterable<CertificationCourseEntity> findAllByCa(final CertificationAuthorityEntity ca);
+
 }
