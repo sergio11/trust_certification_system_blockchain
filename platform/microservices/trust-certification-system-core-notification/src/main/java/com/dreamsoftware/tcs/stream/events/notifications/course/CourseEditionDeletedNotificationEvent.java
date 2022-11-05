@@ -2,11 +2,7 @@ package com.dreamsoftware.tcs.stream.events.notifications.course;
 
 import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  *
@@ -17,17 +13,21 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityAnnotation(entityClass = CourseEnabledNotificationEvent.class)
-public class CourseEnabledNotificationEvent extends AbstractNotificationEvent {
+@EntityAnnotation(entityClass = CourseEditionDeletedNotificationEvent.class)
+public class CourseEditionDeletedNotificationEvent extends AbstractNotificationEvent {
 
     /**
      * Course Id
      */
-    private String id;
+    private String courseId;
+
+    /**
+     * Course Edition Id
+     */
+    private String editionId;
 
     /**
      * Course Name
      */
     private String name;
-
 }

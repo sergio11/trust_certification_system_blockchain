@@ -2,8 +2,10 @@ package com.dreamsoftware.tcs.processor.handlers;
 
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEditionEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseEditionRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.stream.events.course.EnableCertificationCourseEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.course.CourseEnabledNotificationEvent;
@@ -27,6 +29,11 @@ public class EnableCertificationCourseHandler extends AbstractCourseManagementHa
     private final CertificationCourseRepository certificationCourseRepository;
 
     /**
+     * Certification Course Edition Repository
+     */
+    private final CertificationCourseEditionRepository certificationCourseEditionRepository;
+
+    /**
      * Certification Course Blockchain Repository
      */
     private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
@@ -40,8 +47,15 @@ public class EnableCertificationCourseHandler extends AbstractCourseManagementHa
     @Override
     public CourseEnabledNotificationEvent onHandle(final EnableCertificationCourseEvent event) throws RepositoryException {
         Assert.notNull(event, "Event can not be null");
-        certificationCourseBlockchainRepository.enable(event.getCaWalletHash(), event.getCourseId());
+        log.debug("EnableCertificationCourseHandler CALLED!");
         final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.updateStatus(new ObjectId(event.getCourseId()), CertificationCourseStateEnum.ENABLED);
+        final Iterable<CertificationCourseEditionEntity> certificationCourseEditionEntities = certificationCourseEditionRepository.findAllByCourse(certificationCourseEntity.getId());
+        for (CertificationCourseEditionEntity edition: certificationCourseEditionEntities) {
+            if(edition.getStatus() == CertificationCourseStateEnum.DISABLED) {
+                certificationCourseBlockchainRepository.enable(event.getCaWalletHash(), edition.getId().toString());
+                certificationCourseEditionRepository.updateStatus(edition.getId(), CertificationCourseStateEnum.ENABLED);
+            }
+        }
         return CourseEnabledNotificationEvent.builder()
                 .id(event.getCourseId())
                 .name(certificationCourseEntity.getName())

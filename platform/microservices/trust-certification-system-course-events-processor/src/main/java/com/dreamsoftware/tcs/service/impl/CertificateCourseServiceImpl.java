@@ -51,28 +51,4 @@ public class CertificateCourseServiceImpl implements ICertificateCourseService {
         ResolvableType type = ResolvableType.forClassWithGenerics(AbstractCourseManagementHandler.class, clazz);
         return applicationContext.<AbstractCourseManagementHandler<T, ? extends AbstractNotificationEvent>>getBeanProvider(type).getObject();
     }
-
-    /*
-    private final CertificationCourseRepository certificationCourseRepository;
-
-    private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
-
-    @Override
-    public CertificationCourseBcEntity onRegisterNewCertificateCourse(CourseCertificateRegistrationRequestEvent event) throws RepositoryException {
-        Assert.notNull(event, "event can not be null");
-        log.debug("onRegisterNewCertificateCourse courseId: " + event.getId() + " CALLED!");
-        return certificationCourseBlockchainRepository.addCertificationCourse(event.getCaWalletHash(), event.getId(),
-                event.getCostOfIssuingCertificate(), event.getDurationInHours(), event.getExpirationInDays(), event.getCanBeRenewed(), event.getCostOfRenewingCertificate());
-    }
-
-    @Override
-    public CertificationCourseEntity onNewCertificateCourseRegistered(final CertificationCourseRegisteredEvent event) {
-        Assert.notNull(event, "event can not be null");
-        Assert.notNull(event.getCaWalletHash(), "caWalletHash can not be null");
-        Assert.notNull(event.getCertificationCourse().getId(), "courseId can not be null");
-        final String caWalletHash = event.getCaWalletHash();
-        final String courseId = event.getCertificationCourse().getId();
-        log.debug("register: caWalletHash: " + caWalletHash + " courseId: " + courseId + " CALLED!");
-        return certificationCourseRepository.updateStatus(new ObjectId(courseId), CertificationCourseStateEnum.ENABLED);
-    }*/
 }

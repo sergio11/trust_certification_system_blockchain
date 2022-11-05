@@ -10,7 +10,14 @@ import org.springframework.stereotype.Repository;
  * @author ssanchez
  */
 @Repository
-public interface CertificationCourseEditionRepository extends MongoRepository<CertificationCourseEditionEntity, ObjectId> {
+public interface CertificationCourseEditionRepository extends MongoRepository<CertificationCourseEditionEntity, ObjectId>, CertificationCourseEditionRepositoryCustom {
 
+
+    /**
+     *
+     * @param courseId
+     * @return
+     */
+    Iterable<CertificationCourseEditionEntity> findAllByCourse(final ObjectId courseId);
 
 }

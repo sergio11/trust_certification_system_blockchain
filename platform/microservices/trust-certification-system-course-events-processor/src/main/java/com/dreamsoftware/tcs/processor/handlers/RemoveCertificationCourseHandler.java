@@ -2,8 +2,10 @@ package com.dreamsoftware.tcs.processor.handlers;
 
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEditionEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseEditionRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.stream.events.course.RemoveCertificationCourseEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.course.CourseDeletedNotificationEvent;
@@ -27,6 +29,11 @@ public class RemoveCertificationCourseHandler extends AbstractCourseManagementHa
     private final CertificationCourseRepository certificationCourseRepository;
 
     /**
+     * Certification Course Edition Repository
+     */
+    private final CertificationCourseEditionRepository certificationCourseEditionRepository;
+
+    /**
      * Certification Course Blockchain Repository
      */
     private final ICertificationCourseBlockchainRepository certificationCourseBlockchainRepository;
@@ -40,8 +47,15 @@ public class RemoveCertificationCourseHandler extends AbstractCourseManagementHa
     @Override
     public CourseDeletedNotificationEvent onHandle(final RemoveCertificationCourseEvent event) throws RepositoryException {
         Assert.notNull(event, "Event can not be null");
-        certificationCourseBlockchainRepository.remove(event.getCaWalletHash(), event.getCourseId());
         final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.updateStatus(new ObjectId(event.getCourseId()), CertificationCourseStateEnum.REMOVED);
+        log.debug("RemoveCertificationCourseHandler CALLED!");
+        final Iterable<CertificationCourseEditionEntity> certificationCourseEditionEntities = certificationCourseEditionRepository.findAllByCourse(certificationCourseEntity.getId());
+        for (CertificationCourseEditionEntity edition: certificationCourseEditionEntities) {
+            if(edition.getStatus() == CertificationCourseStateEnum.NOT_VALIDATED) {
+                certificationCourseBlockchainRepository.remove(event.getCaWalletHash(), edition.getId().toString());
+                certificationCourseEditionRepository.updateStatus(edition.getId(), CertificationCourseStateEnum.REMOVED);
+            }
+        }
         return CourseDeletedNotificationEvent.builder()
                 .id(event.getCourseId())
                 .name(certificationCourseEntity.getName())

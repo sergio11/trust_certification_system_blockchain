@@ -13,9 +13,12 @@ import org.springframework.core.annotation.AnnotationUtils;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
 @JsonSubTypes({
-        @JsonSubTypes.Type(CourseCertificateRegistrationRequestEvent.class),
+        @JsonSubTypes.Type(NewCertificationCourseEditionRegistrationRequestEvent.class),
+        @JsonSubTypes.Type(UpdateCertificationCourseEditionRequestEvent.class),
         @JsonSubTypes.Type(DisableCertificationCourseEvent.class),
+        @JsonSubTypes.Type(DisableCertificationCourseEditionEvent.class),
         @JsonSubTypes.Type(EnableCertificationCourseEvent.class),
+        @JsonSubTypes.Type(EnableCertificationCourseEditionEvent.class),
         @JsonSubTypes.Type(RemoveCertificationCourseEvent.class),
         @JsonSubTypes.Type(RemoveCertificationCourseEditionEvent.class)
 })

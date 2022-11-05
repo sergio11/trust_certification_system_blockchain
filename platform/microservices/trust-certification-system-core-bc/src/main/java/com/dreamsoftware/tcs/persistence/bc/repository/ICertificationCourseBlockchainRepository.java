@@ -110,11 +110,16 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
 
     /**
      *
-     * @param caWallet
-     * @param model
+     * @param walletHash
+     * @param id
+     * @param costOfIssuingCertificate
+     * @param durationInHours
+     * @param expirationInDays
+     * @param canBeRenewed
+     * @param costOfRenewingCertificate
      * @return
      * @throws RepositoryException
      */
-    CertificationCourseBcEntity update(final String caWallet, final CertificationCourseBcEntity model) throws RepositoryException;
+    CertificationCourseBcEntity update(final String walletHash, final String id, final Long costOfIssuingCertificate, final Long durationInHours, final Long expirationInDays, final Boolean canBeRenewed, final Long costOfRenewingCertificate) throws RepositoryException;
 
 }
