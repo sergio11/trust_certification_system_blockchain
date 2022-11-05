@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.TextIndexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -39,12 +40,14 @@ public class CertificationCourseEntity {
      * Course Name
      */
     @Field("name")
+    @TextIndexed(weight=3)
     private String name;
 
     /**
      * Course Description
      */
     @Field("description")
+    @TextIndexed
     private String description;
 
     /**

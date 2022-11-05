@@ -16,6 +16,13 @@ public interface CertificationCourseRepositoryCustom {
      * @param newStatus
      * @return
      */
-    CertificationCourseEntity updateStatus(ObjectId id, CertificationCourseStateEnum newStatus);
+    CertificationCourseEntity updateStatus(final ObjectId id, final CertificationCourseStateEnum newStatus);
+
+    /**
+     *
+     * @param term
+     * @return
+     */
+    Iterable<CertificationCourseEntity> searchByTerm(final String term);
 
 }

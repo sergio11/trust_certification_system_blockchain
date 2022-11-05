@@ -116,6 +116,14 @@ public interface ICertificationCourseService {
 
     /**
      *
+     * @param term
+     * @return
+     * @throws Throwable
+     */
+    Iterable<SimpleCertificationCourseDetailDTO> searchCourses(final String term) throws Throwable;
+
+    /**
+     *
      * @param caWalletHash
      * @return
      * @throws Throwable

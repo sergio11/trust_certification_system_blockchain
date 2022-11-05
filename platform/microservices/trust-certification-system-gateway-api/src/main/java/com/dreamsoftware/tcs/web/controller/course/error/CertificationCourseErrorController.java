@@ -206,4 +206,18 @@ public class CertificationCourseErrorController extends SupportController {
         return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.PARTIAL_CERTIFICATION_COURSE_EDITION_UPDATE_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("partial_update_certification_course_edition_failed", request));
     }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(SearchCertificationCoursesException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSearchCertificationCoursesException(final SearchCertificationCoursesException ex, final HttpServletRequest request) {
+        log.error("Handler for SearchCertificationCoursesException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.SEARCH_CERTIFICATION_COURSES_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("search_certification_courses_failed", request));
+    }
 }

@@ -6,9 +6,7 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRep
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.mongodb.core.query.*;
 
 /**
  *
@@ -20,10 +18,21 @@ public class CertificationCourseRepositoryCustomImpl implements CertificationCou
     private MongoTemplate mongoTemplate;
 
     @Override
-    public CertificationCourseEntity updateStatus(ObjectId id, CertificationCourseStateEnum newStatus) {
+    public CertificationCourseEntity updateStatus(final ObjectId id, final CertificationCourseStateEnum newStatus) {
         mongoTemplate.updateFirst(
                 new Query(Criteria.where("id").is(id)),
                 new Update().set("status", newStatus.name()), CertificationCourseEntity.class);
         return mongoTemplate.findOne(new Query(Criteria.where("id").is(id)), CertificationCourseEntity.class);
+    }
+
+    /**
+     *
+     * @param term
+     * @return
+     */
+    @Override
+    public Iterable<CertificationCourseEntity> searchByTerm(final String term) {
+        TextQuery textQuery = TextQuery.queryText(new TextCriteria().matchingAny(term)).sortByScore();
+        return mongoTemplate.find(textQuery, CertificationCourseEntity.class);
     }
 }
