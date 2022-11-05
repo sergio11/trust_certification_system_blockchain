@@ -21,7 +21,7 @@ public abstract class SimpleCertificationAuthorityMemberMapper {
         @Mapping(expression = "java(entity.getType().name())", target = "type"),
         @Mapping(expression = "java(entity.getState().name())", target = "state")
     })
-    @Named("userEntityToSimpleUserDTO")
+    @Named("entityToDTO")
     public abstract SimpleCertificationAuthorityMemberDTO entityToDTO(final UserEntity entity);
 
     /**

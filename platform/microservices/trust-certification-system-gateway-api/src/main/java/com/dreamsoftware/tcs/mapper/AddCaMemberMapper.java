@@ -30,7 +30,7 @@ public abstract class AddCaMemberMapper {
             @Mapping(expression = "java(getUserAuthority())", target = "authority"),
             @Mapping(expression = "java(com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum.CA_MEMBER)", target = "type")
     })
-    @Named("userEntityToSimpleUserDTO")
+    @Named("dtoToEntity")
     public abstract UserEntity dtoToEntity(final AddCaMemberDTO dto);
 
     /**

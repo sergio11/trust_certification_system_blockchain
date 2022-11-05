@@ -20,20 +20,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 /**
  * Notifications Controller
@@ -134,7 +130,7 @@ public class NotificationsController extends SupportController {
     ) throws Throwable {
         try {
             final NotificationDTO notification = notificationService.findById(id);
-            return responseHelper.<NotificationDTO>createAndSendResponse(
+            return responseHelper.createAndSendResponse(
                     NotificationsResponseCodeEnum.NOTIFICATION_DETAIL,
                     HttpStatus.OK, notification);
         } catch (final Exception ex) {
@@ -168,7 +164,7 @@ public class NotificationsController extends SupportController {
     ) throws Throwable {
         try {
             notificationService.deleteById(id);
-            return responseHelper.<String>createAndSendResponse(
+            return responseHelper.createAndSendResponse(
                     NotificationsResponseCodeEnum.NOTIFICATION_DELETED,
                     HttpStatus.OK, resolveString("notification_deleted", request));
         } catch (final Exception ex) {
