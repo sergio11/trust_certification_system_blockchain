@@ -32,7 +32,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            if (existeJWTToken(request, response)) {
+            if (hasJwtToken(request, response)) {
                 // Get JWT token from HTTP Header
                 String jwtToken = request.getHeader(tokenHeader).replace(PREFIX, "");
                 log.debug("JwtAuthenticationTokenFilter  jwtToken -> " + jwtToken);
@@ -49,7 +49,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     }
 
-    private boolean existeJWTToken(HttpServletRequest request, HttpServletResponse res) {
+    private boolean hasJwtToken(HttpServletRequest request, HttpServletResponse res) {
         String authenticationHeader = request.getHeader(tokenHeader);
         return !(authenticationHeader == null || !authenticationHeader.startsWith(PREFIX));
     }

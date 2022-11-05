@@ -134,7 +134,6 @@ public class CertificationAuthorityServiceImpl implements ICertificationAuthorit
         caMemberEntity.setState(UserStateEnum.PENDING_VALIDATE);
         caMemberEntity.setWalletHash(walletHash);
         caMemberEntity.setHasCredentialsExpired(true);
-        caMemberEntity.setLastPasswordReset(new Date());
         final UserEntity userEntitySaved = userRepository.save(caMemberEntity);
         streamBridge.send(streamChannelsProperties.getUserManagement(), NewCertificationAuthorityMemberEvent.builder()
                 .caId(caId)

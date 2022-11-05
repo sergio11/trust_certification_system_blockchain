@@ -32,7 +32,6 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         mongoTemplate.updateFirst(
                 new Query(Criteria.where("email").is(email)),
                 new Update()
-                        .set("last_password_reset", new Date())
                         .set("confirmation_token", token), UserEntity.class);
         return mongoTemplate.findOne(new Query(Criteria.where("email").is(email)), UserEntity.class);
     }
@@ -49,6 +48,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         mongoTemplate.updateFirst(
                 new Query(Criteria.where("confirmationToken").is(token)),
                 new Update()
+                        .set("last_password_updated", new Date())
                         .set("password", password), UserEntity.class);
     }
 

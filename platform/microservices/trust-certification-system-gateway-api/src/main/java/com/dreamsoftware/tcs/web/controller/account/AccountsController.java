@@ -243,7 +243,7 @@ public class AccountsController extends SupportController {
             // Configure User Agent from HTTP Header
             user.setUserAgent(userAgent);
             final SimpleUserDTO userSaved = accountsService.signup(user);
-            return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_SUCCESS,
+            return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_SUCCESS,
                     HttpStatus.OK, userSaved);
         } catch (final ConstraintViolationException ex) {
             throw ex;
@@ -282,7 +282,7 @@ public class AccountsController extends SupportController {
             user.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
             // Configure User Agent from HTTP Header
             final SimpleUserDTO userSaved = accountsService.signup(user);
-            return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_EXTERNAL_ACCOUNT_SUCCESS,
+            return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_EXTERNAL_ACCOUNT_SUCCESS,
                     HttpStatus.OK, userSaved);
         } catch (final ConstraintViolationException ex) {
             throw ex;
@@ -326,7 +326,7 @@ public class AccountsController extends SupportController {
             // Configure User Agent from HTTP Header
             ca.getAdmin().setUserAgent(userAgent);
             final SimpleUserDTO userSaved = accountsService.signup(ca);
-            return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_AS_CA_ADMIN_SUCCESS,
+            return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_AS_CA_ADMIN_SUCCESS,
                     HttpStatus.OK, userSaved);
         } catch (final ConstraintViolationException ex) {
             throw ex;
@@ -355,7 +355,7 @@ public class AccountsController extends SupportController {
             @RequestParam(name = "token") final String token) {
         try {
             final SimpleUserDTO userActivated = accountsService.activate(token);
-            return responseHelper.<SimpleUserDTO>createAndSendResponse(AccountsResponseCodeEnum.ACTIVATE_SUCCESS, HttpStatus.OK, userActivated);
+            return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.ACTIVATE_SUCCESS, HttpStatus.OK, userActivated);
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Throwable ex) {
@@ -399,7 +399,12 @@ public class AccountsController extends SupportController {
         }
     }
 
-
+    /**
+     *
+     * @param changePasswordRequestDTO
+     * @param request
+     * @return
+     */
     @Operation(summary = "CHANGE_PASSWORD - Change Password", description = "Change Password", tags = {"accounts"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Change Password Success",
