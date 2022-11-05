@@ -25,7 +25,7 @@ public interface ITokenManagementService {
      * @return
      * @throws java.lang.Exception
      */
-    Long getMyTokens(final String walletHash) throws Exception;
+    TokenPricesDTO getMyTokens(final String walletHash) throws Exception;
 
     /**
      *
@@ -51,6 +51,6 @@ public interface ITokenManagementService {
      * @return
      * @throws java.lang.Exception
      */
-    Long getTokensByClient(final String walletHash, final ObjectId clientId) throws Exception;
+    TokenPricesDTO getTokensByClient(final String walletHash, final ObjectId clientId) throws Exception;
 
 }
