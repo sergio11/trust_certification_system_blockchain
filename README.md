@@ -1,21 +1,37 @@
 # Trust Certification System powered by Blockchain Technology.
 
+<p>
+  <img src="https://img.shields.io/github/last-commit/sergio11/trust_certification_system_blockchain.svg" />
+</p>
+
 <img width="auto" align="left" src="./tcs_logo.jpg" />
 
 TCS uses Blockchain technology in order to provide inviolability, immutability and easy verification for all your certificates. This platform guarantees students and certificate authorities the possibility of issuein a digital and unforgeable version of their certificates and it is guaranteed that any interested third party can verify their integrity.
 
-<img  align="left" src="https://img.shields.io/badge/Solidity-2E8B57?style=for-the-badge&logo=solidity&logoColor=white" />
-<img  align="left" src="https://img.shields.io/badge/Ethereum-8B0000?style=for-the-badge&logo=Ethereum&logoColor=white" />
-<img  align="left" src="https://img.shields.io/badge/-Spring%20Boot-2E8B57?style=for-the-badge&logo=spring&logoColor=white" />
-<img  align="left" src="https://img.shields.io/badge/-Spring%20Cloud-2E8B57?style=for-the-badge&logo=spring&logoColor=white" />
-<img  align="left" src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?&style=for-the-badge&logo=mongodb&logoColor=white" />
-<img  align="left" src="https://img.shields.io/badge/-Redis%20DB-8B0000?style=for-the-badge&logo=redis&logoColor=white" />
-<img  align="left" src="https://img.shields.io/badge/-IPFS-3e5f8a?style=for-the-badge&logo=ipfs&logoColor=white" />
-<img  align="left" src="https://img.shields.io/badge/java-%23ED8B00.svg?&style=for-the-badge&logo=java&logoColor=white" />
-<img  align="left" src="https://img.shields.io/badge/apache%20kafka-%23000000.svg?&style=for-the-badge&logo=Apache%20Kafka&logoColor=white" />
-<img   src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white" />
-
 A Certification Authority and a Student reach an agreement in order to issue a certificate on the platform, this certificate is generated, signed and stored using cryptographic techniques. Later, the Student can go to any other institution and share their certificate, whose veracity can be verified directly on the platform without having to contact the institution that issued it again.
+
+</br>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Solidity-2E8B57?style=for-the-badge&logo=solidity&logoColor=white" />
+  <img src="https://img.shields.io/badge/Ethereum-3C3C3D?style=for-the-badge&logo=Ethereum&logoColor=white" />
+  <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white" />
+  <img src="https://img.shields.io/badge/-Spring%20Cloud-2E8B57?style=for-the-badge&logo=spring&logoColor=white" />
+  <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" />
+  <img src="https://img.shields.io/badge/redis-%23DD0031.svg?&style=for-the-badge&logo=redis&logoColor=white" />
+  <img src="https://img.shields.io/badge/-IPFS-3e5f8a?style=for-the-badge&logo=ipfs&logoColor=white" />
+  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" />
+  <img src="https://img.shields.io/badge/apache%20kafka-%23000000.svg?&style=for-the-badge&logo=Apache%20Kafka&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white" />
+  <img src="https://img.shields.io/badge/json%20web%20tokens-323330?style=for-the-badge&logo=json-web-tokens&logoColor=pink" />
+  <img src="https://img.shields.io/badge/Blockchain.com-121D33?logo=blockchaindotcom&logoColor=fff&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white" />
+  <img src="https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white" />
+  <img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=Prometheus&logoColor=white" />
+  <img src="https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white" />
+
+</p>
 
 ## Why Blockchain Technology?
 
