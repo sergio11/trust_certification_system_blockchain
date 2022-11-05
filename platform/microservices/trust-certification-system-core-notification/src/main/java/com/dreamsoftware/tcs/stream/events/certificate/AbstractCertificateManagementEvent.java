@@ -13,8 +13,11 @@ import org.springframework.core.annotation.AnnotationUtils;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
 @JsonSubTypes({
-        @JsonSubTypes.Type(OnNewCertificateIssuedEvent.class),
-        @JsonSubTypes.Type(OnNewIssueCertificateRequestEvent.class)
+        @JsonSubTypes.Type(OnNewIssueCertificateRequestEvent.class),
+        @JsonSubTypes.Type(EnableCertificateRequestEvent.class),
+        @JsonSubTypes.Type(DisableCertificateRequestEvent.class),
+        @JsonSubTypes.Type(UpdateCertificateVisibilityRequestEvent.class),
+        @JsonSubTypes.Type(RenewCertificateRequestEvent.class)
 })
 public abstract class AbstractCertificateManagementEvent {
 

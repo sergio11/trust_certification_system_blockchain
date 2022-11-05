@@ -13,7 +13,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityAnnotation(entityClass = OnNewCertificateIssuedEvent.class)
+@EntityAnnotation(entityClass = OnNewIssueCertificateRequestEvent.class)
 public class OnNewIssueCertificateRequestEvent extends AbstractCertificateManagementEvent {
 
     /**

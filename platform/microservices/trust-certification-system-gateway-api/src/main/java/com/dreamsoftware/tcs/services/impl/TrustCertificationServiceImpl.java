@@ -3,6 +3,8 @@ package com.dreamsoftware.tcs.services.impl;
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.CertificateIssuanceRequestMapper;
 import com.dreamsoftware.tcs.mapper.CertificateIssuedMapper;
+import com.dreamsoftware.tcs.stream.events.certificate.DisableCertificateRequestEvent;
+import com.dreamsoftware.tcs.stream.events.certificate.EnableCertificateRequestEvent;
 import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
@@ -12,9 +14,12 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.services.ITrustCertificationService;
+import com.dreamsoftware.tcs.stream.events.certificate.UpdateCertificateVisibilityRequestEvent;
 import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -23,24 +28,22 @@ import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.service.IipfsGateway;
-import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateDisabledNotificationEvent;
-import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateEnabledNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateRenewedNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateRequestAcceptedNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateRequestRejectedNotificationEvent;
-import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateVisibilityChangedNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.IssueCertificateRequestedNotificationEvent;
 import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
+
 import java.util.Date;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- *
  * @author ssanchez
  */
 @Slf4j
@@ -59,45 +62,38 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     private final IipfsGateway ipfsService;
 
     /**
-     *
      * @param ownerWallet
      * @param certificationId
      * @return
      * @throws Throwable
      */
     @Override
-    public CertificateIssuedDTO enable(final String ownerWallet, final String certificationId) throws Throwable {
+    public void enable(final String ownerWallet, final String certificationId) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
-        final CertificateIssuedEntity certificate = trustCertificationRepository.enable(ownerWallet, certificationId);
-        final CertificateIssuedDTO certificateIssuedDTO = certificateIssuedMapper.entityToDTO(certificate);
-        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CertificateEnabledNotificationEvent.builder()
-                .id(certificateIssuedDTO.getId())
+        streamBridge.send(streamChannelsProperties.getCertificationManagement(), EnableCertificateRequestEvent.builder()
+                .certificationId(certificationId)
+                .studentWalletHash(ownerWallet)
                 .build());
-        return certificateIssuedDTO;
     }
 
     /**
-     *
      * @param ownerWallet
      * @param certificationId
      * @return
      * @throws Throwable
      */
     @Override
-    public CertificateIssuedDTO disable(final String ownerWallet, final String certificationId) throws Throwable {
+    public void disable(final String ownerWallet, final String certificationId) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
-        final CertificateIssuedEntity certificate = trustCertificationRepository.disable(ownerWallet, certificationId);
-        final CertificateIssuedDTO certificateIssuedDTO = certificateIssuedMapper.entityToDTO(certificate);
-        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CertificateDisabledNotificationEvent.builder()
-                .id(certificateIssuedDTO.getId())
+        streamBridge.send(streamChannelsProperties.getCertificationManagement(), DisableCertificateRequestEvent.builder()
+                .certificationId(certificationId)
+                .studentWalletHash(ownerWallet)
                 .build());
-        return certificateIssuedDTO;
     }
 
     /**
-     *
      * @param ownerWallet
      * @param certificationId
      * @param isVisible
@@ -105,20 +101,17 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public CertificateIssuedDTO updateVisibility(final String ownerWallet, final String certificationId, final Boolean isVisible) throws Throwable {
+    public void updateVisibility(final String ownerWallet, final String certificationId, final Boolean isVisible) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
-        final CertificateIssuedEntity certificate = trustCertificationRepository.updateCertificateVisibility(ownerWallet, certificationId, isVisible);
-        final CertificateIssuedDTO certificateIssuedDTO = certificateIssuedMapper.entityToDTO(certificate);
-        streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CertificateVisibilityChangedNotificationEvent.builder()
-                .id(certificateIssuedDTO.getId())
-                .isVisible(certificateIssuedDTO.getIsVisible())
+        streamBridge.send(streamChannelsProperties.getCertificationManagement(), UpdateCertificateVisibilityRequestEvent.builder()
+                .studentWalletHash(ownerWallet)
+                .certificationId(certificationId)
+                .isVisible(isVisible)
                 .build());
-        return certificateIssuedDTO;
     }
 
     /**
-     *
      * @param ownerWallet
      * @param certificationId
      * @return
@@ -133,7 +126,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     *
      * @param ownerWallet
      * @param certificationId
      * @return
@@ -147,7 +139,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     *
      * @param ownerWallet
      * @return
      * @throws Throwable
@@ -160,7 +151,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     *
      * @param ownerWallet
      * @return
      * @throws Throwable
@@ -173,7 +163,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     *
      * @param issueCertificate
      * @throws Throwable
      */
@@ -205,7 +194,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     *
      * @param id
      */
     @Override
@@ -230,7 +218,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     *
      * @param id
      */
     @Override
@@ -245,7 +232,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     *
      * @param ownerWallet
      * @param certificationId
      * @return
@@ -264,7 +250,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     *
      * @param studentWalletHash
      * @return
      */
@@ -276,7 +261,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     *
      * @param ownerId
      * @return
      */
@@ -288,7 +272,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     *
      * @param ownerWallet
      * @param certificateId
      * @return
@@ -308,7 +291,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     *
      * @param certificateFile
      * @return
      * @throws Exception

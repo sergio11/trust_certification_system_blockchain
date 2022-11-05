@@ -4,7 +4,6 @@ import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
-import org.bson.types.ObjectId;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -20,7 +19,7 @@ public interface ITrustCertificationService {
      * @return
      * @throws Throwable
      */
-    CertificateIssuedDTO enable(final String ownerWallet, final String certificationId) throws Throwable;
+    void enable(final String ownerWallet, final String certificationId) throws Throwable;
 
     /**
      *
@@ -29,7 +28,7 @@ public interface ITrustCertificationService {
      * @return
      * @throws Throwable
      */
-    CertificateIssuedDTO disable(final String ownerWallet, final String certificationId) throws Throwable;
+    void disable(final String ownerWallet, final String certificationId) throws Throwable;
 
     /**
      * Update Visibility
@@ -40,7 +39,7 @@ public interface ITrustCertificationService {
      * @return
      * @throws Throwable
      */
-    CertificateIssuedDTO updateVisibility(final String ownerWallet, final String certificationId, final Boolean isVisible) throws Throwable;
+    void updateVisibility(final String ownerWallet, final String certificationId, final Boolean isVisible) throws Throwable;
 
     /**
      *

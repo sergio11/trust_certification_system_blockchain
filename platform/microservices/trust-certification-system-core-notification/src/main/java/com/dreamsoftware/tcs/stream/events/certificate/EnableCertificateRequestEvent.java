@@ -13,13 +13,8 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityAnnotation(entityClass = OnNewCertificateIssuedEvent.class)
-public class OnNewCertificateIssuedEvent extends AbstractCertificateManagementEvent {
-
-    /**
-     * Certificate Id
-     */
-    private String certificateId;
+@EntityAnnotation(entityClass = EnableCertificateRequestEvent.class)
+public class EnableCertificateRequestEvent extends AbstractCertificateManagementEvent {
 
     /**
      * Student Wallet Hash
@@ -27,8 +22,7 @@ public class OnNewCertificateIssuedEvent extends AbstractCertificateManagementEv
     private String studentWalletHash;
 
     /**
-     * CA Wallet Hash
+     * Certificate Id
      */
-    private String caWalletHash;
-
+    private String certificationId;
 }
