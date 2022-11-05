@@ -72,13 +72,12 @@ public class TokenManagementController extends SupportController {
     @RequestMapping(value = {"/"}, method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<APIResponse<Long>> getMyTokens(
+    public ResponseEntity<APIResponse<TokenPricesDTO>> getMyTokens(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
-            final Long myTokens = tokenManagementService.getMyTokens(selfUser.getWalletHash());
-            return responseHelper.<Long>createAndSendResponse(
-                    TokenManagementResponseCodeEnum.GET_MY_TOKENS_SUCCESS,
+            final TokenPricesDTO myTokens = tokenManagementService.getMyTokens(selfUser.getWalletHash());
+            return responseHelper.createAndSendResponse(TokenManagementResponseCodeEnum.GET_MY_TOKENS_SUCCESS,
                     HttpStatus.OK, myTokens);
         } catch (final RepositoryException ex) {
             throw new GetMyTokensException(ex.getMessage(), ex);
@@ -101,12 +100,11 @@ public class TokenManagementController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<APIResponse<TokenPricesDTO>> getTokenPrices(
-            @RequestParam(required = true) Long tokenCount
+            @RequestParam(name = "tokens") Long tokenCount
     ) throws Throwable {
         try {
             final TokenPricesDTO tokenPrices = tokenManagementService.getTokenPrices(tokenCount);
-            return responseHelper.<TokenPricesDTO>createAndSendResponse(
-                    TokenManagementResponseCodeEnum.GET_TOKEN_PRICES_SUCCESS,
+            return responseHelper.createAndSendResponse(TokenManagementResponseCodeEnum.GET_TOKEN_PRICES_SUCCESS,
                     HttpStatus.OK, tokenPrices);
         } catch (final RepositoryException ex) {
             throw new GetTokenPricesException(ex.getMessage(), ex);
@@ -135,7 +133,7 @@ public class TokenManagementController extends SupportController {
             placeTokensOrderRequestDTO.setWalletHash(selfUser.getWalletHash());
             placeTokensOrderRequestDTO.setConfirmOrderUri(buildConfirmOrderUrl(request));
             final OrderDetailDTO orderDetail = tokenManagementService.placeTokensOrder(placeTokensOrderRequestDTO);
-            return responseHelper.<OrderDetailDTO>createAndSendResponse(TokenManagementResponseCodeEnum.PLACE_TOKENS_ORDER_SUCCESS,
+            return responseHelper.createAndSendResponse(TokenManagementResponseCodeEnum.PLACE_TOKENS_ORDER_SUCCESS,
                     HttpStatus.OK, orderDetail);
         } catch (final Exception ex) {
             throw new PlaceTokensOrderException(ex.getMessage(), ex);
@@ -153,12 +151,12 @@ public class TokenManagementController extends SupportController {
     @RequestMapping(value = "/order/confirm", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<OrderDetailDTO>> confirmOrder(
-            @RequestParam(name = "token", required = true) String externalOrderId,
-            @RequestParam(name = "st", required = true) String securityToken
+            @RequestParam(name = "token") String externalOrderId,
+            @RequestParam(name = "st") String securityToken
     ) throws Throwable {
         try {
             final OrderDetailDTO orderDetail = tokenManagementService.confirmOrder(externalOrderId, securityToken);
-            return responseHelper.<OrderDetailDTO>createAndSendResponse(TokenManagementResponseCodeEnum.CONFIRM_ORDER_SUCCESS,
+            return responseHelper.createAndSendResponse(TokenManagementResponseCodeEnum.CONFIRM_ORDER_SUCCESS,
                     HttpStatus.OK, orderDetail);
         } catch (final Exception ex) {
             throw new ConfirmOrderException(ex.getMessage(), ex);
@@ -182,14 +180,14 @@ public class TokenManagementController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @OnlyAccessForAdmin
-    public ResponseEntity<APIResponse<Long>> getClientTokens(
+    public ResponseEntity<APIResponse<TokenPricesDTO>> getClientTokens(
             @Parameter(name = "id", description = "User Id", required = true)
             @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}") @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {
-            final Long tokens = tokenManagementService.getTokensByClient(selfUser.getWalletHash(), new ObjectId(id));
-            return responseHelper.<Long>createAndSendResponse(
+            final TokenPricesDTO tokens = tokenManagementService.getTokensByClient(selfUser.getWalletHash(), new ObjectId(id));
+            return responseHelper.createAndSendResponse(
                     TokenManagementResponseCodeEnum.GET_CLIENT_TOKENS_SUCCESS,
                     HttpStatus.OK, tokens);
         } catch (final RepositoryException ex) {

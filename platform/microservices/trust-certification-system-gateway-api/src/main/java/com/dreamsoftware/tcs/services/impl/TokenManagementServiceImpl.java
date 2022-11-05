@@ -52,9 +52,10 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
      * @return
      */
     @Override
-    public Long getMyTokens(final String walletHash) throws Exception {
+    public TokenPricesDTO getMyTokens(final String walletHash) throws Exception {
         Assert.notNull(walletHash, "Wallet Hash can not be null");
-        return tokenManagementBlockchainRepository.getMyTokens(walletHash);
+        final Long tokenCount =  tokenManagementBlockchainRepository.getMyTokens(walletHash);
+        return getTokenPricesByTokenCount(tokenCount);
     }
 
     /**
@@ -65,17 +66,7 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
     @Override
     public TokenPricesDTO getTokenPrices(final Long tokenCount) throws Exception {
         Assert.notNull(tokenCount, "Token Count can not be null");
-        final Long tokenPriceInWeis = tokenManagementBlockchainRepository.getTokenPriceInWeis(tokenCount);
-        final Double tokenPriceInEth = tokenPriceInWeis * ONE_WEI_IN_ETH;
-        final CryptoComparePricesDTO prices = cryptoCompareService.getEthPrices();
-        final Double tokenPriceInEUR = prices.getEUR() * tokenPriceInEth;
-        final Double tokenPriceInUSD = prices.getUSD() * tokenPriceInEth;
-        return TokenPricesDTO
-                .builder()
-                .tokenCount(tokenCount)
-                .tokenPriceInEUR(tokenPriceInEUR)
-                .tokenPriceInUSD(tokenPriceInUSD)
-                .build();
+        return getTokenPricesByTokenCount(tokenCount);
     }
 
     /**
@@ -85,11 +76,12 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
      * @return
      */
     @Override
-    public Long getTokensByClient(final String walletHash, final ObjectId clientId) throws Exception {
+    public TokenPricesDTO getTokensByClient(final String walletHash, final ObjectId clientId) throws Exception {
         Assert.notNull(walletHash, "Wallet hash can not be null");
         Assert.notNull(clientId, "Client Id can not be null");
         final UserEntity userEntity = userRepository.findById(clientId).orElseThrow(() -> new IllegalStateException("User not found"));
-        return tokenManagementBlockchainRepository.getTokensByClient(walletHash, userEntity.getWalletHash());
+        final Long tokenCount = tokenManagementBlockchainRepository.getTokensByClient(walletHash, userEntity.getWalletHash());
+        return getTokenPricesByTokenCount(tokenCount);
     }
 
     /**
@@ -154,6 +146,25 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
         streamBridge.send(streamChannelsProperties.getNewTokensOrderApproved(), new NewTokensOrderApprovedEvent(createdOrderEntity.getId()));
         final CreatedOrderEntity createdOrderEntitySaved = createdOrderRepository.save(createdOrderEntity);
         return createdOrderMapper.entityToDTO(createdOrderEntitySaved);
+    }
+
+
+    /**
+     * Private Method
+     */
+
+    private TokenPricesDTO getTokenPricesByTokenCount(final Long tokenCount) throws RepositoryException {
+        final Long tokenPriceInWeis = tokenManagementBlockchainRepository.getTokenPriceInWeis(tokenCount);
+        final Double tokenPriceInEth = tokenPriceInWeis * ONE_WEI_IN_ETH;
+        final CryptoComparePricesDTO prices = cryptoCompareService.getEthPrices();
+        final Double tokenPriceInEUR = prices.getEUR() * tokenPriceInEth;
+        final Double tokenPriceInUSD = prices.getUSD() * tokenPriceInEth;
+        return TokenPricesDTO
+                .builder()
+                .tokenCount(tokenCount)
+                .tokenPriceInEUR(tokenPriceInEUR)
+                .tokenPriceInUSD(tokenPriceInUSD)
+                .build();
     }
 
 }
