@@ -67,23 +67,22 @@ public class TrustCertificationController extends SupportController {
     /**
      * Enable Certificate
      *
-     * @param id
+     * @param certId
      * @param selfUser
      * @return
      * @throws java.lang.Throwable
      */
     @Operation(summary = "ENABLE_CERTIFICATE - Enable Certificate", description = "Enable Certificate", tags = {"CERTIFICATE_ISSUED"})
-    @RequestMapping(value = "/{id}/enable", method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{certId}/enable", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<CertificateIssuedDTO>> enable(
-            @Parameter(name = "id", description = "Certificate Id", required = true)
-            @PathVariable("id") String id,
+            @Parameter(name = "certId", description = "Certificate Id", required = true)
+            @PathVariable("certId") String certId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
-            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.enable(selfUser.getWalletHash(), id);
-            return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_ENABLED,
+            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.enable(selfUser.getWalletHash(), certId);
+            return responseHelper.createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_ENABLED,
                     HttpStatus.OK, certificateIssuedDTO);
         } catch (final Exception ex) {
             throw new EnableCertificateException(ex.getMessage(), ex);
@@ -93,23 +92,22 @@ public class TrustCertificationController extends SupportController {
     /**
      * Disable Certificate
      *
-     * @param id
+     * @param certId
      * @param selfUser
      * @return
      * @throws java.lang.Throwable
      */
     @Operation(summary = "DISABLE_CERTIFICATE - Disable Certificate", description = "Disable Certificate", tags = {"CERTIFICATE_ISSUED"})
-    @RequestMapping(value = "/{id}/disable", method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{certId}/disable", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<CertificateIssuedDTO>> disable(
-            @Parameter(name = "id", description = "Certificate Id", required = true)
-            @PathVariable("id") String id,
+            @Parameter(name = "certId", description = "Certificate Id", required = true)
+            @PathVariable("certId") String certId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
-            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.disable(selfUser.getWalletHash(), id);
-            return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_DISABLED,
+            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.disable(selfUser.getWalletHash(), certId);
+            return responseHelper.createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_DISABLED,
                     HttpStatus.OK, certificateIssuedDTO);
         } catch (final Exception ex) {
             throw new DisableCertificateException(ex.getMessage(), ex);
@@ -119,23 +117,22 @@ public class TrustCertificationController extends SupportController {
     /**
      * Enable Certificate Visibility
      *
-     * @param id
+     * @param certId
      * @param selfUser
      * @return
      * @throws java.lang.Throwable
      */
     @Operation(summary = "ENABLE_CERTIFICATE_VISIBILITY - Enable Certificate Visibility", description = "Enable Certificate Visibility", tags = {"CERTIFICATE_ISSUED"})
-    @RequestMapping(value = "/{id}/visible", method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{certId}/visible", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
-    public ResponseEntity<APIResponse<CertificateIssuedDTO>> visible(
-            @Parameter(name = "id", description = "Certificate Id", required = true)
-            @PathVariable("id") String id,
+    public ResponseEntity<APIResponse<CertificateIssuedDTO>> enableCertificateVisibility(
+            @Parameter(name = "certId", description = "Certificate Id", required = true)
+            @PathVariable("certId") String certId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
-            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.updateVisibility(selfUser.getWalletHash(), id, true);
-            return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_VISIBILITY_UPDATED,
+            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.updateVisibility(selfUser.getWalletHash(), certId, true);
+            return responseHelper.createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_VISIBILITY_UPDATED,
                     HttpStatus.OK, certificateIssuedDTO);
         } catch (final Exception ex) {
             throw new UpdateCertificateVisibilityException(ex.getMessage(), ex);
@@ -145,23 +142,23 @@ public class TrustCertificationController extends SupportController {
     /**
      * Disable Certificate Visibility
      *
-     * @param id
+     * @param certId
      * @param selfUser
      * @return
      * @throws java.lang.Throwable
      */
     @Operation(summary = "DISABLE_CERTIFICATE_VISIBILITY - Disable Certificate Visibility", description = "Disable Certificate Visibility", tags = {"CERTIFICATE_ISSUED"})
-    @RequestMapping(value = "/{id}/invisible", method = RequestMethod.PUT,
+    @RequestMapping(value = "/{certId}/invisible", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
-    public ResponseEntity<APIResponse<CertificateIssuedDTO>> invisible(
-            @Parameter(name = "id", description = "Certificate Id", required = true)
-            @PathVariable("id") String id,
+    public ResponseEntity<APIResponse<CertificateIssuedDTO>> disableCertificateVisibility(
+            @Parameter(name = "certId", description = "Certificate Id", required = true)
+            @PathVariable("certId") String certId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
-            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.updateVisibility(selfUser.getWalletHash(), id, false);
-            return responseHelper.<CertificateIssuedDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_VISIBILITY_UPDATED,
+            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.updateVisibility(selfUser.getWalletHash(), certId, false);
+            return responseHelper.createAndSendResponse(TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_VISIBILITY_UPDATED,
                     HttpStatus.OK, certificateIssuedDTO);
         } catch (final Exception ex) {
             throw new UpdateCertificateVisibilityException(ex.getMessage(), ex);
@@ -171,7 +168,7 @@ public class TrustCertificationController extends SupportController {
     /**
      * Get Certificate Issued Detail
      *
-     * @param id
+     * @param certId
      * @param selfUser
      * @return
      * @throws Throwable
@@ -183,16 +180,16 @@ public class TrustCertificationController extends SupportController {
         @ApiResponse(responseCode = "404", description = "Certificate Issued Not Found",
                 content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/{id}/detail"}, method = RequestMethod.GET,
+    @RequestMapping(value = {"/{certId}/detail"}, method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<CertificateIssuedDTO>> getDetailById(
-            @Parameter(name = "id", description = "Certificate Id", required = true)
-            @PathVariable("id") String id,
+            @Parameter(name = "certId", description = "Certificate Id", required = true)
+            @PathVariable("certId") String certId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
-            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.getDetail(selfUser.getWalletHash(), id);
-            return responseHelper.<CertificateIssuedDTO>createAndSendResponse(
+            final CertificateIssuedDTO certificateIssuedDTO = trustCertificationService.getDetail(selfUser.getWalletHash(), certId);
+            return responseHelper.createAndSendResponse(
                     TrustCertificationResponseCodeEnum.CERTIFICATE_ISSUED_DETAIL,
                     HttpStatus.OK, certificateIssuedDTO);
         } catch (final Exception ex) {
@@ -222,8 +219,7 @@ public class TrustCertificationController extends SupportController {
     ) throws Throwable {
         try {
             final Iterable<CertificateIssuedDTO> certificateIssuedDTOList = trustCertificationService.getMyCertificatesAsRecipient(selfUser.getWalletHash());
-            return responseHelper.<Iterable<CertificateIssuedDTO>>createAndSendResponse(
-                    TrustCertificationResponseCodeEnum.GET_MY_CERTIFICATES_AS_RECIPIENT,
+            return responseHelper.createAndSendResponse(TrustCertificationResponseCodeEnum.GET_MY_CERTIFICATES_AS_RECIPIENT,
                     HttpStatus.OK, certificateIssuedDTOList);
         } catch (final Exception ex) {
             throw new GetCertificatesException(ex.getMessage(), ex);
@@ -252,8 +248,7 @@ public class TrustCertificationController extends SupportController {
     ) throws Throwable {
         try {
             final Iterable<CertificateIssuanceRequestDTO> certificateIssuanceRequestDTOList = trustCertificationService.getCertificatesIssuanceRequestsFromStudent(selfUser.getUserId());
-            return responseHelper.<Iterable<CertificateIssuanceRequestDTO>>createAndSendResponse(
-                    TrustCertificationResponseCodeEnum.GET_CERTIFICATES_ISSUANCE_REQUEST_SUCCESS,
+            return responseHelper.createAndSendResponse(TrustCertificationResponseCodeEnum.GET_CERTIFICATES_ISSUANCE_REQUEST_SUCCESS,
                     HttpStatus.OK, certificateIssuanceRequestDTOList);
         } catch (final Exception ex) {
             throw new GetCertificatesIssuanceRequestsException(ex.getMessage(), ex);
@@ -282,8 +277,7 @@ public class TrustCertificationController extends SupportController {
     ) throws Throwable {
         try {
             final Iterable<CertificateIssuanceRequestDTO> certificateIssuanceRequestDTOList = trustCertificationService.getCertificatesIssuanceRequestsFromCa(selfUser.getUserId());
-            return responseHelper.<Iterable<CertificateIssuanceRequestDTO>>createAndSendResponse(
-                    TrustCertificationResponseCodeEnum.GET_CERTIFICATES_ISSUANCE_REQUEST_SUCCESS,
+            return responseHelper.createAndSendResponse(TrustCertificationResponseCodeEnum.GET_CERTIFICATES_ISSUANCE_REQUEST_SUCCESS,
                     HttpStatus.OK, certificateIssuanceRequestDTOList);
         } catch (final Exception ex) {
             throw new GetCertificatesIssuanceRequestsException(ex.getMessage(), ex);
@@ -312,8 +306,7 @@ public class TrustCertificationController extends SupportController {
     ) throws Throwable {
         try {
             final Iterable<CertificateIssuedDTO> certificateIssuedDTOList = trustCertificationService.getMyCertificatesAsIssuer(selfUser.getWalletHash());
-            return responseHelper.<Iterable<CertificateIssuedDTO>>createAndSendResponse(
-                    TrustCertificationResponseCodeEnum.GET_MY_CERTIFICATES_AS_ISSUER,
+            return responseHelper.createAndSendResponse(TrustCertificationResponseCodeEnum.GET_MY_CERTIFICATES_AS_ISSUER,
                     HttpStatus.OK, certificateIssuedDTOList);
         } catch (final Exception ex) {
             throw new GetCertificatesException(ex.getMessage(), ex);
@@ -341,7 +334,7 @@ public class TrustCertificationController extends SupportController {
         try {
             issueCertificate.setStudentWalletHash(selfUser.getWalletHash());
             final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.issueCertificateRequest(issueCertificate);
-            return responseHelper.<CertificateIssuanceRequestDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.NEW_ISSUED_CERTIFICATE_REQUESTED,
+            return responseHelper.createAndSendResponse(TrustCertificationResponseCodeEnum.NEW_ISSUED_CERTIFICATE_REQUESTED,
                     HttpStatus.OK, certificateIssuanceRequestDTO);
         } catch (final Exception ex) {
             throw new IssueCertificateRequestException(ex.getMessage(), ex);
@@ -351,23 +344,22 @@ public class TrustCertificationController extends SupportController {
     /**
      * Accept request for certificate issuance
      *
-     * @param id
-     * @param selfUser
+     * @param certId
      * @return
      * @throws java.lang.Throwable
      */
     @Operation(summary = "ACCEPT_CERTIFICATE_REQUEST - Accept request for certificate issuance", description = "Accept request for certificate issuance", tags = {"CERTIFICATE_ISSUED"})
-    @RequestMapping(value = "/{id}/accept", method = RequestMethod.PUT,
+    @RequestMapping(value = "/{certId}/accept", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> acceptCertificateRequest(
-            @Parameter(name = "id", description = "Certificate Id", required = true)
-            @Valid @CertificateShouldBePendingReview(message = "{certificate_should_be_pending_review}") @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
+            @Parameter(name = "certId", description = "Certificate Id", required = true)
+            @Valid @CertificateShouldBePendingReview(message = "{certificate_should_be_pending_review}")
+            @PathVariable("certId") String certId
     ) throws Throwable {
         try {
-            final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.acceptCertificateRequest(id);
-            return responseHelper.<CertificateIssuanceRequestDTO>createAndSendResponse(TrustCertificationResponseCodeEnum.ISSUE_CERTIFICATE_REQUEST_ACCEPTED,
+            final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = trustCertificationService.acceptCertificateRequest(certId);
+            return responseHelper.createAndSendResponse(TrustCertificationResponseCodeEnum.ISSUE_CERTIFICATE_REQUEST_ACCEPTED,
                     HttpStatus.OK, certificateIssuanceRequestDTO);
         } catch (final Exception ex) {
             throw new AcceptCertificateRequestException(ex.getMessage(), ex);

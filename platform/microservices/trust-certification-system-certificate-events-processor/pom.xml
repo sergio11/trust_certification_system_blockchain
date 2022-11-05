@@ -11,10 +11,11 @@
 
     <properties>
         <poi.version>5.2.2</poi.version>
-        <docx4j.version>8.3.8</docx4j.version>
-        <pdfbox.version>2.0.26</pdfbox.version>
-        <bcprov.jdk18on.version>1.71</bcprov.jdk18on.version>
+        <docx4j.version>11.4.8</docx4j.version>
+        <pdfbox.version>2.0.27</pdfbox.version>
+        <bcprov.jdk18on.version>1.72</bcprov.jdk18on.version>
         <zxing.version>3.5.0</zxing.version>
+        <guava.version>31.1-jre</guava.version>
     </properties>
 
     <parent>
@@ -109,6 +110,13 @@
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
             <version>${zxing.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
 
     </dependencies>

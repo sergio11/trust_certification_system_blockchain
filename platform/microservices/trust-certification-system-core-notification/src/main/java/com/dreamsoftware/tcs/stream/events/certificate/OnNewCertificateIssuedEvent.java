@@ -1,9 +1,7 @@
 package com.dreamsoftware.tcs.stream.events.certificate;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.dreamsoftware.tcs.utils.EntityAnnotation;
+import lombok.*;
 
 /**
  *
@@ -11,10 +9,12 @@ import lombok.NoArgsConstructor;
  *
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OnNewCertificateIssuedEvent {
+@EntityAnnotation(entityClass = OnNewCertificateIssuedEvent.class)
+public class OnNewCertificateIssuedEvent extends AbstractCertificateManagementEvent {
 
     /**
      * Certificate Id

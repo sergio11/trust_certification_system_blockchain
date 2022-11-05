@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <jasypt.spring.boot.version>2.1.1</jasypt.spring.boot.version>
+        <jasypt.spring.boot.version>3.0.4</jasypt.spring.boot.version>
     </properties>
 
     <parent>

@@ -1,9 +1,7 @@
 package com.dreamsoftware.tcs.stream.events.certificate;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.dreamsoftware.tcs.utils.EntityAnnotation;
+import lombok.*;
 
 /**
  *
@@ -11,10 +9,12 @@ import lombok.NoArgsConstructor;
  *
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OnNewIssueCertificateRequestEvent {
+@EntityAnnotation(entityClass = OnNewCertificateIssuedEvent.class)
+public class OnNewIssueCertificateRequestEvent extends AbstractCertificateManagementEvent {
 
     /**
      * Student Wallet Hash
@@ -35,4 +35,9 @@ public class OnNewIssueCertificateRequestEvent {
      * Qualification
      */
     private Long qualification;
+
+    /**
+     * Certification Request Id
+     */
+    private String certificationRequestId;
 }

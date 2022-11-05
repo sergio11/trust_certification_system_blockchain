@@ -13,7 +13,7 @@
         <web3j.version>4.8.4</web3j.version>
         <web3j-maven-plugin.version>4.8.2</web3j-maven-plugin.version>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <sshj.version>0.27.0</sshj.version>
+        <sshj.version>0.34.0</sshj.version>
     </properties>
 
     <parent>
