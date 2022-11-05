@@ -95,10 +95,10 @@ public class UserEntity {
     private Date activationDate;
 
     /**
-     * Last Password Reset
+     * Last Password Updated
      */
-    @Field("last_password_reset")
-    private Date lastPasswordReset;
+    @Field("last_password_updated")
+    private Date lastPasswordUpdated;
 
     /**
      * Has Credentials Expired

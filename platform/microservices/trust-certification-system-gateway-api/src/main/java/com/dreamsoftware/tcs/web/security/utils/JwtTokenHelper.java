@@ -76,6 +76,17 @@ public class JwtTokenHelper {
     }
 
     /**
+     *
+     * @param token
+     * @return
+     */
+    public Date getCreatedAtFromToken(final String token) {
+        Assert.notNull(token, "Token can not be null");
+        final Claims claims = getClaimsFromToken(token);
+        return (Date) claims.get(CLAIM_KEY_CREATED);
+    }
+
+    /**
      * Refresh Token
      *
      * @param token
@@ -253,7 +264,8 @@ public class JwtTokenHelper {
 
     /**
      *
-     * @param clientAddr
+     * @param token
+     * @param clientUserAgent
      * @return
      */
     private Boolean isFromSameUserAgent(final String token, final String clientUserAgent) {

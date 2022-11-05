@@ -188,9 +188,13 @@ public class AccountsServiceImpl implements IAccountsService {
                 final Collection<String> authorities = jwtTokenHelper.getAuthoritiesFromToken(token);
                 if (authorities.contains(AuthorityEnum.ROLE_STUDENT.name()) || authorities.contains(AuthorityEnum.ROLE_CA_MEMBER.name())) {
                     log.debug("Restore User Details into security context for user id -> " + sub);
-                    userDetails = userRepository.findById(new ObjectId(sub))
-                            .map(userDetailsMapper::entityToDTO)
-                            .orElse(null);
+                    final UserEntity userEntity = userRepository.findById(new ObjectId(sub)).orElse(null);
+                    if(userEntity != null) {
+                        final Date tokenCreatedAt = jwtTokenHelper.getCreatedAtFromToken(token);
+                        if(!userEntity.getHasCredentialsExpired() && userEntity.getLastPasswordUpdated() == null || userEntity.getLastPasswordUpdated().before(tokenCreatedAt)) {
+                            userDetails = userDetailsMapper.entityToDTO(userEntity);
+                        }
+                    }
                 } else if (authorities.contains(AuthorityEnum.ROLE_ADMIN.name())) {
                     log.debug("Restore User Details into security context for user id -> " + sub);
                     userDetails = userLdapRepository.findOneByUid(sub)
