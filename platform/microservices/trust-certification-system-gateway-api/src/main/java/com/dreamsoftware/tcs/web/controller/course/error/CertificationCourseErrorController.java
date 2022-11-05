@@ -220,4 +220,32 @@ public class CertificationCourseErrorController extends SupportController {
         return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.SEARCH_CERTIFICATION_COURSES_FAILED,
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("search_certification_courses_failed", request));
     }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(CheckCertificateCourseCanBeIssuedException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleCheckCertificateCourseCanBeIssuedException(final CheckCertificateCourseCanBeIssuedException ex, final HttpServletRequest request) {
+        log.error("Handler for CheckCertificateCourseCanBeIssuedException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.CHECK_CERTIFICATION_COURSE_CAN_BE_ISSUED_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("check_certification_course_can_be_issued_failed", request));
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(CheckCertificateCourseCanBeRenewedException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleCheckCertificateCourseCanBeRenewedException(final CheckCertificateCourseCanBeRenewedException ex, final HttpServletRequest request) {
+        log.error("Handler for CheckCertificateCourseCanBeRenewedException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.CHECK_CERTIFICATION_COURSE_CAN_BE_RENEWED_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("check_certification_course_can_be_renewed_failed", request));
+    }
 }

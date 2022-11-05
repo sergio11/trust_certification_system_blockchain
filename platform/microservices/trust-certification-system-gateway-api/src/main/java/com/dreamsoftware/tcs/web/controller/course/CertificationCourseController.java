@@ -505,30 +505,26 @@ public class CertificationCourseController extends SupportController {
     }
 
     /**
-     * Certificate Course can be issued
-     *
-     * @param id
-     * @param selfUser
+     *  Check if it is possible issue certificate for this course edition
+     * @param courseEditionId
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "CERTIFICATE_COURSE_CAN_BE_ISSUED - Certificate Course Can be issued", description = "Certificate Course Can be issued", tags = {"COURSE"})
+    @Operation(summary = "CERTIFICATE_COURSE_CAN_BE_ISSUED - Check if it is possible issue certificate for this course edition", description = "Check if it is possible issue certificate for this course edition", tags = {"COURSE"})
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Course Detail",
-                    content = @Content(schema = @Schema(implementation = SimpleCertificationCourseDetailDTO.class))),
+            @ApiResponse(responseCode = "200", description = "Can be issued or not",
+                    content = @Content(schema = @Schema(implementation = Boolean.class))),
             @ApiResponse(responseCode = "404", description = "Course Not Found",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/{id}/canBeIssued"}, method = RequestMethod.GET,
+    @RequestMapping(value = {"/{courseId}/editions/{editionId}/canBeIssued"}, method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @OnlyAccessForCA
     public ResponseEntity<APIResponse<Boolean>> canBeIssued(
-            @Parameter(name = "id", description = "Course Id", required = true)
-            @PathVariable("id") String id,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
+            @Parameter(name = "editionId", description = "Course Edition Id", required = true)
+            @PathVariable("editionId") String courseEditionId
     ) throws Throwable {
         try {
-            final Boolean canBeIssued = certificationCourseService.canBeIssued(selfUser.getWalletHash(), id);
+            final Boolean canBeIssued = certificationCourseService.canBeIssued(courseEditionId);
             return responseHelper.createAndSendResponse(
                     canBeIssued ? CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CAN_BE_ISSUED
                             : CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CANNOT_BE_ISSUED,
@@ -536,7 +532,39 @@ public class CertificationCourseController extends SupportController {
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Throwable ex) {
-            throw new GetCertificationCourseDetailException(ex.getMessage(), ex);
+            throw new CheckCertificateCourseCanBeIssuedException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *  Check if it is possible issue certificate for this course edition
+     * @param courseEditionId
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "CERTIFICATE_COURSE_CAN_BE_RENEWED - Check if it is possible renew certificate for this course edition", description = "Check if it is possible renew certificate for this course edition", tags = {"COURSE"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Can be issued or not",
+                    content = @Content(schema = @Schema(implementation = Boolean.class))),
+            @ApiResponse(responseCode = "404", description = "Course Not Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    @RequestMapping(value = {"/{courseId}/editions/{editionId}/canBeRenewed"}, method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<Boolean>> canBeRenewed(
+            @Parameter(name = "editionId", description = "Course Edition Id", required = true)
+            @PathVariable("editionId") String courseEditionId
+    ) throws Throwable {
+        try {
+            final Boolean canBeRenewed = certificationCourseService.canBeRenewed(courseEditionId);
+            return responseHelper.createAndSendResponse(
+                    canBeRenewed ? CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CAN_BE_RENEWED
+                            : CertificationCourseResponseCodeEnum.CERTIFICATION_COURSE_CANNOT_BE_RENEWED,
+                    HttpStatus.OK, canBeRenewed);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new CheckCertificateCourseCanBeRenewedException(ex.getMessage(), ex);
         }
     }
 }

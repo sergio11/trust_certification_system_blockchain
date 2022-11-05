@@ -91,22 +91,20 @@ public interface ICertificationCourseBlockchainRepository extends IBlockchainEve
     /**
      * Can be issued
      *
-     * @param caWallet
      * @param courseId
      * @return
      * @throws RepositoryException
      */
-    Boolean canBeIssued(final String caWallet, final String courseId) throws RepositoryException;
+    Boolean canBeIssued(final String courseId) throws RepositoryException;
 
     /**
      * Can be renewed
      *
-     * @param caWallet
      * @param courseId
      * @return
      * @throws RepositoryException
      */
-    Boolean canBeRenewed(final String caWallet, final String courseId) throws RepositoryException;
+    Boolean canBeRenewed(final String courseId) throws RepositoryException;
 
     /**
      *
