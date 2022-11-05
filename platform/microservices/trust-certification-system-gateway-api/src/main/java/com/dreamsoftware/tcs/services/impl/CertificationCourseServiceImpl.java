@@ -193,31 +193,27 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     }
 
     /**
-     * @param caWalletHash
      * @param courseId
      * @return
      * @throws Throwable
      */
     @Override
-    public Boolean canBeIssued(final String caWalletHash, final String courseId) throws Throwable {
-        Assert.notNull(caWalletHash, "CA wallet can not be null");
+    public Boolean canBeIssued(final String courseId) throws Throwable {
         Assert.notNull(courseId, "Course ID can not be null");
         log.debug("check certification course " + courseId + " can be issued CALLED!");
-        return certificationCourseBlockchainRepository.canBeIssued(caWalletHash, courseId);
+        return certificationCourseBlockchainRepository.canBeIssued(courseId);
     }
 
     /**
-     * @param caWalletHash
      * @param courseId
      * @return
      * @throws Throwable
      */
     @Override
-    public Boolean canBeRenewed(final String caWalletHash, final String courseId) throws Throwable {
-        Assert.notNull(caWalletHash, "CA wallet can not be null");
+    public Boolean canBeRenewed(final String courseId) throws Throwable {
         Assert.notNull(courseId, "Course ID can not be null");
         log.debug("check certification course " + courseId + " can be renewed CALLED!");
-        return certificationCourseBlockchainRepository.canBeRenewed(caWalletHash, courseId);
+        return certificationCourseBlockchainRepository.canBeRenewed(courseId);
     }
 
     /**

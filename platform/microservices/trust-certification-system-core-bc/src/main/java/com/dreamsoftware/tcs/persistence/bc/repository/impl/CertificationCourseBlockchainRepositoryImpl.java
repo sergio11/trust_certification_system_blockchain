@@ -174,17 +174,15 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
     /**
      * Can be issued
      *
-     * @param caWallet
      * @param courseId
      * @return
      * @throws RepositoryException
      */
     @Override
-    public Boolean canBeIssued(final String caWallet, final String courseId) throws RepositoryException {
-        Assert.notNull(caWallet, "Ca Wallet can not be null");
+    public Boolean canBeIssued(final String courseId) throws RepositoryException {
         Assert.notNull(courseId, "Course Id can not be null");
         try {
-            final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(caWallet);
+            final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract();
             return certificationCourseContract.canBeIssued(courseId).send();
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
@@ -192,19 +190,17 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
     }
 
     /**
-     * Can Be renewed
+     * Can be renewed
      *
-     * @param caWallet
      * @param courseId
      * @return
      * @throws RepositoryException
      */
     @Override
-    public Boolean canBeRenewed(final String caWallet, final String courseId) throws RepositoryException {
-        Assert.notNull(caWallet, "Ca Wallet can not be null");
+    public Boolean canBeRenewed(final String courseId) throws RepositoryException {
         Assert.notNull(courseId, "Course Id can not be null");
         try {
-            final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(caWallet);
+            final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract();
             return certificationCourseContract.canBeRenewed(courseId).send();
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);

@@ -81,22 +81,20 @@ public interface ICertificationCourseService {
     /**
      * Check if can be issued
      *
-     * @param caWalletHash
      * @param courseId
      * @return
      * @throws java.lang.Throwable
      */
-    Boolean canBeIssued(final String caWalletHash, final String courseId) throws Throwable;
+    Boolean canBeIssued(final String courseId) throws Throwable;
 
     /**
      * Check if can be renewed
      *
-     * @param caWalletHash
      * @param courseId
      * @return
      * @throws java.lang.Throwable
      */
-    Boolean canBeRenewed(final String caWalletHash, final String courseId) throws Throwable;
+    Boolean canBeRenewed(final String courseId) throws Throwable;
 
     /**
      * Get Detail
