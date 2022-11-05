@@ -30,10 +30,10 @@ public class StreamChannelsProperties {
     private String courseManagement;
 
     /**
-     * New Certification Request Channel
+     * Certification management Channel
      */
-    @Value("${channels.new-certification-request}")
-    private String newCertificationRequest;
+    @Value("${channels.certification-management}")
+    private String certificationManagement;
 
     /**
      * New Tokens Order Approved Channel
@@ -57,7 +57,7 @@ public class StreamChannelsProperties {
     public void onPostConstruct() {
         log.debug("userManagement -> " + userManagement);
         log.debug("courseManagement -> " + courseManagement);
-        log.debug("newCertificationRequest -> " + newCertificationRequest);
+        log.debug("certificationManagement -> " + certificationManagement);
         log.debug("newTokensOrderApproved -> " + newTokensOrderApproved);
         log.debug("notificationDeliveryRequest -> " + notificationDeliveryRequest);
         log.debug("deviceManagement -> " + deviceManagement);

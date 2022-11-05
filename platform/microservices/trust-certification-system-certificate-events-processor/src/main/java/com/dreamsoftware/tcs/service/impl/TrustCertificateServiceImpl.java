@@ -1,27 +1,17 @@
 package com.dreamsoftware.tcs.service.impl;
 
-import com.dreamsoftware.tcs.model.CertificateGenerated;
-import com.dreamsoftware.tcs.model.CertificationGenerationRequest;
-import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.*;
-import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
-import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
-import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
-import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
+import com.dreamsoftware.tcs.processor.handlers.AbstractCertificateManagementHandler;
 import com.dreamsoftware.tcs.service.ITrustCertificateService;
-import com.dreamsoftware.tcs.service.IipfsGateway;
-import com.dreamsoftware.tcs.stream.events.certificate.OnNewCertificateIssuedEvent;
-import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
+import com.dreamsoftware.tcs.stream.events.certificate.AbstractCertificateManagementEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.ResolvableType;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
-import java.util.Date;
 
 /**
  *
@@ -32,91 +22,34 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class TrustCertificateServiceImpl implements ITrustCertificateService {
 
-    /**
-     * Certificate Generator
-     */
-    private final ICertificateGeneratorService certificateGenerator;
-
-    /**
-     * Certification Course Repository
-     */
-    private final CertificationCourseRepository certificationCourseRepository;
-
-    /**
-     * User Repository
-     */
-    private final UserRepository userRepository;
-
-    /**
-     * IPFS Service
-     */
-    private final IipfsGateway ipfsService;
-
-    /**
-     * Trust Certification Blockchain Repository
-     */
-    private final ITrustCertificationBlockchainRepository trustCertificationBlockchainRepository;
-
-    /**
-     * Certificate Issued Repository
-     */
-    private final CertificateIssuanceRequestRepository certificateIssuedRepository;
+    private final ObjectMapper objectMapper;
+    private final ApplicationContext applicationContext;
 
     /**
      *
      * @param event
      * @return
+     * @throws Exception
      */
     @Override
-    public CertificateIssuedEntity issueCertificate(OnNewIssueCertificateRequestEvent event) throws Exception {
+    public AbstractNotificationEvent handle(final GenericMessage<String> event) throws Exception {
         Assert.notNull(event, "Event can not be null");
-        log.debug("issueCertificate - CA Wallet: " + event.getCaWalletHash());
-        log.debug("issueCertificate - Student Wallet: " + event.getStudentWalletHash());
-        log.debug("issueCertificate - Course ID: " + event.getCourseId());
-
-        final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.findById(new ObjectId(event.getCourseId()))
-                .orElseThrow(() -> new IllegalStateException("Course not found"));
-        final CertificationAuthorityEntity certificationAuthorityEntity = certificationCourseEntity.getCa();
-        final String studentName = userRepository.findOneByWalletHash(event.getStudentWalletHash()).map(UserEntity::getFullName).orElseThrow(() -> new IllegalStateException("Student not found"));
-        // Generate new certificate using the data provide by event
-        final CertificateGenerated certificateGenerated = certificateGenerator.generate(CertificationGenerationRequest.builder()
-                .caName(certificationAuthorityEntity.getName())
-                .caWalletHash(event.getCaWalletHash())
-                .studentName(studentName)
-                .studentWalletHash(event.getStudentWalletHash())
-                .courseName(certificationCourseEntity.getName())
-                .courseId(event.getCourseId())
-                .qualification(event.getQualification())
-                .build());
-        // Save Certificate in IPFS node
-        final String fileCertificateCid = ipfsService.save(certificateGenerated.getFile(), true);
-        // Save Certificate Image in IPFS node
-        final String imageCertificateCid = ipfsService.save(certificateGenerated.getImage(), true);
-        // Generate SHA 256 from file
-        String fileCertificateHash = Files.asByteSource(certificateGenerated.getFile()).hash(Hashing.sha256()).toString();
-        // Generate SHA 256 from image
-        String imageCertificateHash = Files.asByteSource(certificateGenerated.getImage()).hash(Hashing.sha256()).toString();
-        return trustCertificationBlockchainRepository.issueCertificate(certificateGenerated.getId(), event.getCaWalletHash(), event.getStudentWalletHash(), event.getCourseId(),
-                event.getQualification(), fileCertificateCid, fileCertificateHash, imageCertificateCid, imageCertificateHash);
+        log.debug("Event payload -> " + event.getPayload());
+        final AbstractCertificateManagementEvent certificateManagementEvent = objectMapper.readValue(event.getPayload(), AbstractCertificateManagementEvent.class);
+        final AbstractCertificateManagementHandler eventHandler = getHandler(certificateManagementEvent.getEntityType());
+        return eventHandler.onHandle(certificateManagementEvent);
     }
 
     /**
      *
-     * @param event
+     * @param clazz
+     * @return
+     * @param <T>
      */
-    @Override
-    public CertificateIssuanceRequestEntity saveCertificate(final OnNewCertificateIssuedEvent event) {
-        Assert.notNull(event, "Event can not be null");
-        final UserEntity caUserEntity = userRepository.findOneByWalletHash(event.getCaWalletHash()).orElseThrow(() -> new IllegalStateException("CA Wallet Hash not found"));
-        final UserEntity studentEntity = userRepository.findOneByWalletHash(event.getStudentWalletHash()).orElseThrow(() -> new IllegalStateException("Student Wallet Hash not found"));
-        final CertificateIssuanceRequestEntity certificateIssued = CertificateIssuanceRequestEntity.builder()
-                .ca(caUserEntity)
-                .student(studentEntity)
-                .status(CertificateStatusEnum.VALIDATED)
-                .certificateId(event.getCertificateId())
-                .createdAt(new Date())
-                .build();
-        return certificateIssuedRepository.save(certificateIssued);
+    private <T extends AbstractCertificateManagementEvent> AbstractCertificateManagementHandler<T, ? extends AbstractNotificationEvent> getHandler(Class<T> clazz) {
+        log.debug("getHandler -> " + clazz.getCanonicalName());
+        ResolvableType type = ResolvableType.forClassWithGenerics(AbstractCertificateManagementHandler.class, clazz);
+        return applicationContext.<AbstractCertificateManagementHandler<T, ? extends AbstractNotificationEvent>>getBeanProvider(type).getObject();
     }
 
 }

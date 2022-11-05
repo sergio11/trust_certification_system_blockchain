@@ -213,14 +213,14 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
         Assert.notNull(id, "Id can not be null");
         final CertificateIssuanceRequestEntity certificate = certificateIssuanceRequestRepository.findById(new ObjectId(id))
                 .orElseThrow(() -> new IllegalStateException("Certificate not found"));
-        final OnNewIssueCertificateRequestEvent event = OnNewIssueCertificateRequestEvent
+        streamBridge.send(streamChannelsProperties.getCertificationManagement(), OnNewIssueCertificateRequestEvent
                 .builder()
                 .caWalletHash(certificate.getCa().getWalletHash())
                 .courseId(certificate.getCourse().getId().toString())
                 .qualification(certificate.getQualification())
                 .studentWalletHash(certificate.getStudent().getWalletHash())
-                .build();
-        streamBridge.send(streamChannelsProperties.getNewCertificationRequest(), event);
+                .certificationRequestId(id)
+                .build());
         final CertificateIssuanceRequestEntity certificateRequestUpdated = certificateIssuanceRequestRepository.updateStatus(new ObjectId(id), CertificateStatusEnum.REVIEWED);
         final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = certificateIssuanceRequestMapper.entityToDTO(certificateRequestUpdated);
         streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CertificateRequestAcceptedNotificationEvent.builder()

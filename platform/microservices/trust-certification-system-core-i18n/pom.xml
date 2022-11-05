@@ -16,6 +16,10 @@
         <relativePath>../</relativePath>
     </parent>
 
+    <properties>
+        <validation-api.version>2.0.1.Final</validation-api.version>
+    </properties>
+
     <repositories>
         <repository>
             <id>jitpack.io</id>
@@ -37,7 +41,7 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>2.0.0.Final</version>
+            <version>${validation-api.version}</version>
         </dependency>
     </dependencies>
 

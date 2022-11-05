@@ -1,9 +1,7 @@
 package com.dreamsoftware.tcs.service;
 
-import com.dreamsoftware.tcs.stream.events.certificate.OnNewCertificateIssuedEvent;
-import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
-import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
+import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import org.springframework.messaging.support.GenericMessage;
 
 /**
  *
@@ -15,14 +13,7 @@ public interface ITrustCertificateService {
      *
      * @param event
      * @return
-     * @throws java.lang.Exception
+     * @throws Exception
      */
-    CertificateIssuedEntity issueCertificate(OnNewIssueCertificateRequestEvent event) throws Exception;
-
-    /**
-     *
-     * @param event
-     * @return
-     */
-    CertificateIssuanceRequestEntity saveCertificate(OnNewCertificateIssuedEvent event);
+    AbstractNotificationEvent handle(final GenericMessage<String> event) throws Exception;
 }
