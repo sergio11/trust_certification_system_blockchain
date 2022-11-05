@@ -1,14 +1,13 @@
 package com.dreamsoftware.tcs.web.interceptors;
 
-import com.google.common.io.ByteStreams;
-import java.io.IOException;
-import java.nio.charset.Charset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+
+import java.io.IOException;
 
 /**
  *
@@ -41,12 +40,6 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
             log.debug("Status code  : {}", response.getStatusCode());
             log.debug("Status text  : {}", response.getStatusText());
             log.debug("Headers      : {}", response.getHeaders());
-            try {
-                final String bodyAsString = new String(ByteStreams.toByteArray(response.getBody()), Charset.forName("UTF-8"));
-                log.debug("Body: ", bodyAsString);
-            } catch (final Exception ex) {
-                log.debug("Parse Body Exception -> " + ex.getMessage());
-            }
             log.debug("=======================response end=================================================");
         } catch (IOException ex) {
             log.error(ex.getMessage());
