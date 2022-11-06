@@ -71,12 +71,25 @@ public class CertificateIssuedEntity {
     private Boolean isExist;
 
     /**
-     * Certificate CID
+     * Certificate File CID
      */
-    private String cid;
+    private String fileCid;
 
     /**
-     * Certificate Hash
+     * Certificate File Hash
      */
-    private String certificateHash;
+    private String fileCertificateHash;
+
+    /**
+     * Certificate Image CID
+     */
+    private String imageCid;
+
+    /**
+     * Certificate Image Hash
+     */
+    private String imageCertificateHash;
+
 }
+
+

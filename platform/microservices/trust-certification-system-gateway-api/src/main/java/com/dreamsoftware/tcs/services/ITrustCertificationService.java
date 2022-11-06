@@ -126,6 +126,24 @@ public interface ITrustCertificationService {
 
     /**
      *
+     * @param certificateId
+     * @param width
+     * @param height
+     * @return
+     * @throws Exception
+     */
+    FileInfoDTO generateCertificateQr(final String certificateId, final Integer width, final Integer height) throws Exception;
+
+    /**
+     *
+     * @param certificateId
+     * @return
+     * @throws Exception
+     */
+    FileInfoDTO getCertificateImage(final String certificateId) throws Exception;
+
+    /**
+     *
      * @param certificatePayload
      * @return
      * @throws Exception

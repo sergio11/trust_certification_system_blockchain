@@ -32,7 +32,8 @@ public enum TrustCertificationResponseCodeEnum implements IResponseCodeTypes {
     DOWNLOAD_CERTIFICATE_FILE_FAILED(421L),
     CERTIFICATE_IS_VALID(422L),
     CERTIFICATE_VALIDATION_FAILED(423L),
-    CERTIFICATE_IS_INVALID(424L);
+    CERTIFICATE_IS_INVALID(424L),
+    GENERATE_CERTIFICATE_QR_FAILED(425L);
 
     private final Long code;
     public static final String CATEGORY_NAME = "CERTIFICATE_ISSUED";
