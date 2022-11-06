@@ -71,8 +71,9 @@ public class CertificateIssuedDTO {
     private Boolean isExist;
 
     /**
-     * Certifiate CID
+     * File Certificate Hash
      */
-    @JsonProperty("cid")
-    private String cid;
+    @JsonProperty("file_certificate_hash")
+    private String fileCertificateHash;
+
 }

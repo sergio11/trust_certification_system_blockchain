@@ -13,6 +13,7 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceReq
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.ICryptService;
+import com.dreamsoftware.tcs.service.IQRCodeGenerator;
 import com.dreamsoftware.tcs.service.IipfsGateway;
 import com.dreamsoftware.tcs.services.ITrustCertificationService;
 import com.dreamsoftware.tcs.stream.events.certificate.DisableCertificateRequestEvent;
@@ -56,6 +57,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     private final CertificateIssuanceRequestMapper certificateIssuanceRequestMapper;
     private final IipfsGateway ipfsService;
     private final ICryptService cryptService;
+    private final IQRCodeGenerator qrCodeGenerator;
 
     /**
      * @param ownerWallet
@@ -261,11 +263,53 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     public FileInfoDTO getCertificateFile(final String certificateId) throws Exception {
         Assert.notNull(certificateId, "Certificate Id can not be null");
         final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(certificateId);
-        final byte[] fileContents = ipfsService.get(certificate.getCid());
+        final byte[] fileContents = ipfsService.get(certificate.getFileCid());
         return FileInfoDTO
                 .builder()
                 .content(fileContents)
                 .contentType(MediaType.APPLICATION_PDF_VALUE)
+                .size((long) fileContents.length)
+                .build();
+    }
+
+    /**
+     *
+     * @param certificateId
+     * @param width
+     * @param height
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public FileInfoDTO generateCertificateQr(final String certificateId, final Integer width, final Integer height) throws Exception {
+        Assert.notNull(certificateId, "Certificate Id can not be null");
+        Assert.notNull(width, "Width can not be null");
+        Assert.notNull(height, "Height can not be null");
+        final String certificateQrDataEncrypted = cryptService.encrypt(certificateId);
+        final byte[] qrCodeData = qrCodeGenerator.getQRCodeImage(certificateQrDataEncrypted, width, height);
+        return FileInfoDTO
+                .builder()
+                .content(qrCodeData)
+                .contentType(MediaType.IMAGE_PNG_VALUE)
+                .size((long) qrCodeData.length)
+                .build();
+    }
+
+    /**
+     *
+     * @param certificateId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public FileInfoDTO getCertificateImage(final String certificateId) throws Exception {
+        Assert.notNull(certificateId, "Certificate Id can not be null");
+        final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(certificateId);
+        final byte[] fileContents = ipfsService.get(certificate.getImageCid());
+        return FileInfoDTO
+                .builder()
+                .content(fileContents)
+                .contentType(MediaType.IMAGE_PNG_VALUE)
                 .size((long) fileContents.length)
                 .build();
     }

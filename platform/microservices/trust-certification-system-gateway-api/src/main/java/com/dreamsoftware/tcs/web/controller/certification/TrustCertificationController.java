@@ -18,7 +18,7 @@ import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,10 +28,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMethod;
 import com.dreamsoftware.tcs.web.validation.constraints.CertificateShouldBePendingReview;
 
 import javax.servlet.http.HttpServletRequest;
@@ -408,7 +405,7 @@ public class TrustCertificationController extends SupportController {
     /**
      * Download Certificate File
      *
-     * @param id
+     * @param certId
      * @return
      */
     @Operation(summary = "DOWNLOAD_CERTIFICATE_FILE - Download Certificate file", description = "Download certificate file", tags = {"CERTIFICATE_ISSUED"})
@@ -423,7 +420,54 @@ public class TrustCertificationController extends SupportController {
         } catch (final Exception ex) {
             throw new DownloadCertificateFileException(ex.getMessage(), ex);
         }
+    }
 
+    /**
+     * Download Certificate Image
+     *
+     * @param certId
+     * @return
+     */
+    @Operation(summary = "DOWNLOAD_CERTIFICATE_IMAGE - Download Certificate Image", description = "Download certificate image", tags = {"CERTIFICATE_ISSUED"})
+    @RequestMapping(value = "/{certId}/download", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> downloadCertificateImage(
+            @Parameter(name = "certId", description = "Certificate Id", required = true)
+            @PathVariable("certId") String certId
+    ) {
+        try {
+            final FileInfoDTO fileInfo = trustCertificationService.getCertificateImage(certId);
+            return responseHelper.createAndSendMediaResponse(fileInfo);
+        } catch (final Exception ex) {
+            throw new DownloadCertificateFileException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Generate Certificate QR
+     * @param certId
+     * @param qrWidth
+     * @param qrHeight
+     * @return
+     */
+    @Operation(summary = "GENERATE_CERTIFICATE_QR - Get Certificate QR", description = "Generate Certificate QR", tags = {"CERTIFICATE_ISSUED"})
+    @RequestMapping(value = "/{certId}/qr", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @OnlyAccessForStudent
+    public ResponseEntity<byte[]> generateCertificateQR(
+            @Parameter(name = "certId", description = "Certificate Id", required = true)
+            @PathVariable("certId") String certId,
+            @Parameter(name = "width", description = "QR Width")
+            @RequestParam(name = "width", defaultValue = "200")
+            final Integer qrWidth,
+            @Parameter(name = "height", description = "QR Height")
+            @RequestParam(name = "height", defaultValue = "200")
+            final Integer qrHeight
+    ) {
+        try {
+            final FileInfoDTO fileInfo = trustCertificationService.generateCertificateQr(certId, qrWidth, qrHeight);
+            return responseHelper.createAndSendMediaResponse(fileInfo);
+        } catch (final Exception ex) {
+            throw new GenerateCertificateQRException(ex.getMessage(), ex);
+        }
     }
 
     /**

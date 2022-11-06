@@ -208,4 +208,18 @@ public class TrustCertificationErrorController extends SupportController {
                 HttpStatus.BAD_REQUEST, resolveString("certificate_is_invalid", request));
     }
 
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(GenerateCertificateQRException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGenerateCertificateQRException(final GenerateCertificateQRException ex, HttpServletRequest request) {
+        logger.error("Handler for GenerateCertificateQRException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(TrustCertificationResponseCodeEnum.GENERATE_CERTIFICATE_QR_FAILED,
+                HttpStatus.BAD_REQUEST, resolveString("generate_certificate_qr_failed", request));
+    }
+
 }

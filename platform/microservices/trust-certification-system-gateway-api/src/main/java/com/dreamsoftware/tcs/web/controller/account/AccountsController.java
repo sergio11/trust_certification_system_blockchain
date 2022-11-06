@@ -352,6 +352,8 @@ public class AccountsController extends SupportController {
     @SecurityRequirements
     @RequestMapping(value = "/activate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<SimpleUserDTO>> activate(
+            @Parameter(name = "ca", description = "Activate Token, it can not be null",
+                    required = true, schema = @Schema(implementation = String.class))
             @RequestParam(name = "token") final String token) {
         try {
             final SimpleUserDTO userActivated = accountsService.activate(token);
