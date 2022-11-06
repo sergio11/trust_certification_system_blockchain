@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.stream.events.notifications.users;
+package com.dreamsoftware.tcs.stream.events.notifications.ca;
 
 import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
@@ -13,8 +13,8 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityAnnotation(entityClass = CertificationAuthorityMemberEnabledNotificationEvent.class)
-public class CertificationAuthorityMemberEnabledNotificationEvent extends AbstractNotificationEvent {
+@EntityAnnotation(entityClass = CertificationAuthorityMemberDisabledNotificationEvent.class)
+public class CertificationAuthorityMemberDisabledNotificationEvent extends AbstractNotificationEvent {
 
     /**
      *  User Wallet hash

@@ -1,6 +1,5 @@
-package com.dreamsoftware.tcs.stream.events.notifications.users;
+package com.dreamsoftware.tcs.stream.events.notifications.ca;
 
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import lombok.*;
