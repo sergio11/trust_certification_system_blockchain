@@ -57,7 +57,7 @@ public class IssueCertificateRequestedHandler extends AbstractNotificationHandle
             final String studentNotificationBody = resolveString("notification_student_issue_certificate_requested_body", studentLocale, new Object[]{
                 studentEntity.getFullName()});
             devicesManagementService.sendNotification(studentEntity.getId(), studentNotificationTitle, studentNotificationBody);
-            final UserEntity ca = certificateRequest.getCa();
+            final UserEntity ca = certificateRequest.getCaMember();
             final Locale caLocale = i18nService.parseLocaleOrDefault(ca.getLanguage());
             mailClientService.sendMail(IssueCertificateRequestMailRequestDTO
                     .builder()

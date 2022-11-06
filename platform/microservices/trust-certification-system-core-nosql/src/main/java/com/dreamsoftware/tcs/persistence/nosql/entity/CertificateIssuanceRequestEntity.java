@@ -67,7 +67,7 @@ public class CertificateIssuanceRequestEntity {
      * Course
      */
     @DBRef
-    private CertificationCourseEntity course;
+    private CertificationCourseEditionEntity course;
 
     /**
      * Student
@@ -79,5 +79,5 @@ public class CertificateIssuanceRequestEntity {
      * CA
      */
     @DBRef
-    private UserEntity ca;
+    private UserEntity caMember;
 }
