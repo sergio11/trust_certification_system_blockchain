@@ -168,18 +168,16 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
 
     /**
      *
-     * @param walletHash
      * @param certificationId
      * @return
      * @throws RepositoryException
      */
     @Override
-    public Boolean isCertificateValid(final String walletHash, final String certificationId) throws RepositoryException {
-        Assert.notNull(walletHash, "Wallet can not be null");
+    public Boolean isCertificateValid(final String certificationId) throws RepositoryException {
         Assert.notNull(certificationId, "Certification Id can not be null");
         log.debug("isCertificateValid CALLED!");
         try {
-            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(walletHash);
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract();
             return trustCertificationContract.isCertificateValid(certificationId).send();
         } catch (final Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
@@ -188,18 +186,16 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
 
     /**
      *
-     * @param walletHash
      * @param certificationId
      * @return
      * @throws RepositoryException
      */
     @Override
-    public CertificateIssuedEntity getCertificateDetail(final String walletHash, final String certificationId) throws RepositoryException {
-        Assert.notNull(walletHash, "Wallet can not be null");
+    public CertificateIssuedEntity getCertificateDetail(final String certificationId) throws RepositoryException {
         Assert.notNull(certificationId, "Certification Id can not be null");
         log.debug("getCertificateDetail CALLED!");
         try {
-            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract(walletHash);
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract();
             final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();
             return trustCertificationEntityMapper.certificateRecordToCertificateIssuedEntity(certificateRecord);
         } catch (final Exception ex) {

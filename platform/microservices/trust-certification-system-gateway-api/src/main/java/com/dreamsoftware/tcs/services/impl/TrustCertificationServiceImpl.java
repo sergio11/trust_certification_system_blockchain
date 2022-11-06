@@ -3,45 +3,40 @@ package com.dreamsoftware.tcs.services.impl;
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.CertificateIssuanceRequestMapper;
 import com.dreamsoftware.tcs.mapper.CertificateIssuedMapper;
-import com.dreamsoftware.tcs.stream.events.certificate.DisableCertificateRequestEvent;
-import com.dreamsoftware.tcs.stream.events.certificate.EnableCertificateRequestEvent;
-import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateStatusEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
-import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
-import com.dreamsoftware.tcs.services.ITrustCertificationService;
-import com.dreamsoftware.tcs.stream.events.certificate.UpdateCertificateVisibilityRequestEvent;
-import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
-import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
-
-import java.util.List;
-
-import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
+import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.tcs.service.ICryptService;
 import com.dreamsoftware.tcs.service.IipfsGateway;
+import com.dreamsoftware.tcs.services.ITrustCertificationService;
+import com.dreamsoftware.tcs.stream.events.certificate.DisableCertificateRequestEvent;
+import com.dreamsoftware.tcs.stream.events.certificate.EnableCertificateRequestEvent;
+import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
+import com.dreamsoftware.tcs.stream.events.certificate.UpdateCertificateVisibilityRequestEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateRenewedNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateRequestAcceptedNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateRequestRejectedNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.IssueCertificateRequestedNotificationEvent;
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.CertificateInvalidException;
 import com.dreamsoftware.tcs.web.core.FileInfoDTO;
+import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
-import com.google.common.hash.Hashing;
-import com.google.common.io.ByteSource;
-
-import java.util.Date;
-
+import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.http.MediaType;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author ssanchez
@@ -60,6 +55,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     private final StreamChannelsProperties streamChannelsProperties;
     private final CertificateIssuanceRequestMapper certificateIssuanceRequestMapper;
     private final IipfsGateway ipfsService;
+    private final ICryptService cryptService;
 
     /**
      * @param ownerWallet
@@ -112,30 +108,15 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     * @param ownerWallet
      * @param certificationId
      * @return
      * @throws Throwable
      */
     @Override
-    public CertificateIssuedDTO getDetail(final String ownerWallet, final String certificationId) throws Throwable {
-        Assert.notNull(ownerWallet, "ownerWallet can not be null");
+    public CertificateIssuedDTO getDetail(final String certificationId) throws Throwable {
         Assert.notNull(certificationId, "certificationId can not be null");
-        final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(ownerWallet, certificationId);
+        final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(certificationId);
         return certificateIssuedMapper.entityToDTO(certificate);
-    }
-
-    /**
-     * @param ownerWallet
-     * @param certificationId
-     * @return
-     * @throws Throwable
-     */
-    @Override
-    public Boolean isCertificateValid(final String ownerWallet, final String certificationId) throws Throwable {
-        Assert.notNull(ownerWallet, "ownerWallet can not be null");
-        Assert.notNull(certificationId, "certificationId can not be null");
-        return trustCertificationRepository.isCertificateValid(ownerWallet, certificationId);
     }
 
     /**
@@ -272,15 +253,14 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     * @param ownerWallet
      * @param certificateId
      * @return
      * @throws Exception
      */
     @Override
-    public FileInfoDTO getCertificateFile(final String ownerWallet, final String certificateId) throws Exception {
+    public FileInfoDTO getCertificateFile(final String certificateId) throws Exception {
         Assert.notNull(certificateId, "Certificate Id can not be null");
-        final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(ownerWallet, certificateId);
+        final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(certificateId);
         final byte[] fileContents = ipfsService.get(certificate.getCid());
         return FileInfoDTO
                 .builder()
@@ -291,15 +271,19 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     * @param certificateFile
+     *
+     * @param certificatePayload
      * @return
      * @throws Exception
      */
     @Override
-    public Boolean validateCertificate(final MultipartFile certificateFile) throws Exception {
-        Assert.notNull(certificateFile, "certificateFile can not be null");
-        String certificateHash = ByteSource.wrap(certificateFile.getBytes()).hash(Hashing.sha256()).toString();
-        //return trustCertificationRepository.validateCertificateIntegrity(certificateHash);
-        return false;
+    public CertificateIssuedDTO validateCertificate(final String certificatePayload) throws Exception {
+        Assert.notNull(certificatePayload, "CertificatePayload can not be null");
+        final String certificateId = cryptService.decrypt(certificatePayload);
+        if(!trustCertificationRepository.isCertificateValid(certificateId)) {
+            throw new CertificateInvalidException();
+        }
+        final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(certificateId);
+        return certificateIssuedMapper.entityToDTO(certificate);
     }
 }

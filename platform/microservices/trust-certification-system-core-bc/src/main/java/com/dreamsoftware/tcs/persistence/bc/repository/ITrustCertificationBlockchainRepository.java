@@ -74,22 +74,20 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
     /**
      * Is Certificate Valid
      *
-     * @param walletHash
      * @param certificationId
      * @return
      * @throws RepositoryException
      */
-    Boolean isCertificateValid(final String walletHash, final String certificationId) throws RepositoryException;
+    Boolean isCertificateValid(final String certificationId) throws RepositoryException;
 
     /**
      * Get Certificate Detail
      *
-     * @param walletHash
      * @param certificationId
      * @return
      * @throws RepositoryException
      */
-    CertificateIssuedEntity getCertificateDetail(final String walletHash, final String certificationId) throws RepositoryException;
+    CertificateIssuedEntity getCertificateDetail(final String certificationId) throws RepositoryException;
 
     /**
      * Get My Certificates as Recipient
