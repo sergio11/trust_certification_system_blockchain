@@ -2,7 +2,9 @@ package com.dreamsoftware.tcs.services.impl;
 
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.CertificateIssuanceRequestMapper;
-import com.dreamsoftware.tcs.mapper.CertificateIssuedMapper;
+import com.dreamsoftware.tcs.mapper.CertificationCourseEditionDetailMapper;
+import com.dreamsoftware.tcs.mapper.SimpleCertificateIssuedMapper;
+import com.dreamsoftware.tcs.mapper.SimpleUserMapper;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.*;
@@ -25,7 +27,8 @@ import com.dreamsoftware.tcs.web.controller.certification.error.exception.Certif
 import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
-import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
+import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.SimpleCertificateIssuedDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -44,7 +47,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrustCertificationServiceImpl implements ITrustCertificationService {
 
-    private final CertificateIssuedMapper certificateIssuedMapper;
+    private final SimpleCertificateIssuedMapper simpleCertificateIssuedMapper;
+    private final SimpleUserMapper simpleUserMapper;
+    private final CertificationCourseEditionDetailMapper certificationCourseEditionDetailMapper;
     private final UserRepository userRepository;
     private final CertificateIssuanceRequestRepository certificateIssuanceRequestRepository;
     private final ITrustCertificationBlockchainRepository trustCertificationRepository;
@@ -112,10 +117,10 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public CertificateIssuedDTO getDetail(final String certificationId) throws Throwable {
+    public CertificateIssuedDetailDTO getDetail(final String certificationId) throws Throwable {
         Assert.notNull(certificationId, "certificationId can not be null");
         final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(certificationId);
-        return certificateIssuedMapper.entityToDTO(certificate);
+        return mapToCertificateIssuedDetail(certificate);
     }
 
     /**
@@ -124,10 +129,10 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public Iterable<CertificateIssuedDTO> getMyCertificatesAsRecipient(final String ownerWallet) throws Throwable {
+    public Iterable<SimpleCertificateIssuedDTO> getMyCertificatesAsRecipient(final String ownerWallet) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         final List<CertificateIssuedEntity> myCertificates = trustCertificationRepository.getMyCertificatesAsRecipient(ownerWallet);
-        return certificateIssuedMapper.entityToDTO(myCertificates);
+        return simpleCertificateIssuedMapper.entityToDTO(myCertificates);
     }
 
     /**
@@ -136,10 +141,10 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public Iterable<CertificateIssuedDTO> getMyCertificatesAsIssuer(final String ownerWallet) throws Throwable {
+    public Iterable<SimpleCertificateIssuedDTO> getMyCertificatesAsIssuer(final String ownerWallet) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         final List<CertificateIssuedEntity> myCertificates = trustCertificationRepository.getMyCertificatesAsIssuer(ownerWallet);
-        return certificateIssuedMapper.entityToDTO(myCertificates);
+        return simpleCertificateIssuedMapper.entityToDTO(myCertificates);
     }
 
     /**
@@ -218,15 +223,14 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Throwable
      */
     @Override
-    public CertificateIssuedDTO renewCertificate(final String ownerWallet, final String certificationId) throws Throwable {
+    public CertificateIssuedDetailDTO renewCertificate(final String ownerWallet, final String certificationId) throws Throwable {
         Assert.notNull(ownerWallet, "ownerWallet can not be null");
         Assert.notNull(certificationId, "certificationId can not be null");
         final CertificateIssuedEntity certificate = trustCertificationRepository.renewCertificate(ownerWallet, certificationId);
-        final CertificateIssuedDTO certificateIssuedDTO = certificateIssuedMapper.entityToDTO(certificate);
         streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CertificateRenewedNotificationEvent.builder()
-                .id(certificateIssuedDTO.getId())
+                .id(certificate.getId())
                 .build());
-        return certificateIssuedDTO;
+        return mapToCertificateIssuedDetail(certificate);
     }
 
     /**
@@ -318,13 +322,24 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
      * @throws Exception
      */
     @Override
-    public CertificateIssuedDTO validateCertificate(final String certificatePayload) throws Exception {
+    public CertificateIssuedDetailDTO validateCertificate(final String certificatePayload) throws Exception {
         Assert.notNull(certificatePayload, "CertificatePayload can not be null");
         final String certificateId = cryptService.decrypt(certificatePayload);
         if(!trustCertificationRepository.isCertificateValid(certificateId)) {
             throw new CertificateInvalidException();
         }
         final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(certificateId);
-        return certificateIssuedMapper.entityToDTO(certificate);
+        return mapToCertificateIssuedDetail(certificate);
+    }
+
+    private CertificateIssuedDetailDTO mapToCertificateIssuedDetail(final CertificateIssuedEntity certificate) {
+        final CertificateIssuanceRequestEntity certificateIssuanceRequestEntity = certificateIssuanceRequestRepository.findByCertificateId(certificate.getId())
+                .orElseThrow(() -> new IllegalStateException("Certification can not be found"));
+        return CertificateIssuedDetailDTO.builder()
+                .student(simpleUserMapper.entityToDTO(certificateIssuanceRequestEntity.getStudent()))
+                .caMember(simpleUserMapper.entityToDTO(certificateIssuanceRequestEntity.getCaMember()))
+                .course(certificationCourseEditionDetailMapper.entityToDTO(certificateIssuanceRequestEntity.getCourse()))
+                .certificate(simpleCertificateIssuedMapper.entityToDTO(certificate))
+                .build();
     }
 }
