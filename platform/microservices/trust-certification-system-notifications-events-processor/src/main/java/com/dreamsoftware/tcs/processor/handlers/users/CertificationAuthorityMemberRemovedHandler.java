@@ -1,14 +1,11 @@
 package com.dreamsoftware.tcs.processor.handlers.users;
 
 import com.dreamsoftware.tcs.i18n.service.I18NService;
-import com.dreamsoftware.tcs.mail.model.UserActivatedEventMailRequestDTO;
 import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
 import com.dreamsoftware.tcs.service.INotificationService;
-import com.dreamsoftware.tcs.stream.events.notifications.users.CertificationAuthorityMemberDisabledNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.users.CertificationAuthorityMemberRemovedNotificationEvent;
-import com.dreamsoftware.tcs.stream.events.notifications.users.UserRegisteredNotificationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;

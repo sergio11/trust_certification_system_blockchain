@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor.handlers.course;
 
 import com.dreamsoftware.tcs.i18n.service.I18NService;
-import com.dreamsoftware.tcs.mail.model.CourseEnabledMailRequestDTO;
+import com.dreamsoftware.tcs.mail.model.course.CourseEnabledMailRequestDTO;
 import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;

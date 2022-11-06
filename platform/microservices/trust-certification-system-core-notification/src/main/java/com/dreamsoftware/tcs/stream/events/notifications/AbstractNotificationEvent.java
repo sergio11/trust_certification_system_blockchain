@@ -48,6 +48,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 })
 public abstract class AbstractNotificationEvent {
 
+
     /**
      * Get Entity Type
      *
@@ -62,4 +63,5 @@ public abstract class AbstractNotificationEvent {
         }
         return entityClass;
     }
+
 }

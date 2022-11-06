@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor.handlers.users;
 
 import com.dreamsoftware.tcs.i18n.service.I18NService;
-import com.dreamsoftware.tcs.mail.model.UserOrderCompletedMailRequestDTO;
+import com.dreamsoftware.tcs.mail.model.user.UserOrderCompletedMailRequestDTO;
 import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CreatedOrderRepository;

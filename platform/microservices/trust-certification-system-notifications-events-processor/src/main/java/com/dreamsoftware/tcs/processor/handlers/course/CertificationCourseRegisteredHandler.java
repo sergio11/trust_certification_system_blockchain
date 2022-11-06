@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor.handlers.course;
 
 import com.dreamsoftware.tcs.i18n.service.I18NService;
-import com.dreamsoftware.tcs.mail.model.CertificationCourseRegisteredMailRequestDTO;
+import com.dreamsoftware.tcs.mail.model.course.CourseEditionRegisteredMailRequestDTO;
 import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
@@ -41,7 +41,7 @@ public class CertificationCourseRegisteredHandler extends AbstractNotificationHa
         certificationCourseRepository.findById(new ObjectId(notification.getCourseId())).ifPresent((certificationCourseEntitySaved) -> {
             notificationService.onCACertificationCourseRegistered(certificationCourseEntitySaved);
             final UserEntity caAdmin = certificationCourseEntitySaved.getCa().getAdmin();
-            mailClientService.sendMail(CertificationCourseRegisteredMailRequestDTO.builder()
+            mailClientService.sendMail(CourseEditionRegisteredMailRequestDTO.builder()
                     .courseId(certificationCourseEntitySaved.getId().toString())
                     .courseName(notification.getCourseName())
                     .email(caAdmin.getEmail())
