@@ -46,9 +46,7 @@ public class MailClientServiceImpl implements IMailClientService {
     public void forwardEmails(int numberOfEmailsToForwarding) {
         Assert.isTrue(numberOfEmailsToForwarding > 0, "Number of mails should be greater than 0");
         emailRepository.findAllByOrderByLastChanceAsc(Pageable.ofSize(numberOfEmailsToForwarding))
-                .forEach((email) -> {
-                    sendMail(email);
-                });
+                .forEach(this::sendMail);
 
     }
 
@@ -126,7 +124,10 @@ public class MailClientServiceImpl implements IMailClientService {
                 log.error("JsonProcessingException:  " + ex.getMessage());
             }
         }
-        emailRepository.save(emailEntity);
+
+        if(emailEntity != null) {
+            emailRepository.save(emailEntity);
+        }
     }
 
     /**

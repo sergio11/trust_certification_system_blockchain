@@ -1,5 +1,10 @@
 package com.dreamsoftware.tcs.mail.model;
 
+import com.dreamsoftware.tcs.mail.model.ca.*;
+import com.dreamsoftware.tcs.mail.model.certificate.*;
+import com.dreamsoftware.tcs.mail.model.course.*;
+import com.dreamsoftware.tcs.mail.model.user.UserActivatedEventMailRequestDTO;
+import com.dreamsoftware.tcs.mail.model.user.UserPendingValidationMailRequestDTO;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -36,7 +41,12 @@ import org.springframework.core.annotation.AnnotationUtils;
         @Type(UserActivatedEventMailRequestDTO.class),
         @Type(UserPendingValidationMailRequestDTO.class),
         @Type(CertificationAuthorityMemberRemovedMailRequestDTO.class),
-        @Type(CertificationAuthorityRemovedMailRequestDTO.class)
+        @Type(CertificationAuthorityRemovedMailRequestDTO.class),
+        @Type(CourseEditionRegisteredMailRequestDTO.class),
+        @Type(CourseDeletedMailRequestDTO.class),
+        @Type(CourseEditionDeletedMailRequestDTO.class),
+        @Type(CourseEditionDisabledMailRequestDTO.class),
+        @Type(CourseEditionEnabledMailRequestDTO.class)
 })
 public abstract class AbstractMailRequestDTO {
 
