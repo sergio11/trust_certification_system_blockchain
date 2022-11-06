@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.Date;
 
 /**
  *
@@ -35,21 +36,39 @@ public class CertificateIssuanceRequestDTO {
     private Long qualification;
 
     /**
+     * Created At
+     */
+    @JsonProperty("created_at")
+    private Date createdAt;
+
+    /**
+     * Updated At
+     */
+    @JsonProperty("updated_at")
+    private Date updatedAt;
+
+    /**
+     * Certificate Id
+     */
+    @JsonProperty("certificate_id")
+    private String certificateId;
+
+    /**
      * Course
      */
-    //@JsonProperty("course")
-    //private SimpleCertificationCourseDetailDTO course;
+    @JsonProperty("course")
+    private CertificationCourseEditionDetailDTO course;
 
     /**
-     * Student Wallet Hash
+     * Student
      */
-    @JsonProperty("student_wallet_hash")
-    private String studentWalletHash;
+    @JsonProperty("student")
+    private SimpleUserDTO student;
 
     /**
-     * CA Wallet Hash
+     * CA Member
      */
-    @JsonProperty("ca_wallet_hash")
-    private String caWalletHash;
+    @JsonProperty("ca_member")
+    private SimpleUserDTO caMember;
 
 }

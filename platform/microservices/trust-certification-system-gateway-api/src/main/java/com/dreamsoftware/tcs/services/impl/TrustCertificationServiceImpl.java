@@ -5,12 +5,9 @@ import com.dreamsoftware.tcs.mapper.CertificateIssuanceRequestMapper;
 import com.dreamsoftware.tcs.mapper.CertificateIssuedMapper;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.bc.repository.entity.CertificateIssuedEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateStatusEnum;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.*;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceRequestRepository;
-import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseEditionRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.ICryptService;
 import com.dreamsoftware.tcs.service.IQRCodeGenerator;
@@ -51,7 +48,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     private final UserRepository userRepository;
     private final CertificateIssuanceRequestRepository certificateIssuanceRequestRepository;
     private final ITrustCertificationBlockchainRepository trustCertificationRepository;
-    private final CertificationCourseRepository certificationCourseRepository;
+    private final CertificationCourseEditionRepository certificationCourseEditionRepository;
     private final StreamBridge streamBridge;
     private final StreamChannelsProperties streamChannelsProperties;
     private final CertificateIssuanceRequestMapper certificateIssuanceRequestMapper;
@@ -152,17 +149,17 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     @Override
     public CertificateIssuanceRequestDTO issueCertificateRequest(final IssueCertificateRequestDTO issueCertificate) throws Throwable {
         Assert.notNull(issueCertificate.getStudentWalletHash(), "Student Wallet Hash can not be null");
-        Assert.notNull(issueCertificate.getCertificateCourseId(), "certificateCourseId can not be null");
+        Assert.notNull(issueCertificate.getCertificateCourseEditionId(), "certificateCourseId can not be null");
         Assert.notNull(issueCertificate.getQualification(), "qualification can not be null");
-        final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.findById(new ObjectId(issueCertificate.getCertificateCourseId()))
+        final CertificationCourseEditionEntity certificationCourseEditionEntity = certificationCourseEditionRepository.findById(new ObjectId(issueCertificate.getCertificateCourseEditionId()))
                 .orElseThrow(() -> new IllegalStateException("Course not found"));
-        final UserEntity caEntity = certificationCourseEntity.getCa().getAdmin();
+        final UserEntity caEntity = certificationCourseEditionEntity.getCourse().getCa().getAdmin();
         final UserEntity studentEntity = userRepository.findOneByWalletHash(issueCertificate.getStudentWalletHash())
                 .orElseThrow(() -> new IllegalStateException("Student not found"));
         final CertificateIssuanceRequestEntity certificateRequest = CertificateIssuanceRequestEntity
                 .builder()
-                .ca(caEntity)
-                .course(certificationCourseEntity)
+                .caMember(caEntity)
+                .course(certificationCourseEditionEntity)
                 .createdAt(new Date())
                 .status(CertificateStatusEnum.PENDING_REVIEW)
                 .qualification(issueCertificate.getQualification())
@@ -186,7 +183,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
                 .orElseThrow(() -> new IllegalStateException("Certificate not found"));
         streamBridge.send(streamChannelsProperties.getCertificationManagement(), OnNewIssueCertificateRequestEvent
                 .builder()
-                .caWalletHash(certificate.getCa().getWalletHash())
+                .caWalletHash(certificate.getCaMember().getWalletHash())
                 .courseId(certificate.getCourse().getId().toString())
                 .qualification(certificate.getQualification())
                 .studentWalletHash(certificate.getStudent().getWalletHash())

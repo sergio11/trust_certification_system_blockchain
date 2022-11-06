@@ -10,20 +10,23 @@ import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- *
  * @author ssanchez
  */
 @Mapper(unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public abstract class CertificateIssuanceRequestMapper {
 
     @Autowired
-    protected SimpleCertificationCourseDetailMapper certificationCourseDetailMapper;
+    protected CertificationCourseEditionDetailMapper certificationCourseEditionDetailMapper;
+
+    @Autowired
+    protected SimpleUserMapper simpleUserMapper;
 
     @Mappings({
-        @Mapping(expression = "java(entity.getId().toString())", target = "id"),
-        @Mapping(expression = "java(entity.getStatus().name())", target = "status"),
-        @Mapping(expression = "java(entity.getStudent().getId().toString())", target = "studentWalletHash"),
-        @Mapping(expression = "java(entity.getCa().getId().toString())", target = "caWalletHash")
+            @Mapping(expression = "java(entity.getId().toString())", target = "id"),
+            @Mapping(expression = "java(entity.getStatus().name())", target = "status"),
+            @Mapping(expression = "java(simpleUserMapper.entityToDTO(entity.getStudent()))", target = "student"),
+            @Mapping(expression = "java(simpleUserMapper.entityToDTO(entity.getCaMember()))", target = "caMember"),
+            @Mapping(expression = "java(certificationCourseEditionDetailMapper.entityToDTO(entity.getCourse()))", target = "course")
     })
     @Named("entityToDTO")
     public abstract CertificateIssuanceRequestDTO entityToDTO(CertificateIssuanceRequestEntity entity);

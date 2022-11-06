@@ -114,9 +114,12 @@ public class WalletServiceImpl implements IWalletService {
      */
     /**
      * Save Wallet File
-     *
-     * @param walletFile
+     * @param walletFileName
+     * @param walletSecret
+     * @param walletMnemonic
      * @return
+     * @throws IOException
+     * @throws NoSuchAlgorithmException
      */
     private String saveWalletFile(final String walletFileName, final String walletSecret, final String walletMnemonic) throws IOException, NoSuchAlgorithmException {
         final File walletFile = new File(trustCertificationSystemProperties.getWalletDirectory(),

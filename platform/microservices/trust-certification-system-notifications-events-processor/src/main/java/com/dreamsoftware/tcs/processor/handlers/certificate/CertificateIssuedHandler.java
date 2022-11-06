@@ -42,7 +42,7 @@ public class CertificateIssuedHandler extends AbstractNotificationHandler<Certif
         Assert.notNull(notification, "Notification can not be null");
         log.debug("CertificateIssuedNotificationEvent handled!");
         certificateIssuanceRequestRepository.findByCertificateId(notification.getId()).ifPresent((certificateIssuedSaved) -> {
-            final UserEntity caUserEntity = certificateIssuedSaved.getCa();
+            final UserEntity caUserEntity = certificateIssuedSaved.getCaMember();
             final UserEntity studentEntity = certificateIssuedSaved.getStudent();
             final Locale userLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
             notificationService.onUserCertificateValidated(certificateIssuedSaved);

@@ -20,12 +20,12 @@ import lombok.NoArgsConstructor;
 public class IssueCertificateRequestDTO {
 
     /**
-     * Certificate Course Id
+     * Certificate Course Edition Id
      */
     @Schema(description = "Certification Course Id", required = true)
     @JsonProperty("certificateCourseId")
     @NotBlank(message = "{certification_course_id_not_null}")
-    private String certificateCourseId;
+    private String certificateCourseEditionId;
 
     /**
      * Qualification Obtained
