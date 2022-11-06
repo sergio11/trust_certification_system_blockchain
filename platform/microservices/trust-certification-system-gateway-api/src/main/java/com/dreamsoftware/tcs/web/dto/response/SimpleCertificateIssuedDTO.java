@@ -14,19 +14,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CertificateIssuedDTO {
+public class SimpleCertificateIssuedDTO {
 
     /**
      * Identity
      */
     @JsonProperty("identity")
     private String id;
-
-    /**
-     * Course
-     */
-    @JsonProperty("course")
-    private String course;
 
     /**
      * Expiration Date

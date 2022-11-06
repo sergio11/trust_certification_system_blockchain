@@ -1,11 +1,10 @@
 package com.dreamsoftware.tcs.services;
 
-import com.dreamsoftware.tcs.web.controller.certification.error.exception.CertificateInvalidException;
 import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
-import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDTO;
-import org.springframework.web.multipart.MultipartFile;
+import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDetailDTO;
+import com.dreamsoftware.tcs.web.dto.response.SimpleCertificateIssuedDTO;
 
 /**
  *
@@ -49,7 +48,7 @@ public interface ITrustCertificationService {
      * @return
      * @throws Throwable
      */
-    CertificateIssuedDTO getDetail(final String certificationId) throws Throwable;
+    CertificateIssuedDetailDTO getDetail(final String certificationId) throws Throwable;
 
     /**
      *
@@ -57,7 +56,7 @@ public interface ITrustCertificationService {
      * @return
      * @throws Throwable
      */
-    Iterable<CertificateIssuedDTO> getMyCertificatesAsRecipient(final String ownerId) throws Throwable;
+    Iterable<SimpleCertificateIssuedDTO> getMyCertificatesAsRecipient(final String ownerId) throws Throwable;
 
     /**
      *
@@ -65,7 +64,7 @@ public interface ITrustCertificationService {
      * @return
      * @throws Throwable
      */
-    Iterable<CertificateIssuedDTO> getMyCertificatesAsIssuer(final String ownerId) throws Throwable;
+    Iterable<SimpleCertificateIssuedDTO> getMyCertificatesAsIssuer(final String ownerId) throws Throwable;
 
     /**
      * Issue Certificate Request
@@ -114,7 +113,7 @@ public interface ITrustCertificationService {
      * @return
      * @throws Throwable
      */
-    CertificateIssuedDTO renewCertificate(final String ownerWallet, final String certificationId) throws Throwable;
+    CertificateIssuedDetailDTO renewCertificate(final String ownerWallet, final String certificationId) throws Throwable;
 
     /**
      *
@@ -148,5 +147,5 @@ public interface ITrustCertificationService {
      * @return
      * @throws Exception
      */
-    CertificateIssuedDTO validateCertificate(final String certificatePayload) throws Exception;
+    CertificateIssuedDetailDTO validateCertificate(final String certificatePayload) throws Exception;
 }
