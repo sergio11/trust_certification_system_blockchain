@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.services;
 
+import com.dreamsoftware.tcs.web.controller.certification.error.exception.CertificateInvalidException;
 import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
@@ -41,23 +42,14 @@ public interface ITrustCertificationService {
      */
     void updateVisibility(final String ownerWallet, final String certificationId, final Boolean isVisible) throws Throwable;
 
-    /**
-     *
-     * @param ownerWallet
-     * @param certificationId
-     * @return
-     * @throws Throwable
-     */
-    Boolean isCertificateValid(final String ownerWallet, final String certificationId) throws Throwable;
 
     /**
      *
-     * @param ownerWallet
      * @param certificationId
      * @return
      * @throws Throwable
      */
-    CertificateIssuedDTO getDetail(final String ownerWallet, final String certificationId) throws Throwable;
+    CertificateIssuedDTO getDetail(final String certificationId) throws Throwable;
 
     /**
      *
@@ -126,18 +118,17 @@ public interface ITrustCertificationService {
 
     /**
      *
-     * @param ownerWallet
      * @param certificateId
      * @return
      * @throws Exception
      */
-    FileInfoDTO getCertificateFile(final String ownerWallet, final String certificateId) throws Exception;
+    FileInfoDTO getCertificateFile(final String certificateId) throws Exception;
 
     /**
      *
-     * @param certificateFile
+     * @param certificatePayload
      * @return
      * @throws Exception
      */
-    Boolean validateCertificate(final MultipartFile certificateFile) throws Exception;
+    CertificateIssuedDTO validateCertificate(final String certificatePayload) throws Exception;
 }

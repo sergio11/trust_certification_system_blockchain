@@ -147,7 +147,6 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
     /**
      *
      * @param certificateFile
-     * @param request
      * @return
      * @throws IOException
      * @throws Docx4JException
@@ -194,9 +193,9 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
         try (final PDDocument doc = PDDocument.load(destFile)) {
             try (PDPageContentStream contents = new PDPageContentStream(doc, doc.getPage(0), PDPageContentStream.AppendMode.APPEND, true)) {
                 final String certificateQrDataEncrypted = cryptService.encrypt(certificateId.toString());
-                log.debug("issueCertificate - QR data: " + certificateId.toString());
+                log.debug("issueCertificate - QR data: " + certificateId);
                 log.debug("issueCertificate - QR data encrypted: " + certificateQrDataEncrypted);
-                final byte[] qrCodeData = qrCodeGenerator.getQRCodeImage(cryptService.encrypt(certificateQrDataEncrypted), DEFAULT_QR_CODE_WIDTH, DEFAULT_QR_CODE_HEIGHT);
+                final byte[] qrCodeData = qrCodeGenerator.getQRCodeImage(certificateQrDataEncrypted, DEFAULT_QR_CODE_WIDTH, DEFAULT_QR_CODE_HEIGHT);
                 final PDImageXObject qrCodeImage = PDImageXObject.createFromByteArray(doc, qrCodeData, "CertificationQRCode");
                 qrCodeImage.setWidth(DEFAULT_QR_CODE_WIDTH);
                 qrCodeImage.setHeight(DEFAULT_QR_CODE_HEIGHT);
