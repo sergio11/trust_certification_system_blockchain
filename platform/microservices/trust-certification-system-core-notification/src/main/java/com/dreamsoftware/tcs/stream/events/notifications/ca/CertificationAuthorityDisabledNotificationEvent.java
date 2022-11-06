@@ -1,4 +1,4 @@
-package com.dreamsoftware.tcs.stream.events.notifications.users;
+package com.dreamsoftware.tcs.stream.events.notifications.ca;
 
 import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;

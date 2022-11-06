@@ -24,7 +24,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class CertificationCourseRegisteredHandler extends AbstractNotificationHandler<CourseEditionRegisteredNotificationEvent> {
+public class CourseEditionRegisteredHandler extends AbstractNotificationHandler<CourseEditionRegisteredNotificationEvent> {
 
     private final CertificationCourseRepository certificationCourseRepository;
     private final IMailClientService mailClientService;

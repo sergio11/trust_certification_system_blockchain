@@ -1,11 +1,10 @@
-package com.dreamsoftware.tcs.processor.handlers.users;
+package com.dreamsoftware.tcs.processor.handlers.course;
 
 import com.dreamsoftware.tcs.i18n.service.I18NService;
 import com.dreamsoftware.tcs.mail.service.IMailClientService;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
-import com.dreamsoftware.tcs.service.INotificationService;
-import com.dreamsoftware.tcs.stream.events.notifications.users.CertificationAuthorityRemovedNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.notifications.course.CertificationCourseEditionUpdatedNotificationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -21,22 +20,20 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class CertificationAuthorityRemovedHandler extends AbstractNotificationHandler<CertificationAuthorityRemovedNotificationEvent> {
+public class CourseEditionUpdatedHandler extends AbstractNotificationHandler<CertificationCourseEditionUpdatedNotificationEvent> {
 
     private final IMailClientService mailClientService;
-    private final UserRepository userRepository;
     private final I18NService i18nService;
-    private final INotificationService notificationService;
+    private final UserRepository userRepository;
 
     /**
      *
      * @param notification
      */
     @Override
-    public void onHandle(final CertificationAuthorityRemovedNotificationEvent notification) {
+    public void onHandle(final CertificationCourseEditionUpdatedNotificationEvent notification) {
         Assert.notNull(notification, "Notification can not be null");
-        log.debug("CertificationAuthorityRemovedHandler handled!");
-
+        log.debug("CourseEditionUpdatedHandler CALLED!");
     }
 
 }

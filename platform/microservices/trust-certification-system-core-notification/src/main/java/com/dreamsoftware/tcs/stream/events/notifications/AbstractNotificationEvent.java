@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.stream.events.notifications;
 
+import com.dreamsoftware.tcs.stream.events.notifications.ca.*;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.*;
 import com.dreamsoftware.tcs.stream.events.notifications.course.*;
 import com.dreamsoftware.tcs.stream.events.notifications.users.*;
