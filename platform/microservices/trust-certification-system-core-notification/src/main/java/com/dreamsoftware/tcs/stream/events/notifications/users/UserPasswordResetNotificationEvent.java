@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.stream.events.notifications.users;
 
-import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import lombok.*;
 
@@ -14,7 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @EntityAnnotation(entityClass = UserPasswordResetNotificationEvent.class)
-public class UserPasswordResetNotificationEvent extends AbstractNotificationEvent {
+public class UserPasswordResetNotificationEvent extends AbstractEvent {
 
     /**
      * User Id

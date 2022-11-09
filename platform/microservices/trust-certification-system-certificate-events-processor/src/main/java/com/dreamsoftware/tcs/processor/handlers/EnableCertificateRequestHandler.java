@@ -3,6 +3,7 @@ package com.dreamsoftware.tcs.processor.handlers;
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
 import com.dreamsoftware.tcs.stream.events.certificate.EnableCertificateRequestEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateEnabledNotificationEvent;
+import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -19,7 +20,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class EnableCertificateRequestHandler extends AbstractCertificateManagementHandler<EnableCertificateRequestEvent, CertificateEnabledNotificationEvent> {
+public class EnableCertificateRequestHandler extends AbstractProcessAndReturnHandler<EnableCertificateRequestEvent, CertificateEnabledNotificationEvent> {
 
     /**
      * Trust Certification Blockchain Repository

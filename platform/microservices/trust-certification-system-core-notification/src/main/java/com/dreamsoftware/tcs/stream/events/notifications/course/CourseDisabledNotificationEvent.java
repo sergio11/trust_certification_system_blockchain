@@ -1,6 +1,6 @@
 package com.dreamsoftware.tcs.stream.events.notifications.course;
 
-import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,16 +18,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityAnnotation(entityClass = CourseDisabledNotificationEvent.class)
-public class CourseDisabledNotificationEvent extends AbstractNotificationEvent {
+public class CourseDisabledNotificationEvent extends AbstractEvent {
 
     /**
      * Course Id
      */
     private String id;
-
-    /**
-     * Course Name
-     */
-    private String name;
 
 }

@@ -6,8 +6,8 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEdition
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseEditionRepository;
 import com.dreamsoftware.tcs.stream.events.course.RemoveCertificationCourseEditionEvent;
-import com.dreamsoftware.tcs.stream.events.notifications.course.CourseDeletedNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.course.CourseEditionDeletedNotificationEvent;
+import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -20,7 +20,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class RemoveCertificationCourseEditionHandler extends AbstractCourseManagementHandler<RemoveCertificationCourseEditionEvent, CourseEditionDeletedNotificationEvent> {
+public class RemoveCertificationCourseEditionHandler extends AbstractProcessAndReturnHandler<RemoveCertificationCourseEditionEvent, CourseEditionDeletedNotificationEvent> {
 
     /**
      * Certification Course Edition Repository
@@ -53,9 +53,6 @@ public class RemoveCertificationCourseEditionHandler extends AbstractCourseManag
         return CourseEditionDeletedNotificationEvent.builder()
                 .courseId(event.getCourseId())
                 .editionId(event.getEditionId())
-                .name(certificationCourseEditionEntity.getCourse().getName())
                 .build();
-
-
     }
 }

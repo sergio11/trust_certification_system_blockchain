@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.stream.events.course;
 
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import lombok.*;
 
@@ -14,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityAnnotation(entityClass = EnableCertificationCourseEditionEvent.class)
-public class EnableCertificationCourseEditionEvent extends AbstractCourseManagementEvent {
+public class EnableCertificationCourseEditionEvent extends AbstractEvent {
 
     /**
      * Certification Course Id

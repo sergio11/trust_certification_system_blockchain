@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor;
 
-import com.dreamsoftware.tcs.service.ITrustCertificateService;
-import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import com.dreamsoftware.tcs.service.IDispatcherEventHandlerService;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.support.GenericMessage;
@@ -17,23 +17,20 @@ import java.util.function.Function;
 @Component("certificateManagementProcessor")
 @RequiredArgsConstructor
 @Slf4j
-public class CertificateManagementProcessor implements Function<GenericMessage<String>, AbstractNotificationEvent> {
+public class CertificateManagementProcessor implements Function<GenericMessage<String>, AbstractEvent> {
 
-    /**
-     * Trust certificate service
-     */
-    private final ITrustCertificateService trustCertificateService;
+    private final IDispatcherEventHandlerService dispatcherEventHandlerService;
 
     /**
      * @param event
      * @return
      */
     @Override
-    public AbstractNotificationEvent apply(final GenericMessage<String> event) {
+    public AbstractEvent apply(final GenericMessage<String> event) {
         log.debug("CertificateManagementProcessor CALLED!");
-        AbstractNotificationEvent notificationEvent = null;
+        AbstractEvent notificationEvent = null;
         try {
-            notificationEvent = trustCertificateService.handle(event);
+            notificationEvent = dispatcherEventHandlerService.processEventAndGetResult(event.getPayload());
         } catch (Exception e) {
             log.error("CertificateManagementProcessor ex -> " + e.getMessage());
         }

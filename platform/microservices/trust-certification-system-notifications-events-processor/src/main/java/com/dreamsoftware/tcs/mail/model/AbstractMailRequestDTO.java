@@ -46,7 +46,8 @@ import org.springframework.core.annotation.AnnotationUtils;
         @Type(CourseDeletedMailRequestDTO.class),
         @Type(CourseEditionDeletedMailRequestDTO.class),
         @Type(CourseEditionDisabledMailRequestDTO.class),
-        @Type(CourseEditionEnabledMailRequestDTO.class)
+        @Type(CourseEditionEnabledMailRequestDTO.class),
+        @Type(CourseEditionUpdatedMailRequestDTO.class)
 })
 public abstract class AbstractMailRequestDTO {
 

@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor;
 
-import com.dreamsoftware.tcs.service.IUserService;
-import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import com.dreamsoftware.tcs.service.IDispatcherEventHandlerService;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.support.GenericMessage;
@@ -16,21 +16,21 @@ import java.util.function.Function;
 @Component("userManagementProcessor")
 @RequiredArgsConstructor
 @Slf4j
-public class UserManagementProcessor implements Function<GenericMessage<String>, AbstractNotificationEvent> {
+public class UserManagementProcessor implements Function<GenericMessage<String>, AbstractEvent> {
 
 
-    private final IUserService userRegistrationService;
+    private final IDispatcherEventHandlerService dispatcherEventHandlerService;
 
     /**
      * @param event
      * @return
      */
     @Override
-    public AbstractNotificationEvent apply(final GenericMessage<String> event) {
+    public AbstractEvent apply(final GenericMessage<String> event) {
         log.debug("UserManagementProcessor CALLED!");
-        AbstractNotificationEvent notificationEvent = null;
+        AbstractEvent notificationEvent = null;
         try {
-            notificationEvent = userRegistrationService.handle(event);
+            notificationEvent = dispatcherEventHandlerService.processEventAndGetResult(event.getPayload());
         } catch (Exception e) {
             log.error("UserManagementProcessor ex -> " + e.getMessage());
         }

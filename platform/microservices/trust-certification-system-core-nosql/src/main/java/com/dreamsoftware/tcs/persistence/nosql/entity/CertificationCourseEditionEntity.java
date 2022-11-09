@@ -101,4 +101,10 @@ public class CertificationCourseEditionEntity {
      */
     @DBRef
     private CertificationCourseEntity course;
+
+    /**
+     * CA Member
+     */
+    @DBRef
+    private UserEntity caMember;
 }

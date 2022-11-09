@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.stream.events.user;
 
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import lombok.*;
 
@@ -14,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityAnnotation(entityClass = NewCertificationAuthorityMemberEvent.class)
-public class NewCertificationAuthorityMemberEvent extends AbstractUserManagementEvent {
+public class NewCertificationAuthorityMemberEvent extends AbstractEvent {
 
     /**
      * Certification Authority ID

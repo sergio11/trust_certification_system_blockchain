@@ -5,9 +5,9 @@ import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserAccountStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
-import com.dreamsoftware.tcs.processor.handlers.AbstractUserManagementHandler;
 import com.dreamsoftware.tcs.stream.events.notifications.ca.CertificationAuthorityMemberEnabledNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.user.EnableCertificationAuthorityMemberEvent;
+import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -20,7 +20,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class EnableCertificationAuthorityMemberHandler extends AbstractUserManagementHandler<EnableCertificationAuthorityMemberEvent, CertificationAuthorityMemberEnabledNotificationEvent> {
+public class EnableCertificationAuthorityMemberHandler extends AbstractProcessAndReturnHandler<EnableCertificationAuthorityMemberEvent, CertificationAuthorityMemberEnabledNotificationEvent> {
 
     /**
      * Certification Authority Blockchain Repository

@@ -3,10 +3,10 @@ package com.dreamsoftware.tcs.processor.handlers.impl;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
-import com.dreamsoftware.tcs.processor.handlers.AbstractUserManagementHandler;
 import com.dreamsoftware.tcs.service.IPasswordResetTokenService;
 import com.dreamsoftware.tcs.stream.events.notifications.users.UserPasswordResetNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.user.UserPasswordResetEvent;
+import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class UserPasswordResetHandler extends AbstractUserManagementHandler<UserPasswordResetEvent, UserPasswordResetNotificationEvent> {
+public class UserPasswordResetHandler extends AbstractProcessAndReturnHandler<UserPasswordResetEvent, UserPasswordResetNotificationEvent> {
 
     /**
      * Password Reset Token Service

@@ -7,6 +7,7 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEn
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseEditionRepository;
 import com.dreamsoftware.tcs.stream.events.course.EnableCertificationCourseEditionEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.course.CourseEditionEnabledNotificationEvent;
+import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -19,7 +20,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class EnableCertificationCourseEditionHandler extends AbstractCourseManagementHandler<EnableCertificationCourseEditionEvent, CourseEditionEnabledNotificationEvent> {
+public class EnableCertificationCourseEditionHandler extends AbstractProcessAndReturnHandler<EnableCertificationCourseEditionEvent, CourseEditionEnabledNotificationEvent> {
 
     /**
      * Certification Course Edition Repository

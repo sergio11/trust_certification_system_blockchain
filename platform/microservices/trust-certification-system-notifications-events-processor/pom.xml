@@ -18,8 +18,8 @@
 
     <properties>
         <commons-io.version>2.11.0</commons-io.version>
-        <shedlock-spring.version>4.41.0</shedlock-spring.version>
-        <shedlock-provider-redis-spring.version>4.41.0</shedlock-provider-redis-spring.version>
+        <shedlock-spring.version>4.42.0</shedlock-spring.version>
+        <shedlock-provider-redis-spring.version>4.42.0</shedlock-provider-redis-spring.version>
     </properties>
 
     <dependencies>
