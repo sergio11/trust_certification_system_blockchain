@@ -19,5 +19,5 @@ public class CertificationAuthorityMemberRemovedNotificationEvent extends Abstra
     /**
      * User Wallet Hash
      */
-    private String walletHash;
+    private String userWalletHash;
 }
