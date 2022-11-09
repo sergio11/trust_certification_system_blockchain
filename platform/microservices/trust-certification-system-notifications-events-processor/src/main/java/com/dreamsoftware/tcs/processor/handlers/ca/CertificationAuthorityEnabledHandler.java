@@ -39,6 +39,7 @@ public class CertificationAuthorityEnabledHandler extends AbstractNotificationHa
         Assert.notNull(notification, "Notification can not be null");
         log.debug("CertificationAuthorityEnabledNotificationEvent handled!");
         userRepository.findAllByCaId(new ObjectId(notification.getCaId())).forEach((caUserEntity) -> {
+            notificationService.saveNotification("ca_enabled_title", "ca_enabled_message", caUserEntity);
             mailClientService.sendMail(CertificationAuthorityEnabledMailRequestDTO
                     .builder()
                     .email(caUserEntity.getEmail())

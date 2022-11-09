@@ -38,7 +38,7 @@ public class UserRegisteredHandler extends AbstractNotificationHandler<UserRegis
         Assert.notNull(notification, "Notification can not be null");
         log.debug("UserRegisteredNotificationHandler handled!");
         userRepository.findOneByWalletHash(notification.getWalletHash()).ifPresent((userEntity) -> {
-            notificationService.onUserAccountValidated(userEntity);
+            notificationService.saveNotification("user_account_validated_title", "user_account_validated_message", userEntity);
             mailClientService.sendMail(UserActivatedEventMailRequestDTO.builder()
                     .email(userEntity.getEmail())
                     .name(userEntity.getFullName())

@@ -42,8 +42,8 @@ public class OrderCompletedHandler extends AbstractNotificationHandler<OrderComp
         Assert.notNull(notification, "Notification can not be null");
         log.debug("UserRegisteredNotificationHandler handled!");
         createdOrderRepository.findById(new ObjectId(notification.getOrderId())).ifPresent((orderEntitySaved) -> {
-            notificationService.onUserOrderCompleted(orderEntitySaved);
             final UserEntity userEntity = orderEntitySaved.getUser();
+            notificationService.saveNotification("user_order_completed_title", "user_order_completed_message", userEntity);
             mailClientService.sendMail(UserOrderCompletedMailRequestDTO.builder()
                     .orderId(orderEntitySaved.getId().toString())
                     .amountEUR(orderEntitySaved.getAmountEUR())

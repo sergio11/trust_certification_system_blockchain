@@ -1,8 +1,6 @@
 package com.dreamsoftware.tcs.service;
 
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificateIssuanceRequestEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CreatedOrderEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.NotificationLevelEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 
 /**
@@ -13,26 +11,19 @@ public interface INotificationService {
 
     /**
      *
+     * @param titleKey
+     * @param messageKey
+     * @param user
+     * @param level
+     */
+    void saveNotification(final String titleKey, final String messageKey, final UserEntity user, final NotificationLevelEnum level);
+
+    /**
+     *
+     * @param titleKey
+     * @param messageKey
      * @param user
      */
-    void onUserAccountValidated(final UserEntity user);
-
-    /**
-     *
-     * @param order
-     */
-    void onUserOrderCompleted(final CreatedOrderEntity order);
-
-    /**
-     *
-     * @param certificate
-     */
-    void onUserCertificateValidated(final CertificateIssuanceRequestEntity certificate);
-
-    /**
-     *
-     * @param certificationCourseEntity
-     */
-    void onCACertificationCourseRegistered(final CertificationCourseEntity certificationCourseEntity);
+    void saveNotification(final String titleKey, final String messageKey, final UserEntity user);
 
 }

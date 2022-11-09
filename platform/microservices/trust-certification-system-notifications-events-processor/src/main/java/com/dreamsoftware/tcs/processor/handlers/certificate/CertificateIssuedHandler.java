@@ -45,7 +45,7 @@ public class CertificateIssuedHandler extends AbstractNotificationHandler<Certif
             final UserEntity caUserEntity = certificateIssuedSaved.getCaMember();
             final UserEntity studentEntity = certificateIssuedSaved.getStudent();
             final Locale userLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
-            notificationService.onUserCertificateValidated(certificateIssuedSaved);
+            notificationService.saveNotification("user_certificate_validated_title", "user_account_validated_message", certificateIssuedSaved.getStudent());
             mailClientService.sendMail(CertificateGeneratedMailRequestDTO.builder()
                     .certificateId(certificateIssuedSaved.getCertificateId())
                     .caName(caUserEntity.getFullName())

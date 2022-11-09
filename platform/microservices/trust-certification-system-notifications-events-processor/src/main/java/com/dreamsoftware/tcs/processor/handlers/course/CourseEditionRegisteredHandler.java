@@ -39,8 +39,8 @@ public class CourseEditionRegisteredHandler extends AbstractNotificationHandler<
     public void onHandle(final CourseEditionRegisteredNotificationEvent notification) {
         Assert.notNull(notification, "Notification can not be null");
         certificationCourseRepository.findById(new ObjectId(notification.getCourseId())).ifPresent((certificationCourseEntitySaved) -> {
-            notificationService.onCACertificationCourseRegistered(certificationCourseEntitySaved);
             final UserEntity caAdmin = certificationCourseEntitySaved.getCa().getAdmin();
+            notificationService.saveNotification("ca_certification_course_registered_title", "ca_certification_course_registered_message", caAdmin);
             mailClientService.sendMail(CourseEditionRegisteredMailRequestDTO.builder()
                     .courseId(certificationCourseEntitySaved.getId().toString())
                     .courseName(notification.getCourseName())
