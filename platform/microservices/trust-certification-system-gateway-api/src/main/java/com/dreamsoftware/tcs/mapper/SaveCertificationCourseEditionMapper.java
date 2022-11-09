@@ -3,7 +3,9 @@ package com.dreamsoftware.tcs.mapper;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEditionEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
+import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.CertificationCourseNotFoundException;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseEditionDTO;
 import org.bson.types.ObjectId;
@@ -20,6 +22,8 @@ public abstract class SaveCertificationCourseEditionMapper {
 
     @Autowired
     protected CertificationCourseRepository certificationCourseRepository;
+    @Autowired
+    protected UserRepository userRepository;
 
     /**
      *
@@ -28,7 +32,8 @@ public abstract class SaveCertificationCourseEditionMapper {
      */
     @Mappings({
             @Mapping(expression = "java(getCertificationCourse(dto.getCertificationCourseId()))", target = "course"),
-            @Mapping(expression = "java(getCertificationCourseEditionInitialState())", target = "status")
+            @Mapping(expression = "java(getCertificationCourseEditionInitialState())", target = "status"),
+            @Mapping(expression = "java(getCaMember(dto.getCaWalletHash()))", target = "caMember")
     })
     @Named("dtoToEntity")
     public abstract CertificationCourseEditionEntity dtoToEntity(SaveCertificationCourseEditionDTO dto);
@@ -57,5 +62,15 @@ public abstract class SaveCertificationCourseEditionMapper {
      */
     protected CertificationCourseStateEnum getCertificationCourseEditionInitialState() {
         return CertificationCourseStateEnum.NOT_VALIDATED;
+    }
+
+    /**
+     *
+     * @param caMemberWalletHash
+     * @return
+     */
+    protected UserEntity getCaMember(final String caMemberWalletHash) {
+        return userRepository.findOneByWalletHash(caMemberWalletHash)
+                .orElseThrow(IllegalStateException::new);
     }
 }

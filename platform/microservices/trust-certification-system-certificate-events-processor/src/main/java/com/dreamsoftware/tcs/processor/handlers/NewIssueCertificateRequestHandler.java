@@ -12,6 +12,7 @@ import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
 import com.dreamsoftware.tcs.service.IipfsGateway;
 import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateIssuedNotificationEvent;
+import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ import java.util.Date;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class NewIssueCertificateRequestHandler extends AbstractCertificateManagementHandler<OnNewIssueCertificateRequestEvent, CertificateIssuedNotificationEvent> {
+public class NewIssueCertificateRequestHandler extends AbstractProcessAndReturnHandler<OnNewIssueCertificateRequestEvent, CertificateIssuedNotificationEvent> {
 
     /**
      * Certification Course Repository

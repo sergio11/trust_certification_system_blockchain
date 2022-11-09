@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.stream.events.notifications.users;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
-import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityAnnotation(entityClass = UserRegisteredNotificationEvent.class)
-public class UserRegisteredNotificationEvent extends AbstractNotificationEvent {
+public class UserRegisteredNotificationEvent extends AbstractEvent {
 
     /**
      * User Wallet Hash

@@ -1,7 +1,7 @@
 package com.dreamsoftware.tcs.processor;
 
-import com.dreamsoftware.tcs.service.ICertificateCourseService;
-import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import com.dreamsoftware.tcs.service.IDispatcherEventHandlerService;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.support.GenericMessage;
@@ -16,23 +16,20 @@ import java.util.function.Function;
 @Component("courseManagementProcessor")
 @RequiredArgsConstructor
 @Slf4j
-public class CourseManagementProcessor implements Function<GenericMessage<String>, AbstractNotificationEvent> {
+public class CourseManagementProcessor implements Function<GenericMessage<String>, AbstractEvent> {
 
-    /**
-     * Certification Course Service
-     */
-    private final ICertificateCourseService certificateCourseService;
+    private final IDispatcherEventHandlerService dispatcherEventHandlerService;
 
     /**
      * @param event
      * @return
      */
     @Override
-    public AbstractNotificationEvent apply(final GenericMessage<String> event) {
+    public AbstractEvent apply(final GenericMessage<String> event) {
         log.debug("CourseManagementProcessor CALLED!");
-        AbstractNotificationEvent notificationEvent = null;
+        AbstractEvent notificationEvent = null;
         try {
-            notificationEvent = certificateCourseService.handle(event);
+            notificationEvent = dispatcherEventHandlerService.processEventAndGetResult(event.getPayload());
         } catch (Exception e) {
             log.error("CourseManagementProcessor ex -> " + e.getMessage());
         }

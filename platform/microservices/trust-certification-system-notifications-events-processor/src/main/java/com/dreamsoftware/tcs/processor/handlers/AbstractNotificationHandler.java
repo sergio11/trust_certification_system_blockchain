@@ -1,8 +1,10 @@
 package com.dreamsoftware.tcs.processor.handlers;
 
 import com.dreamsoftware.tcs.i18n.service.IMessageSourceResolverService;
-import com.dreamsoftware.tcs.stream.events.notifications.AbstractNotificationEvent;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
+
 import java.util.Locale;
+import com.dreamsoftware.tcs.utils.AbstractOnlyProcessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -11,16 +13,10 @@ import org.springframework.util.Assert;
  * @author ssanchez
  * @param <T>
  */
-public abstract class AbstractNotificationHandler<T extends AbstractNotificationEvent> {
+public abstract class AbstractNotificationHandler<T extends AbstractEvent> extends AbstractOnlyProcessHandler<T> {
 
     @Autowired
     private IMessageSourceResolverService messageSourceResolver;
-
-    /**
-     *
-     * @param notification
-     */
-    public abstract void onHandle(T notification);
 
     /**
      *

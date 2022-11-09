@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.stream.events.certificate;
 
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import lombok.*;
 
@@ -14,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityAnnotation(entityClass = EnableCertificateRequestEvent.class)
-public class EnableCertificateRequestEvent extends AbstractCertificateManagementEvent {
+public class EnableCertificateRequestEvent extends AbstractEvent {
 
     /**
      * Student Wallet Hash

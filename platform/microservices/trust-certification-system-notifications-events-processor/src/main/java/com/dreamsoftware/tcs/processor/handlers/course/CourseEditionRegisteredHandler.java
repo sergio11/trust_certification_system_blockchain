@@ -3,8 +3,9 @@ package com.dreamsoftware.tcs.processor.handlers.course;
 import com.dreamsoftware.tcs.i18n.service.I18NService;
 import com.dreamsoftware.tcs.mail.model.course.CourseEditionRegisteredMailRequestDTO;
 import com.dreamsoftware.tcs.mail.service.IMailClientService;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEditionEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
-import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseEditionRepository;
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
 import com.dreamsoftware.tcs.service.INotificationService;
 import com.dreamsoftware.tcs.stream.events.notifications.course.CourseEditionRegisteredNotificationEvent;
@@ -16,6 +17,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.Locale;
+
 /**
  *
  * @author ssanchez
@@ -26,7 +29,7 @@ import org.springframework.util.Assert;
 @Slf4j
 public class CourseEditionRegisteredHandler extends AbstractNotificationHandler<CourseEditionRegisteredNotificationEvent> {
 
-    private final CertificationCourseRepository certificationCourseRepository;
+    private final CertificationCourseEditionRepository certificationCourseEditionRepository;
     private final IMailClientService mailClientService;
     private final INotificationService notificationService;
     private final I18NService i18nService;
@@ -38,16 +41,26 @@ public class CourseEditionRegisteredHandler extends AbstractNotificationHandler<
     @Override
     public void onHandle(final CourseEditionRegisteredNotificationEvent notification) {
         Assert.notNull(notification, "Notification can not be null");
-        certificationCourseRepository.findById(new ObjectId(notification.getCourseId())).ifPresent((certificationCourseEntitySaved) -> {
-            final UserEntity caAdmin = certificationCourseEntitySaved.getCa().getAdmin();
-            notificationService.saveNotification("ca_certification_course_registered_title", "ca_certification_course_registered_message", caAdmin);
-            mailClientService.sendMail(CourseEditionRegisteredMailRequestDTO.builder()
-                    .courseId(certificationCourseEntitySaved.getId().toString())
-                    .courseName(notification.getCourseName())
-                    .email(caAdmin.getEmail())
-                    .locale(i18nService.parseLocaleOrDefault(caAdmin.getLanguage()))
-                    .build());
+        certificationCourseEditionRepository.findById(new ObjectId(notification.getCourseId())).ifPresent((courseEditionEntity) -> {
+            final UserEntity caMember = courseEditionEntity.getCaMember();
+            sendNotification(caMember, courseEditionEntity);
+            final UserEntity caAdmin = courseEditionEntity.getCourse().getCa().getAdmin();
+            sendNotification(caAdmin, courseEditionEntity);
         });
     }
 
+    private void sendNotification(final UserEntity caMemberEntity, final CertificationCourseEditionEntity courseEditionEntity) {
+        final Locale userLocale = i18nService.parseLocaleOrDefault(caMemberEntity.getLanguage());
+        final String courseTitle = courseEditionEntity.getName().isBlank() ? courseEditionEntity.getCourse().getName() : courseEditionEntity.getName();
+        final String notificationTitle = resolveString("course_edition_registered_title", userLocale, new Object[]{ courseTitle });
+        final String notificationMessage = resolveString("course_edition_registered_message", userLocale, new Object[]{ courseTitle });
+        notificationService.saveNotification(notificationTitle, notificationMessage, caMemberEntity);
+        mailClientService.sendMail(CourseEditionRegisteredMailRequestDTO
+                .builder()
+                .courseId(courseEditionEntity.getId().toString())
+                .courseName(courseTitle)
+                .locale(userLocale)
+                .email(caMemberEntity.getEmail())
+                .build());
+    }
 }

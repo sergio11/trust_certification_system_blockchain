@@ -1,7 +1,8 @@
 package com.dreamsoftware.tcs.processor;
 
-import com.dreamsoftware.tcs.service.INotificationDeliveryRequestService;
 import java.util.function.Consumer;
+
+import com.dreamsoftware.tcs.service.IDispatcherEventHandlerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.support.GenericMessage;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class NotificationDeliveryRequestProcessor implements Consumer<GenericMessage<String>> {
 
-    private final INotificationDeliveryRequestService notificationDeliveryRequestService;
+    private final IDispatcherEventHandlerService dispatcherEventHandlerService;
 
     /**
      *
@@ -26,7 +27,7 @@ public class NotificationDeliveryRequestProcessor implements Consumer<GenericMes
     @Override
     public void accept(final GenericMessage<String> notificationEvent) {
         log.debug("NotificationDeliveryRequestProcessor CALLED!");
-        notificationDeliveryRequestService.handle(notificationEvent);
+        dispatcherEventHandlerService.onlyProcessEvent(notificationEvent.getPayload());
     }
 
 }
