@@ -102,9 +102,10 @@ namespace :tcs do
 
 		desc "Compile Project"
 		task :compile do 
-			puts "Compile Platform"
+			puts "Starting build of all microservices in the project ..."
 			if which('mvn')
 				puts `mvn -f ./platform/microservices clean install`
+				puts "Compilation finished! you could use ':package' task in order to generate the docker images"
 			else
 				raise "Please check that Apache Maven is visible and accessible in the PATH"
 			end
@@ -113,7 +114,7 @@ namespace :tcs do
 
 		desc "Build Docker Images"
 		task :package => [ :check_docker_task, :login, :compile ] do 
-			puts "Build Docker Images"
+			puts "Starting the creation of the images for the microservices of the project"
 			baseDirectory = "./platform/microservices"
 			rakeCompileFile = "rake_compile.json"
 			Dir.each_child('./platform/microservices') do |microservice|
@@ -132,6 +133,7 @@ namespace :tcs do
 		  			puts "A rake compile file has not found in this microservice folder"
 		  		end
 			end
+			puts "All microservices images have been built"
 		end 
 
 	end

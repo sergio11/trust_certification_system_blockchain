@@ -8,10 +8,6 @@ volumes:
     driver: local
   kafka-data:
     driver: local
-  redis-data:
-    driver: local
-  redis-ui:
-    driver: local
   openldap-data:
     driver: local
 
@@ -159,32 +155,6 @@ services:
       - mongo
     ports:
       - "8083:8081"
-    networks:
-      - tcs_network
-
-  # Redis is an open-source in-memory datastore used as a database, cache, and even a message broker. 
-  redis-server:
-    image: redis:6.2-alpine
-    container_name: redis-server
-    restart: always
-    ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    volumes: 
-      - redis-data:/data
-    networks:
-      - tcs_network
-
-  # P3X Redis UI is a very functional handy database GUI and works in your pocket on the responsive web or as a desktop app
-  redis-ui:
-    image: patrikx3/p3x-redis-ui
-    container_name: redis-ui
-    ports:
-      - 7843:7843
-    volumes: 
-      - redis-ui:/settings
-    links:
-      - redis-server
     networks:
       - tcs_network
 
