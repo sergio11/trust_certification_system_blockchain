@@ -99,14 +99,15 @@ public class MailProperties implements Serializable {
     @Value("${mail.templates.certificates.course-edition-updated}")
     private String courseEditionUpdatedMailTemplate;
 
+    @Value("${mail.templates.certificates.course-edition-registered}")
+    private String courseEditionRegisteredMailTemplate;
+
     @Value("${mail.templates.certificates.issue-certificate-request}")
     private String issueCertificateRequestMailTemplate;
 
     @Value("${mail.templates.certificates.certificate-generated}")
     private String certificateGeneratedMailTemplate;
 
-    @Value("${mail.templates.certificates.certification-course-edition-registered}")
-    private String certificationCourseEditionRegisteredMailTemplate;
 
     @PostConstruct
     protected void onPostConstruct() {
@@ -135,7 +136,7 @@ public class MailProperties implements Serializable {
         log.debug("courseEditionDeletedMailTemplate: " + courseEditionDeletedMailTemplate);
         log.debug("courseEditionUpdatedMailTemplate: " + courseEditionUpdatedMailTemplate);
         log.debug("issueCertificateRequestMailTemplate: " + issueCertificateRequestMailTemplate);
-        log.debug("certificationCourseRegisteredMailTemplate: " + certificationCourseEditionRegisteredMailTemplate);
+        log.debug("certificationCourseRegisteredMailTemplate: " + courseEditionRegisteredMailTemplate);
         log.debug("certificateGeneratedMailTemplate: " + certificateGeneratedMailTemplate);
         log.debug("userOrderCompletedMailTemplate: " + userOrderCompletedMailTemplate);
         log.debug("userResetPassword: " + userResetPassword);

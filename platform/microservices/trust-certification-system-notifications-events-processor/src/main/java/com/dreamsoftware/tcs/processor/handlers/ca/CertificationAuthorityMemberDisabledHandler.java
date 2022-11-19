@@ -36,7 +36,7 @@ public class CertificationAuthorityMemberDisabledHandler extends AbstractNotific
     public void onHandle(final CertificationAuthorityMemberDisabledNotificationEvent notification) {
         Assert.notNull(notification, "Notification can not be null");
         log.debug("CertificationAuthorityMemberDisabledHandler handled!");
-        userRepository.findOneByWalletHash(notification.getUserWalletHash()).ifPresent((userEntity -> {
+        userRepository.findOneByWalletHash(notification.getCaMemberWalletHash()).ifPresent((userEntity -> {
             notificationService.saveNotification("ca_member_disabled_title", "ca_member_disabled_message", userEntity);
             mailClientService.sendMail(CertificationAuthorityMemberDisabledMailRequestDTO
                     .builder()

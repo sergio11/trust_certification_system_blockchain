@@ -19,5 +19,5 @@ public class CertificationAuthorityMemberDisabledNotificationEvent extends Abstr
     /**
      *  User Wallet hash
      */
-    private String userWalletHash;
+    private String caMemberWalletHash;
 }

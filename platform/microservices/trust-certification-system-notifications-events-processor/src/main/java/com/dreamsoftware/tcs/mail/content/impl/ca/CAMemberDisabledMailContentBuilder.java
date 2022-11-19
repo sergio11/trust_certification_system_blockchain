@@ -35,7 +35,7 @@ public class CAMemberDisabledMailContentBuilder extends AbstractMailContentBuild
         log.debug("CAMemberDisabledMailContentBuilder CALLED!");
         // Generate Email Subject
         final String subject = resolveString("mail_ca_member_disabled_subject_title", request.getLocale(),
-                new Object[]{request.getName()});
+                new Object[]{ request.getName() });
 
         final Context context = new Context(request.getLocale());
         context.setVariable("name", request.getName());
