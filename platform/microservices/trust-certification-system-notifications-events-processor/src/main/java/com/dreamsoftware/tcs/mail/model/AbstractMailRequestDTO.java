@@ -3,7 +3,9 @@ package com.dreamsoftware.tcs.mail.model;
 import com.dreamsoftware.tcs.mail.model.ca.*;
 import com.dreamsoftware.tcs.mail.model.certificate.*;
 import com.dreamsoftware.tcs.mail.model.course.*;
+import com.dreamsoftware.tcs.mail.model.user.ResetPasswordMailRequestDTO;
 import com.dreamsoftware.tcs.mail.model.user.UserActivatedEventMailRequestDTO;
+import com.dreamsoftware.tcs.mail.model.user.UserOrderCompletedMailRequestDTO;
 import com.dreamsoftware.tcs.mail.model.user.UserPendingValidationMailRequestDTO;
 import com.dreamsoftware.tcs.utils.EntityAnnotation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,26 +30,28 @@ import org.springframework.core.annotation.AnnotationUtils;
         @Type(CertificationAuthorityEnabledMailRequestDTO.class),
         @Type(CertificationAuthorityMemberDisabledMailRequestDTO.class),
         @Type(CertificationAuthorityMemberEnabledMailRequestDTO.class),
+        @Type(CertificationAuthorityMemberRemovedMailRequestDTO.class),
+        @Type(CertificationAuthorityRemovedMailRequestDTO.class),
         @Type(CertificateDisabledMailRequestDTO.class),
         @Type(CertificateEnabledMailRequestDTO.class),
+        @Type(CertificateGeneratedMailRequestDTO.class),
         @Type(CertificateRenewedMailRequestDTO.class),
         @Type(CertificateRequestAcceptedMailRequestDTO.class),
         @Type(CertificateRequestRejectedMailRequestDTO.class),
         @Type(CertificateVisibilityChangedMailRequestDTO.class),
+        @Type(IssueCertificateRequestMailRequestDTO.class),
+        @Type(CourseDeletedMailRequestDTO.class),
         @Type(CourseDisabledMailRequestDTO.class),
         @Type(CourseEnabledMailRequestDTO.class),
-        @Type(IssueCertificateRequestMailRequestDTO.class),
-        @Type(NewCourseRegistrationRequestedMailRequestDTO.class),
-        @Type(UserActivatedEventMailRequestDTO.class),
-        @Type(UserPendingValidationMailRequestDTO.class),
-        @Type(CertificationAuthorityMemberRemovedMailRequestDTO.class),
-        @Type(CertificationAuthorityRemovedMailRequestDTO.class),
-        @Type(CourseEditionRegisteredMailRequestDTO.class),
-        @Type(CourseDeletedMailRequestDTO.class),
         @Type(CourseEditionDeletedMailRequestDTO.class),
         @Type(CourseEditionDisabledMailRequestDTO.class),
         @Type(CourseEditionEnabledMailRequestDTO.class),
-        @Type(CourseEditionUpdatedMailRequestDTO.class)
+        @Type(CourseEditionRegisteredMailRequestDTO.class),
+        @Type(CourseEditionUpdatedMailRequestDTO.class),
+        @Type(UserActivatedEventMailRequestDTO.class),
+        @Type(UserPendingValidationMailRequestDTO.class),
+        @Type(ResetPasswordMailRequestDTO.class),
+        @Type(UserOrderCompletedMailRequestDTO.class)
 })
 public abstract class AbstractMailRequestDTO {
 

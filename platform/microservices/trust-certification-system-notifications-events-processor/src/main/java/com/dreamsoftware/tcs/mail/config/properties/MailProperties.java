@@ -36,11 +36,29 @@ public class MailProperties implements Serializable {
     @Value("${mail.templates.accounts.pending-validation}")
     private String userPendingValidationMailTemplate;
 
+    @Value("${mail.templates.accounts.reset-password}")
+    private String userResetPassword;
+
+    @Value("${mail.templates.accounts.user-order-completed}")
+    private String userOrderCompletedMailTemplate;
+
     @Value("${mail.templates.certificates.ca-disabled}")
     private String caDisabledMailTemplate;
 
     @Value("${mail.templates.certificates.ca-enabled}")
     private String caEnabledMailTemplate;
+
+    @Value("${mail.templates.certificates.ca-member-disabled}")
+    private String caMemberDisabledMailTemplate;
+
+    @Value("${mail.templates.certificates.ca-member-enabled}")
+    private String caMemberEnabledMailTemplate;
+
+    @Value("${mail.templates.certificates.ca-member-removed}")
+    private String caMemberRemovedMailTemplate;
+
+    @Value("${mail.templates.certificates.ca-removed}")
+    private String caRemovedMailTemplate;
 
     @Value("${mail.templates.certificates.disabled}")
     private String certificateDisabledMailTemplate;
@@ -69,20 +87,26 @@ public class MailProperties implements Serializable {
     @Value("${mail.templates.certificates.course-deleted}")
     private String courseDeletedMailTemplate;
 
+    @Value("${mail.templates.certificates.course-edition-disabled}")
+    private String courseEditionDisabledMailTemplate;
+
+    @Value("${mail.templates.certificates.course-edition-enabled}")
+    private String courseEditionEnabledMailTemplate;
+
+    @Value("${mail.templates.certificates.course-edition-deleted}")
+    private String courseEditionDeletedMailTemplate;
+
+    @Value("${mail.templates.certificates.course-edition-updated}")
+    private String courseEditionUpdatedMailTemplate;
+
     @Value("${mail.templates.certificates.issue-certificate-request}")
     private String issueCertificateRequestMailTemplate;
-
-    @Value("${mail.templates.certificates.new-course-registration-request}")
-    private String newCourseRegistrationRequestedMailTemplate;
 
     @Value("${mail.templates.certificates.certificate-generated}")
     private String certificateGeneratedMailTemplate;
 
-    @Value("${mail.templates.certificates.certification-course-registered}")
-    private String certificationCourseRegisteredMailTemplate;
-
-    @Value("${mail.templates.certificates.user-order-completed}")
-    private String userOrderCompletedMailTemplate;
+    @Value("${mail.templates.certificates.certification-course-edition-registered}")
+    private String certificationCourseEditionRegisteredMailTemplate;
 
     @PostConstruct
     protected void onPostConstruct() {
@@ -93,6 +117,10 @@ public class MailProperties implements Serializable {
         log.debug("userPendingValidationMailTemplate: " + userPendingValidationMailTemplate);
         log.debug("caDisabledMailTemplate: " + caDisabledMailTemplate);
         log.debug("caEnabledMailTemplate: " + caEnabledMailTemplate);
+        log.debug("caMemberDisabledMailTemplate: " + caMemberDisabledMailTemplate);
+        log.debug("caMemberEnabledMailTemplate: " + caMemberEnabledMailTemplate);
+        log.debug("caMemberRemovedMailTemplate: " + caMemberRemovedMailTemplate);
+        log.debug("caRemovedMailTemplate: " + caRemovedMailTemplate);
         log.debug("certificateDisabledMailTemplate: " + certificateDisabledMailTemplate);
         log.debug("certificateEnabledMailTemplate: " + certificateEnabledMailTemplate);
         log.debug("certificateRenewedMailTemplate: " + certificateRenewedMailTemplate);
@@ -102,10 +130,14 @@ public class MailProperties implements Serializable {
         log.debug("courseDisabledMailTemplate: " + courseDisabledMailTemplate);
         log.debug("courseEnabledMailTemplate: " + courseEnabledMailTemplate);
         log.debug("courseDeletedMailTemplate: " + courseDeletedMailTemplate);
+        log.debug("courseEditionDisabledMailTemplate: " + courseEditionDisabledMailTemplate);
+        log.debug("courseEditionEnabledMailTemplate: " + courseEditionEnabledMailTemplate);
+        log.debug("courseEditionDeletedMailTemplate: " + courseEditionDeletedMailTemplate);
+        log.debug("courseEditionUpdatedMailTemplate: " + courseEditionUpdatedMailTemplate);
         log.debug("issueCertificateRequestMailTemplate: " + issueCertificateRequestMailTemplate);
-        log.debug("newCourseRegistrationRequestedMailTemplate: " + newCourseRegistrationRequestedMailTemplate);
-        log.debug("certificationCourseRegisteredMailTemplate: " + certificationCourseRegisteredMailTemplate);
+        log.debug("certificationCourseRegisteredMailTemplate: " + certificationCourseEditionRegisteredMailTemplate);
         log.debug("certificateGeneratedMailTemplate: " + certificateGeneratedMailTemplate);
         log.debug("userOrderCompletedMailTemplate: " + userOrderCompletedMailTemplate);
+        log.debug("userResetPassword: " + userResetPassword);
     }
 }
