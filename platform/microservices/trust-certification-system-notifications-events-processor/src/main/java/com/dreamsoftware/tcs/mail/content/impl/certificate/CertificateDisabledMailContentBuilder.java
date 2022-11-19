@@ -4,6 +4,8 @@ import com.dreamsoftware.tcs.mail.content.AbstractMailContentBuilder;
 import com.dreamsoftware.tcs.mail.model.certificate.CertificateDisabledMailRequestDTO;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,7 @@ import org.thymeleaf.context.Context;
  */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Slf4j
 public class CertificateDisabledMailContentBuilder extends AbstractMailContentBuilder<CertificateDisabledMailRequestDTO> {
 
     /**
@@ -29,6 +32,7 @@ public class CertificateDisabledMailContentBuilder extends AbstractMailContentBu
         Assert.notNull(request, "Request can not be null");
         Assert.notNull(mailContentProperties.getCertificateDisabledMailTemplate(), "Mail Template can not be null");
         Assert.hasLength(mailContentProperties.getCertificateDisabledMailTemplate(), "Mail Template can not be empty");
+        log.debug("CertificateDisabledMailContentBuilder CALLED!");
         // Generate Email Subject
         final String subject = resolveString("mail_certificate_disabled_subject_title", request.getLocale(),
                 new Object[]{request.getName(), request.getCertificateId()});

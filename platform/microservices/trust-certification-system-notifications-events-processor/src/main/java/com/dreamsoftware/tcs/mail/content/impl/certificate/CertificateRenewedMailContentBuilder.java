@@ -4,6 +4,8 @@ import com.dreamsoftware.tcs.mail.content.AbstractMailContentBuilder;
 import com.dreamsoftware.tcs.mail.model.certificate.CertificateRenewedMailRequestDTO;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,7 @@ import org.thymeleaf.context.Context;
  */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Slf4j
 public class CertificateRenewedMailContentBuilder extends AbstractMailContentBuilder<CertificateRenewedMailRequestDTO> {
 
     /**
@@ -29,6 +32,7 @@ public class CertificateRenewedMailContentBuilder extends AbstractMailContentBui
         Assert.notNull(request, "Request can not be null");
         Assert.notNull(mailContentProperties.getCertificateRenewedMailTemplate(), "Mail Template can not be null");
         Assert.hasLength(mailContentProperties.getCertificateRenewedMailTemplate(), "Mail Template can not be empty");
+        log.debug("CertificateRenewedMailContentBuilder CALLED!");
         // Generate Email Subject
         final String subject = resolveString("mail_certificate_renewed_subject_title", request.getLocale(),
                 new Object[]{request.getName(), request.getCertificateId()});

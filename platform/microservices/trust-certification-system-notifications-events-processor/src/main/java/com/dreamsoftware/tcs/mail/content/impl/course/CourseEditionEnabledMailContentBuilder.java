@@ -1,16 +1,16 @@
 package com.dreamsoftware.tcs.mail.content.impl.course;
 
 import com.dreamsoftware.tcs.mail.content.AbstractMailContentBuilder;
-import com.dreamsoftware.tcs.mail.model.course.CourseDisabledMailRequestDTO;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
+import com.dreamsoftware.tcs.mail.model.course.CourseEditionEnabledMailRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.thymeleaf.context.Context;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 /**
  *
@@ -19,7 +19,7 @@ import org.thymeleaf.context.Context;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class CourseDisabledMailContentBuilder extends AbstractMailContentBuilder<CourseDisabledMailRequestDTO> {
+public class CourseEditionEnabledMailContentBuilder extends AbstractMailContentBuilder<CourseEditionEnabledMailRequestDTO> {
 
     /**
      *
@@ -28,20 +28,20 @@ public class CourseDisabledMailContentBuilder extends AbstractMailContentBuilder
      * @throws MessagingException
      */
     @Override
-    public MimeMessage buildContent(final CourseDisabledMailRequestDTO request) throws MessagingException {
+    public MimeMessage buildContent(final CourseEditionEnabledMailRequestDTO request) throws MessagingException {
         Assert.notNull(request, "Request can not be null");
-        Assert.notNull(mailContentProperties.getCourseDisabledMailTemplate(), "Mail Template can not be null");
-        Assert.hasLength(mailContentProperties.getCourseDisabledMailTemplate(), "Mail Template can not be empty");
-        log.debug("CourseDisabledMailContentBuilder CALLED!");
+        Assert.notNull(mailContentProperties.getCourseEditionEnabledMailTemplate(), "Mail Template can not be null");
+        Assert.hasLength(mailContentProperties.getCourseEditionEnabledMailTemplate(), "Mail Template can not be empty");
+        log.debug("CourseEditionEnabledMailContentBuilder CALLED!");
         // Generate Email Subject
-        final String subject = resolveString("mail_certificate_course_disabled_subject_title", request.getLocale(),
+        final String subject = resolveString("mail_certificate_course_edition_enabled_subject_title", request.getLocale(),
                 new Object[]{request.getCaName(), request.getCourseName()});
 
         final Context context = new Context(request.getLocale());
         context.setVariable("caName", request.getCaName());
         context.setVariable("courseName", request.getCourseName());
 
-        return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getCourseDisabledMailTemplate(), null);
+        return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getCourseEditionEnabledMailTemplate(), null);
     }
 
 }

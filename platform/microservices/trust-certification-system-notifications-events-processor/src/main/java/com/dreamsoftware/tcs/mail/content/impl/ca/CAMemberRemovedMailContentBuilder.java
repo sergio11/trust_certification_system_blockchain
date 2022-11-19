@@ -30,17 +30,17 @@ public class CAMemberRemovedMailContentBuilder extends AbstractMailContentBuilde
     @Override
     public MimeMessage buildContent(final CertificationAuthorityMemberRemovedMailRequestDTO request) throws MessagingException {
         Assert.notNull(request, "Request can not be null");
-        Assert.notNull(mailContentProperties.getCaDisabledMailTemplate(), "Mail Template can not be null");
-        Assert.hasLength(mailContentProperties.getCaDisabledMailTemplate(), "Mail Template can not be empty");
-        log.debug("CAMemberEnabledMailContentBuilder CALLED!");
+        Assert.notNull(mailContentProperties.getCaMemberRemovedMailTemplate(), "Mail Template can not be null");
+        Assert.hasLength(mailContentProperties.getCaMemberRemovedMailTemplate(), "Mail Template can not be empty");
+        log.debug("CAMemberRemovedMailContentBuilder CALLED!");
         // Generate Email Subject
-        final String subject = resolveString("mail_ca_disabled_subject_title", request.getLocale(),
+        final String subject = resolveString("mail_ca_member_removed_subject_title", request.getLocale(),
                 new Object[]{request.getName()});
 
         final Context context = new Context(request.getLocale());
         context.setVariable("name", request.getName());
 
-        return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getCaDisabledMailTemplate(), null);
+        return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getCaMemberRemovedMailTemplate(), null);
     }
 
 }
