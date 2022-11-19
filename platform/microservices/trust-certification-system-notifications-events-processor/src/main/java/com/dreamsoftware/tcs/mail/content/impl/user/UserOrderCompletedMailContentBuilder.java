@@ -27,15 +27,15 @@ public class UserOrderCompletedMailContentBuilder extends AbstractMailContentBui
     @Override
     public MimeMessage buildContent(final UserOrderCompletedMailRequestDTO request) throws MessagingException {
         Assert.notNull(request, "Request can not be null");
-        Assert.notNull(mailContentProperties.getCertificationCourseEditionRegisteredMailTemplate(), "Mail Template can not be null");
-        Assert.hasLength(mailContentProperties.getCertificationCourseEditionRegisteredMailTemplate(), "Mail Template can not be empty");
+        Assert.notNull(mailContentProperties.getCourseEditionRegisteredMailTemplate(), "Mail Template can not be null");
+        Assert.hasLength(mailContentProperties.getCourseEditionRegisteredMailTemplate(), "Mail Template can not be empty");
         // Generate Email Subject
         final String subject = resolveString("mail_certification_course_registered_subject_title", request.getLocale(),
                 new Object[]{});
 
         final Context context = new Context(request.getLocale());
 
-        return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getCertificationCourseEditionRegisteredMailTemplate(), null);
+        return buildMimeMessage(subject, request.getEmail(), context, mailContentProperties.getCourseEditionRegisteredMailTemplate(), null);
     }
 
 }

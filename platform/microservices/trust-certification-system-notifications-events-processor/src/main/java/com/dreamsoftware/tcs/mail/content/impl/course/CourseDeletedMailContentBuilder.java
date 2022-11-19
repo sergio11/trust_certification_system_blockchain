@@ -34,7 +34,7 @@ public class CourseDeletedMailContentBuilder extends AbstractMailContentBuilder<
         Assert.hasLength(mailContentProperties.getCourseDeletedMailTemplate(), "Mail Template can not be empty");
         log.debug("CourseDeletedMailContentBuilder CALLED!");
         // Generate Email Subject
-        final String subject = resolveString("mail_certificate_course_deleted_subject_title", request.getLocale(),
+        final String subject = resolveString("mail_course_deleted_subject_title", request.getLocale(),
                 new Object[]{request.getCaName(), request.getCourseName()});
 
         final Context context = new Context(request.getLocale());
