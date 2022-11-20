@@ -4,6 +4,7 @@ import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBl
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserAccountStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.ca.CertificationAuthorityRemovedNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.user.RemoveCertificationAuthorityEvent;
 import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
@@ -18,7 +19,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class RemoveCertificationAuthorityHandler extends AbstractProcessAndReturnHandler<RemoveCertificationAuthorityEvent, CertificationAuthorityRemovedNotificationEvent> {
+public class RemoveCertificationAuthorityHandler extends AbstractProcessAndReturnHandler<RemoveCertificationAuthorityEvent> {
 
     /**
      * Certification Authority Blockchain Repository
@@ -31,7 +32,7 @@ public class RemoveCertificationAuthorityHandler extends AbstractProcessAndRetur
     private final UserRepository userRepository;
 
     @Override
-    public CertificationAuthorityRemovedNotificationEvent onHandle(final RemoveCertificationAuthorityEvent event) throws RepositoryException {
+    public AbstractEvent onHandle(final RemoveCertificationAuthorityEvent event) throws RepositoryException {
         Assert.notNull(event, "Event can not be null");
         certificationAuthorityBlockchainRepository.removeCertificationAuthority(event.getCaId());
         userRepository.updateAccountStateByCaId(event.getCaId(), UserAccountStateEnum.REMOVED);

@@ -35,7 +35,6 @@
         <module>trust-certification-system-core-ipfs</module>
         <module>trust-certification-system-core</module>
         <module>trust-certification-system-core-qr</module>
-        <module>trust-certification-system-core-redis</module>
         <module>trust-certification-system-core-notification</module>
         <module>trust-certification-system-core-i18n</module>
         <module>trust-certification-system-user-events-processor</module>

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CertificationCourseEditionRepository extends MongoRepository<CertificationCourseEditionEntity, ObjectId>, CertificationCourseEditionRepositoryCustom {
 
+    Long countByIdAndCaId(final ObjectId courseId, final ObjectId caId);
 
     /**
      *

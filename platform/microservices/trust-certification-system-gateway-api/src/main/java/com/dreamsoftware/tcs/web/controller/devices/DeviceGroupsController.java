@@ -60,7 +60,7 @@ public class DeviceGroupsController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_DEVICES_BY_OWNER - Get all devices registered owned by the user", description = "Get all devices registered owned by the user", tags = {"device-groups"})
+    @Operation(summary = "GET_DEVICES_BY_OWNER - Get all devices registered owned by the user", description = "Get all devices registered owned by the user", tags = {"devices-groups"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "All devices registered in the group",
                 content = @Content(schema = @Schema(implementation = DeviceDTO.class))),
@@ -89,7 +89,7 @@ public class DeviceGroupsController extends SupportController {
      * @param request
      * @return
      */
-    @Operation(summary = "ADD_DEVICE_TO_GROUP - Add device into devices group", description = "Add device into devices group", tags = {"device-groups"})
+    @Operation(summary = "ADD_DEVICE_TO_GROUP - Add device into devices group", description = "Add device into devices group", tags = {"devices-groups"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Device Added",
                 content = @Content(schema = @Schema(implementation = DeviceDTO.class))),
@@ -123,7 +123,7 @@ public class DeviceGroupsController extends SupportController {
      * @param request
      * @return
      */
-    @Operation(summary = "UPDATE_DEVICE_REGISTRATION_TOKEN - Update Device Registration Token", description = "Update Device Registration Token", tags = {"device-groups"})
+    @Operation(summary = "UPDATE_DEVICE_REGISTRATION_TOKEN - Update Device Registration Token", description = "Update Device Registration Token", tags = {"devices-groups"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Device Updated",
                 content = @Content(schema = @Schema(implementation = DeviceDTO.class))),
@@ -156,7 +156,7 @@ public class DeviceGroupsController extends SupportController {
      * @param request
      * @return
      */
-    @Operation(summary = "SAVE_DEVICE - Save device into the group", description = "Save device into the group", tags = {"device-groups"})
+    @Operation(summary = "SAVE_DEVICE - Save device into the group", description = "Save device into the group", tags = {"devices-groups"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Device Saved",
                 content = @Content(schema = @Schema(implementation = DeviceDTO.class))),
@@ -190,7 +190,7 @@ public class DeviceGroupsController extends SupportController {
      * @param request
      * @return
      */
-    @Operation(summary = "DELETE_DEVICE_FROM_GROUP - Delete Device From Group", description = "Delete Device From Group", tags = {"device-groups"})
+    @Operation(summary = "DELETE_DEVICE_FROM_GROUP - Delete Device From Group", description = "Delete Device From Group", tags = {"devices-groups"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Device Deleted",
                 content = @Content(schema = @Schema(implementation = DeviceDTO.class))),

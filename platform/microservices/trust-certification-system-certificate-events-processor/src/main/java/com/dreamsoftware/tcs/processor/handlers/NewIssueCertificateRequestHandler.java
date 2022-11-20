@@ -10,6 +10,7 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRep
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.ICertificateGeneratorService;
 import com.dreamsoftware.tcs.service.IipfsGateway;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateIssuedNotificationEvent;
 import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
@@ -33,7 +34,7 @@ import java.util.Date;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class NewIssueCertificateRequestHandler extends AbstractProcessAndReturnHandler<OnNewIssueCertificateRequestEvent, CertificateIssuedNotificationEvent> {
+public class NewIssueCertificateRequestHandler extends AbstractProcessAndReturnHandler<OnNewIssueCertificateRequestEvent> {
 
     /**
      * Certification Course Repository
@@ -63,7 +64,7 @@ public class NewIssueCertificateRequestHandler extends AbstractProcessAndReturnH
     private final CertificateIssuanceRequestRepository certificateIssuanceRequestRepository;
 
     @Override
-    public CertificateIssuedNotificationEvent onHandle(final OnNewIssueCertificateRequestEvent event) throws Exception {
+    public AbstractEvent onHandle(final OnNewIssueCertificateRequestEvent event) throws Exception {
         Assert.notNull(event, "Event can not be null");
         log.debug("issueCertificate - CA Wallet: " + event.getCaWalletHash());
         log.debug("issueCertificate - Student Wallet: " + event.getStudentWalletHash());

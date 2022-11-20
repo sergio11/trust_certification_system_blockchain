@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.processor.handlers;
 
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.stream.events.certificate.RenewCertificateRequestEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateRenewedNotificationEvent;
 import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
@@ -20,7 +21,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class RenewCertificateRequestHandler extends AbstractProcessAndReturnHandler<RenewCertificateRequestEvent, CertificateRenewedNotificationEvent> {
+public class RenewCertificateRequestHandler extends AbstractProcessAndReturnHandler<RenewCertificateRequestEvent> {
 
     /**
      * Trust Certification Blockchain Repository
@@ -28,7 +29,7 @@ public class RenewCertificateRequestHandler extends AbstractProcessAndReturnHand
     private final ITrustCertificationBlockchainRepository trustCertificationBlockchainRepository;
 
     @Override
-    public CertificateRenewedNotificationEvent onHandle(RenewCertificateRequestEvent event) throws Exception {
+    public AbstractEvent onHandle(RenewCertificateRequestEvent event) throws Exception {
         Assert.notNull(event, "Event can not be null");
         log.debug("RenewCertificateRequestHandler CALLED!");
         trustCertificationBlockchainRepository.renewCertificate(event.getStudentWalletHash(), event.getCertificationId());

@@ -20,7 +20,7 @@ import java.util.Optional;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class UserPasswordResetHandler extends AbstractProcessAndReturnHandler<UserPasswordResetEvent, UserPasswordResetNotificationEvent> {
+public class UserPasswordResetHandler extends AbstractProcessAndReturnHandler<UserPasswordResetEvent> {
 
     /**
      * Password Reset Token Service

@@ -11,9 +11,9 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 @SpringBootApplication
 @OpenAPIDefinition(info
         = @Info(
-                title = "Certification Authority API",
+                title = "Trust Certification System Blockchain API",
                 version = "1.0",
-                description = "Trust Certification System Blockchain - Certification Authority API API v1.0"
+                description = "Trust Certification System Blockchain - Certification API v1.0"
         )
 )
 @EnableEncryptableProperties

@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.processor.handlers;
 
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.stream.events.certificate.UpdateCertificateVisibilityRequestEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateVisibilityChangedNotificationEvent;
 import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
@@ -20,7 +21,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class UpdateCertificateVisibilityRequestHandler extends AbstractProcessAndReturnHandler<UpdateCertificateVisibilityRequestEvent, CertificateVisibilityChangedNotificationEvent> {
+public class UpdateCertificateVisibilityRequestHandler extends AbstractProcessAndReturnHandler<UpdateCertificateVisibilityRequestEvent> {
 
     /**
      * Trust Certification Blockchain Repository
@@ -28,7 +29,7 @@ public class UpdateCertificateVisibilityRequestHandler extends AbstractProcessAn
     private final ITrustCertificationBlockchainRepository trustCertificationBlockchainRepository;
 
     @Override
-    public CertificateVisibilityChangedNotificationEvent onHandle(UpdateCertificateVisibilityRequestEvent event) throws Exception {
+    public AbstractEvent onHandle(UpdateCertificateVisibilityRequestEvent event) throws Exception {
         Assert.notNull(event, "Event can not be null");
         log.debug("UpdateCertificateVisibilityRequestHandler CALLED!");
         trustCertificationBlockchainRepository.updateCertificateVisibility(event.getStudentWalletHash(), event.getCertificationId(), event.getIsVisible());

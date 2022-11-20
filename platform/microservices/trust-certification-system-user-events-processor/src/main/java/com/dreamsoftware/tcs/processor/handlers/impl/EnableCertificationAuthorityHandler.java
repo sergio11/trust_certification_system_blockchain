@@ -4,6 +4,7 @@ import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBl
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserAccountStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.ca.CertificationAuthorityEnabledNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.user.EnableCertificationAuthorityEvent;
 import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
@@ -18,7 +19,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class EnableCertificationAuthorityHandler extends AbstractProcessAndReturnHandler<EnableCertificationAuthorityEvent, CertificationAuthorityEnabledNotificationEvent> {
+public class EnableCertificationAuthorityHandler extends AbstractProcessAndReturnHandler<EnableCertificationAuthorityEvent> {
 
     /**
      * Certification Authority Blockchain Repository
@@ -31,7 +32,7 @@ public class EnableCertificationAuthorityHandler extends AbstractProcessAndRetur
     private final UserRepository userRepository;
 
     @Override
-    public CertificationAuthorityEnabledNotificationEvent onHandle(final EnableCertificationAuthorityEvent event) throws RepositoryException {
+    public AbstractEvent onHandle(final EnableCertificationAuthorityEvent event) throws RepositoryException {
         Assert.notNull(event, "Event can not be null");
         certificationAuthorityBlockchainRepository.enable(event.getCaId());
         // Enable all users belong to this CA

@@ -300,7 +300,7 @@ public class AccountsController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "SIGN_UP_CA_ADMIN - Registering an administrator user of a Certification Authority", description = "Registering an administrator user of a Certification Authority.", tags = {"accounts"})
+    @Operation(summary = "SIGN_UP_CA_ADMIN - Allows you to register a Certification Authority along with the administrator user", description = "Allows you to register a Certification Authority along with the administrator user.", tags = {"accounts"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sign Up Success",
                     content = @Content(schema = @Schema(implementation = SimpleUserDTO.class))),
@@ -311,20 +311,20 @@ public class AccountsController extends SupportController {
     @RequestMapping(value = "/signup/ca", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<SimpleUserDTO>> signup(
-            @Parameter(name = "ca", description = "New User data. Cannot null or empty.",
-                    required = true, schema = @Schema(implementation = SignupAsCaAdminDTO.class))
-            @Validated(ICommonSequence.class) SignupAsCaAdminDTO ca,
+            @Parameter(name = "ca", description = "Certification Authority Data. Cannot null or empty.",
+                    required = true, schema = @Schema(implementation = SignUpAsCaAdminDTO.class))
+            @Validated(ICommonSequence.class) SignUpAsCaAdminDTO ca,
             @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
             @Parameter(hidden = true) Locale locale) throws Throwable {
 
         try {
 
             // Configure ISO3 Language
-            if (StringUtils.isBlank(ca.getAdmin().getLanguage())) {
-                ca.getAdmin().setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
+            if (StringUtils.isBlank(ca.getLanguage())) {
+                ca.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
             }
             // Configure User Agent from HTTP Header
-            ca.getAdmin().setUserAgent(userAgent);
+            ca.setUserAgent(userAgent);
             final SimpleUserDTO userSaved = accountsService.signup(ca);
             return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_AS_CA_ADMIN_SUCCESS,
                     HttpStatus.OK, userSaved);
@@ -352,7 +352,7 @@ public class AccountsController extends SupportController {
     @SecurityRequirements
     @RequestMapping(value = "/activate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<SimpleUserDTO>> activate(
-            @Parameter(name = "ca", description = "Activate Token, it can not be null",
+            @Parameter(name = "token", description = "Activate Token, it can not be null",
                     required = true, schema = @Schema(implementation = String.class))
             @RequestParam(name = "token") final String token) {
         try {

@@ -5,6 +5,7 @@ import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEditionEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseEditionRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.stream.events.course.UpdateCertificationCourseEditionRequestEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.course.CertificationCourseEditionUpdatedNotificationEvent;
 import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
@@ -20,7 +21,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class UpdateCourseEditionRequestHandler extends AbstractProcessAndReturnHandler<UpdateCertificationCourseEditionRequestEvent, CertificationCourseEditionUpdatedNotificationEvent> {
+public class UpdateCourseEditionRequestHandler extends AbstractProcessAndReturnHandler<UpdateCertificationCourseEditionRequestEvent> {
 
     /**
      * Certification Course Repository
@@ -44,7 +45,7 @@ public class UpdateCourseEditionRequestHandler extends AbstractProcessAndReturnH
      * @throws RepositoryException
      */
     @Override
-    public CertificationCourseEditionUpdatedNotificationEvent onHandle(final UpdateCertificationCourseEditionRequestEvent event) throws RepositoryException {
+    public AbstractEvent onHandle(final UpdateCertificationCourseEditionRequestEvent event) throws RepositoryException {
         Assert.notNull(event, "Event can not be null");
         final CertificationCourseEditionEntity certificationCourseEditionEntity = certificationCourseEditionRepository.findById(new ObjectId(event.getCourseEditionId()))
                 .orElseThrow(() -> new IllegalStateException("Course Edition can not be found"));

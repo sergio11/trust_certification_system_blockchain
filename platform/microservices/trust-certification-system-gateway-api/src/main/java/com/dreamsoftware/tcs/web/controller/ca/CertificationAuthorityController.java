@@ -61,7 +61,7 @@ public class CertificationAuthorityController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_ALL - Get All certification authorities have been registered", description = "Get All certification authorities have been registered", tags = {"CA"})
+    @Operation(summary = "GET_ALL - Get All certification authorities have been registered", description = "Get All certification authorities have been registered", tags = {"ca"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All CAs registered",
                     content = @Content(schema = @Schema(implementation = SimpleCertificationAuthorityDetailDTO.class))),
@@ -88,7 +88,7 @@ public class CertificationAuthorityController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_CA_DETAIL - Get Certification Authority Detail", description = "Get Certification Authority Detail", tags = {"CA"})
+    @Operation(summary = "GET_CA_DETAIL - Get Certification Authority Detail", description = "Get Certification Authority Detail", tags = {"ca"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "CA Detail",
                     content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
@@ -120,7 +120,7 @@ public class CertificationAuthorityController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_CA_DETAIL - Get Current Certification Authority Detail", description = "Get Certification Authority Detail", tags = {"CA"})
+    @Operation(summary = "GET_CA_DETAIL - Get Current Certification Authority Detail", description = "Get Certification Authority Detail", tags = {"ca"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "CA Detail",
                     content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
@@ -180,7 +180,7 @@ public class CertificationAuthorityController extends SupportController {
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "ENABLE_CA - Enable Certification Authority", description = "Enable Certification Authority", tags = {"CA"})
+    @Operation(summary = "ENABLE_CA - Enable Certification Authority", description = "Enable Certification Authority", tags = {"ca"})
     @RequestMapping(value = "/{id}/enable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForAdmin
@@ -211,7 +211,7 @@ public class CertificationAuthorityController extends SupportController {
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "ENABLE_CA_MEMBER - Enable Certification Authority Member", description = "Enable Certification Authority Member", tags = {"CA"})
+    @Operation(summary = "ENABLE_CA_MEMBER - Enable Certification Authority Member", description = "Enable Certification Authority Member", tags = {"ca"})
     @RequestMapping(value = "/{caId}/member/{memberId}/enable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCaAdmin
@@ -244,7 +244,7 @@ public class CertificationAuthorityController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "DISABLE_CA - Disable Certification Authority", description = "Disable Certification Authority Detail", tags = {"CA"})
+    @Operation(summary = "DISABLE_CA - Disable Certification Authority", description = "Disable Certification Authority Detail", tags = {"ca"})
     @RequestMapping(value = "/{id}/disable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForAdmin
@@ -274,7 +274,7 @@ public class CertificationAuthorityController extends SupportController {
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "DISABLE_CA_MEMBER - Disable Certification Authority Member", description = "Disable Certification Authority Member", tags = {"CA"})
+    @Operation(summary = "DISABLE_CA_MEMBER - Disable Certification Authority Member", description = "Disable Certification Authority Member", tags = {"ca"})
     @RequestMapping(value = "/{caId}/member/{memberId}/disable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCaAdmin
@@ -308,7 +308,7 @@ public class CertificationAuthorityController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "ADD_CA_MEMBER - Add member to certification authority", description = "Add member to certification authority", tags = {"CA"})
+    @Operation(summary = "ADD_CA_MEMBER - Add member to certification authority", description = "Add member to certification authority", tags = {"ca"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "CA Member added succesfully",
                     content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
@@ -347,7 +347,7 @@ public class CertificationAuthorityController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "REMOVE_CA_MEMBER - Remove member from certification authority", description = "Remove member from certification authority", tags = {"CA"})
+    @Operation(summary = "REMOVE_CA_MEMBER - Remove member from certification authority", description = "Remove member from certification authority", tags = {"ca"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "CA Member removed successfully",
                     content = @Content(schema = @Schema(implementation = CertificationAuthorityDetailDTO.class))),
@@ -384,7 +384,7 @@ public class CertificationAuthorityController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "REMOVE_CA - Remove Certification authority (Only ADMIN)", description = "Remove  certification authority", tags = {"CA"})
+    @Operation(summary = "REMOVE_CA - Remove Certification authority (Only ADMIN)", description = "Remove  certification authority", tags = {"ca"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "CA removed successfully",
                     content = @Content(schema = @Schema(implementation = String.class))),

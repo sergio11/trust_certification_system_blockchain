@@ -57,7 +57,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_ALL_COURSES - Get All courses", description = "Get All courses", tags = {"COURSE"})
+    @Operation(summary = "GET_ALL_COURSES - Get All courses", description = "Get All courses", tags = {"course"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Course Detail",
                 content = @Content(schema = @Schema(implementation = SimpleCertificationCourseDetailDTO.class))),
@@ -83,7 +83,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "SEARCH_COURSES - Searching courses by term", description = "Searching courses by term", tags = {"COURSE"})
+    @Operation(summary = "SEARCH_COURSES - Searching courses by term", description = "Searching courses by term", tags = {"course"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Course Detail",
                     content = @Content(schema = @Schema(implementation = SimpleCertificationCourseDetailDTO.class))),
@@ -114,7 +114,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_COURSE_DETAIL - Get Course Detail", description = "Get Certification Course Detail", tags = {"COURSE"})
+    @Operation(summary = "GET_COURSE_DETAIL - Get Course Detail", description = "Get Certification Course Detail", tags = {"course"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Course Detail",
                     content = @Content(schema = @Schema(implementation = SimpleCertificationCourseDetailDTO.class))),
@@ -145,7 +145,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_ALL_COURSES_BY_CA - Get All courses by CA", description = "Get All courses by CA", tags = {"COURSE"})
+    @Operation(summary = "GET_ALL_COURSES_BY_CA - Get All courses by CA", description = "Get All courses by CA", tags = {"course"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Course Detail",
                 content = @Content(schema = @Schema(implementation = SimpleCertificationCourseDetailDTO.class))),
@@ -242,7 +242,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "ENABLE_COURSE - Enable Certification Course", description = "Enable Certification Course", tags = {"COURSE"})
+    @Operation(summary = "ENABLE_COURSE - Enable Certification Course", description = "Enable Certification Course", tags = {"course"})
     @RequestMapping(value = "/{courseId}/enable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForAdminOrCourseOwner
@@ -271,7 +271,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "DISABLE_COURSE - Disable Certification Course", description = "Disable Certification Course", tags = {"COURSE"})
+    @Operation(summary = "DISABLE_COURSE - Disable Certification Course", description = "Disable Certification Course", tags = {"course"})
     @RequestMapping(value = "/{courseId}/disable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForAdminOrCourseOwner
@@ -301,7 +301,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "DELETE_CERTIFICATION_COURSE - Delete Certification Course (Only Access For Admin Or Course Owner)", description = "Delete Certification Course", tags = {"COURSE"})
+    @Operation(summary = "DELETE_CERTIFICATION_COURSE - Delete Certification Course (Only Access For Admin Or Course Owner)", description = "Delete Certification Course", tags = {"course"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Certification Course Deleted",
                     content = @Content(schema = @Schema(implementation = String.class))),
@@ -409,7 +409,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "ENABLE_COURSE_EDITION - Enable Certification Course Edition", description = "Enable Certification Course Edition", tags = {"COURSE"})
+    @Operation(summary = "ENABLE_COURSE_EDITION - Enable Certification Course Edition", description = "Enable Certification Course Edition", tags = {"course"})
     @RequestMapping(value = "/{courseId}/editions/{editionId}/enable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForAdminOrCourseOwner
@@ -440,7 +440,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "DISABLE_COURSE_EDITION - Disable Certification Course Edition", description = "Disable Certification Course Edition", tags = {"COURSE"})
+    @Operation(summary = "DISABLE_COURSE_EDITION - Disable Certification Course Edition", description = "Disable Certification Course Edition", tags = {"course"})
     @RequestMapping(value = "/{courseId}/editions/{editionId}/disable", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForAdminOrCourseOwner
@@ -474,7 +474,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "DELETE_CERTIFICATION_COURSE_EDITION - Delete Certification Course Edition (Only Access For Admin Or Course Owner)", description = "Delete Certification Course Edition", tags = {"COURSE"})
+    @Operation(summary = "DELETE_CERTIFICATION_COURSE_EDITION - Delete Certification Course Edition (Only Access For Admin Or Course Owner)", description = "Delete Certification Course Edition", tags = {"course"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Certification Course Edition Deleted",
                     content = @Content(schema = @Schema(implementation = String.class))),
@@ -510,7 +510,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "CERTIFICATE_COURSE_CAN_BE_ISSUED - Check if it is possible issue certificate for this course edition", description = "Check if it is possible issue certificate for this course edition", tags = {"COURSE"})
+    @Operation(summary = "CERTIFICATE_COURSE_CAN_BE_ISSUED - Check if it is possible issue certificate for this course edition", description = "Check if it is possible issue certificate for this course edition", tags = {"course"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Can be issued or not",
                     content = @Content(schema = @Schema(implementation = Boolean.class))),
@@ -542,7 +542,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "CERTIFICATE_COURSE_CAN_BE_RENEWED - Check if it is possible renew certificate for this course edition", description = "Check if it is possible renew certificate for this course edition", tags = {"COURSE"})
+    @Operation(summary = "CERTIFICATE_COURSE_CAN_BE_RENEWED - Check if it is possible renew certificate for this course edition", description = "Check if it is possible renew certificate for this course edition", tags = {"course"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Can be issued or not",
                     content = @Content(schema = @Schema(implementation = Boolean.class))),

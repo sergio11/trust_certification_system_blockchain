@@ -4,6 +4,7 @@ import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationAuthorityBl
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.users.UserRegisteredNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.user.NewCertificationAuthorityMemberEvent;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class NewCertificationAuthorityMemberHandler extends SupportUserRegistrat
     private final UserRepository userRepository;
 
     @Override
-    public UserRegisteredNotificationEvent onHandle(final NewCertificationAuthorityMemberEvent event) throws RepositoryException {
+    public AbstractEvent onHandle(final NewCertificationAuthorityMemberEvent event) throws RepositoryException {
         Assert.notNull(event, "Event can not be null");
         // Add Seed funds
         addSeedFunds(event.getMemberWalletHash());
