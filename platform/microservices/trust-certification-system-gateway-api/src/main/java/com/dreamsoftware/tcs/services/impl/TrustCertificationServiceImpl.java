@@ -251,7 +251,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     @Override
     public Iterable<CertificateIssuanceRequestDTO> getCertificatesIssuanceRequestsFromCa(final String ownerId) {
         Assert.notNull(ownerId, "Owner Id can not be null");
-        Iterable<CertificateIssuanceRequestEntity> certificateRequests = certificateIssuanceRequestRepository.findByCaOrderByUpdatedAtDesc(new ObjectId(ownerId));
+        Iterable<CertificateIssuanceRequestEntity> certificateRequests = certificateIssuanceRequestRepository.findByCaMemberOrderByUpdatedAtDesc(new ObjectId(ownerId));
         return certificateIssuanceRequestMapper.entityToDTO(certificateRequests);
     }
 

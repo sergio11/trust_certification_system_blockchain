@@ -1,10 +1,12 @@
 package com.dreamsoftware.tcs.utils;
 
-public abstract class AbstractProcessAndReturnHandler<T, E> {
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
+
+public abstract class AbstractProcessAndReturnHandler<T> {
 
     /**
      *
      * @param event
      */
-    public abstract E onHandle(final T event) throws Exception;
+    public abstract AbstractEvent onHandle(final T event) throws Exception;
 }

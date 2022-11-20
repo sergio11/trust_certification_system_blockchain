@@ -134,7 +134,7 @@ public interface ICertificationCourseService {
      * @param userId
      * @return
      */
-    Boolean isTheOwner(final String courseId, final ObjectId userId);
+    Boolean isTheCourseOwner(final String courseId, final ObjectId userId);
 
     /**
      *

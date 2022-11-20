@@ -63,7 +63,7 @@ public class MailClientServiceImpl implements IMailClientService {
         try {
             mailSender.send(buildMimeMessage(request));
         } catch (final MessagingException | MailException ex) {
-            log.error(request.getEntityType().getName() + " - MailException: " + ex.getMessage());
+            log.debug(request.getEntityType().getName() + " - MailException: " + ex.getMessage());
             saveFailedEmail(null, ex.getMessage(), request);
         }
     }

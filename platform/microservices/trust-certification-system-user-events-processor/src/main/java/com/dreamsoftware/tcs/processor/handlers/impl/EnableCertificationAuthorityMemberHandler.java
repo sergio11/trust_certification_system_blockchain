@@ -5,6 +5,7 @@ import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserAccountStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.ca.CertificationAuthorityMemberEnabledNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.user.EnableCertificationAuthorityMemberEvent;
 import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
@@ -20,7 +21,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class EnableCertificationAuthorityMemberHandler extends AbstractProcessAndReturnHandler<EnableCertificationAuthorityMemberEvent, CertificationAuthorityMemberEnabledNotificationEvent> {
+public class EnableCertificationAuthorityMemberHandler extends AbstractProcessAndReturnHandler<EnableCertificationAuthorityMemberEvent> {
 
     /**
      * Certification Authority Blockchain Repository
@@ -33,7 +34,7 @@ public class EnableCertificationAuthorityMemberHandler extends AbstractProcessAn
     private final UserRepository userRepository;
 
     @Override
-    public CertificationAuthorityMemberEnabledNotificationEvent onHandle(final EnableCertificationAuthorityMemberEvent event) throws RepositoryException {
+    public AbstractEvent onHandle(final EnableCertificationAuthorityMemberEvent event) throws RepositoryException {
         Assert.notNull(event, "Event can not be null");
         final UserEntity caMember = userRepository.findById(new ObjectId(event.getMemberId()))
                 .orElseThrow(() -> new IllegalStateException("CA member not found"));

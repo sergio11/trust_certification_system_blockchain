@@ -57,7 +57,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "ENABLE_CERTIFICATE - Enable Certificate", description = "Enable Certificate", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "ENABLE_CERTIFICATE - Enable Certificate", description = "Enable Certificate", tags = {"certification"})
     @RequestMapping(value = "/{certId}/enable", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<String>> enable(
@@ -83,7 +83,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "DISABLE_CERTIFICATE - Disable Certificate", description = "Disable Certificate", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "DISABLE_CERTIFICATE - Disable Certificate", description = "Disable Certificate", tags = {"certification"})
     @RequestMapping(value = "/{certId}/disable", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<String>> disable(
@@ -109,7 +109,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "ENABLE_CERTIFICATE_VISIBILITY - Enable Certificate Visibility", description = "Enable Certificate Visibility", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "ENABLE_CERTIFICATE_VISIBILITY - Enable Certificate Visibility", description = "Enable Certificate Visibility", tags = {"certification"})
     @RequestMapping(value = "/{certId}/visible", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<String>> enableCertificateVisibility(
@@ -135,7 +135,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "DISABLE_CERTIFICATE_VISIBILITY - Disable Certificate Visibility", description = "Disable Certificate Visibility", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "DISABLE_CERTIFICATE_VISIBILITY - Disable Certificate Visibility", description = "Disable Certificate Visibility", tags = {"certification"})
     @RequestMapping(value = "/{certId}/invisible", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
@@ -161,7 +161,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_CERTIFICATE_ISSUED_DETAIL - Get Certificate Issued Detail", description = "Get Certificate Detail", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "GET_CERTIFICATE_ISSUED_DETAIL - Get Certificate Issued Detail", description = "Get Certificate Detail", tags = {"certification"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Certificate Issued Detail",
                 content = @Content(schema = @Schema(implementation = SimpleCertificateIssuedDTO.class))),
@@ -190,7 +190,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_MY_CERTIFICATES_AS_RECIPIENT - Get My Certificates As Recipient", description = "Get My Certificates As Recipient", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "GET_MY_CERTIFICATES_AS_RECIPIENT - Get My Certificates As Recipient", description = "Get My Certificates As Recipient", tags = {"certification"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Certificates As Recipient",
                 content = @Content(schema = @Schema(implementation = SimpleCertificateIssuedDTO.class))),
@@ -219,7 +219,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_CERTIFICATES_ISSUANCE_REQUESTS_FROM_STUDENT - Get certificates issuance requests from student", description = "Get certificates issuance requests from student", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "GET_CERTIFICATES_ISSUANCE_REQUESTS_FROM_STUDENT - Get certificates issuance requests from student", description = "Get certificates issuance requests from student", tags = {"certification"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Certificates Issuance request",
                 content = @Content(schema = @Schema(implementation = CertificateIssuanceRequestDTO.class))),
@@ -248,7 +248,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_CERTIFICATES_ISSUANCE_REQUESTS_FROM_CA - Get certificates issuance requests from CA", description = "Get certificates issuance requests from CA", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "GET_CERTIFICATES_ISSUANCE_REQUESTS_FROM_CA - Get certificates issuance requests from CA", description = "Get certificates issuance requests from CA", tags = {"certification"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Certificates Issuance request",
                 content = @Content(schema = @Schema(implementation = CertificateIssuanceRequestDTO.class))),
@@ -277,7 +277,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_MY_CERTIFICATES_AS_ISSUER - Get My Certificates As Issuer", description = "Get My Certificates As Issuer", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "GET_MY_CERTIFICATES_AS_ISSUER - Get My Certificates As Issuer", description = "Get My Certificates As Issuer", tags = {"certification"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Certificates As Issuer",
                 content = @Content(schema = @Schema(implementation = SimpleCertificateIssuedDTO.class))),
@@ -307,7 +307,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "ISSUE_CERTIFICATE_REQUEST - Issue Certificate Request", description = "Issue Certificate Request", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "ISSUE_CERTIFICATE_REQUEST - Issue Certificate Request", description = "Issue Certificate Request", tags = {"certification"})
     @RequestMapping(value = "/request", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
@@ -334,7 +334,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "ACCEPT_CERTIFICATE_REQUEST - Accept request for certificate issuance", description = "Accept request for certificate issuance", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "ACCEPT_CERTIFICATE_REQUEST - Accept request for certificate issuance", description = "Accept request for certificate issuance", tags = {"certification"})
     @RequestMapping(value = "/{certId}/accept", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
@@ -359,7 +359,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "REJECT_CERTIFICATE_REQUEST - Reject request for certificate issuance", description = "Reject request for certificate issuance", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "REJECT_CERTIFICATE_REQUEST - Reject request for certificate issuance", description = "Reject request for certificate issuance", tags = {"certification"})
     @RequestMapping(value = "/{certId}/reject", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
@@ -384,7 +384,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws java.lang.Throwable
      */
-    @Operation(summary = "RENEW_CERTIFICATE - Renew Certificate", description = "Issue Certificate", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "RENEW_CERTIFICATE - Renew Certificate", description = "Issue Certificate", tags = {"certification"})
     @RequestMapping(value = "/{certId}/renew", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
@@ -408,7 +408,7 @@ public class TrustCertificationController extends SupportController {
      * @param certId
      * @return
      */
-    @Operation(summary = "DOWNLOAD_CERTIFICATE_FILE - Download Certificate file", description = "Download certificate file", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "DOWNLOAD_CERTIFICATE_FILE - Download Certificate file", description = "Download certificate file", tags = {"certification"})
     @RequestMapping(value = "/{certId}/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> downloadCertificateFile(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
@@ -428,7 +428,7 @@ public class TrustCertificationController extends SupportController {
      * @param certId
      * @return
      */
-    @Operation(summary = "DOWNLOAD_CERTIFICATE_IMAGE - Download Certificate Image", description = "Download certificate image", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "DOWNLOAD_CERTIFICATE_IMAGE - Download Certificate Image", description = "Download certificate image", tags = {"certification"})
     @RequestMapping(value = "/{certId}/download", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> downloadCertificateImage(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
@@ -449,7 +449,7 @@ public class TrustCertificationController extends SupportController {
      * @param qrHeight
      * @return
      */
-    @Operation(summary = "GENERATE_CERTIFICATE_QR - Get Certificate QR", description = "Generate Certificate QR", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "GENERATE_CERTIFICATE_QR - Get Certificate QR", description = "Generate Certificate QR", tags = {"certification"})
     @RequestMapping(value = "/{certId}/qr", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<byte[]> generateCertificateQR(
@@ -476,7 +476,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "VALIDATE_CERTIFICATE - Validate Certificate", description = "Validate Certificate", tags = {"CERTIFICATE_ISSUED"})
+    @Operation(summary = "VALIDATE_CERTIFICATE - Validate Certificate", description = "Validate Certificate", tags = {"certification"})
     @RequestMapping(value = "/validate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<CertificateIssuedDetailDTO>> validateCertificate(

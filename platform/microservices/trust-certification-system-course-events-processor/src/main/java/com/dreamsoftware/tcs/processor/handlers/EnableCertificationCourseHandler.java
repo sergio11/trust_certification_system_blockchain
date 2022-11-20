@@ -7,6 +7,7 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseEditionRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
+import com.dreamsoftware.tcs.stream.events.AbstractEvent;
 import com.dreamsoftware.tcs.stream.events.course.EnableCertificationCourseEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.course.CourseEnabledNotificationEvent;
 import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
@@ -22,7 +23,7 @@ import org.springframework.util.Assert;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 @Slf4j
-public class EnableCertificationCourseHandler extends AbstractProcessAndReturnHandler<EnableCertificationCourseEvent, CourseEnabledNotificationEvent> {
+public class EnableCertificationCourseHandler extends AbstractProcessAndReturnHandler<EnableCertificationCourseEvent> {
 
     /**
      * Certification Course Repository
@@ -46,7 +47,7 @@ public class EnableCertificationCourseHandler extends AbstractProcessAndReturnHa
      * @throws RepositoryException
      */
     @Override
-    public CourseEnabledNotificationEvent onHandle(final EnableCertificationCourseEvent event) throws RepositoryException {
+    public AbstractEvent onHandle(final EnableCertificationCourseEvent event) throws RepositoryException {
         Assert.notNull(event, "Event can not be null");
         log.debug("EnableCertificationCourseHandler CALLED!");
         final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.updateStatus(new ObjectId(event.getCourseId()), CertificationCourseStateEnum.ENABLED);

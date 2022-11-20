@@ -52,7 +52,7 @@ public class DispatcherEventHandlerServiceImpl implements IDispatcherEventHandle
             log.debug("Event payload -> " + eventPayload);
             final AbstractEvent eventData = objectMapper.readValue(eventPayload, AbstractEvent.class);
             final AbstractProcessAndReturnHandler eventHandler = getProcessAndReturnResultHandler(eventData.getEntityType());
-            result = (AbstractEvent)eventHandler.onHandle(eventData);
+            result = eventHandler.onHandle(eventData);
         } catch (JsonProcessingException ex) {
             log.debug("DispatcherEventHandler ex -> " + ex.getMessage());
         }
@@ -66,7 +66,7 @@ public class DispatcherEventHandlerServiceImpl implements IDispatcherEventHandle
      * @param <T>
      */
     private <T extends AbstractEvent> AbstractOnlyProcessHandler<T> getOnlyProcessEventHandler(Class<T> clazz) {
-        log.debug("getNotificationHandler -> " + clazz.getCanonicalName());
+        log.debug("getOnlyProcessEventHandler for -> " + clazz.getCanonicalName());
         ResolvableType type = ResolvableType.forClassWithGenerics(AbstractOnlyProcessHandler.class, clazz);
         return applicationContext.<AbstractOnlyProcessHandler<T>>getBeanProvider(type).getObject();
     }
@@ -77,9 +77,9 @@ public class DispatcherEventHandlerServiceImpl implements IDispatcherEventHandle
      * @return
      * @param <T>
      */
-    private <T extends AbstractEvent> AbstractProcessAndReturnHandler<T, AbstractEvent> getProcessAndReturnResultHandler(Class<T> clazz) {
-        log.debug("getNotificationHandler -> " + clazz.getCanonicalName());
-        ResolvableType type = ResolvableType.forClassWithGenerics(AbstractProcessAndReturnHandler.class, clazz, AbstractEvent.class);
-        return applicationContext.<AbstractProcessAndReturnHandler<T, AbstractEvent>>getBeanProvider(type).getObject();
+    private <T extends AbstractEvent> AbstractProcessAndReturnHandler<T> getProcessAndReturnResultHandler(Class<T> clazz) {
+        log.debug("getProcessAndReturnResultHandler for -> " + clazz.getCanonicalName());
+        ResolvableType type = ResolvableType.forClassWithGenerics(AbstractProcessAndReturnHandler.class, clazz);
+        return applicationContext.<AbstractProcessAndReturnHandler<T>>getBeanProvider(type).getObject();
     }
 }

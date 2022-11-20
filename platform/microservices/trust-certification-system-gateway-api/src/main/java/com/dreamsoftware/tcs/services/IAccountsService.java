@@ -71,7 +71,7 @@ public interface IAccountsService {
      * @param ca
      * @return
      */
-    SimpleUserDTO signup(final SignupAsCaAdminDTO ca);
+    SimpleUserDTO signup(final SignUpAsCaAdminDTO ca);
 
     /**
      * Signup SignUpExternalProviderDTO

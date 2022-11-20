@@ -63,7 +63,7 @@ public class TokenManagementController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_MY_TOKENS - Get my current balance of TCS tokens", description = "Get my current balance of TCS tokens", tags = {"tokens-manadgement"})
+    @Operation(summary = "GET_MY_TOKENS - Get my current balance of TCS tokens", description = "Get my current balance of TCS tokens", tags = {"tokens-management"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "My Current balance of TCS tokens",
                 content = @Content(
@@ -90,7 +90,7 @@ public class TokenManagementController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_TOKEN_PRICES - Get Token prices", description = "Get token prices", tags = {"tokens-manadgement"})
+    @Operation(summary = "GET_TOKEN_PRICES - Get Token prices", description = "Get token prices", tags = {"tokens-management"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Token prices",
                 content = @Content(
@@ -119,7 +119,7 @@ public class TokenManagementController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "PLACE_TOKENS_ORDER - Place Tokens Order", description = "Place Tokens Order", tags = {"tokens-manadgement"})
+    @Operation(summary = "PLACE_TOKENS_ORDER - Place Tokens Order", description = "Place Tokens Order", tags = {"tokens-management"})
     @RequestMapping(value = "/order", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<OrderDetailDTO>> placeTokensOrder(
@@ -147,7 +147,7 @@ public class TokenManagementController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "CONFIRM_ORDER - Confirm Order", description = "Confirm Order", tags = {"tokens-manadgement"})
+    @Operation(summary = "CONFIRM_ORDER - Confirm Order", description = "Confirm Order", tags = {"tokens-management"})
     @RequestMapping(value = "/order/confirm", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<OrderDetailDTO>> confirmOrder(
@@ -170,7 +170,7 @@ public class TokenManagementController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "GET_CLIENT_TOKENS - Get client balance of TCS tokens", description = "Get my current balance of TCS tokens", tags = {"tokens-manadgement"})
+    @Operation(summary = "GET_CLIENT_TOKENS - Get client balance of TCS tokens", description = "Get my current balance of TCS tokens", tags = {"tokens-management"})
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Client balance of TCS tokens",
                 content = @Content(

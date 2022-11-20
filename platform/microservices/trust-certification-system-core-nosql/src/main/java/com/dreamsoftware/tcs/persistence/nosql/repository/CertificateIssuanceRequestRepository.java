@@ -38,9 +38,9 @@ public interface CertificateIssuanceRequestRepository extends MongoRepository<Ce
 
     /**
      *
-     * @param caId
+     * @param caMemberId
      * @return
      */
-    Iterable<CertificateIssuanceRequestEntity> findByCaOrderByUpdatedAtDesc(final ObjectId caId);
+    Iterable<CertificateIssuanceRequestEntity> findByCaMemberOrderByUpdatedAtDesc(final ObjectId caMemberId);
 
 }

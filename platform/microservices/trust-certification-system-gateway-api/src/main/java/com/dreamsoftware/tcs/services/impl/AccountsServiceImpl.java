@@ -5,6 +5,7 @@ import com.dreamsoftware.tcs.mapper.*;
 import com.dreamsoftware.tcs.persistence.ldap.repository.IUserLdapRepository;
 import com.dreamsoftware.tcs.persistence.nosql.entity.*;
 import com.dreamsoftware.tcs.persistence.nosql.repository.AuthenticationProviderRepository;
+import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationAuthorityRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserLoginRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IWalletService;
@@ -61,6 +62,7 @@ public class AccountsServiceImpl implements IAccountsService {
     private final StreamChannelsProperties streamChannelsProperties;
     private final UserLoginRepository userLoginRepository;
     private final SimpleUserLoginMapper simpleUserLoginMapper;
+    private final CertificationAuthorityRepository certificationAuthorityRepository;
     private final IFacebookService facebookService;
     private final SimpleSocialUserMapper simpleSocialUserMapper;
     private final SignUpSocialUserMapper signUpSocialUserMapper;
@@ -77,6 +79,8 @@ public class AccountsServiceImpl implements IAccountsService {
     private final UserLdapAccountMapper userLdapAccountMapper;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final SignUpAsCaAdminMapper signUpAsCaAdminMapper;
 
     /**
      * @param dto
@@ -185,21 +189,24 @@ public class AccountsServiceImpl implements IAccountsService {
             if (jwtTokenHelper.validateToken(token, clientAddr, clientUserAgent)) {
                 ICommonUserDetailsAware<String> userDetails = null;
                 final String sub = jwtTokenHelper.getSubFromToken(token);
+                log.debug("restoreSecurityContextFor: token is VALID!");
                 final Collection<String> authorities = jwtTokenHelper.getAuthoritiesFromToken(token);
-                if (authorities.contains(AuthorityEnum.ROLE_STUDENT.name()) || authorities.contains(AuthorityEnum.ROLE_CA_MEMBER.name())) {
-                    log.debug("Restore User Details into security context for user id -> " + sub);
-                    final UserEntity userEntity = userRepository.findById(new ObjectId(sub)).orElse(null);
-                    if(userEntity != null) {
-                        final Date tokenCreatedAt = jwtTokenHelper.getCreatedAtFromToken(token);
-                        if(!userEntity.getHasCredentialsExpired() && userEntity.getLastPasswordUpdated() == null || userEntity.getLastPasswordUpdated().before(tokenCreatedAt)) {
-                            userDetails = userDetailsMapper.entityToDTO(userEntity);
+                if(!authorities.isEmpty()) {
+                    if(!authorities.contains(AuthorityEnum.ROLE_ADMIN.name())) {
+                        log.debug("Restore User Details into security context for user id -> " + sub);
+                        final UserEntity userEntity = userRepository.findById(new ObjectId(sub)).orElse(null);
+                        if(userEntity != null) {
+                            final Date tokenCreatedAt = jwtTokenHelper.getCreatedDateFromToken(token);
+                            if(!userEntity.getHasCredentialsExpired() && userEntity.getLastPasswordUpdated() == null || userEntity.getLastPasswordUpdated().before(tokenCreatedAt)) {
+                                userDetails = userDetailsMapper.entityToDTO(userEntity);
+                            }
                         }
+                    } else {
+                        log.debug("Restore User Details into security context for user id -> " + sub);
+                        userDetails = userLdapRepository.findOneByUid(sub)
+                                .map(userLdapAccountMapper::entityToDTO)
+                                .orElse(null);
                     }
-                } else if (authorities.contains(AuthorityEnum.ROLE_ADMIN.name())) {
-                    log.debug("Restore User Details into security context for user id -> " + sub);
-                    userDetails = userLdapRepository.findOneByUid(sub)
-                            .map(userLdapAccountMapper::entityToDTO)
-                            .orElse(null);
                 }
                 if (userDetails != null) {
                     SecurityContextHolder.getContext().setAuthentication(
@@ -207,6 +214,7 @@ public class AccountsServiceImpl implements IAccountsService {
                 }
             }
         } catch (final Exception ex) {
+            ex.printStackTrace();
             log.debug("Fail to restore security context for token -> " + token);
         }
     }
@@ -256,22 +264,14 @@ public class AccountsServiceImpl implements IAccountsService {
      * @return
      */
     @Override
-    public SimpleUserDTO signup(final SignupAsCaAdminDTO ca) {
+    public SimpleUserDTO signup(final SignUpAsCaAdminDTO ca) {
         Assert.notNull(ca, "ca can not be null");
-        final UserEntity userToSave = signUpUserMapper.signUpUserDTOToCaAdminUserEntity(ca.getAdmin());
-        final CertificationAuthorityEntity caEntity = CertificationAuthorityEntity
-                .builder()
-                .createdDate(new Date())
-                .executiveDirector(ca.getExecutiveDirector())
-                .location(ca.getLocation())
-                .name(ca.getName())
-                .defaultCostOfIssuingCertificate(ca.getDefaultCostOfIssuingCertificate())
-                .supportMail(ca.getSupportMail())
-                .build();
-        userToSave.setCa(caEntity);
-        caEntity.setAdmin(userToSave);
-        final UserEntity userEntitySaved = userRepository.save(userToSave);
-        final SimpleUserDTO simpleUserDTO = simpleUserMapper.entityToDTO(userEntitySaved);
+        final CertificationAuthorityEntity caEntityToSave = signUpAsCaAdminMapper.dtoToEntity(ca);
+        final CertificationAuthorityEntity caEntitySaved = certificationAuthorityRepository.save(caEntityToSave);
+        final UserEntity caAdmin = caEntitySaved.getAdmin();
+        caAdmin.setCa(caEntitySaved);
+        final UserEntity caAdminSaved = userRepository.save(caAdmin);
+        final SimpleUserDTO simpleUserDTO = simpleUserMapper.entityToDTO(caAdminSaved);
         streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), UserPendingValidationNotificationEvent.builder()
                 .userId(simpleUserDTO.getIdentity())
                 .build());

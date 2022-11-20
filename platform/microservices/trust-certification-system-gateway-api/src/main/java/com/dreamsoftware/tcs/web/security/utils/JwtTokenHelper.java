@@ -13,6 +13,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
@@ -76,17 +77,6 @@ public class JwtTokenHelper {
     }
 
     /**
-     *
-     * @param token
-     * @return
-     */
-    public Date getCreatedAtFromToken(final String token) {
-        Assert.notNull(token, "Token can not be null");
-        final Claims claims = getClaimsFromToken(token);
-        return (Date) claims.get(CLAIM_KEY_CREATED);
-    }
-
-    /**
      * Refresh Token
      *
      * @param token
@@ -133,7 +123,7 @@ public class JwtTokenHelper {
         claims.put(CLAIM_KEY_CLIENT_ADDR, Hashing.sha512().hashBytes(remoteAddr.getBytes()).toString());
         claims.put(CLAIM_KEY_USER_AGENT, Hashing.sha512().hashBytes(userAgent.getBytes()).toString());
         claims.put(CLAIM_KEY_AUTHORITIES, userDetails.getAuthorities().stream()
-                .map((auth) -> auth.getAuthority()).toArray());
+                .map(GrantedAuthority::getAuthority).toArray());
 
         final String token = doGenerateToken(claims, expirationAt);
 
@@ -165,7 +155,7 @@ public class JwtTokenHelper {
      * @param token
      * @return
      */
-    private Date getCreatedDateFromToken(String token) {
+    public Date getCreatedDateFromToken(final String token) {
         Date created;
         try {
             final Claims claims = getClaimsFromToken(token);

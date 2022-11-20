@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.persistence.nosql.entity;
 
+import com.dreamsoftware.tcs.persistence.nosql.annotation.CascadeSave;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,7 +12,6 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.Date;
-import lombok.Builder;
 
 /**
  *
@@ -21,7 +21,6 @@ import lombok.Builder;
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Document(collection = CertificationAuthorityEntity.COLLECTION_NAME)
 public class CertificationAuthorityEntity {
 
@@ -62,7 +61,7 @@ public class CertificationAuthorityEntity {
      * Creation Date
      */
     @Field("created_date")
-    private Date createdDate;
+    private Date createdDate = new Date();
 
     /**
      * Default Cost of issuing certificate
@@ -74,6 +73,7 @@ public class CertificationAuthorityEntity {
      * Admin
      */
     @DBRef
+    @CascadeSave
     private UserEntity admin;
 
 }

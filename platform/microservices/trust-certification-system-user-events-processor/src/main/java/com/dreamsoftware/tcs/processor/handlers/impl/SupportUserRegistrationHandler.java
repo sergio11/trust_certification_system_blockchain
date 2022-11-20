@@ -3,7 +3,6 @@ package com.dreamsoftware.tcs.processor.handlers.impl;
 import com.dreamsoftware.tcs.persistence.bc.repository.IEtherFaucetBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
 import com.dreamsoftware.tcs.stream.events.AbstractEvent;
-import com.dreamsoftware.tcs.stream.events.notifications.users.UserRegisteredNotificationEvent;
 import com.dreamsoftware.tcs.utils.AbstractProcessAndReturnHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import java.math.BigInteger;
  * @param <T>
  */
 @Slf4j
-public abstract class SupportUserRegistrationHandler<T extends AbstractEvent> extends AbstractProcessAndReturnHandler<T, UserRegisteredNotificationEvent> {
+public abstract class SupportUserRegistrationHandler<T extends AbstractEvent> extends AbstractProcessAndReturnHandler<T> {
 
     /**
      * Ether Faucet Blockchain Repository

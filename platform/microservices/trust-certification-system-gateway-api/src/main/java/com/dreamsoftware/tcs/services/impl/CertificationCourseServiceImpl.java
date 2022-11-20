@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Certification Course Service
@@ -235,18 +236,6 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
 
     /**
      * @param courseId
-     * @param userId
-     * @return
-     */
-    @Override
-    public Boolean isTheOwner(final String courseId, final ObjectId userId) {
-        Assert.notNull(courseId, "Id can not be null");
-        Assert.notNull(userId, "Id can not be null");
-        return certificationCourseRepository.countByIdAndCaId(new ObjectId(courseId), userId) > 0;
-    }
-
-    /**
-     * @param courseId
      * @return
      */
     @Override
@@ -313,7 +302,6 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     }
 
     /**
-     *
      * @param term
      * @return
      * @throws Throwable
@@ -338,5 +326,25 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
                 .orElseThrow(() -> new IllegalStateException("CA not found"));
         final Iterable<CertificationCourseEntity> certificationCoursesByCA = certificationCourseRepository.findAllByCa(caMemberEntity.getCa());
         return certificationCourseDetailMapper.entityListToDTOList(certificationCoursesByCA);
+    }
+
+    /**
+     * @param courseId
+     * @param userId
+     * @return
+     */
+    @Override
+    public Boolean isTheCourseOwner(String courseId, ObjectId userId) {
+        Assert.notNull(courseId, "Id can not be null");
+        Assert.notNull(userId, "Id can not be null");
+        AtomicBoolean isTheCourseOwner = new AtomicBoolean(false);
+        userRepository.findById(userId).ifPresent(userEntity -> {
+            certificationCourseRepository.findById(new ObjectId(courseId)).ifPresent(certificationCourseEntity -> {
+                if (userEntity.getCa() != null) {
+                    isTheCourseOwner.set(userEntity.getCa().getId().equals(certificationCourseEntity.getCa().getId()));
+                }
+            });
+        });
+        return isTheCourseOwner.get();
     }
 }
