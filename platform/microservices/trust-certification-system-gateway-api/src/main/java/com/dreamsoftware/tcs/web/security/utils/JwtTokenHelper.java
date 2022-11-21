@@ -207,7 +207,7 @@ public class JwtTokenHelper {
      * @param lastPasswordReset
      * @return
      */
-    private Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
+    public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
         final Date created = getCreatedDateFromToken(token);
         return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset)
                 && (!isTokenExpired(token) || ignoreTokenExpiration(token));

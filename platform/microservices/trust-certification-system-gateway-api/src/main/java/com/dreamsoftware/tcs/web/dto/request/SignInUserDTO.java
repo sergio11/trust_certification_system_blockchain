@@ -46,14 +46,14 @@ public class SignInUserDTO {
     /**
      * Latitude
      */
-    @Schema(description = "Current Latitude value", required = false)
+    @Schema(description = "Current Latitude value")
     @JsonProperty("latitude")
     private String latitude;
 
     /**
      * Longitude
      */
-    @Schema(description = "Current Longitude", required = false)
+    @Schema(description = "Current Longitude")
     @JsonProperty("longitude")
     private String longitude;
 
