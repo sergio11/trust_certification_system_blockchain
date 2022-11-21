@@ -33,6 +33,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -93,7 +94,6 @@ public class AccountsServiceImpl implements IAccountsService {
         Assert.notNull(dto.getUserAgent(), "UserAgent can not be null");
         Assert.notNull(dto.getRemoteAddr(), "RemoteAddr can not be null");
         Assert.notNull(device, "Device can not be null");
-
         final Float loginLat = StringUtils.isNoneEmpty(dto.getLatitude())
                 ? Float.valueOf(dto.getLatitude()) : null;
         final Float loginLon = StringUtils.isNoneEmpty(dto.getLongitude())
@@ -167,7 +167,14 @@ public class AccountsServiceImpl implements IAccountsService {
     public AuthenticationDTO refresh(String token) {
         Assert.notNull(token, "Token can not be null");
         Assert.hasLength(token, "Token can not be empty");
-
+        final Collection<String> authorities = jwtTokenHelper.getAuthoritiesFromToken(token);
+        if(!authorities.contains(AuthorityEnum.ROLE_ADMIN.name())) {
+            final UserEntity userEntity = userRepository.findById(new ObjectId(jwtTokenHelper.getSubFromToken(token)))
+                    .orElseThrow(() -> new UsernameNotFoundException("User can not be found"));
+            if(userEntity.getLastPasswordUpdated() != null && !jwtTokenHelper.canTokenBeRefreshed(token, userEntity.getLastPasswordUpdated())) {
+                throw new IllegalStateException("Token can not be refreshed");
+            }
+        }
         return AuthenticationDTO.builder()
                 .accessToken(jwtTokenHelper.refreshToken(token))
                 .type(AUTH_TYPE)
@@ -422,9 +429,6 @@ public class AccountsServiceImpl implements IAccountsService {
             final Device device) {
 
         Assert.notNull(authenticationRequest, "Authentication can not be null");
-        Assert.notNull(latitude, "latitude can not be null");
-        Assert.notNull(longitude, "longitude can not be null");
-        Assert.notNull(userAgent, "userAgent can not be null");
         Assert.notNull(remoteAddr, "remoteAddr can not be null");
         Assert.notNull(device, "Device can not be null");
 

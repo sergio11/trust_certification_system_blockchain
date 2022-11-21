@@ -28,6 +28,14 @@ public class SaveCertificationCourseDTO {
     private String name;
 
     /**
+     * Description
+     */
+    @Schema(description = "Certification Course Description", required = true)
+    @JsonProperty("description")
+    @NotBlank(message = "{certification_course_description_not_null}")
+    private String description;
+
+    /**
      * Cost of issuing certificate not null
      */
     @Schema(description = "Cost of Issuing new Certification Course", required = true)

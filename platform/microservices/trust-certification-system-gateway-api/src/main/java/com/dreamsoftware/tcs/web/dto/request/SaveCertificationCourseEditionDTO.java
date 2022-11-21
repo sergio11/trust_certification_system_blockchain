@@ -22,7 +22,7 @@ public class SaveCertificationCourseEditionDTO {
     /**
      * Certification Course Edition Nam
      */
-    @Schema(description = "Certification Course Edition Name", required = true)
+    @Schema(description = "Certification Course Edition Name", required = false)
     @JsonProperty("name")
     private String name;
 
@@ -43,21 +43,21 @@ public class SaveCertificationCourseEditionDTO {
     /**
      * Expiration in days
      */
-    @Schema(description = "Expiration In Days", required = false)
+    @Schema(description = "Expiration In Days")
     @JsonProperty("expiration_in_days")
     private Long expirationInDays;
 
     /**
      * Can be renewed
      */
-    @Schema(description = "Can Be Renewed", required = false)
+    @Schema(description = "Can Be Renewed")
     @JsonProperty("can_be_renewed")
     private Boolean canBeRenewed;
 
     /**
      * Cost of renewing certificate
      */
-    @Schema(description = "Cost of renewing certificate", required = false)
+    @Schema(description = "Cost of renewing certificate")
     @JsonProperty("cost_renew_certificate")
     private Long costOfRenewingCertificate;
 

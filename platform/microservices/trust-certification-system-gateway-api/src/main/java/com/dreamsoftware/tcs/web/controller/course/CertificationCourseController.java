@@ -171,7 +171,6 @@ public class CertificationCourseController extends SupportController {
      * Save Certification Course
      * @param certificationCourse
      * @param selfUser
-     * @param request
      * @return
      * @throws Throwable
      */
@@ -185,18 +184,16 @@ public class CertificationCourseController extends SupportController {
     @RequestMapping(value = "/", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
-    public ResponseEntity<APIResponse<String>> save(
+    public ResponseEntity<APIResponse<SimpleCertificationCourseDetailDTO>> save(
             @Parameter(name = "certification_course", description = "Certification Course Data. Cannot null or empty.",
                     required = true, schema = @Schema(implementation = SaveCertificationCourseDTO.class))
             @Validated(ICommonSequence.class) SaveCertificationCourseDTO certificationCourse,
-            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
-            @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser) throws Throwable {
         try {
             certificationCourse.setCaWalletHash(selfUser.getWalletHash());
-            certificationCourseService.save(certificationCourse);
+            final SimpleCertificationCourseDetailDTO certificationCourseDetailDTO = certificationCourseService.save(certificationCourse);
             return responseHelper.createAndSendResponse(
-                    CertificationCourseResponseCodeEnum.SAVE_CERTIFICATION_COURSE, HttpStatus.OK,
-                    resolveString("new_course_registration_requested", request));
+                    CertificationCourseResponseCodeEnum.SAVE_CERTIFICATION_COURSE, HttpStatus.OK, certificationCourseDetailDTO);
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Throwable ex) {
