@@ -58,7 +58,7 @@ import org.springframework.util.Assert;
 @RequiredArgsConstructor
 public class CertificateSigningServiceImpl implements ICertificateSigningService {
 
-    private static String SIGNED_CERTIFICATE_TMP_FILE_NAME = "signedCertificate";
+    private final static String SIGNED_CERTIFICATE_TMP_FILE_NAME = "signedCertificate";
 
     /**
      * Properties

@@ -23,7 +23,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
 @JsonSubTypes({
-        @JsonSubTypes.Type(OnNewIssueCertificateRequestEvent.class),
+        @JsonSubTypes.Type(OnNewCertificateRequestAcceptedEvent.class),
         @JsonSubTypes.Type(EnableCertificateRequestEvent.class),
         @JsonSubTypes.Type(DisableCertificateRequestEvent.class),
         @JsonSubTypes.Type(UpdateCertificateVisibilityRequestEvent.class),
