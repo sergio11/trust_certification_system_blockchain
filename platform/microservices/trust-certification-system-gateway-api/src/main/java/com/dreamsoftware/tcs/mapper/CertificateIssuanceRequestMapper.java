@@ -26,7 +26,7 @@ public abstract class CertificateIssuanceRequestMapper {
             @Mapping(expression = "java(entity.getStatus().name())", target = "status"),
             @Mapping(expression = "java(simpleUserMapper.entityToDTO(entity.getStudent()))", target = "student"),
             @Mapping(expression = "java(simpleUserMapper.entityToDTO(entity.getCaMember()))", target = "caMember"),
-            @Mapping(expression = "java(certificationCourseEditionDetailMapper.entityToDTO(entity.getCourse()))", target = "course")
+            @Mapping(expression = "java(certificationCourseEditionDetailMapper.entityToDTO(entity.getCourseEdition()))", target = "course")
     })
     @Named("entityToDTO")
     public abstract CertificateIssuanceRequestDTO entityToDTO(CertificateIssuanceRequestEntity entity);

@@ -17,7 +17,7 @@ import com.dreamsoftware.tcs.service.IipfsGateway;
 import com.dreamsoftware.tcs.services.ITrustCertificationService;
 import com.dreamsoftware.tcs.stream.events.certificate.DisableCertificateRequestEvent;
 import com.dreamsoftware.tcs.stream.events.certificate.EnableCertificateRequestEvent;
-import com.dreamsoftware.tcs.stream.events.certificate.OnNewIssueCertificateRequestEvent;
+import com.dreamsoftware.tcs.stream.events.certificate.OnNewCertificateRequestAcceptedEvent;
 import com.dreamsoftware.tcs.stream.events.certificate.UpdateCertificateVisibilityRequestEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateRenewedNotificationEvent;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateRequestAcceptedNotificationEvent;
@@ -164,7 +164,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
         final CertificateIssuanceRequestEntity certificateRequest = CertificateIssuanceRequestEntity
                 .builder()
                 .caMember(caEntity)
-                .course(certificationCourseEditionEntity)
+                .courseEdition(certificationCourseEditionEntity)
                 .createdAt(new Date())
                 .status(CertificateStatusEnum.PENDING_REVIEW)
                 .qualification(issueCertificate.getQualification())
@@ -184,18 +184,12 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     @Override
     public CertificateIssuanceRequestDTO acceptCertificateRequest(final String id) {
         Assert.notNull(id, "Id can not be null");
-        final CertificateIssuanceRequestEntity certificate = certificateIssuanceRequestRepository.findById(new ObjectId(id))
-                .orElseThrow(() -> new IllegalStateException("Certificate not found"));
-        streamBridge.send(streamChannelsProperties.getCertificationManagement(), OnNewIssueCertificateRequestEvent
-                .builder()
-                .caWalletHash(certificate.getCaMember().getWalletHash())
-                .courseId(certificate.getCourse().getId().toString())
-                .qualification(certificate.getQualification())
-                .studentWalletHash(certificate.getStudent().getWalletHash())
-                .certificationRequestId(id)
-                .build());
         final CertificateIssuanceRequestEntity certificateRequestUpdated = certificateIssuanceRequestRepository.updateStatus(new ObjectId(id), CertificateStatusEnum.REVIEWED);
         final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = certificateIssuanceRequestMapper.entityToDTO(certificateRequestUpdated);
+        streamBridge.send(streamChannelsProperties.getCertificationManagement(), OnNewCertificateRequestAcceptedEvent
+                .builder()
+                .certificationRequestId(certificateIssuanceRequestDTO.getId())
+                .build());
         streamBridge.send(streamChannelsProperties.getNotificationDeliveryRequest(), CertificateRequestAcceptedNotificationEvent.builder()
                 .id(certificateIssuanceRequestDTO.getId())
                 .build());
@@ -338,7 +332,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
         return CertificateIssuedDetailDTO.builder()
                 .student(simpleUserMapper.entityToDTO(certificateIssuanceRequestEntity.getStudent()))
                 .caMember(simpleUserMapper.entityToDTO(certificateIssuanceRequestEntity.getCaMember()))
-                .course(certificationCourseEditionDetailMapper.entityToDTO(certificateIssuanceRequestEntity.getCourse()))
+                .course(certificationCourseEditionDetailMapper.entityToDTO(certificateIssuanceRequestEntity.getCourseEdition()))
                 .certificate(simpleCertificateIssuedMapper.entityToDTO(certificate))
                 .build();
     }

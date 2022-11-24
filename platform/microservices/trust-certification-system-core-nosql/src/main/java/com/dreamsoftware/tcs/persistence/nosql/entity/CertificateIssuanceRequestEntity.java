@@ -46,6 +46,12 @@ public class CertificateIssuanceRequestEntity {
     private CertificateStatusEnum status;
 
     /**
+     * Certificate Type
+     */
+    @Field("type")
+    private CertificateTypeEnum type;
+
+    /**
      * Created At
      */
     @Field("created_at")
@@ -64,10 +70,10 @@ public class CertificateIssuanceRequestEntity {
     private Long qualification;
 
     /**
-     * Course
+     * Course Edition
      */
     @DBRef
-    private CertificationCourseEditionEntity course;
+    private CertificationCourseEditionEntity courseEdition;
 
     /**
      * Student

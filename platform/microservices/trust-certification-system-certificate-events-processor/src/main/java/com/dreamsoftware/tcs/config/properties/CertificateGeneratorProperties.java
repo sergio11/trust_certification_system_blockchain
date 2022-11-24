@@ -24,28 +24,28 @@ public class CertificateGeneratorProperties {
     private String baseFolder;
 
     /**
-     * Background innovate
+     * Background Achievement
      */
-    @Value("${certificateGenerator.background.innovate}")
-    private String backgroundInnovate;
+    @Value("${certificateGenerator.background.achievement}")
+    private String backgroundAchievement;
 
     /**
-     * Background Professional
+     * Background Attendance
      */
-    @Value("${certificateGenerator.background.professional}")
-    private String backgroundProfessional;
+    @Value("${certificateGenerator.background.attendance}")
+    private String backgroundAttendance;
 
     /**
-     * Background Standard
+     * Achievement Certificate Template
      */
-    @Value("${certificateGenerator.background.standard}")
-    private String backgroundStandard;
+    @Value("${certificateGenerator.templates.achievement}")
+    private String achievementCertificateTemplate;
 
     /**
-     * Template File
+     * Attendance Certificate Template
      */
-    @Value("${certificateGenerator.template-file}")
-    private String templateFile;
+    @Value("${certificateGenerator.templates.attendance}")
+    private String attendanceCertificateTemplate;
 
     /**
      * Timestamp Authority
@@ -70,6 +70,12 @@ public class CertificateGeneratorProperties {
      */
     @Value("${certificateGenerator.placeholders.course-name}")
     private String courseNamePlaceholder;
+
+    /**
+     * Executive Director Placeholder
+     */
+    @Value("${certificateGenerator.placeholders.executive-director}")
+    private String executiveDirectorPlaceholder;
 
     /**
      * Student Qualification Placeholder
@@ -128,12 +134,12 @@ public class CertificateGeneratorProperties {
     @PostConstruct
     protected void onPostConstruct() {
         log.debug("baseFolder: " + baseFolder);
-        log.debug("backgroundInnovate: " + backgroundInnovate);
-        log.debug("backgroundProfessional: " + backgroundProfessional);
-        log.debug("backgroundStandard: " + backgroundStandard);
-        log.debug("templateFile: " + templateFile);
+        log.debug("backgroundAchievement: " + backgroundAchievement);
+        log.debug("backgroundAttendance: " + backgroundAttendance);
+        log.debug("templateFile: " + achievementCertificateTemplate);
         log.debug("timestampAuthority: " + timestampAuthority);
         log.debug("caNamePlaceholder: " + caNamePlaceholder);
+        log.debug("executiveDirectorPlaceholder: " + executiveDirectorPlaceholder);
         log.debug("studentNamePlaceholder: " + studentNamePlaceholder);
         log.debug("courseNamePlaceholder: " + courseNamePlaceholder);
         log.debug("studentQualificationPlaceholder: " + studentQualificationPlaceholder);
