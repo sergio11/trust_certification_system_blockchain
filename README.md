@@ -17,8 +17,8 @@ A Certification Authority and a Student reach an agreement in order to issue a c
   <img src="https://img.shields.io/badge/Ethereum-3C3C3D?style=for-the-badge&logo=Ethereum&logoColor=white" />
   <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white" />
   <img src="https://img.shields.io/badge/-Spring%20Cloud-2E8B57?style=for-the-badge&logo=spring&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vault-%23000000.svg?&style=for-the-badge&logo=Vault&logoColor=white" />
   <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" />
-  <img src="https://img.shields.io/badge/redis-%23DD0031.svg?&style=for-the-badge&logo=redis&logoColor=white" />
   <img src="https://img.shields.io/badge/-IPFS-3e5f8a?style=for-the-badge&logo=ipfs&logoColor=white" />
   <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" />
   <img src="https://img.shields.io/badge/apache%20kafka-%23000000.svg?&style=for-the-badge&logo=Apache%20Kafka&logoColor=white" />
