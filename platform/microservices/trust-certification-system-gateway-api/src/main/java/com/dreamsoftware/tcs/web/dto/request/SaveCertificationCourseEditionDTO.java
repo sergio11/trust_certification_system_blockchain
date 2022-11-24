@@ -22,7 +22,7 @@ public class SaveCertificationCourseEditionDTO {
     /**
      * Certification Course Edition Nam
      */
-    @Schema(description = "Certification Course Edition Name", required = false)
+    @Schema(description = "Certification Course Edition Name")
     @JsonProperty("name")
     private String name;
 
@@ -64,12 +64,14 @@ public class SaveCertificationCourseEditionDTO {
     /**
      * Start At
      */
+    @Schema(description = "Course start at")
     @JsonProperty("start_at")
     private Date startAt;
 
     /**
      * End At
      */
+    @Schema(description = "Course end at")
     @JsonProperty("end_at")
     private Date endAt;
 

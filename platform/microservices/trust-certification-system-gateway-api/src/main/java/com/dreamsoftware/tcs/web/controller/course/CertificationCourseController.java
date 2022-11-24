@@ -13,6 +13,8 @@ import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdminOrCourseOwner;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
+import com.dreamsoftware.tcs.web.validation.constraints.CourseEditionShouldExist;
+import com.dreamsoftware.tcs.web.validation.constraints.CourseShouldExist;
 import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.json.JsonMergePatch;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -125,6 +129,7 @@ public class CertificationCourseController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<CertificationCourseDetailDTO>> getDetailById(
             @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
@@ -216,6 +221,7 @@ public class CertificationCourseController extends SupportController {
     public ResponseEntity<APIResponse<SimpleCertificationCourseDetailDTO>> partialUpdateCertificationCourse(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @RequestBody JsonMergePatch mergePatchDocument) {
         try {
@@ -245,6 +251,7 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<String>> enable(
             @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -274,6 +281,7 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<String>> disable(
             @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -310,6 +318,7 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<String>> deleteById(
             @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -346,6 +355,7 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<CertificationCourseEditionDetailDTO>> save(
             @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(name = "certification_course_edition", description = "Certification Course Data. Cannot null or empty.",
                     required = true, schema = @Schema(implementation = SaveCertificationCourseEditionDTO.class))
@@ -380,8 +390,10 @@ public class CertificationCourseController extends SupportController {
     public ResponseEntity<APIResponse<CertificationCourseEditionDetailDTO>> partialUpdateCertificationCourseEdition(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Edition Id", required = true)
+            @Valid @CourseEditionShouldExist(message = "{course_edition_should_exist}")
             @PathVariable("editionId") String editionId,
             @RequestBody JsonMergePatch mergePatchDocument) {
         try {
@@ -412,8 +424,10 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<String>> enable(
             @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Edition Id", required = true)
+            @Valid @CourseEditionShouldExist(message = "{course_edition_should_exist}")
             @PathVariable("editionId") String editionId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -443,8 +457,10 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<String>> disable(
             @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Edition Id", required = true)
+            @Valid @CourseEditionShouldExist(message = "{course_edition_should_exist}")
             @PathVariable("editionId") String editionId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -483,8 +499,10 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<String>> deleteById(
             @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Edition Id", required = true)
+            @Valid @CourseEditionShouldExist(message = "{course_edition_should_exist}")
             @PathVariable("editionId") String editionId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -517,7 +535,11 @@ public class CertificationCourseController extends SupportController {
     @RequestMapping(value = {"/{courseId}/editions/{editionId}/canBeIssued"}, method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<Boolean>> canBeIssued(
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Course Edition Id", required = true)
+            @Valid @CourseEditionShouldExist(message = "{course_edition_should_exist}")
             @PathVariable("editionId") String courseEditionId
     ) throws Throwable {
         try {
@@ -549,6 +571,9 @@ public class CertificationCourseController extends SupportController {
     @RequestMapping(value = {"/{courseId}/editions/{editionId}/canBeRenewed"}, method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<Boolean>> canBeRenewed(
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Course Edition Id", required = true)
             @PathVariable("editionId") String courseEditionId
     ) throws Throwable {

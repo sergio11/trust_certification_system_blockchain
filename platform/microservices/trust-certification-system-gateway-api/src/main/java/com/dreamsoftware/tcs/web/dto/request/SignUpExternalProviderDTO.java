@@ -34,6 +34,7 @@ public class SignUpExternalProviderDTO {
     /**
      * Type
      */
+    @Schema(description = "External Provider (FACEBOOK, GOOGLE)", required = true)
     @JsonProperty("provider")
     @NotBlank(message = "{provider_not_null}")
     @ValidAuthProviderType(message = "{provider_type_invalid}", groups = {IExtended.class})

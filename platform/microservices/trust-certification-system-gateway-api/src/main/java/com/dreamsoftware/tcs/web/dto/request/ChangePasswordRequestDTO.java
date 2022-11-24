@@ -32,6 +32,7 @@ public class ChangePasswordRequestDTO {
     /**
      * Password Clear
      */
+    @Schema(description = "Password clear", required = true)
     @JsonProperty("passwordClear")
     @NotBlank(message = "{user_password_not_null}")
     @Size(min = 8, max = 25, message = "{user_password_size}")
@@ -40,6 +41,7 @@ public class ChangePasswordRequestDTO {
     /**
      * Confirm Password
      */
+    @Schema(description = "Confirm Password", required = true)
     @JsonProperty("confirmPassword")
     @NotBlank(message = "{user_confirm_password_not_null}")
     private String confirmPassword;
@@ -47,6 +49,7 @@ public class ChangePasswordRequestDTO {
     /**
      * Confirmation Token
      */
+    @Schema(description = "Confirmation Token", required = true)
     @JsonProperty("confirmationToken")
     @NotBlank(message = "{confirmation_token_not_null}")
     private String confirmationToken;

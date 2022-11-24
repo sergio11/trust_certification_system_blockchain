@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 /**
  *
  * @author ssanchez
@@ -24,6 +26,7 @@ public class PlaceTokensOrderRequestDTO {
      */
     @Schema(description = "Tokens to buy", required = true)
     @JsonProperty("tokens")
+    @NotNull(message = "{tokens_not_null}")
     private Long tokens;
 
     /**

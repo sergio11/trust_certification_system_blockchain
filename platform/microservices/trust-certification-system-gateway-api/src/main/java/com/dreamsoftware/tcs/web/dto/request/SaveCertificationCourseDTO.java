@@ -52,21 +52,21 @@ public class SaveCertificationCourseDTO {
     /**
      * Duration In Hours
      */
-    @Schema(description = "Expiration In Days", required = false)
+    @Schema(description = "Expiration In Days")
     @JsonProperty("expirationInDays")
     private Long expirationInDays;
 
     /**
      * Can be renewed
      */
-    @Schema(description = "Can Be Renewed", required = false)
+    @Schema(description = "Can Be Renewed")
     @JsonProperty("canBeRenewed")
     private Boolean canBeRenewed;
 
     /**
      * Cost of renewing certificate
      */
-    @Schema(description = "Cost of renewing certificate", required = false)
+    @Schema(description = "Cost of renewing certificate")
     @JsonProperty("costOfRenewingCertificate")
     private Long costOfRenewingCertificate;
 

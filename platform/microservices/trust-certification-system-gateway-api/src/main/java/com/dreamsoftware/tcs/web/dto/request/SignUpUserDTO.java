@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +30,7 @@ public class SignUpUserDTO {
     /**
      * Name
      */
+    @Schema(description = "User full name", required = true)
     @JsonProperty("fullName")
     @NotBlank(message = "{user_name_not_null}")
     @Size(min = 2, max = 45, message = "{user_name_size}")
@@ -36,6 +39,7 @@ public class SignUpUserDTO {
     /**
      * Email
      */
+    @Schema(description = "User email", required = true)
     @JsonProperty("email")
     @NotBlank(message = "{user_email_not_null}")
     @Email(message = "{user_email_invalid}")
@@ -45,6 +49,7 @@ public class SignUpUserDTO {
     /**
      * Password Clear
      */
+    @Schema(description = "Password clear", required = true)
     @JsonProperty("passwordClear")
     @NotBlank(message = "{user_password_not_null}")
     @Size(min = 8, max = 25, message = "{user_password_size}")
@@ -53,6 +58,7 @@ public class SignUpUserDTO {
     /**
      * Confirm Password
      */
+    @Schema(description = "Confirm clear", required = true)
     @JsonProperty("confirmPassword")
     @NotBlank(message = "{user_confirm_password_not_null}")
     protected String confirmPassword;

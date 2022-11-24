@@ -20,13 +20,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import java.text.MessageFormat;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-
 import org.springframework.http.MediaType;
 import org.springframework.mobile.device.Device;
 import org.springframework.validation.annotation.Validated;
@@ -165,7 +163,6 @@ public class AccountsController extends SupportController {
                     required = true, schema = @Schema(implementation = SignInUserExternalProviderDTO.class))
             @Valid SignInUserExternalProviderDTO externalProviderAuthRequest,
             @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
-            @Parameter(hidden = true) Locale locale,
             @Parameter(hidden = true) Device device,
             @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
         try {
@@ -278,9 +275,12 @@ public class AccountsController extends SupportController {
             @Parameter(hidden = true) @RequestHeader("User-Agent") String userAgent,
             @Parameter(hidden = true) Locale locale) throws Throwable {
         try {
-            user.setUserAgent(userAgent);
-            user.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
+            // Configure ISO3 Language
+            if (StringUtils.isBlank(user.getLanguage())) {
+                user.setLanguage(MessageFormat.format("{0}_{1}", locale.getLanguage(), locale.getCountry()));
+            }
             // Configure User Agent from HTTP Header
+            user.setUserAgent(userAgent);
             final SimpleUserDTO userSaved = accountsService.signup(user);
             return responseHelper.createAndSendResponse(AccountsResponseCodeEnum.SIGNUP_EXTERNAL_ACCOUNT_SUCCESS,
                     HttpStatus.OK, userSaved);

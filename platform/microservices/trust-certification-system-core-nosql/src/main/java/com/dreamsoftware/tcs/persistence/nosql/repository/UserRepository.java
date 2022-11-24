@@ -5,6 +5,8 @@ import com.dreamsoftware.tcs.persistence.nosql.entity.UserStateEnum;
 
 import java.util.List;
 import java.util.Optional;
+
+import com.dreamsoftware.tcs.persistence.nosql.entity.UserTypeEnum;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -43,6 +45,13 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId> , 
      * @return
      */
     Long countByEmail(final String email);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    Long countByIdAndCaIsNotNull(final ObjectId id);
 
     /**
      *
