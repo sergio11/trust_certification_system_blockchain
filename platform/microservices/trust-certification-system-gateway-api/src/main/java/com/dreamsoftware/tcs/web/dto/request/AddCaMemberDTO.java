@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +26,7 @@ public class AddCaMemberDTO {
     /**
      * Name
      */
+    @Schema(description = "CA member full name", required = true)
     @JsonProperty("fullName")
     @NotBlank(message = "{user_name_not_null}")
     @Size(min = 2, max = 45, message = "{user_name_size}")
@@ -32,6 +35,7 @@ public class AddCaMemberDTO {
     /**
      * Email
      */
+    @Schema(description = "CA member email address", required = true)
     @JsonProperty("email")
     @NotBlank(message = "{user_email_not_null}")
     @Email(message = "{user_email_invalid}")
@@ -41,6 +45,7 @@ public class AddCaMemberDTO {
     /**
      * User Language
      */
+    @Schema(description = "CA member preferred language", required = true)
     @JsonProperty("language")
     @ShouldBeValidISOLanguage(message = "{user_language_invalid}")
     private String language;

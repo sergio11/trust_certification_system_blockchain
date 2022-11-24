@@ -2,10 +2,10 @@ package com.dreamsoftware.tcs.web.controller.ca;
 
 import com.dreamsoftware.tcs.services.ICertificationAuthorityService;
 import com.dreamsoftware.tcs.web.controller.ca.error.exception.*;
-import com.dreamsoftware.tcs.web.core.APIResponse;
-import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.converter.mediatype.PatchMediaType;
+import com.dreamsoftware.tcs.web.core.APIResponse;
+import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.dto.request.AddCaMemberDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificationAuthorityDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleCertificationAuthorityDetailDTO;
@@ -16,29 +16,27 @@ import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdmin;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCaAdmin;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
+import com.dreamsoftware.tcs.web.validation.constraints.CaMemberShouldExist;
+import com.dreamsoftware.tcs.web.validation.constraints.CaShouldExist;
 import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
-import com.dreamsoftware.tcs.web.validation.constraints.ShouldBeAValidObjectId;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import javax.json.JsonMergePatch;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * @author ssanchez
@@ -98,7 +96,7 @@ public class CertificationAuthorityController extends SupportController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<CertificationAuthorityDetailDTO>> getDetailById(
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @Valid @CaShouldExist(message = "{ca_should_exist}")
             @PathVariable("id") String id
     ) throws Throwable {
         try {
@@ -156,7 +154,7 @@ public class CertificationAuthorityController extends SupportController {
     public ResponseEntity<APIResponse<SimpleCertificationAuthorityDetailDTO>> partialUpdateCertificationCourse(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @Valid @CaShouldExist(message = "{ca_should_exist}")
             @PathVariable("id") String id,
             @RequestBody JsonMergePatch mergePatchDocument) {
 
@@ -186,7 +184,7 @@ public class CertificationAuthorityController extends SupportController {
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<String>> enable(
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}")
+            @Valid @CaShouldExist(message = "{ca_should_exist}")
             @PathVariable("id") String id,
             @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
@@ -218,10 +216,10 @@ public class CertificationAuthorityController extends SupportController {
     public ResponseEntity<APIResponse<String>> enableMember(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "caId", description = "Certification Authority Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @Valid @CaShouldExist(message = "{ca_should_exist}")
             @PathVariable("caId") String caId,
             @Parameter(name = "memberId", description = "Member Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{member_id_not_valid}")
+            @Valid @CaMemberShouldExist(message = "{ca_member_should_exist}")
             @PathVariable("memberId") String memberId,
             @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
@@ -250,7 +248,8 @@ public class CertificationAuthorityController extends SupportController {
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<String>> disable(
             @Parameter(name = "id", description = "CA Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}") @PathVariable("id") String id,
+            @Valid @CaShouldExist(message = "{ca_should_exist}")
+            @PathVariable("id") String id,
             @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
         try {
@@ -281,10 +280,10 @@ public class CertificationAuthorityController extends SupportController {
     public ResponseEntity<APIResponse<String>> disableMember(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "caId", description = "Certification Authority Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @Valid @CaShouldExist(message = "{ca_should_exist}")
             @PathVariable("caId") String caId,
             @Parameter(name = "memberId", description = "Member Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{member_id_not_valid}")
+            @Valid @CaMemberShouldExist(message = "{ca_member_should_exist}")
             @PathVariable("memberId") String memberId,
             @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
@@ -321,7 +320,7 @@ public class CertificationAuthorityController extends SupportController {
     public ResponseEntity<APIResponse<SimpleUserDTO>> addCaMember(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "id", description = "Certification Authority Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @Valid @CaShouldExist(message = "{ca_should_exist}")
             @PathVariable("id") String caId,
             @Parameter(name = "member", description = "CA Member data. Cannot null or empty.",
                     required = true, schema = @Schema(implementation = AddCaMemberDTO.class))
@@ -359,10 +358,10 @@ public class CertificationAuthorityController extends SupportController {
     public ResponseEntity<APIResponse<String>> removeCaMember(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "caId", description = "Certification Authority Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @Valid @CaShouldExist(message = "{ca_should_exist}")
             @PathVariable("caId") String caId,
             @Parameter(name = "memberId", description = "CA Member Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}")
+            @Valid @CaMemberShouldExist(message = "{ca_member_should_exist}")
             @PathVariable("memberId") String memberId,
             @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
         try {
@@ -395,7 +394,7 @@ public class CertificationAuthorityController extends SupportController {
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<String>> removeCa(
             @Parameter(name = "caId", description = "Certification Authority Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{ca_id_not_valid}")
+            @Valid @CaShouldExist(message = "{ca_should_exist}")
             @PathVariable("caId") String caId,
             @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
         try {

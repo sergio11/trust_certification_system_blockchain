@@ -20,4 +20,11 @@ public interface CertificationCourseRepository extends MongoRepository<Certifica
      */
     Iterable<CertificationCourseEntity> findAllByCa(final CertificationAuthorityEntity ca);
 
+    /**
+     *
+     * @param id
+     * @return
+     */
+    Long countById(final ObjectId id);
+
 }
