@@ -168,6 +168,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
                 .createdAt(new Date())
                 .status(CertificateStatusEnum.PENDING_REVIEW)
                 .qualification(issueCertificate.getQualification())
+                .type(CertificateTypeEnum.valueOf(issueCertificate.getType()))
                 .student(studentEntity)
                 .build();
         final CertificateIssuanceRequestEntity certificateRequestSaved = certificateIssuanceRequestRepository.save(certificateRequest);

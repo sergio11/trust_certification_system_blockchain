@@ -1,5 +1,7 @@
 package com.dreamsoftware.tcs.web.dto.request;
 
+import com.dreamsoftware.tcs.web.validation.constraints.IExtended;
+import com.dreamsoftware.tcs.web.validation.constraints.ValidCertificateType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,6 +35,16 @@ public class IssueCertificateRequestDTO {
     @Schema(description = "Qualification Obtained", required = true)
     @JsonProperty("qualification")
     private Long qualification;
+
+    /**
+     * Certificate Type
+     */
+    @Schema(description = "Certificate Type (ACHIEVEMENT, ATTENDANCE)", required = true)
+    @JsonProperty("type")
+    @NotBlank(message = "{certificate_type_not_null}")
+    @ValidCertificateType(message = "{certificate_type_invalid}", groups = {IExtended.class})
+    private String type;
+
 
     /**
      * Student Wallet Hash
