@@ -16,7 +16,7 @@ import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdmin;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
-import com.dreamsoftware.tcs.web.validation.constraints.ShouldBeAValidObjectId;
+import com.dreamsoftware.tcs.web.validation.constraints.UserShouldExist;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -182,7 +182,7 @@ public class TokenManagementController extends SupportController {
     @OnlyAccessForAdmin
     public ResponseEntity<APIResponse<TokenPricesDTO>> getClientTokens(
             @Parameter(name = "id", description = "User Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{user_id_not_valid}") @PathVariable("id") String id,
+            @Valid @UserShouldExist(message = "{user_not_exists}") @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<ObjectId> selfUser
     ) throws Throwable {
         try {

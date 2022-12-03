@@ -12,7 +12,8 @@ import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdmin;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdminOrNotificationOwner;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
-import com.dreamsoftware.tcs.web.validation.constraints.ShouldBeAValidObjectId;
+import com.dreamsoftware.tcs.web.validation.constraints.NotificationShouldExist;
+import com.dreamsoftware.tcs.web.validation.constraints.UserShouldExist;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,7 +28,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -72,8 +72,8 @@ public class NotificationsController extends SupportController {
     public ResponseEntity<APIResponse<Page<NotificationDTO>>> getNotificationsForUser(
             @RequestParam(name = "page", required = false, defaultValue = "0") final Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "20") final Integer size,
-            @PathVariable @Valid @ShouldBeAValidObjectId(message = "{notification_id_not_valid}") final String id) throws Throwable {
-
+            @Valid @UserShouldExist(message = "{user_not_exists}")
+            @PathVariable final String id) throws Throwable {
         return getNotifications(id, page, size);
     }
 
@@ -125,7 +125,8 @@ public class NotificationsController extends SupportController {
     @OnlyAccessForAdminOrNotificationOwner
     public ResponseEntity<APIResponse<NotificationDTO>> getById(
             @Parameter(name = "id", description = "Notification Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{notification_id_not_valid}") @PathVariable("id") String id,
+            @Valid @NotificationShouldExist(message = "{notification_not_exist}")
+            @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
         try {
@@ -158,7 +159,8 @@ public class NotificationsController extends SupportController {
     @OnlyAccessForAdminOrNotificationOwner
     public ResponseEntity<APIResponse<String>> deleteById(
             @Parameter(name = "id", description = "Notification Id", required = true)
-            @Valid @ShouldBeAValidObjectId(message = "{notification_id_not_valid}") @PathVariable("id") String id,
+            @Valid @NotificationShouldExist(message = "{notification_not_exist}")
+            @PathVariable("id") String id,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
     ) throws Throwable {
