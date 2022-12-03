@@ -40,4 +40,6 @@ public interface NotificationRepository extends MongoRepository<NotificationEnti
      */
     Long countByIdAndUserId(final ObjectId id, final ObjectId userId);
 
+    Long countById(final ObjectId id);
+
 }
