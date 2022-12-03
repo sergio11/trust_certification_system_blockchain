@@ -253,28 +253,6 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
 
     /**
      *
-     * @param id
-     * @param fileCertificateHash
-     * @param recipientAddress
-     * @return
-     * @throws RepositoryException
-     */
-    @Override
-    public Boolean validateCertificateIntegrity(final String id, final String fileCertificateHash, final String recipientAddress) throws RepositoryException {
-        Assert.notNull(id, "id can not be null");
-        Assert.notNull(fileCertificateHash, "certificateHash can not be null");
-        Assert.notNull(recipientAddress, "certificateHash can not be null");
-        log.debug("validateCertificateIntegrity CALLED!");
-        try {
-            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract();
-            return trustCertificationContract.validateCertificateIntegrity(id, fileCertificateHash, recipientAddress).send();
-        } catch (final Exception ex) {
-            throw new RepositoryException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     *
      * @return @throws RepositoryException
      */
     @Override

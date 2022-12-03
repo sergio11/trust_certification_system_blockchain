@@ -107,14 +107,4 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
      */
     List<CertificateIssuedEntity> getMyCertificatesAsIssuer(final String walletHash) throws RepositoryException;
 
-    /**
-     *
-     * @param id
-     * @param fileCertificateHash
-     * @param recipientAddress
-     * @return
-     * @throws RepositoryException
-     */
-    Boolean validateCertificateIntegrity(final String id, final String fileCertificateHash, final String recipientAddress) throws RepositoryException;
-
 }

@@ -350,6 +350,11 @@ public class AccountsServiceImpl implements IAccountsService {
         return authProviderEntityRepository.findOneByKey(key).map(authProviderMapper::entityToDTO);
     }
 
+    @Override
+    public ICommonUserDetailsAware<String> getCurrentPrincipal() {
+        return (ICommonUserDetailsAware<String>) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     /**
      * @param dto
      * @return
