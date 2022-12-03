@@ -5,6 +5,8 @@ import com.dreamsoftware.tcs.web.dto.response.AuthenticationDTO;
 import com.dreamsoftware.tcs.web.dto.response.AuthenticationProviderDTO;
 import com.dreamsoftware.tcs.web.dto.response.SimpleUserDTO;
 import java.util.Optional;
+
+import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import org.springframework.mobile.device.Device;
 
 /**
@@ -110,4 +112,10 @@ public interface IAccountsService {
      * @return
      */
     Optional<AuthenticationProviderDTO> findAuthProviderByKey(final String key);
+
+    /**
+     * Get Current Principal
+     * @return
+     */
+    ICommonUserDetailsAware<String> getCurrentPrincipal();
 }
