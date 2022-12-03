@@ -1,29 +1,22 @@
 package com.dreamsoftware.tcs.services.impl;
 
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
-import com.dreamsoftware.tcs.services.IPaymentService;
+import com.dreamsoftware.tcs.config.properties.PaypalProperties;
 import com.dreamsoftware.tcs.service.ISecurityTokenGeneratorService;
+import com.dreamsoftware.tcs.services.IPaymentService;
+import com.dreamsoftware.tcs.web.dto.internal.CreateOrderRequestDTO;
 import com.dreamsoftware.tcs.web.dto.internal.CreatedOrderDTO;
 import com.paypal.core.PayPalHttpClient;
 import com.paypal.http.HttpResponse;
-import com.paypal.orders.AmountWithBreakdown;
-import com.paypal.orders.ApplicationContext;
-import com.paypal.orders.LinkDescription;
-import com.paypal.orders.Name;
-import com.paypal.orders.Order;
-import com.paypal.orders.OrderRequest;
-import com.paypal.orders.OrdersCaptureRequest;
-import com.paypal.orders.OrdersCreateRequest;
-import com.paypal.orders.Payer;
-import com.paypal.orders.PurchaseUnitRequest;
-import io.jsonwebtoken.lang.Assert;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import com.paypal.orders.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+import java.util.Collections;
+import java.util.NoSuchElementException;
 
 /**
  * PayPal Payment Service Implementation
@@ -35,7 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class PayPalPaymentServiceImpl implements IPaymentService {
 
     private final static String CHECKOUT_PAYMENT_INTENT = "CAPTURE";
-    private final static String CURRENCY_CODE = "EU";
+    private final static String CURRENCY_CODE = "EUR";
     private final static String APPROVE_LINK_REL = "approve";
     private final static String SECURITY_TOKEN_PARAM = "st";
 
@@ -43,38 +36,39 @@ public class PayPalPaymentServiceImpl implements IPaymentService {
      * PayPal Http Client
      */
     private final PayPalHttpClient payPalHttpClient;
+    private final PaypalProperties paypalProperties;
     private final ISecurityTokenGeneratorService securityTokenGeneratorService;
 
     /**
      *
-     * @param userEntity
-     * @param totalAmount
-     * @param returnUrl
+     * @param createOrderRequestDTO
      * @return
      */
     @Override
     @SneakyThrows
-    public CreatedOrderDTO createOrder(final UserEntity userEntity, final Double totalAmount, final URI returnUrl) {
-        Assert.notNull(userEntity, "User Entity can not be null");
-        Assert.notNull(totalAmount, "Total Amount can not be null");
-        Assert.notNull(returnUrl, "ReturnUrl can not be null");
+    public CreatedOrderDTO createOrder(final CreateOrderRequestDTO createOrderRequestDTO) {
+        Assert.notNull(createOrderRequestDTO.getPayerId(), "Payer id can not be null");
+        Assert.notNull(createOrderRequestDTO.getPayerEmail(), "Payer email can not be null");
+        Assert.notNull(createOrderRequestDTO.getTotalAmount(), "Total Amount can not be null");
+        Assert.notNull(createOrderRequestDTO.getReturnUrl(), "ReturnUrl can not be null");
 
         final OrderRequest orderRequest = new OrderRequest();
         orderRequest.checkoutPaymentIntent(CHECKOUT_PAYMENT_INTENT);
+        final Payee payee = new Payee();
+        payee.email(paypalProperties.getPayeeEmailAddress());
         final PurchaseUnitRequest purchaseUnitRequest = new PurchaseUnitRequest()
+                .payee(payee)
                 .amountWithBreakdown(new AmountWithBreakdown()
                         .currencyCode(CURRENCY_CODE)
-                        .value(totalAmount.toString()));
-        orderRequest.purchaseUnits(Arrays.asList(purchaseUnitRequest));
+                        .value(createOrderRequestDTO.getTotalAmount().toString()));
+        orderRequest.purchaseUnits(Collections.singletonList(purchaseUnitRequest));
         final Payer payer = new Payer();
-        payer.email(userEntity.getEmail());
+        payer.email(createOrderRequestDTO.getPayerEmail());
         final Name payerName = new Name();
-        payerName.fullName(userEntity.getFullName());
         payer.name(payerName);
-        payer.payerId(userEntity.getId().toString());
         orderRequest.payer(payer);
-        final String securityToken = securityTokenGeneratorService.generateToken(userEntity.getId().toString());
-        orderRequest.applicationContext(new ApplicationContext().returnUrl(UriComponentsBuilder.fromUri(returnUrl)
+        final String securityToken = securityTokenGeneratorService.generateToken(createOrderRequestDTO.getPayerId());
+        orderRequest.applicationContext(new ApplicationContext().returnUrl(UriComponentsBuilder.fromUri(createOrderRequestDTO.getReturnUrl())
                 .queryParam(SECURITY_TOKEN_PARAM, securityToken)
                 .build().toUriString()));
         final OrdersCreateRequest ordersCreateRequest = new OrdersCreateRequest().requestBody(orderRequest);

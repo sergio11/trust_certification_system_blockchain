@@ -29,9 +29,16 @@ public class PaypalProperties {
     @Value("${paypal.client.secret}")
     private String clientSecret;
 
+    /**
+     * Payee Email Address
+     */
+    @Value("${paypal.payeeEmailAddress}")
+    private String payeeEmailAddress;
+
     @PostConstruct
     public void onPostConstruct() {
         log.debug("Paypal Client Id: " + clientId);
         log.debug("Paypal Client Secret: " + clientSecret);
+        log.debug("Paypal Payee email address: " + payeeEmailAddress);
     }
 }
