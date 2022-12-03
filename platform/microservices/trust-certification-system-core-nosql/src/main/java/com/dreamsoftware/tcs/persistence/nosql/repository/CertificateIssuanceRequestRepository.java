@@ -50,4 +50,12 @@ public interface CertificateIssuanceRequestRepository extends MongoRepository<Ce
      */
     Long countByCertificateId(final String id);
 
+    /**
+     *
+     * @param student
+     * @param courseEdition
+     * @return
+     */
+    Long countByStudentAndCourseEdition(final ObjectId student, final ObjectId courseEdition);
+
 }

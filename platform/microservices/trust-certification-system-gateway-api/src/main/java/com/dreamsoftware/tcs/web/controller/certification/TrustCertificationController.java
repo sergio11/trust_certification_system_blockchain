@@ -15,8 +15,7 @@ import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForStudent;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
-import com.dreamsoftware.tcs.web.validation.constraints.CertificateShouldExist;
-import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
+import com.dreamsoftware.tcs.web.validation.constraints.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -31,7 +30,7 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import com.dreamsoftware.tcs.web.validation.constraints.CertificateShouldBePendingReview;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -396,7 +395,8 @@ public class TrustCertificationController extends SupportController {
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<CertificateIssuedDetailDTO>> renewCertificate(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
-            @Valid @CertificateShouldExist(message = "{certificate_not_exist}")
+            @Valid @ShouldHaveAssociatedCertificate(message = "{certificate_not_exist}")
+            @ShouldHaveEnoughFundForRenewingCertificate(message = "{not_enough_funds_for_renewing_certificate}")
             @PathVariable("certId") String certId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {

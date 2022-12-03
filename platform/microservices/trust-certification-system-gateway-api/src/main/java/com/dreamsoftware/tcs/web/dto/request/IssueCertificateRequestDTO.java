@@ -1,7 +1,6 @@
 package com.dreamsoftware.tcs.web.dto.request;
 
-import com.dreamsoftware.tcs.web.validation.constraints.IExtended;
-import com.dreamsoftware.tcs.web.validation.constraints.ValidCertificateType;
+import com.dreamsoftware.tcs.web.validation.constraints.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,7 +25,9 @@ public class IssueCertificateRequestDTO {
      */
     @Schema(description = "Certification Course Id", required = true)
     @JsonProperty("certificateCourseId")
-    @NotBlank(message = "{certification_course_id_not_null}")
+    @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+    @ShouldNotHaveAssociatedCertificate(message = "{course_edition_has_associated_certificate}")
+    @ShouldHaveEnoughFundForIssuingCertificate(message = "{not_enough_funds_for_issuing_certificate}")
     private String certificateCourseEditionId;
 
     /**
