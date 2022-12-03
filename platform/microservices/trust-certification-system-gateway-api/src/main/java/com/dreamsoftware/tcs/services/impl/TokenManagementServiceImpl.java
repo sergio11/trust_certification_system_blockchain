@@ -13,6 +13,7 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.services.ICryptoCompareService;
 import com.dreamsoftware.tcs.services.IPaymentService;
 import com.dreamsoftware.tcs.services.ITokenManagementService;
+import com.dreamsoftware.tcs.web.dto.internal.CreateOrderRequestDTO;
 import com.dreamsoftware.tcs.web.dto.internal.CreatedOrderDTO;
 import com.dreamsoftware.tcs.web.dto.internal.CryptoComparePricesDTO;
 import com.dreamsoftware.tcs.web.dto.request.PlaceTokensOrderRequestDTO;
@@ -108,7 +109,12 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
         final Double orderAmountEUR = tokens * tokenPriceInEUR;
         final Double orderAmountUSD = tokens * tokenPriceInUSD;
         final Long orderAmountWEI = tokens * tokenPriceInWeis;
-        final CreatedOrderDTO createdOrder = paymentService.createOrder(userEntity, orderAmountEUR, orderRequest.getConfirmOrderUri());
+        final CreatedOrderDTO createdOrder = paymentService.createOrder(CreateOrderRequestDTO.builder()
+                .payerEmail(userEntity.getEmail())
+                .payerId(userEntity.getId().toString())
+                .totalAmount(orderAmountEUR)
+                .returnUrl(orderRequest.getConfirmOrderUri())
+                .build());
         final CreatedOrderEntity createdOrderEntity = CreatedOrderEntity
                 .builder()
                 .externalOrderId(createdOrder.getOrderId())
@@ -140,6 +146,7 @@ public class TokenManagementServiceImpl implements ITokenManagementService {
         Assert.notNull(externalOrderId, "External Order id can not be null");
         Assert.notNull(securityToken, "Security Token can not be null");
         final CreatedOrderEntity createdOrderEntity = createdOrderRepository.findByExternalOrderIdAndSecurityToken(externalOrderId, securityToken).orElseThrow(() -> new IllegalStateException("Order not found"));
+        paymentService.captureOrder(createdOrderEntity.getExternalOrderId());
         createdOrderEntity.setStatus(CreatedOrderStateEnum.APPROVED);
         createdOrderEntity.setApprovedAt(new Date());
         createdOrderEntity.setSecurityToken(null);
