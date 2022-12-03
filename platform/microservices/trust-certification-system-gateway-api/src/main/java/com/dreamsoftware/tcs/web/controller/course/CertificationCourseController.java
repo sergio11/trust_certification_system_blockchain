@@ -575,6 +575,7 @@ public class CertificationCourseController extends SupportController {
             @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Course Edition Id", required = true)
+            @Valid @CourseEditionShouldExist(message = "{course_edition_should_exist}")
             @PathVariable("editionId") String courseEditionId
     ) throws Throwable {
         try {
