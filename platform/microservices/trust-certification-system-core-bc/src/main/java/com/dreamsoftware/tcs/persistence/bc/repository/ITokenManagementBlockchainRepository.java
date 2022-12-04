@@ -75,4 +75,13 @@ public interface ITokenManagementBlockchainRepository {
      */
     void generateTokens(final String walletHash, final Long tokenCount) throws RepositoryException;
 
+    /**
+     *
+     * @param fromWalletHash
+     * @param toWalletHash
+     * @param tokenCount
+     * @throws RepositoryException
+     */
+    void transfer(final String fromWalletHash, final String toWalletHash, final Long tokenCount) throws RepositoryException;
+
 }

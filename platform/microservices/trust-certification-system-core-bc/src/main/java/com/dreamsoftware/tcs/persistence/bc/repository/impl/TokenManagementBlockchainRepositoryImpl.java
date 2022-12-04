@@ -185,6 +185,29 @@ public class TokenManagementBlockchainRepositoryImpl extends SupportBlockchainRe
     }
 
     /**
+     *
+     * @param fromWalletHash
+     * @param toWalletHash
+     * @param tokenCount
+     * @throws RepositoryException
+     */
+    @Override
+    public void transfer(final String fromWalletHash, final String toWalletHash, final Long tokenCount) throws RepositoryException {
+        Assert.notNull(fromWalletHash, "fromWalletHash can not be null");
+        Assert.notNull(toWalletHash, "toWalletHash can not be null");
+        Assert.notNull(tokenCount, "tokenCount can not be null");
+        try {
+            final TokenManagementContractExt tokenManagementContract = loadTokenManagementContract();
+            final Credentials fromCredentials = walletService.loadCredentials(fromWalletHash);
+            final Credentials toCredentials = walletService.loadCredentials(toWalletHash);
+            tokenManagementContract.transfer(fromCredentials.getAddress(), toCredentials.getAddress(),
+                    BigInteger.valueOf(tokenCount));
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Load Token Management Contract
      *
      * @param walletHash

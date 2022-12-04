@@ -49,6 +49,15 @@ public interface ICertificationCourseService {
 
     /**
      *
+     * @param studentWalletHash
+     * @param courseId
+     * @param editionId
+     * @throws Throwable
+     */
+    void enroll(final String studentWalletHash, final String courseId, final String editionId) throws Throwable;
+
+    /**
+     *
      * @param model
      * @return
      */

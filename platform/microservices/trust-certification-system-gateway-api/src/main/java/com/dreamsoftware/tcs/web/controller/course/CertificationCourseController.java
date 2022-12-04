@@ -13,9 +13,7 @@ import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdminOrCourseOwner;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
-import com.dreamsoftware.tcs.web.validation.constraints.CourseEditionShouldExist;
-import com.dreamsoftware.tcs.web.validation.constraints.CourseShouldExist;
-import com.dreamsoftware.tcs.web.validation.constraints.ICommonSequence;
+import com.dreamsoftware.tcs.web.validation.constraints.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -474,6 +472,43 @@ public class CertificationCourseController extends SupportController {
             throw ex;
         } catch (final Throwable ex) {
             throw new DisableCertificationCourseEditionException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param courseId
+     * @param editionId
+     * @param selfUser
+     * @param request
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "COURSE_EDITION_ENROLL - Allows you to enroll in a course edition that requires attendance control ", description = "Allows you to enroll in a course that requires attendance control", tags = {"course"})
+    @RequestMapping(value = "/{courseId}/editions/{editionId}/enroll", method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<String>> enroll(
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @PathVariable("courseId") String courseId,
+            @Parameter(name = "editionId", description = "Edition Id", required = true)
+            @Validated(ICommonSequence.class)
+            @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+            @CourseEditionMustAllowEnrollment(message = "{course_edition_should_allow_enrollment}", groups = {IExtended.class})
+            @UserMustNotYetBeEnrolled(message = "{user_must_not_yet_be_enrolled}", groups = {IExtended.class})
+            @PathVariable("editionId") String editionId,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
+            @Parameter(hidden = true) HttpServletRequest request
+    ) throws Throwable {
+        try {
+            certificationCourseService.enroll(selfUser.getWalletHash(), courseId, editionId);
+            return responseHelper.createAndSendResponse(
+                    CertificationCourseResponseCodeEnum.COURSE_ENROLLMENT_SUCCESSFULLY,
+                    HttpStatus.OK, resolveString("course_enrollment_successfully", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new CourseEnrollmentException(ex.getMessage(), ex);
         }
     }
 

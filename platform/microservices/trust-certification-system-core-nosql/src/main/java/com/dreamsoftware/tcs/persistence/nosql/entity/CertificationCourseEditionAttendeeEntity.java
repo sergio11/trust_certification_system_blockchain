@@ -36,8 +36,8 @@ public class CertificationCourseEditionAttendeeEntity {
     private String securityToken;
 
     /**
-     * User Entity
+     * Student Entity
      */
     @DBRef
-    private UserEntity user;
+    private UserEntity student;
 }
