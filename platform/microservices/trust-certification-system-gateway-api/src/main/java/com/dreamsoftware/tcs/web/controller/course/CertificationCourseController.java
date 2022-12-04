@@ -1,41 +1,39 @@
 package com.dreamsoftware.tcs.web.controller.course;
 
 import com.dreamsoftware.tcs.services.ICertificationCourseService;
-import com.dreamsoftware.tcs.web.controller.course.error.exception.*;
-import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
+import com.dreamsoftware.tcs.web.controller.course.error.exception.*;
 import com.dreamsoftware.tcs.web.converter.mediatype.PatchMediaType;
+import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
+import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseEditionDTO;
 import com.dreamsoftware.tcs.web.dto.response.*;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForAdminOrCourseOwner;
 import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForCA;
+import com.dreamsoftware.tcs.web.security.directives.OnlyAccessForStudent;
 import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import com.dreamsoftware.tcs.web.validation.constraints.*;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 import javax.json.JsonMergePatch;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Certification Course Controller
@@ -487,6 +485,7 @@ public class CertificationCourseController extends SupportController {
     @Operation(summary = "COURSE_EDITION_ENROLL - Allows you to enroll in a course edition that requires attendance control ", description = "Allows you to enroll in a course that requires attendance control", tags = {"course"})
     @RequestMapping(value = "/{courseId}/editions/{editionId}/enroll", method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @OnlyAccessForStudent
     public ResponseEntity<APIResponse<String>> enroll(
             @Parameter(name = "courseId", description = "Course Id", required = true)
             @Valid @CourseShouldExist(message = "{course_should_exist}")
@@ -512,6 +511,31 @@ public class CertificationCourseController extends SupportController {
         }
     }
 
+
+    @Operation(summary = "GENERATE_CERTIFICATE_QR - Get Enrollment QR", description = "Get Enrollment QR", tags = {"course"})
+    @RequestMapping(value = "/{courseId}/editions/{editionId}/enrollmentQR", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @OnlyAccessForStudent
+    public ResponseEntity<byte[]> getEnrollmentQR(
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @PathVariable("courseId") String courseId,
+            @Parameter(name = "editionId", description = "Edition Id", required = true)
+            @PathVariable("editionId") String editionId,
+            @Parameter(name = "width", description = "QR Width")
+            @RequestParam(name = "width", defaultValue = "200")
+            final Integer qrWidth,
+            @Parameter(name = "height", description = "QR Height")
+            @RequestParam(name = "height", defaultValue = "200")
+            final Integer qrHeight,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
+    ) {
+        try {
+            final FileInfoDTO fileInfo = certificationCourseService.getEnrollmentQR(courseId, editionId, selfUser.getWalletHash(), qrWidth, qrHeight);
+            return responseHelper.createAndSendMediaResponse(fileInfo);
+        } catch (final Exception ex) {
+            throw new GetEnrollmentQRException(ex.getMessage(), ex);
+        }
+    }
 
     /**
      *

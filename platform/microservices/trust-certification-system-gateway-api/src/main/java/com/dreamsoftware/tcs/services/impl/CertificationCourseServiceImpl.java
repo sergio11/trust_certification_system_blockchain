@@ -3,14 +3,17 @@ package com.dreamsoftware.tcs.services.impl;
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.*;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEditionAttendeeEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEditionEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseEditionRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
+import com.dreamsoftware.tcs.service.IQRCodeGenerator;
 import com.dreamsoftware.tcs.services.ICertificationCourseService;
 import com.dreamsoftware.tcs.stream.events.course.*;
+import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseEditionDTO;
 import com.dreamsoftware.tcs.web.dto.response.*;
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -47,6 +51,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     private final UserRepository userRepository;
     private final StreamBridge streamBridge;
     private final StreamChannelsProperties streamChannelsProperties;
+    private final IQRCodeGenerator qrCodeGenerator;
 
     /**
      * Enable Certification Course
@@ -146,6 +151,39 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
                 .courseId(courseId)
                 .editionId(editionId)
                 .build());
+    }
+
+    /**
+     *
+     * @param courseId
+     * @param courseEdition
+     * @param studentWalletHash
+     * @param width
+     * @param height
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public FileInfoDTO getEnrollmentQR(final String courseId, final String courseEdition, final String studentWalletHash, final Integer width, final Integer height) throws Exception {
+        Assert.notNull(courseId, "courseId can not be null");
+        Assert.notNull(courseEdition, "courseEdition can not be null");
+        Assert.notNull(studentWalletHash, "studentWalletHash can not be null");
+        Assert.notNull(width, "width can not be null");
+        Assert.notNull(height, "height can not be null");
+        log.debug("getEnrollmentQR CALLED!");
+        final CertificationCourseEditionEntity certificationCourseEditionEntity = certificationCourseEditionRepository.findById(new ObjectId(courseEdition))
+                .orElseThrow(() -> new IllegalStateException("Course Edition not found"));
+        final String attendeeSecurityToken = certificationCourseEditionEntity.getAttendeeControl().getAttendedUsers().stream()
+                .filter(attendeeEntity -> attendeeEntity.getStudent().getWalletHash().equals(studentWalletHash))
+                .findFirst().map(CertificationCourseEditionAttendeeEntity::getSecurityToken)
+                .orElseThrow(() -> new IllegalStateException("Attendee not found"));
+        final byte[] qrCodeData = qrCodeGenerator.getQRCodeImage(attendeeSecurityToken, width, height);
+        return FileInfoDTO
+                .builder()
+                .content(qrCodeData)
+                .contentType(MediaType.IMAGE_PNG_VALUE)
+                .size((long) qrCodeData.length)
+                .build();
     }
 
     /**
