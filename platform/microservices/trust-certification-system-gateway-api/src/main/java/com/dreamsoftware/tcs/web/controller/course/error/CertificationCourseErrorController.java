@@ -86,6 +86,20 @@ public class CertificationCourseErrorController extends SupportController {
      * @param request
      * @return
      */
+    @ExceptionHandler(GetEnrollmentQRException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetEnrollmentQRException(final GetEnrollmentQRException ex, final HttpServletRequest request) {
+        log.error("Handler for GetEnrollmentQRException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.GET_ENROLLMENT_QT_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_enrollment_qr_failed", request));
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
     @ExceptionHandler(SaveCertificationCourseException.class)
     @ResponseBody
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSaveCertificationCourseException(final SaveCertificationCourseException ex, final HttpServletRequest request) {

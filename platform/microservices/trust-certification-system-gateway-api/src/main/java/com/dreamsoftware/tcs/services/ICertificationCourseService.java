@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.services;
 
+import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseEditionDTO;
 import com.dreamsoftware.tcs.web.dto.response.*;
@@ -55,6 +56,18 @@ public interface ICertificationCourseService {
      * @throws Throwable
      */
     void enroll(final String studentWalletHash, final String courseId, final String editionId) throws Throwable;
+
+    /**
+     *
+     * @param courseId
+     * @param courseEdition
+     * @param studentWalletHash
+     * @param width
+     * @param height
+     * @return
+     * @throws Exception
+     */
+    FileInfoDTO getEnrollmentQR(final String courseId, final String courseEdition, final String studentWalletHash, final Integer width, final Integer height) throws Exception;
 
     /**
      *
