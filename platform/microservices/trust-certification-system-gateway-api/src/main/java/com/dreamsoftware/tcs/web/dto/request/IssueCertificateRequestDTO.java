@@ -28,6 +28,7 @@ public class IssueCertificateRequestDTO {
     @CourseEditionShouldExist(message = "{course_edition_should_exist}")
     @ShouldNotHaveAssociatedCertificate(message = "{course_edition_has_associated_certificate}")
     @ShouldHaveEnoughFundForIssuingCertificate(message = "{not_enough_funds_for_issuing_certificate}")
+    @UserMustReachAttendControlLimit(message = "{user_must_reach_attend_control_limit}")
     private String certificateCourseEditionId;
 
     /**
