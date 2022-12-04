@@ -24,10 +24,16 @@ public class CertificationCourseEditionAttendeeEntity {
     private Long attendedCount;
 
     /**
-     * Created At
+     * Enrolled At
      */
-    @Field("created_at")
-    private Date createdAt;
+    @Field("enrolled_at")
+    private Date enrolledAt;
+
+    /**
+     * Security Token
+     */
+    @Field("security_token")
+    private String securityToken;
 
     /**
      * User Entity

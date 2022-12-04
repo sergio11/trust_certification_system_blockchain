@@ -94,7 +94,7 @@ public class CertificationCourseEditionEntity {
      * Attendee Control
      */
     @Field("attendee_control")
-    private CertificationCourseAttendeeControlEntity attendeeControlEntity;
+    private CertificationCourseAttendeeControlEntity attendeeControl;
 
     /**
      * Certification Course
