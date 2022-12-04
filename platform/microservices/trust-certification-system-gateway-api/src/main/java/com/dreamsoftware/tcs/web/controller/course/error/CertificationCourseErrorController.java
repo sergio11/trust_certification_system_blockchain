@@ -86,6 +86,21 @@ public class CertificationCourseErrorController extends SupportController {
      * @param request
      * @return
      */
+    @ExceptionHandler(CourseEditionCheckInException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleCourseEditionCheckInException(final CourseEditionCheckInException ex, final HttpServletRequest request) {
+        log.error("Handler for CourseEditionCheckInException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.COURSE_EDITION_CHECK_IN_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("course_edition_check_in_failed", request));
+    }
+
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
     @ExceptionHandler(GetEnrollmentQRException.class)
     @ResponseBody
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetEnrollmentQRException(final GetEnrollmentQRException ex, final HttpServletRequest request) {

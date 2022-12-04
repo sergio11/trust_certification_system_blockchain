@@ -3,20 +3,19 @@ package com.dreamsoftware.tcs.services.impl;
 import com.dreamsoftware.tcs.config.properties.StreamChannelsProperties;
 import com.dreamsoftware.tcs.mapper.*;
 import com.dreamsoftware.tcs.persistence.bc.repository.ICertificationCourseBlockchainRepository;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEditionAttendeeEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEditionEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.*;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseEditionRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.service.IQRCodeGenerator;
+import com.dreamsoftware.tcs.services.IAccountsService;
 import com.dreamsoftware.tcs.services.ICertificationCourseService;
 import com.dreamsoftware.tcs.stream.events.course.*;
 import com.dreamsoftware.tcs.web.core.FileInfoDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseEditionDTO;
 import com.dreamsoftware.tcs.web.dto.response.*;
+import com.dreamsoftware.tcs.web.security.userdetails.ICommonUserDetailsAware;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -25,8 +24,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * Certification Course Service
@@ -38,6 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 public class CertificationCourseServiceImpl implements ICertificationCourseService {
 
+    private final IAccountsService accountsService;
     private final SimpleCertificationCourseDetailMapper simpleCertificationCourseDetailMapper;
     private final CertificationCourseDetailMapper certificationCourseDetailMapper;
     private final CertificationCourseEditionDetailMapper certificationCourseEditionDetailMapper;
@@ -151,6 +153,82 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
                 .courseId(courseId)
                 .editionId(editionId)
                 .build());
+    }
+
+    /**
+     *
+     * @param studentWalletHash
+     * @param courseId
+     * @param editionId
+     * @param securityToken
+     * @throws Throwable
+     */
+    @Override
+    public void checkIn(String studentWalletHash, String courseId, String editionId, String securityToken) throws Throwable {
+        Assert.notNull(studentWalletHash, "studentWalletHash can not be null");
+        Assert.notNull(courseId, "courseId can not be null");
+        Assert.notNull(editionId, "editionId can not be null");
+        Assert.notNull(securityToken, "securityToken can not be null");
+        log.debug("checkIn course edition editionId -> " + editionId + " CALLED!");
+        final CertificationCourseEditionEntity certificationCourseEditionEntity = certificationCourseEditionRepository.findById(new ObjectId(editionId))
+                .orElseThrow(() -> new IllegalStateException("Course Edition can not be found"));
+        final CertificationCourseAttendeeControlEntity attendeeControlEntity = certificationCourseEditionEntity.getAttendeeControl();
+        final CertificationCourseEditionAttendeeEntity attendeeEntity = attendeeControlEntity.getAttendedUsers().stream().filter(item ->
+                item.getStudent().getWalletHash().equals(studentWalletHash) &&
+                        item.getSecurityToken().equals(securityToken)).findFirst().orElseThrow();
+        attendeeEntity.setAttendedCount(attendeeEntity.getAttendedCount() + 1);
+        certificationCourseEditionRepository.save(certificationCourseEditionEntity);
+    }
+
+    /**
+     *
+     * @param courseEditionId
+     * @return
+     */
+    @Override
+    public boolean currentUserHasBeenEnrolledTo(String courseEditionId) {
+        Assert.notNull(courseEditionId, "courseEditionId can not be null");
+        AtomicBoolean hasBeenEnrolled = new AtomicBoolean(false);
+        final ICommonUserDetailsAware<String> principal = accountsService.getCurrentPrincipal();
+        if(principal != null && ObjectId.isValid(courseEditionId)) {
+            certificationCourseEditionRepository.findById(new ObjectId(courseEditionId)).ifPresent(certificationCourseEditionEntity -> {
+                final CertificationCourseAttendeeControlEntity attendeeControlEntity = certificationCourseEditionEntity.getAttendeeControl();
+                if(attendeeControlEntity != null) {
+                    final List<String> attendeeWalletHash = attendeeControlEntity.getAttendedUsers().stream()
+                            .map(CertificationCourseEditionAttendeeEntity::getStudent)
+                            .map(UserEntity::getWalletHash)
+                            .collect(Collectors.toList());
+                    hasBeenEnrolled.set(attendeeWalletHash.contains(principal.getWalletHash()));
+                }
+            });
+        }
+        return hasBeenEnrolled.get();
+    }
+
+    /**
+     *
+     * @param courseEditionId
+     * @return
+     */
+    @Override
+    public boolean currentUserHasBeenReachAttendControlLimitTo(String courseEditionId) {
+        Assert.notNull(courseEditionId, "courseEditionId can not be null");
+        AtomicBoolean isValid = new AtomicBoolean(false);
+        final ICommonUserDetailsAware<String> principal = accountsService.getCurrentPrincipal();
+        if(principal != null && ObjectId.isValid(courseEditionId)) {
+            certificationCourseEditionRepository.findById(new ObjectId(courseEditionId)).ifPresent(certificationCourseEditionEntity -> {
+                final CertificationCourseAttendeeControlEntity attendeeControlEntity = certificationCourseEditionEntity.getAttendeeControl();
+                if(attendeeControlEntity != null) {
+                    final List<CertificationCourseEditionAttendeeEntity> attendeeList = attendeeControlEntity.getAttendedUsers().stream()
+                            .filter(item -> item.getStudent().getWalletHash().equals(principal.getWalletHash()))
+                            .collect(Collectors.toList());
+                    if(!attendeeList.isEmpty()) {
+                        isValid.set(attendeeControlEntity.getMaxAttendanceCount() <= 0 || (attendeeList.get(0).getAttendedCount() / attendeeControlEntity.getMaxAttendanceCount() * 100) >= attendeeControlEntity.getMinPercentageAttendanceRequired());
+                    }
+                }
+            });
+        }
+        return isValid.get();
     }
 
     /**

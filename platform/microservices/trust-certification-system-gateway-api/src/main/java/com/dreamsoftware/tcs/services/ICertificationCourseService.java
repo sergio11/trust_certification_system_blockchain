@@ -59,6 +59,30 @@ public interface ICertificationCourseService {
 
     /**
      *
+     * @param studentWalletHash
+     * @param courseId
+     * @param editionId
+     * @param securityToken
+     * @throws Throwable
+     */
+    void checkIn(final String studentWalletHash, final String courseId, final String editionId, final String securityToken) throws Throwable;
+
+    /**
+     *
+     * @param courseEditionId
+     * @return
+     */
+    boolean currentUserHasBeenEnrolledTo(final String courseEditionId);
+
+    /**
+     *
+     * @param courseEditionId
+     * @return
+     */
+    boolean currentUserHasBeenReachAttendControlLimitTo(final String courseEditionId);
+
+    /**
+     *
      * @param courseId
      * @param courseEdition
      * @param studentWalletHash

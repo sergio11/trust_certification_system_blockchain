@@ -7,6 +7,7 @@ import com.dreamsoftware.tcs.web.converter.mediatype.PatchMediaType;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import com.dreamsoftware.tcs.web.core.FileInfoDTO;
+import com.dreamsoftware.tcs.web.dto.request.CourseEditionCheckInDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseDTO;
 import com.dreamsoftware.tcs.web.dto.request.SaveCertificationCourseEditionDTO;
 import com.dreamsoftware.tcs.web.dto.response.*;
@@ -511,7 +512,54 @@ public class CertificationCourseController extends SupportController {
         }
     }
 
+    /**
+     *
+     * @param courseId
+     * @param editionId
+     * @param courseEditionCheckInDTO
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "COURSE_EDITION_ENROLL - ", description = "", tags = {"course"})
+    @RequestMapping(value = "/{courseId}/editions/{editionId}/check-in", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<APIResponse<String>> checkIn(
+            @Parameter(name = "courseId", description = "Course Id", required = true)
+            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @PathVariable("courseId") String courseId,
+            @Parameter(name = "editionId", description = "Edition Id", required = true)
+            @Validated(ICommonSequence.class)
+            @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+            @CourseEditionMustAllowEnrollment(message = "{course_edition_should_allow_enrollment}", groups = {IExtended.class})
+            @UserMustBeEnrolled(message = "{user_must_be_enrolled}", groups = {IExtended.class})
+            @PathVariable("editionId") String editionId,
+            @Parameter(description = "Security Token",
+                    required = true, schema = @Schema(implementation = CourseEditionCheckInDTO.class))
+            @Validated(ICommonSequence.class) CourseEditionCheckInDTO courseEditionCheckInDTO,
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
+            @Parameter(hidden = true) HttpServletRequest request) throws Throwable {
+        try {
+            certificationCourseService.checkIn(selfUser.getWalletHash(), courseId, editionId, courseEditionCheckInDTO.getPayload());
+            return responseHelper.createAndSendResponse(
+                    CertificationCourseResponseCodeEnum.COURSE_EDITION_CHECK_IN_SUCCESSFULLY,
+                    HttpStatus.OK, resolveString("course_edition_check_in_successfully", request));
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Exception ex) {
+            throw new CourseEditionCheckInException(ex.getMessage(), ex);
+        }
+    }
 
+    /**
+     *
+     * @param courseId
+     * @param editionId
+     * @param qrWidth
+     * @param qrHeight
+     * @param selfUser
+     * @return
+     */
     @Operation(summary = "GENERATE_CERTIFICATE_QR - Get Enrollment QR", description = "Get Enrollment QR", tags = {"course"})
     @RequestMapping(value = "/{courseId}/editions/{editionId}/enrollmentQR", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     @OnlyAccessForStudent
@@ -519,6 +567,9 @@ public class CertificationCourseController extends SupportController {
             @Parameter(name = "courseId", description = "Course Id", required = true)
             @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
+            @Validated(ICommonSequence.class)
+            @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+            @CourseEditionMustAllowEnrollment(message = "{course_edition_should_allow_enrollment}", groups = {IExtended.class})
             @Parameter(name = "editionId", description = "Edition Id", required = true)
             @PathVariable("editionId") String editionId,
             @Parameter(name = "width", description = "QR Width")
