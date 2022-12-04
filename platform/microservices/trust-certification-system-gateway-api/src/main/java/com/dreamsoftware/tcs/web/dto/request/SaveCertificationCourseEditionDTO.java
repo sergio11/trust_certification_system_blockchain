@@ -30,50 +30,57 @@ public class SaveCertificationCourseEditionDTO {
      * Cost of issuing certificate
      */
     @Schema(description = "Cost of Issuing new certificate edition", required = true)
-    @JsonProperty("cost_issue_certificate")
+    @JsonProperty("costOfIssuingCertificate")
     private Long costOfIssuingCertificate;
 
     /**
      * Duration In Hours
      */
     @Schema(description = "Duration In Hours", required = true)
-    @JsonProperty("duration_in_hours")
+    @JsonProperty("durationInHours")
     private Long durationInHours;
 
     /**
      * Expiration in days
      */
     @Schema(description = "Expiration In Days")
-    @JsonProperty("expiration_in_days")
+    @JsonProperty("expirationInDays")
     private Long expirationInDays;
 
     /**
      * Can be renewed
      */
     @Schema(description = "Can Be Renewed")
-    @JsonProperty("can_be_renewed")
+    @JsonProperty("canBeRenewed")
     private Boolean canBeRenewed;
 
     /**
      * Cost of renewing certificate
      */
     @Schema(description = "Cost of renewing certificate")
-    @JsonProperty("cost_renew_certificate")
+    @JsonProperty("costOfRenewingCertificate")
     private Long costOfRenewingCertificate;
 
     /**
      * Start At
      */
     @Schema(description = "Course start at")
-    @JsonProperty("start_at")
+    @JsonProperty("startAt")
     private Date startAt;
 
     /**
      * End At
      */
     @Schema(description = "Course end at")
-    @JsonProperty("end_at")
+    @JsonProperty("endAt")
     private Date endAt;
+
+    /**
+     * Attendee Control
+     */
+    @Schema(description = "Configuring attendance control for course edition")
+    @JsonProperty("attendeeControl")
+    private SaveCertificationCourseAttendeeControlDTO attendeeControl;
 
     /**
      * Certification Course

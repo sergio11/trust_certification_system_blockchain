@@ -22,8 +22,12 @@ public abstract class SaveCertificationCourseEditionMapper {
 
     @Autowired
     protected CertificationCourseRepository certificationCourseRepository;
+
     @Autowired
     protected UserRepository userRepository;
+
+    @Autowired
+    protected SaveCertificationCourseAttendeeControlMapper saveCertificationCourseAttendeeControlMapper;
 
     /**
      *
@@ -33,7 +37,8 @@ public abstract class SaveCertificationCourseEditionMapper {
     @Mappings({
             @Mapping(expression = "java(getCertificationCourse(dto.getCertificationCourseId()))", target = "course"),
             @Mapping(expression = "java(getCertificationCourseEditionInitialState())", target = "status"),
-            @Mapping(expression = "java(getCaMember(dto.getCaWalletHash()))", target = "caMember")
+            @Mapping(expression = "java(getCaMember(dto.getCaWalletHash()))", target = "caMember"),
+            @Mapping(expression = "java(dto.getAttendeeControl() != null ? saveCertificationCourseAttendeeControlMapper.dtoToEntity(dto.getAttendeeControl()) : null)", target = "attendeeControl")
     })
     @Named("dtoToEntity")
     public abstract CertificationCourseEditionEntity dtoToEntity(SaveCertificationCourseEditionDTO dto);

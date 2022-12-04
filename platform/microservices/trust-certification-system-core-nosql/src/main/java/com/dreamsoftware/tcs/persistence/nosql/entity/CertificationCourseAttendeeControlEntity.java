@@ -35,6 +35,12 @@ public class CertificationCourseAttendeeControlEntity {
     private Long maxAttendanceCount;
 
     /**
+     * Enroll Cost
+     */
+    @Field("enroll_cost")
+    private Long enrollCost;
+
+    /**
      * Attended Users
      */
     @Field("attended_users")
