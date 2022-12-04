@@ -129,6 +129,26 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     }
 
     /**
+     *
+     * @param studentWalletHash
+     * @param courseId
+     * @param editionId
+     * @throws Throwable
+     */
+    @Override
+    public void enroll(String studentWalletHash, String courseId, String editionId) throws Throwable {
+        Assert.notNull(studentWalletHash, "Student wallet can not be null");
+        Assert.notNull(courseId, "Course ID can not be null");
+        Assert.notNull(editionId, "Edition Id can not be null");
+        log.debug("course edition enrollment -> " + courseId + " CALLED!");
+        streamBridge.send(streamChannelsProperties.getCourseManagement(), CourseEditionEnrollmentRequestEvent.builder()
+                .studentWalletHash(studentWalletHash)
+                .courseId(courseId)
+                .editionId(editionId)
+                .build());
+    }
+
+    /**
      * Save Certification Course
      *
      * @param model

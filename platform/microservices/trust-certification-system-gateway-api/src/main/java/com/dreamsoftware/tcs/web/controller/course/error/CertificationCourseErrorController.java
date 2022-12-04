@@ -72,6 +72,20 @@ public class CertificationCourseErrorController extends SupportController {
      * @param request
      * @return
      */
+    @ExceptionHandler(CourseEnrollmentException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleCourseEnrollmentException(final CourseEnrollmentException ex, final HttpServletRequest request) {
+        log.error("Handler for CourseEnrollmentException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(CertificationCourseResponseCodeEnum.COURSE_ENROLLMENT_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("course_enrollment_failed", request));
+    }
+
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
     @ExceptionHandler(SaveCertificationCourseException.class)
     @ResponseBody
     protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleSaveCertificationCourseException(final SaveCertificationCourseException ex, final HttpServletRequest request) {

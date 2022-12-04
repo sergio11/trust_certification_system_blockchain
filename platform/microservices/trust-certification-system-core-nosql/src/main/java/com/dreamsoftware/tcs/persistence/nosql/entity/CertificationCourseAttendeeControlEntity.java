@@ -20,25 +20,25 @@ public class CertificationCourseAttendeeControlEntity {
      * Min Percentage Attendance Required
      */
     @Field("min_percentage_attendance_required")
-    private Integer minPercentageAttendanceRequired;
+    private int minPercentageAttendanceRequired;
 
     /**
      * Max Attendee Count
      */
     @Field("max_attendee_count")
-    private Long maxAttendeeCount;
+    private long maxAttendeeCount;
 
     /**
      * Max Attendance Count
      */
     @Field("max_attendance_count")
-    private Long maxAttendanceCount;
+    private long maxAttendanceCount;
 
     /**
      * Enroll Cost
      */
     @Field("enroll_cost")
-    private Long enrollCost;
+    private long enrollCost;
 
     /**
      * Attended Users
