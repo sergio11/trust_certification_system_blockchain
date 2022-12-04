@@ -102,6 +102,9 @@ public class MailProperties implements Serializable {
     @Value("${mail.templates.certificates.course-edition-registered}")
     private String courseEditionRegisteredMailTemplate;
 
+    @Value("${mail.templates.certificates.course-edition-enrolled}")
+    private String courseEditionEnrolledMailTemplate;
+
     @Value("${mail.templates.certificates.issue-certificate-request}")
     private String issueCertificateRequestMailTemplate;
 
@@ -135,6 +138,7 @@ public class MailProperties implements Serializable {
         log.debug("courseEditionEnabledMailTemplate: " + courseEditionEnabledMailTemplate);
         log.debug("courseEditionDeletedMailTemplate: " + courseEditionDeletedMailTemplate);
         log.debug("courseEditionUpdatedMailTemplate: " + courseEditionUpdatedMailTemplate);
+        log.debug("courseEditionEnrolledMailTemplate: " + courseEditionEnrolledMailTemplate);
         log.debug("issueCertificateRequestMailTemplate: " + issueCertificateRequestMailTemplate);
         log.debug("certificationCourseRegisteredMailTemplate: " + courseEditionRegisteredMailTemplate);
         log.debug("certificateGeneratedMailTemplate: " + certificateGeneratedMailTemplate);
