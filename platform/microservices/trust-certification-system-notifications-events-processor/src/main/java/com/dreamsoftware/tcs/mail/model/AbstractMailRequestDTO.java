@@ -48,6 +48,7 @@ import org.springframework.core.annotation.AnnotationUtils;
         @Type(CourseEditionEnabledMailRequestDTO.class),
         @Type(CourseEditionRegisteredMailRequestDTO.class),
         @Type(CourseEditionUpdatedMailRequestDTO.class),
+        @Type(CourseEditionEnrolledMailRequestDTO.class),
         @Type(UserActivatedEventMailRequestDTO.class),
         @Type(UserPendingValidationMailRequestDTO.class),
         @Type(ResetPasswordMailRequestDTO.class),

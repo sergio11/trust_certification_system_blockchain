@@ -503,8 +503,8 @@ public class CertificationCourseController extends SupportController {
         try {
             certificationCourseService.enroll(selfUser.getWalletHash(), courseId, editionId);
             return responseHelper.createAndSendResponse(
-                    CertificationCourseResponseCodeEnum.COURSE_ENROLLMENT_SUCCESSFULLY,
-                    HttpStatus.OK, resolveString("course_enrollment_successfully", request));
+                    CertificationCourseResponseCodeEnum.COURSE_EDITION_ENROLLMENT_REQUEST_COMPLETED,
+                    HttpStatus.OK, resolveString("course_edition_enrollment_request_completed", request));
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Throwable ex) {
