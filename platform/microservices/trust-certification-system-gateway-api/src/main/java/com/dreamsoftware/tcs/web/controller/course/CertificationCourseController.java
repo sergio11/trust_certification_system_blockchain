@@ -521,7 +521,7 @@ public class CertificationCourseController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "COURSE_EDITION_ENROLL - ", description = "", tags = {"course"})
+    @Operation(summary = "COURSE_EDITION_ENROLL - Allows you to justify attendance at a session of a course edition", description = "Allows you to justify attendance at a session of a course edition", tags = {"course"})
     @RequestMapping(value = "/{courseId}/editions/{editionId}/check-in", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<String>> checkIn(
@@ -531,8 +531,8 @@ public class CertificationCourseController extends SupportController {
             @Parameter(name = "editionId", description = "Edition Id", required = true)
             @Validated(ICommonSequence.class)
             @CourseEditionShouldExist(message = "{course_edition_should_exist}")
-            @CourseEditionMustAllowEnrollment(message = "{course_edition_should_allow_enrollment}", groups = {IExtended.class})
             @UserMustBeEnrolled(message = "{user_must_be_enrolled}", groups = {IExtended.class})
+            @CourseEditionMustAllowCheckIn(message = "{course_edition_must_allow_check_in}", groups = {IExtended.class})
             @PathVariable("editionId") String editionId,
             @Parameter(description = "Security Token",
                     required = true, schema = @Schema(implementation = CourseEditionCheckInDTO.class))
