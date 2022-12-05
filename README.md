@@ -92,6 +92,7 @@ The student or professional is the sovereign owner of the information and decide
 * Spring Cloud Starter Stream Kafka.
 * Spring Boot Jasypt.
 * Spring Boot Starter Actuator.
+* Micrometer Prometheus registry.
 * Spring Cloud Config Monitor.
 * Spring Vault Core.
 * Spring Ldap Core.
