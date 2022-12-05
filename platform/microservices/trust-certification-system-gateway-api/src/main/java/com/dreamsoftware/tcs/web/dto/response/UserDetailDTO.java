@@ -1,10 +1,10 @@
 package com.dreamsoftware.tcs.web.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 /**
  *
@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SimpleUserDTO {
+public class UserDetailDTO {
 
     public static String ACTIVATE_STATE = "ACTIVATE";
     public static String PENDING_DELETE_STATE = "PENDING_DELETE";
@@ -45,6 +45,12 @@ public class SimpleUserDTO {
     private String email;
 
     /**
+     * User Language
+     */
+    @JsonProperty("language")
+    private String language;
+
+    /**
      * Wallet Hash
      */
     @JsonProperty("wallet_hash")
@@ -61,5 +67,11 @@ public class SimpleUserDTO {
      */
     @JsonProperty("auth_provider")
     private SimpleAuthenticationProviderDTO provider;
+
+    /**
+     * Certification Authority
+     */
+    @JsonProperty("ca")
+    private SimpleCertificationAuthorityDetailDTO ca;
 
 }

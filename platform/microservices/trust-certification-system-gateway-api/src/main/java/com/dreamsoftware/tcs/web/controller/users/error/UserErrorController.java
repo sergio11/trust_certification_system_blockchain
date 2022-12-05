@@ -2,10 +2,7 @@ package com.dreamsoftware.tcs.web.controller.users.error;
 
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
 import com.dreamsoftware.tcs.web.controller.users.UsersResponseCodeEnum;
-import com.dreamsoftware.tcs.web.controller.users.error.exception.DeleteLoginHistoryException;
-import com.dreamsoftware.tcs.web.controller.users.error.exception.DeleteProfileAvatarException;
-import com.dreamsoftware.tcs.web.controller.users.error.exception.GetLoginHistoryException;
-import com.dreamsoftware.tcs.web.controller.users.error.exception.UploadProfileImageException;
+import com.dreamsoftware.tcs.web.controller.users.error.exception.*;
 import com.dreamsoftware.tcs.web.core.APIResponse;
 import com.dreamsoftware.tcs.web.core.ErrorResponseDTO;
 import javax.servlet.http.HttpServletRequest;
@@ -83,4 +80,17 @@ public class UserErrorController extends SupportController {
                 HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_loging_history_failed", request));
     }
 
+    /**
+     *
+     * @param ex
+     * @param request
+     * @return
+     */
+    @ExceptionHandler(GetUserDetailException.class)
+    @ResponseBody
+    protected ResponseEntity<APIResponse<ErrorResponseDTO>> handleGetUserDetailException(final GetUserDetailException ex, final HttpServletRequest request) {
+        log.error("Handler for GetUserDetailException -> " + ex.getMessage());
+        return responseHelper.createAndSendErrorResponse(UsersResponseCodeEnum.GET_USER_DETAIL_FAILED,
+                HttpStatus.INTERNAL_SERVER_ERROR, resolveString("get_user_detail_failed", request));
+    }
 }
