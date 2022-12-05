@@ -24,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -229,6 +230,46 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
             });
         }
         return isValid.get();
+    }
+
+    /**
+     *
+     * @param courseEditionId
+     * @return
+     */
+    @Override
+    public boolean courseEditionAllowEnrollment(final String courseEditionId) {
+        Assert.notNull(courseEditionId, "courseEditionId can not be null");
+        AtomicBoolean allowEnrollment = new AtomicBoolean(false);
+        if(ObjectId.isValid(courseEditionId)) {
+            certificationCourseEditionRepository.findById(new ObjectId(courseEditionId)).ifPresent(courseEditionEntity -> {
+                final CertificationCourseAttendeeControlEntity attendeeControlEntity = courseEditionEntity.getAttendeeControl();
+                if(attendeeControlEntity != null && (courseEditionEntity.getStartAt() == null || courseEditionEntity.getStartAt().after(new Date()))) {
+                    allowEnrollment.set(attendeeControlEntity.getMaxAttendanceCount() == 0 || attendeeControlEntity.getMaxAttendanceCount() > 0 &&
+                            attendeeControlEntity.getAttendedUsers().size() < attendeeControlEntity.getMaxAttendanceCount());
+                }
+            });
+        }
+        return allowEnrollment.get();
+    }
+
+    /**
+     *
+     * @param courseEditionId
+     * @return
+     */
+    @Override
+    public boolean courseEditionAllowCheckIn(final String courseEditionId) {
+        Assert.notNull(courseEditionId, "courseEditionId can not be null");
+        AtomicBoolean allowCheckIn = new AtomicBoolean(false);
+        if(ObjectId.isValid(courseEditionId)) {
+            certificationCourseEditionRepository.findById(new ObjectId(courseEditionId)).ifPresent(courseEditionEntity -> {
+                final CertificationCourseAttendeeControlEntity attendeeControlEntity = courseEditionEntity.getAttendeeControl();
+                allowCheckIn.set(attendeeControlEntity != null && (courseEditionEntity.getStartAt() == null ||
+                        courseEditionEntity.getEndAt() == null || courseEditionEntity.getStartAt().before(new Date()) && courseEditionEntity.getEndAt().after(new Date())));
+            });
+        }
+        return allowCheckIn.get();
     }
 
     /**

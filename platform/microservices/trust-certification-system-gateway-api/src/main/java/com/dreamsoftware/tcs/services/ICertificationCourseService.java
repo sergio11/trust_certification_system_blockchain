@@ -83,6 +83,20 @@ public interface ICertificationCourseService {
 
     /**
      *
+     * @param courseEditionId
+     * @return
+     */
+    boolean courseEditionAllowEnrollment(final String courseEditionId);
+
+    /**
+     *
+     * @param courseEditionId
+     * @return
+     */
+    boolean courseEditionAllowCheckIn(final String courseEditionId);
+
+    /**
+     *
      * @param courseId
      * @param courseEdition
      * @param studentWalletHash
