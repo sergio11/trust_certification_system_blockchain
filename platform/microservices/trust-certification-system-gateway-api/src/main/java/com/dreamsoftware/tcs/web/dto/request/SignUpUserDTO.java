@@ -53,7 +53,7 @@ public class SignUpUserDTO {
     @JsonProperty("passwordClear")
     @NotBlank(message = "{user_password_not_null}")
     @Size(min = 8, max = 25, message = "{user_password_size}")
-    protected String passwordClear;
+    private String passwordClear;
 
     /**
      * Confirm Password
@@ -61,7 +61,14 @@ public class SignUpUserDTO {
     @Schema(description = "Confirm clear", required = true)
     @JsonProperty("confirmPassword")
     @NotBlank(message = "{user_confirm_password_not_null}")
-    protected String confirmPassword;
+    private String confirmPassword;
+
+    /**
+     * User Type
+     */
+    @Schema(description = "User Type (STUDENT, CHECKER)", required = true)
+    @JsonProperty("type")
+    private UserTypeEnum type;
 
     /**
      * User Agent
@@ -75,5 +82,13 @@ public class SignUpUserDTO {
     @JsonProperty("language")
     @ShouldBeValidISOLanguage(message = "{user_language_invalid}")
     private String language;
+
+
+    /**
+     * User Type Enum
+     */
+    public enum UserTypeEnum {
+        STUDENT, CHECKER
+    }
 
 }
