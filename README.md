@@ -33,6 +33,11 @@ A Certification Authority and a Student reach an agreement in order to issue a c
 
 </p>
 
+This repository requires the following projects:
+
+* [Decentralized application designed to guarantee the transparency, traceability, security and truthfulness of the certificates issued by certification authorities.](https://github.com/sergio11/trust_certification_system_ethereum_dapp) 
+* [Configuration for TCS microservices platform powered by Spring Cloud Config.](https://github.com/sergio11/trust_certification_system_blockchain_config) 
+
 ## Why Blockchain Technology?
 
 The Blockchain technology is a new technology that appeared in 2008 that allows information to be recorded with guarantees of originality and security never possible before. It is based on a cryptographic system that allows the issuers to be irrefutably identified and that guarantees the immutability of the information.
