@@ -140,9 +140,9 @@ public class AccountsController extends SupportController {
     }
 
     /**
+     *
      * @param externalProviderAuthRequest
      * @param userAgent
-     * @param locale
      * @param device
      * @param request
      * @return
@@ -179,6 +179,7 @@ public class AccountsController extends SupportController {
     }
 
     /**
+     *
      * @param refreshTokenDTO
      * @return
      */
@@ -208,6 +209,7 @@ public class AccountsController extends SupportController {
     }
 
     /**
+     *
      * @param user
      * @param userAgent
      * @param locale
@@ -252,6 +254,7 @@ public class AccountsController extends SupportController {
     }
 
     /**
+     *
      * @param user
      * @param userAgent
      * @param locale
@@ -294,6 +297,7 @@ public class AccountsController extends SupportController {
     }
 
     /**
+     *
      * @param ca
      * @param userAgent
      * @param locale
@@ -337,7 +341,6 @@ public class AccountsController extends SupportController {
     }
 
     /**
-     * Activate Account
      *
      * @param token
      * @return
@@ -366,7 +369,6 @@ public class AccountsController extends SupportController {
     }
 
     /**
-     * Reset Password
      *
      * @param resetPasswordRequestDTO
      * @param request

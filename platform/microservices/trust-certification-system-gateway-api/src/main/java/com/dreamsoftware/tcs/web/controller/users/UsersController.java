@@ -3,11 +3,9 @@ package com.dreamsoftware.tcs.web.controller.users;
 import com.dreamsoftware.tcs.services.IUploadImagesService;
 import com.dreamsoftware.tcs.services.IUserService;
 import com.dreamsoftware.tcs.web.controller.core.SupportController;
-import com.dreamsoftware.tcs.web.controller.users.error.exception.DeleteLoginHistoryException;
-import com.dreamsoftware.tcs.web.controller.users.error.exception.DeleteProfileAvatarException;
-import com.dreamsoftware.tcs.web.controller.users.error.exception.GetLoginHistoryException;
-import com.dreamsoftware.tcs.web.controller.users.error.exception.UploadProfileImageException;
+import com.dreamsoftware.tcs.web.controller.users.error.exception.*;
 import com.dreamsoftware.tcs.web.core.APIResponse;
+import com.dreamsoftware.tcs.web.dto.response.UserDetailDTO;
 import com.dreamsoftware.tcs.web.dto.response.UserLoginDTO;
 import com.dreamsoftware.tcs.web.dto.response.UserPhotoDTO;
 import com.dreamsoftware.tcs.web.security.directives.CurrentUser;
@@ -114,7 +112,53 @@ public class UsersController extends SupportController {
         } catch (final Throwable ex) {
             throw new DeleteLoginHistoryException(ex.getMessage(), ex);
         }
+    }
 
+    /**
+     *
+     * @param id
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "GET_USER_DETAIL", description = "Get a user detail")
+    @RequestMapping(value = "{id}/detail", method = RequestMethod.GET)
+    public ResponseEntity<APIResponse<UserDetailDTO>> getUserDetail(
+            @Valid
+            @Parameter(name = "id", description = "User Id", required = true)
+            @PathVariable
+            final String id
+    ) throws Throwable {
+        try {
+            final UserDetailDTO userDetailDTO = userService.getDetail(id);
+            return responseHelper.createAndSendResponse(UsersResponseCodeEnum.GET_USER_DETAIL_SUCCESSFULLY,
+                    HttpStatus.OK, userDetailDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new GetUserDetailException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     * @param selfUser
+     * @return
+     * @throws Throwable
+     */
+    @Operation(summary = "GET_SELF_DETAIL", description = "Get detail for the current authenticated user")
+    @RequestMapping(value = "self/detail", method = RequestMethod.GET)
+    public ResponseEntity<APIResponse<UserDetailDTO>> getSelfDetail(
+            @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
+    ) throws Throwable {
+        try {
+            final UserDetailDTO userDetailDTO = userService.getDetail(selfUser.getUserId());
+            return responseHelper.createAndSendResponse(UsersResponseCodeEnum.GET_USER_DETAIL_SUCCESSFULLY,
+                    HttpStatus.OK, userDetailDTO);
+        } catch (final ConstraintViolationException ex) {
+            throw ex;
+        } catch (final Throwable ex) {
+            throw new GetUserDetailException(ex.getMessage(), ex);
+        }
     }
 
     /**
