@@ -234,7 +234,9 @@ public class AccountsServiceImpl implements IAccountsService {
     public SimpleUserDTO signup(final SignUpUserDTO user) {
         Assert.notNull(user, "user can not be null");
         // Map to user entity
-        final UserEntity userToSave = signUpUserMapper.signUpUserDTOToStudentUserEntity(user);
+        final UserEntity userToSave = user.getType().equals(SignUpUserDTO.UserTypeEnum.STUDENT) ?
+                signUpUserMapper.signUpUserDTOToStudentUserEntity(user) :
+                signUpUserMapper.signUpUserDTOToCheckerUserEntity(user);
         final UserEntity userEntitySaved = userRepository.save(userToSave);
         final SimpleUserDTO simpleUserDTO = simpleUserMapper.entityToDTO(userEntitySaved);
         if (simpleUserDTO.getState().equals(SimpleUserDTO.PENDING_ACTIVATE_STATE)) {
@@ -298,23 +300,27 @@ public class AccountsServiceImpl implements IAccountsService {
         final UserEntity userToActivate = userRepository.findOneByConfirmationToken(confirmationToken).orElseThrow(() -> {
             throw new IllegalStateException("User can not be found");
         });
-        // Generate Wallet
-        final String walletHash = walletService.generateWallet();
-        log.debug("Wallet created with hash: " + walletHash);
-        userToActivate.setState(UserStateEnum.PENDING_VALIDATE);
-        userToActivate.setConfirmationToken(null);
-        userToActivate.setWalletHash(walletHash);
-        final UserEntity userActivated = userRepository.save(userToActivate);
-        if (userToActivate.getType() == UserTypeEnum.STUDENT) {
-            streamBridge.send(streamChannelsProperties.getUserManagement(), NewStudentEvent.builder()
-                    .walletHash(userActivated.getWalletHash())
-                    .build());
-        } else if (userToActivate.getType() == UserTypeEnum.CA_ADMIN) {
-            streamBridge.send(streamChannelsProperties.getUserManagement(), NewCertificationAuthorityEvent.builder()
-                    .caId(userToActivate.getCa().getId().toString())
-                    .walletHash(userToActivate.getWalletHash())
-                    .build());
+        if(userToActivate.getType() == UserTypeEnum.CHECKER) {
+            userToActivate.setState(UserStateEnum.VALIDATED);
+        } else {
+            // Generate Wallet
+            final String walletHash = walletService.generateWallet();
+            log.debug("Wallet created with hash: " + walletHash);
+            userToActivate.setState(UserStateEnum.PENDING_VALIDATE);
+            userToActivate.setWalletHash(walletHash);
+            if (userToActivate.getType() == UserTypeEnum.STUDENT) {
+                streamBridge.send(streamChannelsProperties.getUserManagement(), NewStudentEvent.builder()
+                        .walletHash(userToActivate.getWalletHash())
+                        .build());
+            } else if (userToActivate.getType() == UserTypeEnum.CA_ADMIN) {
+                streamBridge.send(streamChannelsProperties.getUserManagement(), NewCertificationAuthorityEvent.builder()
+                        .caId(userToActivate.getCa().getId().toString())
+                        .walletHash(userToActivate.getWalletHash())
+                        .build());
+            }
         }
+        userToActivate.setConfirmationToken(null);
+        final UserEntity userActivated = userRepository.save(userToActivate);
         return simpleUserMapper.entityToDTO(userActivated);
     }
 
