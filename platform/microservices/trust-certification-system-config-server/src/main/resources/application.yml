@@ -27,4 +27,16 @@ spring:
                 git:
                     uri: https://github.com/sergio11/trust_certification_system_blockchain_config.git
                     default-label: main
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+    jmx:
+      exposure:
+        include: '*'
 

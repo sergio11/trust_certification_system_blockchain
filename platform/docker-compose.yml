@@ -2,6 +2,10 @@ version: '3.6'
 
 # Volumes
 volumes:
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
   zookeeper-data:
     driver: local
   zookeeper-log:
@@ -55,6 +59,20 @@ services:
     networks:
       - tcs_network
 
+  # Kafka exporter for Prometheus
+  kafka-exporter:
+    image: bitnami/kafka-exporter:latest
+    container_name: kafka-exporter
+    hostname: kafka-exporter
+    command:
+      - '--kafka.server=kafka:9092'
+      - '--web.listen-address=kafka-exporter:9308'
+      - '--web.telemetry-path=/metrics'
+      - '--log.level=debug'
+    restart: unless-stopped
+    networks:
+      - tcs_network
+
   # Manage & view data inside your Apache Kafka ® cluster
   akhq:
     image: tchiotludo/akhq
@@ -96,7 +114,6 @@ services:
 
   ## OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol, 
   ## which makes it possible for organizations to use centralized authentication and directory access services over a network.
-
   openldap:
     image: osixia/openldap-backup:1.5.0
     container_name: openldap
@@ -158,6 +175,95 @@ services:
     networks:
       - tcs_network
 
+  # Grafana is a multi-platform open source analytics and interactive visualization web application. 
+  # It provides charts, graphs, and alerts for the web when connected to supported data sources. 
+  # It is expandable through a plug-in system. End users can create complex monitoring dashboards using interactive query builders.
+  grafana:
+    image: grafana/grafana:latest-ubuntu
+    container_name: grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/datasources:/etc/grafana/datasources
+      - ./grafana/dashboards:/etc/grafana/dashboards
+      - ./grafana/setup.sh:/setup.sh
+    entrypoint: /setup.sh
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-worldmap-panel,grafana-piechart-panel
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: unless-stopped
+    links:
+       - prometheus
+    ports:
+      - '8085:3000'
+    networks:
+      - tcs_network
+
+  # Prometheus is a free software application used for event monitoring and alerting.
+  # It records real-time metrics in a time series database built using a HTTP pull model, with flexible queries and real-time alerting.
+  # The project is written in Go and licensed under the Apache 2 License, with source code available on GitHub,
+  # and is a graduated project of the Cloud Native Computing Foundation, along with Kubernetes and Envoy.
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    ports:
+      - '8086:9090'
+    depends_on:
+      - cadvisor
+      - nodeexporter
+    networks:
+      - tcs_network
+      
+  # Exporter for machine metrics    
+  nodeexporter:
+    image: prom/node-exporter:v0.18.1
+    container_name: nodeexporter
+    hostname: nodeexporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - c:\:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: unless-stopped
+    ports:
+      - '9100:9100'
+    networks:
+      - tcs_network
+      
+  # Analyzes resource usage and performance characteristics of running containers.
+  cadvisor:
+    image: google/cadvisor:latest
+    container_name: cadvisor
+    hostname: cadvisor
+    volumes:
+      - c:\:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    restart: unless-stopped
+    ports:
+      - '8087:8080'
+    networks:
+      - tcs_network
+
+
   # Trust Certification System Discovery Server
   tcs_discovery_server:
     image: ssanchez11/trust_certification_system_discovery_server:0.0.1-SNAPSHOT
@@ -166,19 +272,6 @@ services:
       - .env
     ports:
       - "8761:8761"
-    networks:
-      - tcs_network
-
-  # Trust Certification System Monitor Server
-  tcs_monitor_server:
-    image: ssanchez11/trust_certification_system_monitor_server:0.0.1-SNAPSHOT
-    container_name: tcs-monitor-server
-    env_file:
-      - .env
-    ports:
-      - "8060:8060"
-    environment:
-      - SERVICE_REGISTRY_HOST=tcs-discovery-server
     networks:
       - tcs_network
 
@@ -195,7 +288,20 @@ services:
     environment:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
 
-  # Trust Certification System Gateway API
+  # Trust Certification System Monitor Server
+  tcs_monitor_server:
+    image: ssanchez11/trust_certification_system_monitor_server:0.0.1-SNAPSHOT
+    container_name: tcs-monitor-server
+    env_file:
+      - .env
+    ports:
+      - "8060:8060"
+    environment:
+      - SERVICE_REGISTRY_HOST=tcs-discovery-server
+    networks:
+      - tcs_network
+
+# Trust Certification System Gateway API
   tcs_gateway_api:
     image: ssanchez11/trust_certification_system_gateway_api:0.0.1-SNAPSHOT
     container_name: tcs-gateway-api
@@ -262,3 +368,5 @@ services:
       - tcs_network
     environment:
       - SERVICE_REGISTRY_HOST=tcs-discovery-server
+
+  

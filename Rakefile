@@ -9,7 +9,6 @@ namespace :tcs do
 		puts `docker login 2>&1`
 	end
 
-
 	desc "Cleaning Evironment Task"
 	task :cleaning_environment_task do 
 		puts "Cleaning Environment"
