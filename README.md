@@ -1,4 +1,4 @@
-# Trust Certification System powered by Blockchain Technology.
+# Trust Certification System - Platform for the management and issuance of digital certificates based on blockchain technology.
 
 <p>
   <img src="https://img.shields.io/github/last-commit/sergio11/trust_certification_system_blockchain.svg" />
