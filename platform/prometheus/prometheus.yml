@@ -19,7 +19,7 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     scrape_interval: 2s
     static_configs:
-      - targets: ['tcs-discovery-server:8761', 'tcs-config-server:8888']
+      - targets: ['tcs-discovery-server:8761', 'tcs-config-server:8888', 'tcs-gateway-api:8080']
         labels:
           application: 'TCS Microservices'
       

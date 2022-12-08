@@ -74,5 +74,10 @@ public interface UserRepository extends MongoRepository<UserEntity, ObjectId> , 
      */
     List<UserEntity> findAllByCaId(final ObjectId id);
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     Long countById(final ObjectId id);
 }

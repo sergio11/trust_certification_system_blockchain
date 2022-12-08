@@ -215,8 +215,10 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
     public boolean currentUserHasBeenReachAttendControlLimitTo(String courseEditionId) {
         Assert.notNull(courseEditionId, "courseEditionId can not be null");
         AtomicBoolean isValid = new AtomicBoolean(false);
+        log.debug("currentUserHasBeenReachAttendControlLimitTo -> " + courseEditionId + " CALLED!");
         final ICommonUserDetailsAware<String> principal = accountsService.getCurrentPrincipal();
         if(principal != null && ObjectId.isValid(courseEditionId)) {
+            log.debug("courseEditionId is valid");
             certificationCourseEditionRepository.findById(new ObjectId(courseEditionId)).ifPresent(certificationCourseEditionEntity -> {
                 final CertificationCourseAttendeeControlEntity attendeeControlEntity = certificationCourseEditionEntity.getAttendeeControl();
                 if(attendeeControlEntity != null) {
@@ -226,6 +228,8 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
                     if(!attendeeList.isEmpty()) {
                         isValid.set(attendeeControlEntity.getMaxAttendanceCount() <= 0 || (attendeeList.get(0).getAttendedCount() / attendeeControlEntity.getMaxAttendanceCount() * 100) >= attendeeControlEntity.getMinPercentageAttendanceRequired());
                     }
+                } else {
+                    isValid.set(true);
                 }
             });
         }

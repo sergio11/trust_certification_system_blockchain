@@ -154,9 +154,9 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     @Override
     public CertificateIssuanceRequestDTO issueCertificateRequest(final IssueCertificateRequestDTO issueCertificate) throws Throwable {
         Assert.notNull(issueCertificate.getStudentWalletHash(), "Student Wallet Hash can not be null");
-        Assert.notNull(issueCertificate.getCertificateCourseEditionId(), "certificateCourseId can not be null");
+        Assert.notNull(issueCertificate.getCertificateCourseId(), "certificateCourseId can not be null");
         Assert.notNull(issueCertificate.getQualification(), "qualification can not be null");
-        final CertificationCourseEditionEntity certificationCourseEditionEntity = certificationCourseEditionRepository.findById(new ObjectId(issueCertificate.getCertificateCourseEditionId()))
+        final CertificationCourseEditionEntity certificationCourseEditionEntity = certificationCourseEditionRepository.findById(new ObjectId(issueCertificate.getCertificateCourseId()))
                 .orElseThrow(() -> new IllegalStateException("Course not found"));
         final UserEntity caEntity = certificationCourseEditionEntity.getCaMember();
         final UserEntity studentEntity = userRepository.findOneByWalletHash(issueCertificate.getStudentWalletHash())

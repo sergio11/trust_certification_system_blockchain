@@ -48,12 +48,19 @@ public class CertificationCourseBlockchainRepositoryImpl extends SupportBlockcha
      */
     @Override
     public CertificationCourseBcEntity addCertificationCourse(final String walletHash, final String id, final Long costOfIssuingCertificate, final Long durationInHours, final Long expirationInDays, final Boolean canBeRenewed, final Long costOfRenewingCertificate) throws RepositoryException {
+        Assert.notNull(walletHash, "walletHash can not be null");
+        Assert.notNull(id, "id can not be null");
+        Assert.notNull(costOfIssuingCertificate, "costOfIssuingCertificate can not be null");
+        Assert.notNull(durationInHours, "durationInHours can not be null");
+        Assert.notNull(expirationInDays, "expirationInDays can not be null");
+        Assert.notNull(canBeRenewed, "canBeRenewed can not be null");
+        Assert.notNull(costOfRenewingCertificate, "costOfRenewingCertificate can not be null");
         try {
             log.debug("register new certification course CALLED!");
             final CertificationCourseContract certificationCourseContract = loadCertificationCourseContract(walletHash);
             final TransactionReceipt transactionReceipt = certificationCourseContract.addCertificationCourse(id, BigInteger.valueOf(costOfIssuingCertificate), BigInteger.valueOf(durationInHours),
                     BigInteger.valueOf(expirationInDays), canBeRenewed, BigInteger.valueOf(costOfRenewingCertificate)).send();
-            log.debug("Certification Course registered with id: " + id + " CALLED!");
+            log.debug("Certification Course registered with id: " + id + " transactionReceipt " + transactionReceipt.getBlockHash() + " CALLED!");
             return getCertificationCourseDetail(certificationCourseContract, id);
         } catch (final Exception ex) {
             log.debug("ERROR: register new certification course ex -> " + ex.getMessage());

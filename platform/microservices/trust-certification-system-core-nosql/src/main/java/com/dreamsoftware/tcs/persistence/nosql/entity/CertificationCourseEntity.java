@@ -51,6 +51,12 @@ public class CertificationCourseEntity {
     private String description;
 
     /**
+     *  Duration In Hours
+     */
+    @Field("duration_in_hours")
+    private Long durationInHours;
+
+    /**
      * Created At
      */
     @Field("created_at")

@@ -169,7 +169,7 @@ public class UsersController extends SupportController {
      * @return
      * @throws Throwable
      */
-    @Operation(summary = "UPLOAD_PROFILE_AVATAR - Upload Profile Image", description = "Upload Profile Image", tags = {"profile"})
+    @Operation(summary = "UPLOAD_PROFILE_AVATAR - Upload Profile Image", description = "Upload Profile Image", tags = {"users"})
     @RequestMapping(value = "/avatar", method = RequestMethod.POST,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCaOrStudent
@@ -206,7 +206,7 @@ public class UsersController extends SupportController {
      * @return
      * @throws IOException
      */
-    @Operation(summary = "DOWNLOAD_SELF_PROFILE_AVATAR - Download Self Profile Image", description = "Download Self Profile Image", tags = {"profile"})
+    @Operation(summary = "DOWNLOAD_SELF_PROFILE_AVATAR - Download Self Profile Image", description = "Download Self Profile Image", tags = {"users"})
     @RequestMapping(value = "/avatar", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> downloadProfileImage(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
@@ -229,7 +229,7 @@ public class UsersController extends SupportController {
      * @param request
      * @return
      */
-    @Operation(summary = "DELETE_SELF_PROFILE_AVATAR - Delete Self Profile Avatar", description = "Delete Self Profile Avatar", tags = {"profile"})
+    @Operation(summary = "DELETE_SELF_PROFILE_AVATAR - Delete Self Profile Avatar", description = "Delete Self Profile Avatar", tags = {"users"})
     @RequestMapping(value = "/avatar", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCaOrStudent
     public ResponseEntity<APIResponse<String>> deleteProfileAvatar(

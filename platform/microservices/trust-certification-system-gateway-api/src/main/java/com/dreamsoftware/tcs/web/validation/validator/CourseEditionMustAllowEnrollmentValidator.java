@@ -18,6 +18,6 @@ public class CourseEditionMustAllowEnrollmentValidator implements ConstraintVali
 
     @Override
     public boolean isValid(String id, ConstraintValidatorContext context) {
-        return certificationCourseService.courseEditionAllowEnrollment(id);
+        return !id.isBlank() && certificationCourseService.courseEditionAllowEnrollment(id);
     }
 }

@@ -18,6 +18,6 @@ public class UserMustReachAttendControlLimitValidator implements ConstraintValid
 
     @Override
     public boolean isValid(String courseEditionId, ConstraintValidatorContext context) {
-        return certificationCourseService.currentUserHasBeenReachAttendControlLimitTo(courseEditionId);
+        return !courseEditionId.isBlank() && certificationCourseService.currentUserHasBeenReachAttendControlLimitTo(courseEditionId);
     }
 }
