@@ -19,6 +19,6 @@ public class CourseEditionShouldExistValidator implements ConstraintValidator<Co
 
     @Override
     public boolean isValid(String id, ConstraintValidatorContext context) {
-        return ObjectId.isValid(id) && certificationCourseEditionRepository.countById(new ObjectId(id)) > 0;
+        return !id.isBlank() && ObjectId.isValid(id) && certificationCourseEditionRepository.countById(new ObjectId(id)) > 0;
     }
 }

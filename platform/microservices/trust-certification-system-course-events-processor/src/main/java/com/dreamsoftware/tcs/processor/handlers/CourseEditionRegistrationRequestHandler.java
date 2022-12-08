@@ -51,12 +51,21 @@ public class CourseEditionRegistrationRequestHandler extends AbstractProcessAndR
         final CertificationCourseEditionEntity certificationCourseEditionEntity = certificationCourseEditionRepository.findById(new ObjectId(event.getCourseEditionId()))
                 .orElseThrow(() -> new IllegalStateException("Course Edition can not be found"));
         log.debug("CourseCertificateRegistrationRequestHandler CALLED!");
+        final CertificationCourseEntity certificationCourseEntity = certificationCourseEditionEntity.getCourse();
+        final Long costOfIssuingCertificate = certificationCourseEditionEntity.getCostOfIssuingCertificate() != null ?
+                certificationCourseEditionEntity.getCostOfIssuingCertificate() : certificationCourseEntity.getCostOfIssuingCertificate();
+        final Long durationInHours = certificationCourseEditionEntity.getDurationInHours() != null ?
+                certificationCourseEditionEntity.getDurationInHours() : certificationCourseEntity.getDurationInHours();
+        final Long expirationInDays = certificationCourseEditionEntity.getExpirationInDays() != null ?
+                certificationCourseEditionEntity.getExpirationInDays() : 0;
+        final Boolean canBeRenewed = certificationCourseEditionEntity.getCanBeRenewed() != null ?
+                certificationCourseEditionEntity.getCanBeRenewed() : false;
+        final Long costOfRenewingCertificate = certificationCourseEditionEntity.getCostOfRenewingCertificate() != null ?
+                certificationCourseEditionEntity.getCostOfRenewingCertificate() : 0;
         certificationCourseBlockchainRepository.addCertificationCourse(event.getCaWalletHash(), certificationCourseEditionEntity.getId().toString(),
-                certificationCourseEditionEntity.getCostOfIssuingCertificate(), certificationCourseEditionEntity.getDurationInHours(), certificationCourseEditionEntity.getExpirationInDays(),
-                certificationCourseEditionEntity.getCanBeRenewed(), certificationCourseEditionEntity.getCostOfRenewingCertificate());
+                costOfIssuingCertificate, durationInHours, expirationInDays,
+                canBeRenewed, costOfRenewingCertificate);
         log.debug("Certification Course Edition REGISTERED!");
-        final CertificationCourseEntity certificationCourseEntity = certificationCourseRepository.findById(new ObjectId(event.getCourseId()))
-                .orElseThrow(() -> new IllegalStateException("Course can not be found"));
         certificationCourseEditionRepository.updateStatus(certificationCourseEditionEntity.getId(), certificationCourseEntity.getStatus());
         return CourseEditionRegisteredNotificationEvent.builder()
                 .courseId(certificationCourseEntity.getId().toString())

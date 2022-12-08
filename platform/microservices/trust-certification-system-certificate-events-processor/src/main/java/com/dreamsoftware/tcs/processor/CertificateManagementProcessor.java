@@ -32,6 +32,7 @@ public class CertificateManagementProcessor implements Function<GenericMessage<S
         try {
             notificationEvent = dispatcherEventHandlerService.processEventAndGetResult(event.getPayload());
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("CertificateManagementProcessor ex -> " + e.getMessage());
         }
         return notificationEvent;

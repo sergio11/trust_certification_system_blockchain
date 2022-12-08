@@ -91,7 +91,7 @@ public class CertificationCourseController extends SupportController {
             @ApiResponse(responseCode = "404", description = "Course Not Found",
                     content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/{term}"}, method = RequestMethod.GET,
+    @RequestMapping(value = {"/search/{term}"}, method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<Iterable<SimpleCertificationCourseDetailDTO>>> searchCourses(
             @Parameter(name = "term", description = "Query term", required = true)
@@ -564,8 +564,8 @@ public class CertificationCourseController extends SupportController {
     @RequestMapping(value = "/{courseId}/editions/{editionId}/enrollmentQR", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<byte[]> getEnrollmentQR(
-            @Parameter(name = "courseId", description = "Course Id", required = true)
             @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @Parameter(name = "courseId", description = "Course Id", required = true)
             @PathVariable("courseId") String courseId,
             @Validated(ICommonSequence.class)
             @CourseEditionShouldExist(message = "{course_edition_should_exist}")

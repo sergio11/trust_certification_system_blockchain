@@ -24,7 +24,7 @@ public class ShouldNotHaveAssociatedCertificateValidator implements ConstraintVa
     @Override
     public boolean isValid(String courseEditionId, ConstraintValidatorContext context) {
         final ICommonUserDetailsAware<String> principal = accountsService.getCurrentPrincipal();
-        return principal != null && ObjectId.isValid(courseEditionId)
+        return principal != null && !courseEditionId.isBlank() && ObjectId.isValid(courseEditionId)
                 && certificateIssuanceRequestRepository.countByStudentAndCourseEdition(new ObjectId(principal.getUserId()), new ObjectId(courseEditionId)) == 0;
     }
 }
