@@ -1,8 +1,9 @@
 package com.dreamsoftware.tcs.web.validation.validator;
 
-import com.dreamsoftware.tcs.web.validation.constraints.ValidPdfFile;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import com.dreamsoftware.tcs.web.validation.constraints.ValidPhoto;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author ssanchez
  */
-public class ValidPhotoValidator implements ConstraintValidator<ValidPdfFile, MultipartFile> {
+public class ValidPhotoValidator implements ConstraintValidator<ValidPhoto, MultipartFile> {
 
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext cvc) {

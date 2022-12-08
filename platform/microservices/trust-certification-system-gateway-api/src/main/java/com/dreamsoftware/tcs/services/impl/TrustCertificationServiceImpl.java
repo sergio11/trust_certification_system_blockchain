@@ -259,9 +259,11 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     public FileInfoDTO getCertificateFile(final String certificateId) throws Exception {
         Assert.notNull(certificateId, "Certificate Id can not be null");
         final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(certificateId);
+        log.debug("getCertificateFile certificateId: " + certificateId + " File CID -> " + certificate.getFileCid());
         final byte[] fileContents = ipfsService.get(certificate.getFileCid());
         return FileInfoDTO
                 .builder()
+                .name(certificateId.concat(".pdf"))
                 .content(fileContents)
                 .contentType(MediaType.APPLICATION_PDF_VALUE)
                 .size((long) fileContents.length)
@@ -285,6 +287,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
         final byte[] qrCodeData = qrCodeGenerator.getQRCodeImage(certificateQrDataEncrypted, width, height);
         return FileInfoDTO
                 .builder()
+                .name(certificateId.concat(".png"))
                 .content(qrCodeData)
                 .contentType(MediaType.IMAGE_PNG_VALUE)
                 .size((long) qrCodeData.length)
@@ -301,9 +304,11 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     public FileInfoDTO getCertificateImage(final String certificateId) throws Exception {
         Assert.notNull(certificateId, "Certificate Id can not be null");
         final CertificateIssuedEntity certificate = trustCertificationRepository.getCertificateDetail(certificateId);
+        log.debug("getCertificateImage certificateId: " + certificateId + " Image CID -> " + certificate.getImageCid());
         final byte[] fileContents = ipfsService.get(certificate.getImageCid());
         return FileInfoDTO
                 .builder()
+                .name(certificateId.concat(".png"))
                 .content(fileContents)
                 .contentType(MediaType.IMAGE_PNG_VALUE)
                 .size((long) fileContents.length)

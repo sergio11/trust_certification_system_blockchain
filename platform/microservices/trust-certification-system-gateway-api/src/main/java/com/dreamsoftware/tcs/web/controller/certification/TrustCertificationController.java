@@ -416,7 +416,7 @@ public class TrustCertificationController extends SupportController {
      * @return
      */
     @Operation(summary = "DOWNLOAD_CERTIFICATE_FILE - Download Certificate file", description = "Download certificate file", tags = {"certification"})
-    @RequestMapping(value = "/{certId}/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+    @RequestMapping(value = "/{certId}/download/file", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> downloadCertificateFile(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
             @Valid @CertificateShouldExist(message = "{certificate_not_exist}")
@@ -437,7 +437,8 @@ public class TrustCertificationController extends SupportController {
      * @return
      */
     @Operation(summary = "DOWNLOAD_CERTIFICATE_IMAGE - Download Certificate Image", description = "Download certificate image", tags = {"certification"})
-    @RequestMapping(value = "/{certId}/download", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @RequestMapping(value = "/{certId}/download/image", method = RequestMethod.GET,
+            produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> downloadCertificateImage(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
             @Valid @CertificateShouldExist(message = "{certificate_not_exist}")

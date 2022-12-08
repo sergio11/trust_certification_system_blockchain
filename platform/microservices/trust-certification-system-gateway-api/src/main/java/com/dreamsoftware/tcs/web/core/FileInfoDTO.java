@@ -21,6 +21,11 @@ public class FileInfoDTO {
     private Long size;
 
     /**
+     * Name
+     */
+    private String name;
+
+    /**
      * Content Type
      */
     private String contentType;
