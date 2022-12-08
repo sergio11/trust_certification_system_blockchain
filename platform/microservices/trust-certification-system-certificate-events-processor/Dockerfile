@@ -5,6 +5,8 @@ LABEL description="Trust Certification System Certificate Events Processor"
 ARG PORT=8080
 
 RUN apk update && apk upgrade
+RUN apk add msttcorefonts-installer
+RUN update-ms-fonts
 RUN ln -s /bin/bash /usr/bin
 RUN mkdir -p /usr/src/app
 RUN mkdir -p /opt/wallets
