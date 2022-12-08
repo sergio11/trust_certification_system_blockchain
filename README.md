@@ -1,4 +1,4 @@
-# Trust Certification System powered by Blockchain Technology.
+# Trust Certification System - Platform for the management and issuance of digital certificates based on blockchain technology.
 
 <p>
   <img src="https://img.shields.io/github/last-commit/sergio11/trust_certification_system_blockchain.svg" />
@@ -32,6 +32,11 @@ A Certification Authority and a Student reach an agreement in order to issue a c
   <img src="https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white" />
 
 </p>
+
+This repository requires the following projects:
+
+* [Decentralized application designed to guarantee the transparency, traceability, security and truthfulness of the certificates issued by certification authorities.](https://github.com/sergio11/trust_certification_system_ethereum_dapp) 
+* [Configuration for TCS microservices platform powered by Spring Cloud Config.](https://github.com/sergio11/trust_certification_system_blockchain_config) 
 
 ## Why Blockchain Technology?
 
@@ -92,6 +97,7 @@ The student or professional is the sovereign owner of the information and decide
 * Spring Cloud Starter Stream Kafka.
 * Spring Boot Jasypt.
 * Spring Boot Starter Actuator.
+* Micrometer Prometheus registry.
 * Spring Cloud Config Monitor.
 * Spring Vault Core.
 * Spring Ldap Core.
