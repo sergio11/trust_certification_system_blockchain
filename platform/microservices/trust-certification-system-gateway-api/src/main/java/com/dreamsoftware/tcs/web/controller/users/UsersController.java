@@ -22,6 +22,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+
+import org.springframework.core.io.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,7 +57,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UsersController extends SupportController {
 
     @Qualifier("UploadUserAvatarService")
-    private final IUploadImagesService uploadUserAvatarService;
+    private final IUploadImagesService<ObjectId> uploadUserAvatarService;
     private final IUserService userService;
     private final ResourceLoader resourceLoader;
 
@@ -186,7 +188,7 @@ public class UsersController extends SupportController {
 
             // Upload Profile Image
             UserPhotoDTO imageDTO = uploadUserAvatarService.upload(
-                    selfUser.getUserId(), uploadProfileImage);
+                    new ObjectId(selfUser.getUserId()), uploadProfileImage);
 
             // Create and send response
             return responseHelper.createAndSendResponse(UsersResponseCodeEnum.AVATAR_UPLOAD_SUCCESSFULLY,
@@ -214,7 +216,7 @@ public class UsersController extends SupportController {
 
         UploadFileInfo uploadFileInfo;
         try {
-            uploadFileInfo = uploadUserAvatarService.getInfoForUser(selfUser.getUserId());
+            uploadFileInfo = uploadUserAvatarService.getInfoForUser(new ObjectId(selfUser.getUserId()));
         } catch (final Exception ex) {
             uploadFileInfo = getUserDefaultAvatarImage();
         }
@@ -237,7 +239,7 @@ public class UsersController extends SupportController {
             @Parameter(hidden = true) HttpServletRequest request) {
 
         try {
-            uploadUserAvatarService.deleteForUser(selfUser.getUserId());
+            uploadUserAvatarService.deleteForUser(new ObjectId(selfUser.getUserId()));
             // Create And Send Response
             return responseHelper.createAndSendResponse(UsersResponseCodeEnum.AVATAR_DELETED_SUCCESSFULLY,
                     HttpStatus.OK, resolveString("profile_image_deleted_successfully", request));
@@ -255,7 +257,7 @@ public class UsersController extends SupportController {
      * @throws IOException
      */
     private UploadFileInfo getUserDefaultAvatarImage() throws IOException {
-        final org.springframework.core.io.Resource userDefault = resourceLoader.getResource("classpath:user_default_avatar.png");
+        final Resource userDefault = resourceLoader.getResource("classpath:user_default_avatar.png");
         return new UploadFileInfo(1, userDefault.contentLength(), MediaType.IMAGE_PNG_VALUE,
                 IOUtils.toByteArray(userDefault.getInputStream()));
     }

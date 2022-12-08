@@ -236,6 +236,7 @@ public class ResponseHelper {
      */
     public ResponseEntity<byte[]> createAndSendMediaResponse(final FileInfoDTO fileInfoDTO) {
         return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=" + fileInfoDTO.getName())
                 .contentLength(fileInfoDTO.getSize())
                 .contentType(fileInfoDTO.getContentType() != null
                         ? MediaType.parseMediaType(fileInfoDTO.getContentType())

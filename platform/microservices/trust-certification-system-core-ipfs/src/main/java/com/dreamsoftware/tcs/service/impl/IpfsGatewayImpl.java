@@ -39,19 +39,19 @@ public class IpfsGatewayImpl implements IipfsGateway {
         if (deleteOnSave) {
             fileToSave.delete();
         }
-        return addResult.hash.toHex();
+        return addResult.hash.toBase58();
     }
 
     /**
      *
-     * @param hashHex
+     * @param hashBase58
      * @throws Exception
      */
     @Override
-    public byte[] get(final String hashHex) throws Exception {
-        Assert.notNull(hashHex, "Hash can not be null");
+    public byte[] get(final String hashBase58) throws Exception {
+        Assert.notNull(hashBase58, "Hash can not be null");
         IPFS ipfs = new IPFS(ipfsProperties.getConnectionAddress());
-        return ipfs.get(Multihash.fromHex(hashHex));
+        return ipfs.get(Multihash.fromBase58(hashBase58));
     }
 
 }

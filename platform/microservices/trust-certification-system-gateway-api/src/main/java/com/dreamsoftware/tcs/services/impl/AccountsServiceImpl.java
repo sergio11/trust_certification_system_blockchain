@@ -68,7 +68,7 @@ public class AccountsServiceImpl implements IAccountsService {
     private final SimpleSocialUserMapper simpleSocialUserMapper;
     private final SignUpSocialUserMapper signUpSocialUserMapper;
     @Qualifier("UploadUserAvatarService")
-    private final IUploadImagesService uploadUserAvatarService;
+    private final IUploadImagesService<ObjectId> uploadUserAvatarService;
     private final AuthProviderMapper authProviderMapper;
     private final AuthenticationProviderRepository authProviderEntityRepository;
     private final IGoogleService googleService;
