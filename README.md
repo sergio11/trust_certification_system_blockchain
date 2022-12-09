@@ -33,7 +33,7 @@ A Certification Authority and a Student reach an agreement in order to issue a c
 
 </p>
 
-This repository requires the following projects:
+This repository is based on the following projects:
 
 * [Decentralized application designed to guarantee the transparency, traceability, security and truthfulness of the certificates issued by certification authorities.](https://github.com/sergio11/trust_certification_system_ethereum_dapp) 
 * [Configuration for TCS microservices platform powered by Spring Cloud Config.](https://github.com/sergio11/trust_certification_system_blockchain_config) 
