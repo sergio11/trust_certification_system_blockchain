@@ -8,7 +8,7 @@
 
 TCS uses Blockchain technology in order to provide inviolability, immutability and easy verification for all your certificates. This platform guarantees students and certificate authorities the possibility of issuein a digital and unforgeable version of their certificates and it is guaranteed that any interested third party can verify their integrity.
 
-A Certification Authority and a Student reach an agreement in order to issue a certificate on the platform, this certificate is generated, signed and stored using cryptographic techniques. Later, the Student can go to any other institution and share their certificate, whose veracity can be verified directly on the platform without having to contact the institution that issued it again.
+A Certification Authority and a Student reach an agreement in order to issue a certificate on the platform, this certificate is generated, signed and stored using cryptographic techniques. After that, the Student can go to any other institution and share their certificate, whose veracity can be verified directly on the platform without having to contact the institution that issued it again.
 
 </br>
 
@@ -71,6 +71,7 @@ The student or professional is the sovereign owner of the information and decide
 ### Students
 
 * Comfortable system to share and validate certificates
+* Really easy to use, students can request new certificates through a couple steps.
 
 ### Certificate Authorities
 
@@ -104,20 +105,22 @@ The student or professional is the sovereign owner of the information and decide
 * **Firebase Cloud Messaging:**
 * **Spring Cloud Config Server:** Server-side and client-side support for externalized configuration in a distributed system.
 * **Spring Boot Blockchain Monitoring Service:** Recording events from the blockchain network.
-* ** Spring Eureka Discovery Service:** Eureka instances can be registered and clients can discover the instances using Spring-managed beans.
-* ** Spring Boot API Gateway:**
-* ** Spring Boot Notification Events Processor:**
-* ** Spring Boot Certificate Events Processor:** 
-* ** Spring Boot User Events Processor:**
-* ** Spring Boot Course Events Processor:**
+* **Spring Eureka Discovery Service:** Eureka instances can be registered and clients can discover the instances using Spring-managed beans.
+* **Spring Boot API Gateway:**
+* **Spring Boot Notification Events Processor:**
+* **Spring Boot Certificate Events Processor:** 
+* **Spring Boot User Events Processor:**
+* **Spring Boot Course Events Processor:**
 
 ## Several things to be consider.
 
 * For each user registered on the platform (except users with the role of *checker*), a wallet will be generated to be able to operate with smart contracts.
 * The secrets of the wallets are stored in the **HashiCorp Vault**, the wallet hash must be provided in order to get the wallet credentials to be able to interact with smart contracts
 * Each Certification Authority registered on the platform will be managed by a user account, which will also be able to register additional members (*CA Members*) so that they work on behalf of the entity and can register certification courses, validate certificate requests, etc.
-* Each user registered on the platform will receive an initial deposit in ethers and TCS ERC20 tokens to cover the initial registration costs.
-* 
+* Each user registered on the platform will receive an initial income in ethers and TCS ERC20 tokens to cover the initial registration costs.
+* The members of the certifying entity may register several editions for the same course with a different certificate generation cost.
+* Each edition of a certification course may require that the certificate be renewed after a while, it is possible to define the cost of certificate renewal.
+* For each certification course it is possible to define an attendance control policy, in such a way that users will only be able to request achievement or attendance certificates when they have reached the minimum percentage of attendance.
 
 ## Used technology.
 
