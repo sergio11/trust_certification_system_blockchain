@@ -88,6 +88,7 @@ The student or professional is the sovereign owner of the information and decide
 
 ## Architecture Overview
 
+<img width="auto" src="./doc/trust_certification_system_diagram_v1.drawio.svg" />
 
 ## Used technology.
 
