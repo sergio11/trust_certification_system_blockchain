@@ -90,6 +90,12 @@ The student or professional is the sovereign owner of the information and decide
 
 <img width="auto" src="./doc/trust_certification_system_diagram_v1.drawio.svg" />
 
+## Several things to be consider.
+
+* For each user registered on the platform (except users with the role of "checker"), a wallet will be generated to be able to operate with smart contracts.
+* The secrets of the wallets are stored in the Vault, the wallet hash must be provided in order to get the wallet credentials to be able to interact with smart contracts
+* Each Certification Authority registered on the platform will be managed by a user account, which will also be able to register additional members (CA Members) so that they work on behalf of the entity and can register certification courses, validate certificate requests, etc.
+
 ## Used technology.
 
 * Spring Cloud Starter Config.
