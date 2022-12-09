@@ -114,6 +114,8 @@ The student or professional is the sovereign owner of the information and decide
 
 ## Several things to be consider.
 
+Below I would like to list several important implementation details:
+
 * For each user registered on the platform (except users with the role of *checker*), a wallet will be generated to be able to operate with smart contracts.
 * The secrets of the wallets are stored in the **HashiCorp Vault**, the wallet hash must be provided in order to get the wallet credentials to be able to interact with smart contracts
 * Each Certification Authority registered on the platform will be managed by a user account, which will also be able to register additional members (*CA Members*) so that they work on behalf of the entity and can register certification courses, validate certificate requests, etc.
@@ -121,6 +123,8 @@ The student or professional is the sovereign owner of the information and decide
 * The members of the certifying entity may register several editions for the same course with a different certificate generation cost.
 * Each edition of a certification course may require that the certificate be renewed after a while, it is possible to define the cost of certificate renewal.
 * For each certification course it is possible to define an attendance control policy, in such a way that users will only be able to request achievement or attendance certificates when they have reached the minimum percentage of attendance.
+* Students and users members of a certification authority may acquire new ERC20 TCS tokens to carry out transactions such as certificate generation, registration of certification courses, for the purchase will be made through a PayPal gateway.
+* Any request related to  a certification generation request must be accepted or rejected by a user who is a member of the certification authority to which the certification course belongs. At the time of acceptance, the certification will be generated, stored on the IPFS network, and their information (file signature hash, base58 IPDS id) will be stored at certification smart contract in the blockchain. Users involved in the process will receive notifications about the status of the request.
 
 ## Used technology.
 
