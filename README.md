@@ -166,7 +166,12 @@ In this table you can view the ports assigned to each service to access to the W
 
 As follow, I include some images that help us to understand how each part of the system works.
 
+Using the Ethereum NetStats dashboard we can visualize the state of the nodes that make up the blockchain network, more specifically we can deduce relevant information such as: the speed of mining, the difficulty established for the generation of blocks, the level of consensus of the network
+
 <img width="auto" src="./doc/screenshots/ethereum_netstats_2.PNG" />
+
+If it is necessary to obtain specific information for a mined block, we can use the Ethereum Lite Explorer tool to obtain all the relevant information related to the block.
+
 <img width="auto" src="./doc/screenshots/ethreum_block_explorer.PNG" />
 <img width="auto" src="./doc/screenshots/ethreum_miner.PNG" />
 <img width="auto" src="./doc/screenshots/ethreum_platform.PNG" />
