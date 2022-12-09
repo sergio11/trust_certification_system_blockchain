@@ -90,11 +90,34 @@ The student or professional is the sovereign owner of the information and decide
 
 <img width="auto" src="./doc/trust_certification_system_diagram_v1.drawio.svg" />
 
+
+* **HashiCorp Vault:** Secures, stores and tightly controls access to user wallets.
+* **OpenLDAP:** Stores the information of the platform administration users.
+* **MongoDB:** Storage of platform information and metadata.
+* **MongoDB Express:** 
+* **Grafana:** 
+* **akhq.io:** 
+* **Kafka:** 
+* **IPFS private swarm:** Distributed and secure storage of digital certificates
+* **Private Ethereum network:** Decentralized application designed to guarantee the transparency, traceability, security and truthfulness of the certificates issued by certification authorities. 
+* **PayPal**: Gateway that allows the purchase of ETH on the platform.
+* **Firebase Cloud Messaging:**
+* **Spring Cloud Config Server:** Server-side and client-side support for externalized configuration in a distributed system.
+* **Spring Boot Blockchain Monitoring Service:** Recording events from the blockchain network.
+* ** Spring Eureka Discovery Service:** Eureka instances can be registered and clients can discover the instances using Spring-managed beans.
+* ** Spring Boot API Gateway:**
+* ** Spring Boot Notification Events Processor:**
+* ** Spring Boot Certificate Events Processor:** 
+* ** Spring Boot User Events Processor:**
+* ** Spring Boot Course Events Processor:**
+
 ## Several things to be consider.
 
-* For each user registered on the platform (except users with the role of "checker"), a wallet will be generated to be able to operate with smart contracts.
-* The secrets of the wallets are stored in the Vault, the wallet hash must be provided in order to get the wallet credentials to be able to interact with smart contracts
-* Each Certification Authority registered on the platform will be managed by a user account, which will also be able to register additional members (CA Members) so that they work on behalf of the entity and can register certification courses, validate certificate requests, etc.
+* For each user registered on the platform (except users with the role of *checker*), a wallet will be generated to be able to operate with smart contracts.
+* The secrets of the wallets are stored in the **HashiCorp Vault**, the wallet hash must be provided in order to get the wallet credentials to be able to interact with smart contracts
+* Each Certification Authority registered on the platform will be managed by a user account, which will also be able to register additional members (*CA Members*) so that they work on behalf of the entity and can register certification courses, validate certificate requests, etc.
+* Each user registered on the platform will receive an initial deposit in ethers and TCS ERC20 tokens to cover the initial registration costs.
+* 
 
 ## Used technology.
 
