@@ -6,7 +6,7 @@
 
 <img width="auto" align="left" src="./tcs_logo.jpg" />
 
-Issuance of Academic Certificates or attendance certificates with Blockchain.
+**Issuance of academic certificates or attendance certificates with Blockchain.**
 
 TCS offers a simple system that eliminates paper traffic and complex operating procedures. Allows the creation of unique certificates, immediately verifiable and unfalsifiable for all types of academic diplomas.
 
