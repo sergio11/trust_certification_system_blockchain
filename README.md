@@ -95,10 +95,10 @@ The student or professional is the sovereign owner of the information and decide
 * **HashiCorp Vault:** Secures, stores and tightly controls access to user wallets.
 * **OpenLDAP:** Stores the information of the platform administration users.
 * **MongoDB:** Storage of platform information and metadata.
-* **MongoDB Express:** 
-* **Grafana:** 
-* **akhq.io:** 
-* **Kafka:** 
+* **MongoDB Express:** It allows us to view and manage the information stored in MongoDB, it is widely used for the purposes of validation and checking the status of the information.
+* **Grafana:** It allows us to view real-time metrics of the performance of the platform components, collects information from the Prometheus database.
+* **akhq.io:** It allows us to view the information stored in the Kafka topics, it is a very useful tool for the purpose of validating the messages stored in each topic.
+* **Kafka:**: Central and key element of the architecture, it offers the necessary support to implement a robust and efficient messaging flow.
 * **IPFS private swarm:** Distributed and secure storage of digital certificates
 * **Private Ethereum network:** Decentralized application designed to guarantee the transparency, traceability, security and truthfulness of the certificates issued by certification authorities. 
 * **PayPal**: Gateway that allows the purchase of ETH on the platform.
@@ -107,10 +107,10 @@ The student or professional is the sovereign owner of the information and decide
 * **Spring Boot Blockchain Monitoring Service:** Recording events from the blockchain network.
 * **Spring Eureka Discovery Service:** Eureka instances can be registered and clients can discover the instances using Spring-managed beans.
 * **Spring Boot API Gateway:**
-* **Spring Boot Notification Events Processor:**
-* **Spring Boot Certificate Events Processor:** 
-* **Spring Boot User Events Processor:**
-* **Spring Boot Course Events Processor:**
+* **Spring Boot Notification Events Processor:** Microservice responsible for notification delivery.
+* **Spring Boot Certificate Events Processor:** Microservice responsible for the generation and registration of certificates.
+* **Spring Boot User Events Processor:** Microservice responsible for user management.
+* **Spring Boot Course Events Processor:** Microservice responsible for the management of certification courses.
 
 ## Several things to be consider.
 
