@@ -84,7 +84,7 @@ The student or professional is the sovereign owner of the information and decide
 * Cheaper process, we use our own monetary system based on ERC 20 tokens.
 * It stick off as an innovative and avant-garde institution.
 * Provides greater value for students.
-* Preserves the prestige of the school by ensuring the veracity of the certificates.
+* Preserves the prestige of the certificaction authority by ensuring the veracity of the certificates.
 
 ### Third parties such as companies or other verification institutions.
 
