@@ -106,7 +106,7 @@ The student or professional is the sovereign owner of the information and decide
 * **Spring Cloud Config Server:** Server-side and client-side support for externalized configuration in a distributed system.
 * **Spring Boot Blockchain Monitoring Service:** Recording events from the blockchain network.
 * **Spring Eureka Discovery Service:** Eureka instances can be registered and clients can discover the instances using Spring-managed beans.
-* **Spring Boot API Gateway:**
+* **Spring Boot API Gateway:** Microservice that acts as a front for the rest of the clients, offers a wide API and implements the necessary security rules to control access to certain resources.
 * **Spring Boot Notification Events Processor:** Microservice responsible for notification delivery.
 * **Spring Boot Certificate Events Processor:** Microservice responsible for the generation and registration of certificates.
 * **Spring Boot User Events Processor:** Microservice responsible for user management.
@@ -125,6 +125,7 @@ Below I would like to list several important implementation details:
 * For each certification course it is possible to define an attendance control policy, in such a way that users will only be able to request achievement or attendance certificates when they have reached the minimum percentage of attendance.
 * Students and users members of a certification authority may acquire new ERC20 TCS tokens to carry out transactions such as certificate generation, registration of certification courses, for the purchase will be made through a PayPal gateway.
 * Any request related to  a certification generation request must be accepted or rejected by a user who is a member of the certification authority to which the certification course belongs. At the time of acceptance, the certification will be generated, stored on the IPFS network, and their information (file signature hash, base58 IPDS id) will be stored at certification smart contract in the blockchain. Users involved in the process will receive notifications about the status of the request.
+* Platform administrator users will be authenticated against an OpenLDAP server, they will have sufficient permissions to manage certification authorities and other privileged operations.
 
 ## Used technology.
 
