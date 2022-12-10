@@ -98,11 +98,11 @@ The student or professional is the sovereign owner of the information and decide
 * **MongoDB Express:** It allows us to view and manage the information stored in MongoDB, it is widely used for the purposes of validation and checking the status of the information.
 * **Grafana:** It allows us to view real-time metrics of the performance of the platform components, collects information from the Prometheus database.
 * **akhq.io:** It allows us to view the information stored in the Kafka topics, it is a very useful tool for the purpose of validating the messages stored in each topic.
-* **Kafka:**: Central and key element of the architecture, it offers the necessary support to implement a robust and efficient messaging flow.
+* **Kafka:** Central and key element of the architecture, it offers the necessary support to implement a robust and efficient messaging flow.
 * **IPFS private swarm:** Distributed and secure storage of digital certificates
 * **Private Ethereum network:** Decentralized application designed to guarantee the transparency, traceability, security and truthfulness of the certificates issued by certification authorities. 
 * **PayPal**: Gateway that allows the purchase of ETH on the platform.
-* **Firebase Cloud Messaging:**
+* **Firebase Cloud Messaging:** Offers a robust and easy-to-implement service for notification delivery to registered devices.
 * **Spring Cloud Config Server:** Server-side and client-side support for externalized configuration in a distributed system.
 * **Spring Boot Blockchain Monitoring Service:** Recording events from the blockchain network.
 * **Spring Eureka Discovery Service:** Eureka instances can be registered and clients can discover the instances using Spring-managed beans.
