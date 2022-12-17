@@ -45,6 +45,7 @@ public class CertificateRequestRejectedHandler extends AbstractNotificationHandl
             final Locale userLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
             mailClientService.sendMail(CertificateRequestRejectedMailRequestDTO
                     .builder()
+                    .name(studentEntity.getFullName())
                     .email(studentEntity.getEmail())
                     .qualification(certificateRequest.getQualification())
                     .certificateId(certificateRequest.getId().toString())

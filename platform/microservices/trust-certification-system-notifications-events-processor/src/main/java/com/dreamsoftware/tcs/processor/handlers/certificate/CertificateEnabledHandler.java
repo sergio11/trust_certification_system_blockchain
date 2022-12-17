@@ -45,6 +45,7 @@ public class CertificateEnabledHandler extends AbstractNotificationHandler<Certi
             final Locale userLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
             mailClientService.sendMail(CertificateEnabledMailRequestDTO
                     .builder()
+                    .name(studentEntity.getFullName())
                     .email(studentEntity.getEmail())
                     .certificateId(certificateId)
                     .locale(userLocale)

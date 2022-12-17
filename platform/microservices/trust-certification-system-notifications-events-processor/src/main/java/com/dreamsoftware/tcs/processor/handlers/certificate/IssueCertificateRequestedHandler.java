@@ -47,6 +47,7 @@ public class IssueCertificateRequestedHandler extends AbstractNotificationHandle
             final Locale studentLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
             mailClientService.sendMail(IssueCertificateRequestMailRequestDTO
                     .builder()
+                    .name(studentEntity.getFullName())
                     .email(studentEntity.getEmail())
                     .qualification(qualification)
                     .certificateId(certificationId)

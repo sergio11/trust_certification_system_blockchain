@@ -182,13 +182,18 @@ public class CertificateGeneratorServiceImpl implements ICertificateGeneratorSer
      */
     private void configureBackground(final File destFile, final CertificateTypeEnum certificateTypeEnum) throws IOException {
         try (final PDDocument doc = PDDocument.load(destFile)) {
+            log.debug("configureBackground CALLED!");
             HashMap<Integer, String> overlayGuide = new HashMap<>();
             final File certificateBackground = getCertificateBackgroundFile(certificateTypeEnum);
+            log.debug("doc.getNumberOfPages() -> " + doc.getNumberOfPages());
+            log.debug("certificateBackground path -> " + certificateBackground.getAbsolutePath());
             for (int i = 0; i < doc.getNumberOfPages(); i++) {
                 overlayGuide.put(i + 1, certificateBackground.getAbsolutePath());
             }
             try (Overlay overlay = new Overlay()) {
                 overlay.setInputPDF(doc);
+                overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
+                log.debug("save file with overlay at -> " + destFile.getAbsolutePath());
                 overlay.overlay(overlayGuide).save(destFile);
             }
         }

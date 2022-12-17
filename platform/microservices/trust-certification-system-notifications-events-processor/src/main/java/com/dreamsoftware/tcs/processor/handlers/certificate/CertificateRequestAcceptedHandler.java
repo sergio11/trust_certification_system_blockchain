@@ -8,7 +8,9 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceReq
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
 import com.dreamsoftware.tcs.service.IDevicesManagementService;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateRequestAcceptedNotificationEvent;
+
 import java.util.Locale;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -18,7 +20,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 /**
- *
  * @author ssanchez
  */
 @Component
@@ -33,7 +34,6 @@ public class CertificateRequestAcceptedHandler extends AbstractNotificationHandl
     private final IDevicesManagementService devicesManagementService;
 
     /**
-     *
      * @param notification
      */
     @Override
@@ -45,15 +45,16 @@ public class CertificateRequestAcceptedHandler extends AbstractNotificationHandl
             final Locale userLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
             mailClientService.sendMail(CertificateRequestAcceptedMailRequestDTO
                     .builder()
+                    .name(studentEntity.getFullName())
                     .email(studentEntity.getEmail())
                     .qualification(certificateRequest.getQualification())
                     .certificateId(certificateRequest.getId().toString())
                     .locale(userLocale)
                     .build());
             final String title = resolveString("notification_certificate_request_accepted_title", userLocale, new Object[]{
-                studentEntity.getFullName(), certificateRequest.getId().toString()});
+                    studentEntity.getFullName(), certificateRequest.getId().toString()});
             final String body = resolveString("notification_certificate_request_accepted_body", userLocale, new Object[]{
-                studentEntity.getFullName(), certificateRequest.getId().toString()});
+                    studentEntity.getFullName(), certificateRequest.getId().toString()});
             devicesManagementService.sendNotification(studentEntity.getId(), title, body);
         });
     }

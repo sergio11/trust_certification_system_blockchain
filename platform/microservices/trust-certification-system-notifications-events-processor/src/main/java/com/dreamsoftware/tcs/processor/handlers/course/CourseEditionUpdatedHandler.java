@@ -20,7 +20,6 @@ import org.springframework.util.Assert;
 import java.util.Locale;
 
 /**
- *
  * @author ssanchez
  */
 @Component
@@ -35,7 +34,6 @@ public class CourseEditionUpdatedHandler extends AbstractNotificationHandler<Cer
     private final INotificationService notificationService;
 
     /**
-     *
      * @param notification
      */
     @Override
@@ -53,11 +51,12 @@ public class CourseEditionUpdatedHandler extends AbstractNotificationHandler<Cer
     private void sendNotification(final UserEntity caMemberEntity, final CertificationCourseEditionEntity courseEditionEntity) {
         final Locale userLocale = i18nService.parseLocaleOrDefault(caMemberEntity.getLanguage());
         final String courseTitle = courseEditionEntity.getName().isBlank() ? courseEditionEntity.getCourse().getName() : courseEditionEntity.getName();
-        final String notificationTitle = resolveString("course_edition_updated_title", userLocale, new Object[]{ courseTitle });
-        final String notificationMessage = resolveString("course_edition_updated_message", userLocale, new Object[]{ courseTitle });
+        final String notificationTitle = resolveString("course_edition_updated_title", userLocale, new Object[]{courseTitle});
+        final String notificationMessage = resolveString("course_edition_updated_message", userLocale, new Object[]{courseTitle});
         notificationService.saveNotification(notificationTitle, notificationMessage, caMemberEntity);
         mailClientService.sendMail(CourseEditionUpdatedMailRequestDTO
                 .builder()
+                .caName(caMemberEntity.getFullName())
                 .id(courseEditionEntity.getId().toString())
                 .courseName(courseTitle)
                 .locale(userLocale)
