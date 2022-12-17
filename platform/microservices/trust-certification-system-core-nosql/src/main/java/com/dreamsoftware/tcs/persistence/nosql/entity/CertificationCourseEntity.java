@@ -1,8 +1,6 @@
 package com.dreamsoftware.tcs.persistence.nosql.entity;
 
 import java.util.Date;
-import java.util.Set;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Builder;
@@ -85,12 +83,6 @@ public class CertificationCourseEntity {
      */
     @Field("cost_renew_certificate")
     private Long costOfRenewingCertificate;
-
-    /**
-     * Editions
-     */
-    @DBRef
-    private Set<CertificationCourseEditionEntity> editions;
 
     /**
      * CA
