@@ -22,10 +22,10 @@ public interface IipfsGateway {
 
     /**
      *
-     * @param hashHex
+     * @param hashBase58
      * @return
      * @throws Exception
      */
-    byte[] get(final String hashHex) throws Exception;
+    byte[] get(final String hashBase58) throws Exception;
 
 }
