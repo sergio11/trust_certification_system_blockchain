@@ -19,7 +19,7 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     scrape_interval: 2s
     static_configs:
-      - targets: ['tcs-discovery-server:8761', 'tcs-config-server:8888', 'tcs-gateway-api:8080']
+      - targets: ['tcs-discovery-server:8761', 'tcs-config-server:8888', 'tcs-monitor-server:8060', 'tcs-gateway-api:8080', 'tcs-course-events-processor:8080', 'tcs-user-events-processor:8080', 'tcs-certificate-events-processor:8080', 'tcs-notification-events-processor:8080']
         labels:
           application: 'TCS Microservices'
       
