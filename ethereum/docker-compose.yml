@@ -19,6 +19,9 @@ services:
     networks:
       - tcs_network
 
+  # The Lite Explorer is a client-side only web application that connects directly to a Ethereum JSON RPC compatible node. 
+  # This means you can have your own private Ethereum Explorer should you wish so. No need for servers, hosting or trusting any third parties 
+  # to display chain data.
   ethereum_lite_explorer:
     image: alethio/ethereum-lite-explorer
     container_name: ethereum_lite_explorer
@@ -29,6 +32,8 @@ services:
     networks:
       - tcs_network
 
+  # This is a visual interface for tracking ethereum network status. It uses WebSockets to receive stats from running nodes and output them through an angular interface. 
+  # It is the front-end implementation for eth-net-intelligence-api.
   eth_netstats:
     image: kamael/eth-netstats
     container_name: netstats
