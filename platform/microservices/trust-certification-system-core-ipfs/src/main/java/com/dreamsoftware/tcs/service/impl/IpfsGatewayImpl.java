@@ -51,7 +51,7 @@ public class IpfsGatewayImpl implements IipfsGateway {
     public byte[] get(final String hashBase58) throws Exception {
         Assert.notNull(hashBase58, "Hash can not be null");
         IPFS ipfs = new IPFS(ipfsProperties.getConnectionAddress());
-        return ipfs.get(Multihash.fromBase58(hashBase58));
+        return ipfs.cat(Multihash.fromBase58(hashBase58));
     }
 
 }
