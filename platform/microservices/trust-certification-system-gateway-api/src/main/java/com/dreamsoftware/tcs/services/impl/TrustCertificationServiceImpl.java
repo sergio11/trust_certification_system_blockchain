@@ -229,13 +229,14 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     * @param studentWalletHash
+     * @param studentId
      * @return
      */
     @Override
-    public Iterable<CertificateIssuanceRequestDTO> getCertificatesIssuanceRequestsFromStudent(final String studentWalletHash) {
-        Assert.notNull(studentWalletHash, "Student Wallet hash can not be null");
-        Iterable<CertificateIssuanceRequestEntity> certificateRequests = certificateIssuanceRequestRepository.findByStudentOrderByUpdatedAtDesc(studentWalletHash);
+    public Iterable<CertificateIssuanceRequestDTO> getCertificatesIssuanceRequestsFromStudent(final String studentId) {
+        Assert.notNull(studentId, "Student Id can not be null");
+        Assert.isTrue(ObjectId.isValid(studentId), "Student Id is not valid");
+        Iterable<CertificateIssuanceRequestEntity> certificateRequests = certificateIssuanceRequestRepository.findByStudentOrderByUpdatedAtDesc(new ObjectId(studentId));
         return certificateIssuanceRequestMapper.entityToDTO(certificateRequests);
     }
 

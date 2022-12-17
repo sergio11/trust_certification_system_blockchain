@@ -8,7 +8,9 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceReq
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
 import com.dreamsoftware.tcs.service.IDevicesManagementService;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateDisabledNotificationEvent;
+
 import java.util.Locale;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -17,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 /**
- *
  * @author ssanchez
  */
 @Component
@@ -32,7 +33,6 @@ public class CertificateDisabledHandler extends AbstractNotificationHandler<Cert
     private final IDevicesManagementService devicesManagementService;
 
     /**
-     *
      * @param notification
      */
     @Override
@@ -45,14 +45,15 @@ public class CertificateDisabledHandler extends AbstractNotificationHandler<Cert
             final Locale userLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
             mailClientService.sendMail(CertificateDisabledMailRequestDTO
                     .builder()
+                    .name(studentEntity.getFullName())
                     .email(studentEntity.getEmail())
                     .certificateId(certificateId)
                     .locale(userLocale)
                     .build());
             final String title = resolveString("notification_certificate_disabled_title", userLocale, new Object[]{
-                studentEntity.getFullName(), certificateId});
+                    studentEntity.getFullName(), certificateId});
             final String body = resolveString("notification_certificate_disabled_body", userLocale, new Object[]{
-                studentEntity.getFullName(), certificateId});
+                    studentEntity.getFullName(), certificateId});
             devicesManagementService.sendNotification(studentEntity.getId(), title, body);
         });
     }

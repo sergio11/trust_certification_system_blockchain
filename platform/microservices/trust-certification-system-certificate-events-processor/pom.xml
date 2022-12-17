@@ -11,7 +11,7 @@
     <properties>
         <poi.version>5.2.2</poi.version>
         <docx4j.version>11.4.8</docx4j.version>
-        <pdfbox.version>2.0.27</pdfbox.version>
+        <pdfbox.version>2.0.26</pdfbox.version>
         <bcprov.jdk18on.version>1.72</bcprov.jdk18on.version>
         <guava.version>31.1-jre</guava.version>
         <jakarta.xml.version>4.0.0</jakarta.xml.version>

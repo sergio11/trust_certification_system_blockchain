@@ -93,10 +93,10 @@ public interface ITrustCertificationService {
 
     /**
      *
-     * @param studentWalletHash
+     * @param studentId
      * @return
      */
-    Iterable<CertificateIssuanceRequestDTO> getCertificatesIssuanceRequestsFromStudent(final String studentWalletHash);
+    Iterable<CertificateIssuanceRequestDTO> getCertificatesIssuanceRequestsFromStudent(final String studentId);
 
     /**
      *

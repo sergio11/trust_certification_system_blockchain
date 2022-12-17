@@ -8,7 +8,9 @@ import com.dreamsoftware.tcs.persistence.nosql.repository.CertificateIssuanceReq
 import com.dreamsoftware.tcs.processor.handlers.AbstractNotificationHandler;
 import com.dreamsoftware.tcs.service.IDevicesManagementService;
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.CertificateVisibilityChangedNotificationEvent;
+
 import java.util.Locale;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -17,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 /**
- *
  * @author ssanchez
  */
 @Component
@@ -32,7 +33,6 @@ public class CertificateVisibilityChangedHandler extends AbstractNotificationHan
     private final IDevicesManagementService devicesManagementService;
 
     /**
-     *
      * @param notification
      */
     @Override
@@ -44,16 +44,17 @@ public class CertificateVisibilityChangedHandler extends AbstractNotificationHan
             final Locale userLocale = i18nService.parseLocaleOrDefault(studentEntity.getLanguage());
             mailClientService.sendMail(CertificateVisibilityChangedMailRequestDTO
                     .builder()
+                    .name(studentEntity.getFullName())
                     .email(studentEntity.getEmail())
                     .isVisible(notification.getIsVisible())
                     .certificateId(certificateRequest.getId().toString())
                     .locale(userLocale)
                     .build());
             final String title = resolveString("notification_certificate_visibility_changed_title", userLocale, new Object[]{
-                studentEntity.getFullName()});
+                    studentEntity.getFullName()});
             final String body = resolveString(notification.getIsVisible()
                     ? "notification_certificate_changed_to_visible_body" : "notification_certificate_changed_to_invisible_body", userLocale, new Object[]{
-                        studentEntity.getFullName(), certificateRequest.getId().toString()});
+                    studentEntity.getFullName(), certificateRequest.getId().toString()});
             devicesManagementService.sendNotification(studentEntity.getId(), title, body);
         });
     }
