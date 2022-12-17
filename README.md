@@ -210,6 +210,7 @@ In this table you can view the ports assigned to each service to access to the W
 | MongoDB Express | localhost:8083 |
 | Swagger UI API Gateway | localhost:8080 |
 | IPFS WebUI | localhost:5001/webui |
+| Prometheus WebUI | localhost:8086 |
 
 
 ## Some screenshots.
