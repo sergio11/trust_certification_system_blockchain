@@ -1,9 +1,6 @@
 package com.dreamsoftware.tcs.mapper;
 
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEditionEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
-import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
-import com.dreamsoftware.tcs.persistence.nosql.entity.UserEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.*;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.persistence.nosql.repository.UserRepository;
 import com.dreamsoftware.tcs.web.controller.course.error.exception.CertificationCourseNotFoundException;
@@ -26,11 +23,7 @@ public abstract class SaveCertificationCourseEditionMapper {
     @Autowired
     protected UserRepository userRepository;
 
-    @Autowired
-    protected SaveCertificationCourseAttendeeControlMapper saveCertificationCourseAttendeeControlMapper;
-
     /**
-     *
      * @param dto
      * @return
      */
@@ -38,13 +31,12 @@ public abstract class SaveCertificationCourseEditionMapper {
             @Mapping(expression = "java(getCertificationCourse(dto.getCertificationCourseId()))", target = "course"),
             @Mapping(expression = "java(getCertificationCourseEditionInitialState())", target = "status"),
             @Mapping(expression = "java(getCaMember(dto.getCaWalletHash()))", target = "caMember"),
-            @Mapping(expression = "java(dto.getAttendeeControl() != null ? saveCertificationCourseAttendeeControlMapper.dtoToEntity(dto.getAttendeeControl()) : null)", target = "attendeeControl")
+            @Mapping(expression = "java(mapToAttendeeControl(dto))", target = "attendeeControl")
     })
     @Named("dtoToEntity")
     public abstract CertificationCourseEditionEntity dtoToEntity(SaveCertificationCourseEditionDTO dto);
 
     /**
-     *
      * @param dtoList
      * @return
      */
@@ -53,6 +45,7 @@ public abstract class SaveCertificationCourseEditionMapper {
 
     /**
      * Get Certification Course
+     *
      * @param courseId
      * @return
      */
@@ -63,6 +56,7 @@ public abstract class SaveCertificationCourseEditionMapper {
 
     /**
      * Get Certification Course Edition Initial State
+     *
      * @return
      */
     protected CertificationCourseStateEnum getCertificationCourseEditionInitialState() {
@@ -70,12 +64,23 @@ public abstract class SaveCertificationCourseEditionMapper {
     }
 
     /**
-     *
      * @param caMemberWalletHash
      * @return
      */
     protected UserEntity getCaMember(final String caMemberWalletHash) {
         return userRepository.findOneByWalletHash(caMemberWalletHash)
                 .orElseThrow(IllegalStateException::new);
+    }
+
+
+    protected CertificationCourseAttendeeControlEntity mapToAttendeeControl(final SaveCertificationCourseEditionDTO dto) {
+        return dto.getMaxAttendanceCount() != null &&
+                dto.getMaxAttendeeCount() != null &&
+                dto.getMinPercentageAttendanceRequired() != null ? CertificationCourseAttendeeControlEntity.builder()
+                .enrollCost(dto.getEnrollCost())
+                .maxAttendeeCount(dto.getMaxAttendeeCount())
+                .maxAttendanceCount(dto.getMaxAttendanceCount())
+                .minPercentageAttendanceRequired(dto.getMinPercentageAttendanceRequired())
+                .build() : null;
     }
 }
