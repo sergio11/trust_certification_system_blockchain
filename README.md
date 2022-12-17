@@ -42,7 +42,7 @@ This repository is based on the following projects:
 * [Decentralized application designed to guarantee the transparency, traceability, security and truthfulness of the certificates issued by certification authorities.](https://github.com/sergio11/trust_certification_system_ethereum_dapp) 
 * [Configuration for TCS microservices platform powered by Spring Cloud Config.](https://github.com/sergio11/trust_certification_system_blockchain_config) 
 
-### TCS-signed, self-generated certificates, securely stored in a private IFPS swarm.
+### TCS-signed, self-generated certificates, securely stored in a private Blockchain.
 
 <p align="center">
     <img width="45%" src="./doc/tcs--3761077930437957903.png" />
