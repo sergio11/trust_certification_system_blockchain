@@ -211,7 +211,7 @@ In this table you can view the ports assigned to each service to access to the W
 | Swagger UI API Gateway | localhost:8080 |
 | IPFS WebUI | localhost:5001/webui |
 | Prometheus WebUI | localhost:8086 |
-
+| Grafana | localhost:8085 (user admin/admin) |
 
 ## Some screenshots.
 
