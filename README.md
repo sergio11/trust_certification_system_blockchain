@@ -14,6 +14,8 @@ TCS uses Blockchain technology in order to provide inviolability, immutability a
 
 A Certification Authority and a Student reach an agreement in order to issue a certificate on the platform, this certificate is generated, signed and stored using cryptographic techniques. After that, the Student can go to any other institution and share their certificate, whose veracity can be verified directly on the platform without having to contact the institution that issued it again.
 
+TCS uses a private IPFS swarm to quickly process and store any number of files on multiple computers simultaneously.
+
 </br>
 
 <p align="center">
