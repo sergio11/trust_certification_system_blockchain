@@ -59,11 +59,7 @@ public class CryptServiceImpl implements ICryptService {
             byte[] cipherText = cipher.doFinal(content.getBytes());
             final String ivEncoded = Base64.getEncoder().encodeToString(ivParameterSpec.getIV());
             final String cipherTextEncoded = Base64.getEncoder().encodeToString(cipherText);
-            final StringBuilder sb = new StringBuilder();
-            sb.append(ivEncoded);
-            sb.append(buildSeparator());
-            sb.append(cipherTextEncoded);
-            return sb.toString();
+            return ivEncoded + buildSeparator() + cipherTextEncoded;
         } catch (final InvalidAlgorithmParameterException | IOException | InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException ex) {
             throw new CryptException(ex.getMessage(), ex);
         }
@@ -79,18 +75,16 @@ public class CryptServiceImpl implements ICryptService {
     public String decrypt(final String content) throws CryptException {
         Assert.notNull(content, "Content can not be null");
         try {
-            final String contentDecoded = new String(Base64.getDecoder().decode(content));
-            final String[] contentDecodedChunks = contentDecoded.split(buildSeparator());
+            final String[] contentDecodedChunks = content.split(buildSeparator());
             if (contentDecodedChunks.length != 2) {
                 throw new IllegalStateException("Content decoded invalid");
             }
-            final IvParameterSpec iv = new IvParameterSpec(contentDecodedChunks[0].getBytes());
+            final IvParameterSpec iv = new IvParameterSpec(Base64.getDecoder().decode(contentDecodedChunks[0]));
             final String cipherText = contentDecodedChunks[1];
             final SecretKey key = getKeyFromPassword(cryptProperties.getPassword(), cryptProperties.getSalt());
             final Cipher cipher = createCipher();
             cipher.init(Cipher.DECRYPT_MODE, key, iv);
-            byte[] plainText = cipher.doFinal(Base64.getDecoder()
-                    .decode(cipherText));
+            byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(cipherText));
             return new String(plainText);
         } catch (final InvalidAlgorithmParameterException | IOException | InvalidKeySpecException | NoSuchProviderException | InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException ex) {
             throw new CryptException(ex.getMessage(), ex);
@@ -138,5 +132,4 @@ public class CryptServiceImpl implements ICryptService {
     private String buildSeparator() throws IOException {
         return ByteSource.wrap(cryptProperties.getSeparator().getBytes()).hash(Hashing.sha256()).toString();
     }
-
 }
