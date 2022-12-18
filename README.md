@@ -263,6 +263,12 @@ The Spring Eureka web dashboard allows us to know the status of the microservice
 
 <img width="auto" src="./doc/screenshots/spring_eureka.PNG" />
 
+With the combination of Prometheus and Grafana we can explore the performance metrics of the different services and components that make up the platform
+
+<img width="auto" src="./doc/screenshots/prometheus_targets.PNG" />
+<img width="auto" src="./doc/screenshots/monitor_services.PNG" />
+<img width="auto" src="./doc/screenshots/docker_containers_dashboard.PNG" />
+
 
 ## Please Share & Star the repository to keep me motivated.
   <a href = "https://github.com/sergio11/trust_certification_system_blockchain/stargazers">
