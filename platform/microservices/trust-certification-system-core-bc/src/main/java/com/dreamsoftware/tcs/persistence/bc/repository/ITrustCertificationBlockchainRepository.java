@@ -81,6 +81,38 @@ public interface ITrustCertificationBlockchainRepository extends IBlockchainEven
     Boolean isCertificateValid(final String certificationId) throws RepositoryException;
 
     /**
+     *
+     * @param certificationId
+     * @return
+     * @throws RepositoryException
+     */
+    Boolean isCertificateDisabled(final String certificationId) throws RepositoryException;
+
+    /**
+     *
+     * @param certificationId
+     * @return
+     * @throws RepositoryException
+     */
+    Boolean isCertificateEnabled(final String certificationId) throws RepositoryException;
+
+    /**
+     *
+     * @param certificationId
+     * @return
+     * @throws RepositoryException
+     */
+    Boolean isCertificateVisible(final String certificationId) throws RepositoryException;
+
+    /**
+     *
+     * @param certificationId
+     * @return
+     * @throws RepositoryException
+     */
+    Boolean isCertificateInvisible(final String certificationId) throws RepositoryException;
+
+    /**
      * Get Certificate Detail
      *
      * @param certificationId

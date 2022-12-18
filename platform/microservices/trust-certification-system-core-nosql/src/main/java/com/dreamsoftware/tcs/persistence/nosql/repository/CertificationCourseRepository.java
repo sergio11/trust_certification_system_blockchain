@@ -2,6 +2,7 @@ package com.dreamsoftware.tcs.persistence.nosql.repository;
 
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationAuthorityEntity;
 import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseEntity;
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -22,9 +23,24 @@ public interface CertificationCourseRepository extends MongoRepository<Certifica
 
     /**
      *
+     * @param status
+     * @return
+     */
+    Iterable<CertificationCourseEntity> findAllByStatusNotOrderByCreatedAtDesc(final CertificationCourseStateEnum status);
+
+    /**
+     *
      * @param id
      * @return
      */
     Long countById(final ObjectId id);
+
+    /**
+     *
+     * @param id
+     * @param status
+     * @return
+     */
+    Long countByIdAndStatusNot(final ObjectId id, final CertificationCourseStateEnum status);
 
 }
