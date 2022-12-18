@@ -218,7 +218,9 @@ public class CertificationCourseController extends SupportController {
     public ResponseEntity<APIResponse<SimpleCertificationCourseDetailDTO>> partialUpdateCertificationCourse(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "courseId", description = "Course Id", required = true)
-            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @Validated(ICommonSequence.class)
+            @CourseShouldExist(message = "{course_should_exist}")
+            @CourseShouldEnable(message = "{course_not_enable}", groups = { IExtended.class })
             @PathVariable("courseId") String courseId,
             @RequestBody JsonMergePatch mergePatchDocument) {
         try {
@@ -248,7 +250,9 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<String>> enable(
             @Parameter(name = "courseId", description = "Course Id", required = true)
-            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @Validated(ICommonSequence.class)
+            @CourseShouldExist(message = "{course_should_exist}")
+            @CourseShouldDisable(message = "{course_not_disable}", groups = { IExtended.class })
             @PathVariable("courseId") String courseId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -278,7 +282,9 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<String>> disable(
             @Parameter(name = "courseId", description = "Course Id", required = true)
-            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @Validated(ICommonSequence.class)
+            @CourseShouldExist(message = "{course_should_exist}")
+            @CourseShouldEnable(message = "{course_not_enable}", groups = { IExtended.class })
             @PathVariable("courseId") String courseId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -352,7 +358,9 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForAdminOrCourseOwner
     public ResponseEntity<APIResponse<CertificationCourseEditionDetailDTO>> save(
             @Parameter(name = "courseId", description = "Course Id", required = true)
-            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @Validated(ICommonSequence.class)
+            @CourseShouldExist(message = "{course_should_exist}")
+            @CourseShouldEnable(message = "{course_not_enable}", groups = { IExtended.class })
             @PathVariable("courseId") String courseId,
             @Parameter(name = "certification_course_edition", description = "Certification Course Data. Cannot null or empty.",
                     required = true, schema = @Schema(implementation = SaveCertificationCourseEditionDTO.class))
@@ -387,10 +395,14 @@ public class CertificationCourseController extends SupportController {
     public ResponseEntity<APIResponse<CertificationCourseEditionDetailDTO>> partialUpdateCertificationCourseEdition(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(name = "courseId", description = "Course Id", required = true)
-            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @Validated(ICommonSequence.class)
+            @CourseShouldExist(message = "{course_should_exist}")
+            @CourseShouldEnable(message = "{course_not_enable}", groups = { IExtended.class })
             @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Edition Id", required = true)
-            @Valid @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+            @Validated(ICommonSequence.class)
+            @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+            @CourseEditionShouldEnable(message = "{course_edition_not_enable}", groups = { IExtended.class })
             @PathVariable("editionId") String editionId,
             @RequestBody JsonMergePatch mergePatchDocument) {
         try {
@@ -424,7 +436,9 @@ public class CertificationCourseController extends SupportController {
             @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Edition Id", required = true)
-            @Valid @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+            @Validated(ICommonSequence.class)
+            @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+            @CourseEditionShouldDisable(message = "{course_edition_not_disable}", groups = { IExtended.class })
             @PathVariable("editionId") String editionId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -457,7 +471,9 @@ public class CertificationCourseController extends SupportController {
             @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Edition Id", required = true)
-            @Valid @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+            @Validated(ICommonSequence.class)
+            @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+            @CourseEditionShouldEnable(message = "{course_edition_not_enable}", groups = { IExtended.class })
             @PathVariable("editionId") String editionId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -489,11 +505,14 @@ public class CertificationCourseController extends SupportController {
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<String>> enroll(
             @Parameter(name = "courseId", description = "Course Id", required = true)
-            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @Validated(ICommonSequence.class)
+            @CourseShouldExist(message = "{course_should_exist}")
+            @CourseShouldEnable(message = "{course_not_enable}", groups = { IExtended.class })
             @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Edition Id", required = true)
             @Validated(ICommonSequence.class)
             @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+            @CourseEditionShouldEnable(message = "{course_not_enable}", groups = { IExtended.class })
             @CourseEditionMustAllowEnrollment(message = "{course_edition_should_allow_enrollment}", groups = {IExtended.class})
             @UserMustNotYetBeEnrolled(message = "{user_must_not_yet_be_enrolled}", groups = {IExtended.class})
             @PathVariable("editionId") String editionId,
@@ -526,13 +545,16 @@ public class CertificationCourseController extends SupportController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<String>> checkIn(
             @Parameter(name = "courseId", description = "Course Id", required = true)
-            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @Validated(ICommonSequence.class)
+            @CourseShouldExist(message = "{course_should_exist}")
+            @CourseShouldEnable(message = "{course_not_enable}", groups = { IExtended.class })
             @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Edition Id", required = true)
             @Validated(ICommonSequence.class)
             @CourseEditionShouldExist(message = "{course_edition_should_exist}")
             @UserMustBeEnrolled(message = "{user_must_be_enrolled}", groups = {IExtended.class})
             @CourseEditionMustAllowCheckIn(message = "{course_edition_must_allow_check_in}", groups = {IExtended.class})
+            @CourseEditionShouldEnable(message = "{course_not_enable}", groups = { IExtended.class })
             @PathVariable("editionId") String editionId,
             @Parameter(description = "Security Token",
                     required = true, schema = @Schema(implementation = CourseEditionCheckInDTO.class))
@@ -564,11 +586,14 @@ public class CertificationCourseController extends SupportController {
     @RequestMapping(value = "/{courseId}/editions/{editionId}/enrollmentQR", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<byte[]> getEnrollmentQR(
-            @Valid @CourseShouldExist(message = "{course_should_exist}")
+            @Validated(ICommonSequence.class)
+            @CourseShouldExist(message = "{course_should_exist}")
+            @CourseShouldEnable(message = "{course_not_enable}", groups = { IExtended.class })
             @Parameter(name = "courseId", description = "Course Id", required = true)
             @PathVariable("courseId") String courseId,
             @Validated(ICommonSequence.class)
             @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+            @CourseEditionShouldEnable(message = "{course_not_enable}", groups = { IExtended.class })
             @CourseEditionMustAllowEnrollment(message = "{course_edition_should_allow_enrollment}", groups = {IExtended.class})
             @Parameter(name = "editionId", description = "Edition Id", required = true)
             @PathVariable("editionId") String editionId,
@@ -612,7 +637,8 @@ public class CertificationCourseController extends SupportController {
             @Valid @CourseShouldExist(message = "{course_should_exist}")
             @PathVariable("courseId") String courseId,
             @Parameter(name = "editionId", description = "Edition Id", required = true)
-            @Valid @CourseEditionShouldExist(message = "{course_edition_should_exist}")
+            @Validated(ICommonSequence.class)
+            @CourseEditionShouldExist(message = "{course_edition_should_exist}")
             @PathVariable("editionId") String editionId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request

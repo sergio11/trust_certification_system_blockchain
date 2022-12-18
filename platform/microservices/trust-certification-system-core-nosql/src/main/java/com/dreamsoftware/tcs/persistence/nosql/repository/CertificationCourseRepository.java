@@ -43,4 +43,12 @@ public interface CertificationCourseRepository extends MongoRepository<Certifica
      */
     Long countByIdAndStatusNot(final ObjectId id, final CertificationCourseStateEnum status);
 
+    /**
+     *
+     * @param id
+     * @param status
+     * @return
+     */
+    Long countByIdAndStatus(final ObjectId id, final CertificationCourseStateEnum status);
+
 }

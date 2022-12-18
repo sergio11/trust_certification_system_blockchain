@@ -30,6 +30,14 @@ public interface CertificationCourseEditionRepository extends MongoRepository<Ce
 
     /**
      *
+     * @param courseEditionId
+     * @param status
+     * @return
+     */
+    Long countByIdAndStatus(final ObjectId courseEditionId, final CertificationCourseStateEnum status);
+
+    /**
+     *
      * @param courseId
      * @return
      */
