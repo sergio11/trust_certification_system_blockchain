@@ -2,7 +2,7 @@ package com.dreamsoftware.tcs.web.validation.validator;
 
 import com.dreamsoftware.tcs.persistence.bc.repository.ITrustCertificationBlockchainRepository;
 import com.dreamsoftware.tcs.persistence.exception.RepositoryException;
-import com.dreamsoftware.tcs.web.validation.constraints.CourseShouldDisable;
+import com.dreamsoftware.tcs.web.validation.constraints.CertificateShouldDisable;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -11,7 +11,7 @@ import javax.validation.ConstraintValidatorContext;
  *
  * @author ssanchez
  */
-public class CertificateShouldDisableValidator implements ConstraintValidator<CourseShouldDisable, String> {
+public class CertificateShouldDisableValidator implements ConstraintValidator<CertificateShouldDisable, String> {
 
     @Autowired
     private ITrustCertificationBlockchainRepository trustCertificationBlockchainRepository;

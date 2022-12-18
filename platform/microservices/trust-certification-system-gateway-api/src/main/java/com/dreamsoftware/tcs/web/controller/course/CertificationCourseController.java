@@ -527,6 +527,7 @@ public class CertificationCourseController extends SupportController {
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Throwable ex) {
+            ex.printStackTrace();
             throw new CourseEnrollmentException(ex.getMessage(), ex);
         }
     }
@@ -569,6 +570,7 @@ public class CertificationCourseController extends SupportController {
         } catch (final ConstraintViolationException ex) {
             throw ex;
         } catch (final Exception ex) {
+            ex.printStackTrace();
             throw new CourseEditionCheckInException(ex.getMessage(), ex);
         }
     }
@@ -609,6 +611,7 @@ public class CertificationCourseController extends SupportController {
             final FileInfoDTO fileInfo = certificationCourseService.getEnrollmentQR(courseId, editionId, selfUser.getWalletHash(), qrWidth, qrHeight);
             return responseHelper.createAndSendMediaResponse(fileInfo);
         } catch (final Exception ex) {
+            ex.printStackTrace();
             throw new GetEnrollmentQRException(ex.getMessage(), ex);
         }
     }

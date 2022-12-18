@@ -21,6 +21,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.Date;
+
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
@@ -36,7 +38,6 @@ public class CourseEditionEnrollmentRequestHandler extends AbstractProcessAndRet
     private final ISecurityTokenGeneratorService securityTokenGeneratorService;
 
     /**
-     *
      * @param event
      * @return
      * @throws RepositoryException
@@ -47,21 +48,25 @@ public class CourseEditionEnrollmentRequestHandler extends AbstractProcessAndRet
         Assert.notNull(event.getCourseId(), "Course Id can not be null");
         Assert.notNull(event.getStudentWalletHash(), "Student Wallet hash can not be null");
         Assert.notNull(event.getEditionId(), "Course Edition Id can not be null");
+        log.debug("CourseEditionEnrollmentRequestHandler onHandle CALLED!");
         AbstractEvent notificationEvent = null;
         final UserEntity studentEntity = userRepository.findOneByWalletHash(event.getStudentWalletHash()).orElseThrow();
         final CertificationCourseEditionEntity certificationCourseEditionEntity =
                 certificationCourseEditionRepository.findById(new ObjectId(event.getEditionId())).orElseThrow();
         final CertificationCourseAttendeeControlEntity attendeeControlEntity = certificationCourseEditionEntity.getAttendeeControl();
-        if(attendeeControlEntity != null && (attendeeControlEntity.getMaxAttendanceCount() == 0 || attendeeControlEntity.getMaxAttendanceCount() > 0 &&
+        if (attendeeControlEntity != null && (attendeeControlEntity.getMaxAttendanceCount() == 0 || attendeeControlEntity.getMaxAttendanceCount() > 0 &&
                 attendeeControlEntity.getAttendedUsers().size() < attendeeControlEntity.getMaxAttendanceCount())) {
-            if(attendeeControlEntity.getEnrollCost() > 0) {
+            if (attendeeControlEntity.getEnrollCost() > 0) {
+                log.debug("tokenManagementBlockchainRepository.transfer enroll cost CALLED!");
                 tokenManagementBlockchainRepository.transfer(
                         event.getStudentWalletHash(),
                         certificationCourseEditionEntity.getCaMember().getWalletHash(),
                         attendeeControlEntity.getEnrollCost());
             }
+            log.debug("add CertificationCourseEditionAttendeeEntity CALLED!");
             attendeeControlEntity.getAttendedUsers().add(CertificationCourseEditionAttendeeEntity.builder()
                     .student(studentEntity)
+                    .enrolledAt(new Date())
                     .securityToken(securityTokenGeneratorService.generateToken(studentEntity.getId().toString()))
                     .build());
             certificationCourseEditionRepository.save(certificationCourseEditionEntity);

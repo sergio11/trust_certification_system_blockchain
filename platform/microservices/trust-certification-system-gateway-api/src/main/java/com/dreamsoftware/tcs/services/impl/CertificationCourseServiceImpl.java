@@ -226,7 +226,10 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
                             .filter(item -> item.getStudent().getWalletHash().equals(principal.getWalletHash()))
                             .collect(Collectors.toList());
                     if(!attendeeList.isEmpty()) {
-                        isValid.set(attendeeControlEntity.getMaxAttendanceCount() <= 0 || (attendeeList.get(0).getAttendedCount() / attendeeControlEntity.getMaxAttendanceCount() * 100) >= attendeeControlEntity.getMinPercentageAttendanceRequired());
+                        log.debug("attendeeControlEntity.getMaxAttendanceCount() -> " + attendeeControlEntity.getMaxAttendanceCount());
+                        log.debug("attendeeList.get(0).getAttendedCount() -> " + attendeeList.get(0).getAttendedCount());
+                        log.debug("attendeeControlEntity.getMinPercentageAttendanceRequired() -> " + attendeeControlEntity.getMinPercentageAttendanceRequired());
+                        isValid.set(attendeeControlEntity.getMaxAttendanceCount() <= 0 || ((double) attendeeList.get(0).getAttendedCount() / (double)attendeeControlEntity.getMaxAttendanceCount() * 100) >= attendeeControlEntity.getMinPercentageAttendanceRequired());
                     }
                 } else {
                     isValid.set(true);
@@ -304,6 +307,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
         return FileInfoDTO
                 .builder()
                 .content(qrCodeData)
+                .name(courseId.concat("_").concat(courseEdition))
                 .contentType(MediaType.IMAGE_PNG_VALUE)
                 .size((long) qrCodeData.length)
                 .build();
