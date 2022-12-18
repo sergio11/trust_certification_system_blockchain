@@ -241,11 +241,17 @@ The deployment and set-up of the contracts has been carried out through Remix ID
 Documents that represent the information about the events generated during the execution of the contracts will be registered in MongoDB, they will have the following format
 
 <img width="auto" src="./doc/screenshots/event_logs.PNG" />
-
-
-<img width="auto" src="./doc/screenshots/ipfs_platform.PNG" />
+<img width="auto" src="./doc/screenshots/mongodb_capture_1.PNG" />
+<img width="auto" src="./doc/screenshots/mongodb_capture_2.PNG" />
+<img width="auto" src="./doc/screenshots/mongodb_capture_3.PNG" />
+<img width="auto" src="./doc/screenshots/mongodb_capture_4.PNG" />
+<img width="auto" src="./doc/screenshots/mongodb_capture_5.PNG" />
 
 <img width="auto" src="./doc/screenshots/platform_containers.PNG" />
+
+The IPFS private swarm will consist of 4 nodes and 4 clusters
+
+<img width="auto" src="./doc/screenshots/ipfs_platform.PNG" />
 
 
 It is possible to access the web interface of the private swarm, to explore the stored files and check the configuration of the nodes that constitute it
