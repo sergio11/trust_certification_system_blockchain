@@ -224,19 +224,65 @@ Using the Ethereum NetStats dashboard we can visualize the state of the nodes th
 If it is necessary to obtain specific information for a mined block, we can use the Ethereum Lite Explorer tool to obtain all the relevant information related to the block.
 
 <img width="auto" src="./doc/screenshots/ethreum_block_explorer.PNG" />
-<img width="auto" src="./doc/screenshots/ethreum_miner.PNG" />
+
+The private blockchain network is made up of 7 nodes, 2 of these nodes are mining nodes that will be responsible for generating the blocks.
+
 <img width="auto" src="./doc/screenshots/ethreum_platform.PNG" />
+
+It is possible to review the logs of the nodes that make up the blockchain network, for the mining nodes you can see information about the transactions mined in the blocks.
+
+<img width="auto" src="./doc/screenshots/ethreum_miner.PNG" />
+
+The deployment and set-up of the contracts has been carried out through Remix IDE, using a MetaMask account it is possible to make the necessary configurations
+
 <img width="auto" src="./doc/screenshots/ethreum_remix.PNG" />
 <img width="auto" src="./doc/screenshots/ethreum_remix_2.PNG" />
+
+Documents that represent the information about the events generated during the execution of the contracts will be registered in MongoDB, they will have the following format
+
 <img width="auto" src="./doc/screenshots/event_logs.PNG" />
+<img width="auto" src="./doc/screenshots/mongodb_capture_1.PNG" />
+<img width="auto" src="./doc/screenshots/mongodb_capture_2.PNG" />
+<img width="auto" src="./doc/screenshots/mongodb_capture_3.PNG" />
+<img width="auto" src="./doc/screenshots/mongodb_capture_4.PNG" />
+<img width="auto" src="./doc/screenshots/mongodb_capture_5.PNG" />
+
+<img width="auto" src="./doc/screenshots/platform_containers.PNG" />
+
+The IPFS private swarm will consist of 4 nodes and 4 clusters
+
 <img width="auto" src="./doc/screenshots/ipfs_platform.PNG" />
+
+
+It is possible to access the web interface of the private swarm, to explore the stored files and check the configuration of the nodes that constitute it
+
 <img width="auto" src="./doc/screenshots/ipfs_webui.PNG" />
 <img width="auto" src="./doc/screenshots/ipfs_webui_2.PNG" />
+
+Through the akHQ.io tool we can explore the information of the events stored in the kafka topics, it is the central pillar of the architecture, through these topics the operation of the rest of the components will be orchestrated
+
 <img width="auto" src="./doc/screenshots/kafka_image.PNG" />
 <img width="auto" src="./doc/screenshots/kafka_image_2.PNG" />
 <img width="auto" src="./doc/screenshots/kafka_image_3.PNG" />
-<img width="auto" src="./doc/screenshots/platform_containers.PNG" />
+
+The Spring Eureka web dashboard allows us to know the status of the microservices that make up the platform
+
 <img width="auto" src="./doc/screenshots/spring_eureka.PNG" />
+
+With the combination of Prometheus and Grafana we can explore the performance metrics of the different services and components that make up the platform
+
+<img width="auto" src="./doc/screenshots/prometheus_targets.PNG" />
+<img width="auto" src="./doc/screenshots/monitor_services.PNG" />
+<img width="auto" src="./doc/screenshots/docker_containers_dashboard.PNG" />
+
+
+## Please Share & Star the repository to keep me motivated.
+  <a href = "https://github.com/sergio11/trust_certification_system_blockchain/stargazers">
+     <img src = "https://img.shields.io/github/stars/sergio11/trust_certification_system_blockchain" />
+  </a>
+  <a href = "https://twitter.com/SergioReact418">
+     <img src = "https://img.shields.io/twitter/url?label=follow&style=social&url=https%3A%2F%2Ftwitter.com%2FSergioReact418" />
+  </a>
 
 
 
