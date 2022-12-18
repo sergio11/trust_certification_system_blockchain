@@ -25,6 +25,7 @@ import com.dreamsoftware.tcs.stream.events.notifications.certificate.Certificate
 import com.dreamsoftware.tcs.stream.events.notifications.certificate.IssueCertificateRequestedNotificationEvent;
 import com.dreamsoftware.tcs.web.controller.certification.error.exception.CertificateInvalidException;
 import com.dreamsoftware.tcs.web.core.FileInfoDTO;
+import com.dreamsoftware.tcs.web.dto.request.AcceptCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDetailDTO;
@@ -148,6 +149,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
+     * Issue Certificate Request
      * @param issueCertificate
      * @throws Throwable
      */
@@ -155,7 +157,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     public CertificateIssuanceRequestDTO issueCertificateRequest(final IssueCertificateRequestDTO issueCertificate) throws Throwable {
         Assert.notNull(issueCertificate.getStudentWalletHash(), "Student Wallet Hash can not be null");
         Assert.notNull(issueCertificate.getCertificateCourseId(), "certificateCourseId can not be null");
-        Assert.notNull(issueCertificate.getQualification(), "qualification can not be null");
         final CertificationCourseEditionEntity certificationCourseEditionEntity = certificationCourseEditionRepository.findById(new ObjectId(issueCertificate.getCertificateCourseId()))
                 .orElseThrow(() -> new IllegalStateException("Course not found"));
         final UserEntity caEntity = certificationCourseEditionEntity.getCaMember();
@@ -167,7 +168,6 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
                 .courseEdition(certificationCourseEditionEntity)
                 .createdAt(new Date())
                 .status(CertificateStatusEnum.PENDING_REVIEW)
-                .qualification(issueCertificate.getQualification())
                 .type(CertificateTypeEnum.valueOf(issueCertificate.getType()))
                 .student(studentEntity)
                 .build();
@@ -180,13 +180,21 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
-     * @param id
+     * Accept Certificate Request
+     * @param request
      */
     @Override
-    public CertificateIssuanceRequestDTO acceptCertificateRequest(final String id) {
-        Assert.notNull(id, "Id can not be null");
-        final CertificateIssuanceRequestEntity certificateRequestUpdated = certificateIssuanceRequestRepository.updateStatus(new ObjectId(id), CertificateStatusEnum.REVIEWED);
-        final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = certificateIssuanceRequestMapper.entityToDTO(certificateRequestUpdated);
+    public CertificateIssuanceRequestDTO acceptCertificateRequest(final AcceptCertificateRequestDTO request) {
+        Assert.notNull(request, "request can not be null");
+        Assert.notNull(request.getCertificateRequestId(), "Certificate request id can not be null");
+        Assert.isTrue(ObjectId.isValid(request.getCertificateRequestId()), "Certificate request id is not valid");
+        final CertificateIssuanceRequestEntity certificateIssuanceRequestEntity = certificateIssuanceRequestRepository.findById(new ObjectId(request.getCertificateRequestId())).orElseThrow();
+        if(certificateIssuanceRequestEntity.getType().equals(CertificateTypeEnum.ACHIEVEMENT) && (request.getQualification() == null || request.getQualification() < 5)) {
+            throw new IllegalStateException("The qualification for this ACHIEVEMENT certificate is not valid");
+        }
+        certificateIssuanceRequestEntity.setQualification(request.getQualification());
+        certificateIssuanceRequestEntity.setStatus(CertificateStatusEnum.REVIEWED);
+        final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = certificateIssuanceRequestMapper.entityToDTO(certificateIssuanceRequestEntity);
         streamBridge.send(streamChannelsProperties.getCertificationManagement(), OnNewCertificateRequestAcceptedEvent
                 .builder()
                 .certificationRequestId(certificateIssuanceRequestDTO.getId())
@@ -198,6 +206,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
+     * Reject Certificate Request
      * @param id
      */
     @Override
@@ -212,6 +221,7 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
     }
 
     /**
+     * Renew Certificate
      * @param ownerWallet
      * @param certificationId
      * @return

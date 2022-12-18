@@ -32,13 +32,6 @@ public class IssueCertificateRequestDTO {
     private String certificateCourseId;
 
     /**
-     * Qualification Obtained
-     */
-    @Schema(description = "Qualification Obtained", required = true)
-    @JsonProperty("qualification")
-    private Long qualification;
-
-    /**
      * Certificate Type
      */
     @Schema(description = "Certificate Type (ACHIEVEMENT, ATTENDANCE)", required = true)
