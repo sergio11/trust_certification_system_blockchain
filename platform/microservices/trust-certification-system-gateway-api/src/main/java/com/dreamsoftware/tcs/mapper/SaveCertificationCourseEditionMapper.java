@@ -9,6 +9,8 @@ import org.bson.types.ObjectId;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+
 /**
  * Save Certification Course Edition Mapper
  *
@@ -81,6 +83,7 @@ public abstract class SaveCertificationCourseEditionMapper {
                 .maxAttendeeCount(dto.getMaxAttendeeCount())
                 .maxAttendanceCount(dto.getMaxAttendanceCount())
                 .minPercentageAttendanceRequired(dto.getMinPercentageAttendanceRequired())
+                .attendedUsers(new ArrayList<>())
                 .build() : null;
     }
 }

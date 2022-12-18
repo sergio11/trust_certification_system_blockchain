@@ -31,6 +31,7 @@ public class CourseManagementProcessor implements Function<GenericMessage<String
         try {
             notificationEvent = dispatcherEventHandlerService.processEventAndGetResult(event.getPayload());
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("CourseManagementProcessor ex -> " + e.getMessage());
         }
         return notificationEvent;

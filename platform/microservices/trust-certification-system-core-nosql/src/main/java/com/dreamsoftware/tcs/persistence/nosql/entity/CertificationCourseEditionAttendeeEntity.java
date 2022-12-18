@@ -21,7 +21,7 @@ public class CertificationCourseEditionAttendeeEntity {
      * Attended Count
      */
     @Field("attended_count")
-    private Long attendedCount;
+    private long attendedCount;
 
     /**
      * Enrolled At
