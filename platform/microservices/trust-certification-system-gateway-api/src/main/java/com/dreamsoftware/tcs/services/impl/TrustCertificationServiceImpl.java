@@ -194,7 +194,9 @@ public class TrustCertificationServiceImpl implements ITrustCertificationService
         }
         certificateIssuanceRequestEntity.setQualification(request.getQualification());
         certificateIssuanceRequestEntity.setStatus(CertificateStatusEnum.REVIEWED);
-        final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = certificateIssuanceRequestMapper.entityToDTO(certificateIssuanceRequestEntity);
+        log.debug("acceptCertificateRequest update certification request");
+        final CertificateIssuanceRequestEntity certificateIssuanceRequestEntityUpdated = certificateIssuanceRequestRepository.save(certificateIssuanceRequestEntity);
+        final CertificateIssuanceRequestDTO certificateIssuanceRequestDTO = certificateIssuanceRequestMapper.entityToDTO(certificateIssuanceRequestEntityUpdated);
         streamBridge.send(streamChannelsProperties.getCertificationManagement(), OnNewCertificateRequestAcceptedEvent
                 .builder()
                 .certificationRequestId(certificateIssuanceRequestDTO.getId())

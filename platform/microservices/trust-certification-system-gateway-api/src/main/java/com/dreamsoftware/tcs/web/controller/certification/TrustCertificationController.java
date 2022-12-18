@@ -344,7 +344,7 @@ public class TrustCertificationController extends SupportController {
      * @throws Throwable
      */
     @Operation(summary = "ACCEPT_CERTIFICATE_REQUEST - Accept request for certificate issuance", description = "Accept request for certificate issuance", tags = {"certification"})
-    @RequestMapping(value = "/accept", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/accept", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> acceptCertificateRequest(
             @Parameter(name = "certification request data", description = "Certification Request data",
