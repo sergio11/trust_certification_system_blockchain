@@ -276,6 +276,10 @@ With the combination of Prometheus and Grafana we can explore the performance me
 <img width="auto" src="./doc/screenshots/monitor_services.PNG" />
 <img width="auto" src="./doc/screenshots/docker_containers_dashboard.PNG" />
 
+ ## Visitors Count
+
+<img width="auto" src="https://profile-counter.glitch.me/trust_certification_system_blockchain/count.svg" />
+
 
 ## Please Share & Star the repository to keep me motivated.
   <a href = "https://github.com/sergio11/trust_certification_system_blockchain/stargazers">
