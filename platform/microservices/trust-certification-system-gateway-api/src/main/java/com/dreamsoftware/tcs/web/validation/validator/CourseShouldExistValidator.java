@@ -1,5 +1,6 @@
 package com.dreamsoftware.tcs.web.validation.validator;
 
+import com.dreamsoftware.tcs.persistence.nosql.entity.CertificationCourseStateEnum;
 import com.dreamsoftware.tcs.persistence.nosql.repository.CertificationCourseRepository;
 import com.dreamsoftware.tcs.web.validation.constraints.CourseShouldExist;
 import org.bson.types.ObjectId;
@@ -18,6 +19,6 @@ public class CourseShouldExistValidator implements ConstraintValidator<CourseSho
 
     @Override
     public boolean isValid(String id, ConstraintValidatorContext context) {
-        return ObjectId.isValid(id) && certificationCourseRepository.countById(new ObjectId(id)) > 0;
+        return ObjectId.isValid(id) && certificationCourseRepository.countByIdAndStatusNot(new ObjectId(id), CertificationCourseStateEnum.REMOVED) > 0;
     }
 }

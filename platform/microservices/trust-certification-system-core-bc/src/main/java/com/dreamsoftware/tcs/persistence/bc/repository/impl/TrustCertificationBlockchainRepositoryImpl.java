@@ -184,6 +184,58 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
         }
     }
 
+    @Override
+    public Boolean isCertificateDisabled(String certificationId) throws RepositoryException {
+        Assert.notNull(certificationId, "Certification Id can not be null");
+        log.debug("isCertificateDisabled " + certificationId + "CALLED!");
+        try {
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract();
+            final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();
+            return !certificateRecord.isEnabled;
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Boolean isCertificateEnabled(String certificationId) throws RepositoryException {
+        Assert.notNull(certificationId, "Certification Id can not be null");
+        log.debug("isCertificateEnabled " + certificationId + "CALLED!");
+        try {
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract();
+            final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();
+            return certificateRecord.isEnabled;
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Boolean isCertificateVisible(String certificationId) throws RepositoryException {
+        Assert.notNull(certificationId, "Certification Id can not be null");
+        log.debug("isCertificateVisible " + certificationId + "CALLED!");
+        try {
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract();
+            final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();
+            return certificateRecord.isVisible;
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public Boolean isCertificateInvisible(String certificationId) throws RepositoryException {
+        Assert.notNull(certificationId, "Certification Id can not be null");
+        log.debug("isCertificateInvisible " + certificationId + "CALLED!");
+        try {
+            final TrustCertificationContract trustCertificationContract = loadTrustCertificationContract();
+            final CertificateRecord certificateRecord = trustCertificationContract.getCertificateDetail(certificationId).send();
+            return !certificateRecord.isVisible;
+        } catch (final Exception ex) {
+            throw new RepositoryException(ex.getMessage(), ex);
+        }
+    }
+
     /**
      *
      * @param certificationId
@@ -276,6 +328,8 @@ public class TrustCertificationBlockchainRepositoryImpl extends SupportBlockchai
     /**
      * Private Methods
      */
+
+
     /**
      * Load Trust Certification Contract
      *

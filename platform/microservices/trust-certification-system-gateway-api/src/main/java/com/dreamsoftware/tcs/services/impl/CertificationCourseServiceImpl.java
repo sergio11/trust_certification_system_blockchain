@@ -478,7 +478,7 @@ public class CertificationCourseServiceImpl implements ICertificationCourseServi
      */
     @Override
     public Iterable<SimpleCertificationCourseDetailDTO> getAll() throws Throwable {
-        final Iterable<CertificationCourseEntity> certificationCourseList = certificationCourseRepository.findAll();
+        final Iterable<CertificationCourseEntity> certificationCourseList = certificationCourseRepository.findAllByStatusNotOrderByCreatedAtDesc(CertificationCourseStateEnum.REMOVED);
         return simpleCertificationCourseDetailMapper.entityListToDTOList(certificationCourseList);
     }
 

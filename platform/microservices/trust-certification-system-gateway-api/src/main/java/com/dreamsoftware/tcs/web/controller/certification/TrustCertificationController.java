@@ -26,7 +26,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +36,6 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- *
  * @author ssanchez
  */
 @RestController
@@ -62,7 +63,9 @@ public class TrustCertificationController extends SupportController {
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<String>> enable(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
-            @Valid @CertificateShouldExist(message = "{certificate_not_exist}")
+            @Validated(ICommonSequence.class)
+            @CertificateShouldExist(message = "{certificate_not_exist}")
+            @CertificateShouldDisable(message = "{certificate_not_disabled}", groups = {IExtended.class})
             @PathVariable("certId") String certId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -89,7 +92,9 @@ public class TrustCertificationController extends SupportController {
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<String>> disable(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
-            @Valid @CertificateShouldExist(message = "{certificate_not_exist}")
+            @Validated(ICommonSequence.class)
+            @CertificateShouldExist(message = "{certificate_not_exist}")
+            @CertificateShouldEnable(message = "{certificate_not_enabled}", groups = {IExtended.class})
             @PathVariable("certId") String certId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -116,7 +121,9 @@ public class TrustCertificationController extends SupportController {
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<String>> enableCertificateVisibility(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
-            @Valid @CertificateShouldExist(message = "{certificate_not_exist}")
+            @Validated(ICommonSequence.class)
+            @CertificateShouldExist(message = "{certificate_not_exist}")
+            @CertificateShouldInvisible(message = "{certificate_not_invisible}", groups = {IExtended.class})
             @PathVariable("certId") String certId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -139,12 +146,13 @@ public class TrustCertificationController extends SupportController {
      * @throws java.lang.Throwable
      */
     @Operation(summary = "DISABLE_CERTIFICATE_VISIBILITY - Disable Certificate Visibility", description = "Disable Certificate Visibility", tags = {"certification"})
-    @RequestMapping(value = "/{certId}/invisible", method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{certId}/invisible", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<String>> disableCertificateVisibility(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
-            @Valid @CertificateShouldExist(message = "{certificate_not_exist}")
+            @Validated(ICommonSequence.class)
+            @CertificateShouldExist(message = "{certificate_not_exist}")
+            @CertificateShouldVisible(message = "{certificate_not_visible}", groups = {IExtended.class})
             @PathVariable("certId") String certId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser,
             @Parameter(hidden = true) HttpServletRequest request
@@ -167,16 +175,17 @@ public class TrustCertificationController extends SupportController {
      */
     @Operation(summary = "GET_CERTIFICATE_ISSUED_DETAIL - Get Certificate Issued Detail", description = "Get Certificate Detail", tags = {"certification"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Certificate Issued Detail",
-                content = @Content(schema = @Schema(implementation = SimpleCertificateIssuedDTO.class))),
-        @ApiResponse(responseCode = "404", description = "Certificate Issued Not Found",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Certificate Issued Detail",
+                    content = @Content(schema = @Schema(implementation = SimpleCertificateIssuedDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Certificate Issued Not Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/{certId}/detail"}, method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/{certId}/detail"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<APIResponse<CertificateIssuedDetailDTO>> getDetailById(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
-            @Valid @CertificateShouldExist(message = "{certificate_not_exist}")
+            @Validated(ICommonSequence.class)
+            @CertificateShouldExist(message = "{certificate_not_exist}")
+            @CertificateShouldVisible(message = "{certificate_not_visible}", groups = {IExtended.class})
             @PathVariable("certId") String certId
     ) throws Throwable {
         try {
@@ -197,13 +206,12 @@ public class TrustCertificationController extends SupportController {
      */
     @Operation(summary = "GET_MY_CERTIFICATES_AS_RECIPIENT - Get My Certificates As Recipient", description = "Get My Certificates As Recipient", tags = {"certification"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Certificates As Recipient",
-                content = @Content(schema = @Schema(implementation = SimpleCertificateIssuedDTO.class))),
-        @ApiResponse(responseCode = "404", description = "No Certificates Found",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Certificates As Recipient",
+                    content = @Content(schema = @Schema(implementation = SimpleCertificateIssuedDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No Certificates Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/certificates/recipient"}, method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/certificates/recipient"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<Iterable<SimpleCertificateIssuedDTO>>> getMyCertificatesAsRecipient(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
@@ -226,13 +234,12 @@ public class TrustCertificationController extends SupportController {
      */
     @Operation(summary = "GET_CERTIFICATES_ISSUANCE_REQUESTS_FROM_STUDENT - Get certificates issuance requests from student", description = "Get certificates issuance requests from student", tags = {"certification"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Certificates Issuance request",
-                content = @Content(schema = @Schema(implementation = CertificateIssuanceRequestDTO.class))),
-        @ApiResponse(responseCode = "404", description = "No Certificates request Found",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Certificates Issuance request",
+                    content = @Content(schema = @Schema(implementation = CertificateIssuanceRequestDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No Certificates request Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/certificates/request/student"}, method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/certificates/request/student"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<Iterable<CertificateIssuanceRequestDTO>>> getCertificatesIssuanceRequestsFromStudent(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
@@ -255,13 +262,12 @@ public class TrustCertificationController extends SupportController {
      */
     @Operation(summary = "GET_CERTIFICATES_ISSUANCE_REQUESTS_FROM_CA - Get certificates issuance requests from CA", description = "Get certificates issuance requests from CA", tags = {"certification"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Certificates Issuance request",
-                content = @Content(schema = @Schema(implementation = CertificateIssuanceRequestDTO.class))),
-        @ApiResponse(responseCode = "404", description = "No Certificates request Found",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Certificates Issuance request",
+                    content = @Content(schema = @Schema(implementation = CertificateIssuanceRequestDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No Certificates request Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/certificates/request/ca"}, method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/certificates/request/ca"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<Iterable<CertificateIssuanceRequestDTO>>> getCertificatesIssuanceRequestsFromCa(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
@@ -284,13 +290,12 @@ public class TrustCertificationController extends SupportController {
      */
     @Operation(summary = "GET_MY_CERTIFICATES_AS_ISSUER - Get My Certificates As Issuer", description = "Get My Certificates As Issuer", tags = {"certification"})
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Certificates As Issuer",
-                content = @Content(schema = @Schema(implementation = SimpleCertificateIssuedDTO.class))),
-        @ApiResponse(responseCode = "404", description = "No Certificates Found",
-                content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Certificates As Issuer",
+                    content = @Content(schema = @Schema(implementation = SimpleCertificateIssuedDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No Certificates Found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    @RequestMapping(value = {"/certificates/issuer"}, method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/certificates/issuer"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<Iterable<SimpleCertificateIssuedDTO>>> getMyCertificatesAsIssuer(
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
@@ -313,8 +318,7 @@ public class TrustCertificationController extends SupportController {
      * @throws java.lang.Throwable
      */
     @Operation(summary = "ISSUE_CERTIFICATE_REQUEST - Issue Certificate Request", description = "Issue Certificate Request", tags = {"certification"})
-    @RequestMapping(value = "/request", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/request", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> issueCertificateRequest(
             @Parameter(name = "issue_certificate_request", description = "Issue Certificate Request. Cannot null or empty.",
@@ -340,8 +344,7 @@ public class TrustCertificationController extends SupportController {
      * @throws java.lang.Throwable
      */
     @Operation(summary = "ACCEPT_CERTIFICATE_REQUEST - Accept request for certificate issuance", description = "Accept request for certificate issuance", tags = {"certification"})
-    @RequestMapping(value = "/{certId}/accept", method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{certId}/accept", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> acceptCertificateRequest(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
@@ -365,8 +368,7 @@ public class TrustCertificationController extends SupportController {
      * @throws java.lang.Throwable
      */
     @Operation(summary = "REJECT_CERTIFICATE_REQUEST - Reject request for certificate issuance", description = "Reject request for certificate issuance", tags = {"certification"})
-    @RequestMapping(value = "/{certId}/reject", method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{certId}/reject", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForCA
     public ResponseEntity<APIResponse<CertificateIssuanceRequestDTO>> rejectCertificateRequest(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
@@ -384,19 +386,21 @@ public class TrustCertificationController extends SupportController {
 
     /**
      * Renew Certificate
+     *
      * @param certId
      * @param selfUser
      * @return
      * @throws java.lang.Throwable
      */
     @Operation(summary = "RENEW_CERTIFICATE - Renew Certificate", description = "Issue Certificate", tags = {"certification"})
-    @RequestMapping(value = "/{certId}/renew", method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{certId}/renew", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @OnlyAccessForStudent
     public ResponseEntity<APIResponse<CertificateIssuedDetailDTO>> renewCertificate(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
-            @Valid @ShouldHaveAssociatedCertificate(message = "{certificate_not_exist}")
-            @ShouldHaveEnoughFundForRenewingCertificate(message = "{not_enough_funds_for_renewing_certificate}")
+            @Validated(ICommonSequence.class)
+            @ShouldHaveAssociatedCertificate(message = "{certificate_not_exist}")
+            @CertificateShouldEnable(message = "{certificate_not_enabled}", groups = { IExtended.class })
+            @ShouldHaveEnoughFundForRenewingCertificate(message = "{not_enough_funds_for_renewing_certificate}", groups = {IExtended.class})
             @PathVariable("certId") String certId,
             @Parameter(hidden = true) @CurrentUser ICommonUserDetailsAware<String> selfUser
     ) throws Throwable {
@@ -419,7 +423,9 @@ public class TrustCertificationController extends SupportController {
     @RequestMapping(value = "/{certId}/download/file", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> downloadCertificateFile(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
-            @Valid @CertificateShouldExist(message = "{certificate_not_exist}")
+            @Validated(ICommonSequence.class)
+            @CertificateShouldExist(message = "{certificate_not_exist}")
+            @CertificateShouldVisible(message = "{certificate_not_visible}", groups = {IExtended.class})
             @PathVariable("certId") String certId
     ) {
         try {
@@ -441,7 +447,9 @@ public class TrustCertificationController extends SupportController {
             produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> downloadCertificateImage(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
-            @Valid @CertificateShouldExist(message = "{certificate_not_exist}")
+            @Validated(ICommonSequence.class)
+            @CertificateShouldExist(message = "{certificate_not_exist}")
+            @CertificateShouldVisible(message = "{certificate_not_visible}", groups = {IExtended.class})
             @PathVariable("certId") String certId
     ) {
         try {
@@ -454,6 +462,7 @@ public class TrustCertificationController extends SupportController {
 
     /**
      * Generate Certificate QR
+     *
      * @param certId
      * @param qrWidth
      * @param qrHeight
@@ -464,14 +473,14 @@ public class TrustCertificationController extends SupportController {
     @OnlyAccessForStudent
     public ResponseEntity<byte[]> generateCertificateQR(
             @Parameter(name = "certId", description = "Certificate Id", required = true)
-            @Valid @CertificateShouldExist(message = "{certificate_not_exist}")
+            @Validated(ICommonSequence.class)
+            @CertificateShouldExist(message = "{certificate_not_exist}")
+            @CertificateShouldVisible(message = "{certificate_not_visible}", groups = {IExtended.class})
             @PathVariable("certId") String certId,
             @Parameter(name = "width", description = "QR Width")
-            @RequestParam(name = "width", defaultValue = "200")
-            final Integer qrWidth,
+            @RequestParam(name = "width", defaultValue = "200") final Integer qrWidth,
             @Parameter(name = "height", description = "QR Height")
-            @RequestParam(name = "height", defaultValue = "200")
-            final Integer qrHeight
+            @RequestParam(name = "height", defaultValue = "200") final Integer qrHeight
     ) {
         try {
             final FileInfoDTO fileInfo = trustCertificationService.generateCertificateQr(certId, qrWidth, qrHeight);
@@ -482,7 +491,6 @@ public class TrustCertificationController extends SupportController {
     }
 
     /**
-     *
      * @param validateCertificateDTO
      * @return
      * @throws Throwable
