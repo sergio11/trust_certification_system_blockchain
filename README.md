@@ -139,6 +139,7 @@ Below I would like to list several important implementation details:
 * Students and users members of a certification authority may acquire new ERC20 TCS tokens to carry out transactions such as certificate generation, registration of certification courses, for the purchase will be made through a PayPal gateway.
 * Any request related to  a certification generation request must be accepted or rejected by a user who is a member of the certification authority to which the certification course belongs. At the time of acceptance, the certification will be generated, stored on the IPFS network, and their information (file signature hash, base58 IPDS id) will be stored at certification smart contract in the blockchain. Users involved in the process will receive notifications about the status of the request.
 * Platform administrator users will be authenticated against an OpenLDAP server, they will have sufficient permissions to manage certification authorities and other privileged operations.
+* Each certificate contains a QR code that stores its encrypted identifier. Reading this payload will allow validation of the certificate on the platform.
 
 ## Used technology.
 
