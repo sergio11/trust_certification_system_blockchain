@@ -241,13 +241,26 @@ The deployment and set-up of the contracts has been carried out through Remix ID
 Documents that represent the information about the events generated during the execution of the contracts will be registered in MongoDB, they will have the following format
 
 <img width="auto" src="./doc/screenshots/event_logs.PNG" />
+
+
 <img width="auto" src="./doc/screenshots/ipfs_platform.PNG" />
+
+<img width="auto" src="./doc/screenshots/platform_containers.PNG" />
+
+
+It is possible to access the web interface of the private swarm, to explore the stored files and check the configuration of the nodes that constitute it
+
 <img width="auto" src="./doc/screenshots/ipfs_webui.PNG" />
 <img width="auto" src="./doc/screenshots/ipfs_webui_2.PNG" />
+
+Through the akHQ.io tool we can explore the information of the events stored in the kafka topics, it is the central pillar of the architecture, through these topics the operation of the rest of the components will be orchestrated
+
 <img width="auto" src="./doc/screenshots/kafka_image.PNG" />
 <img width="auto" src="./doc/screenshots/kafka_image_2.PNG" />
 <img width="auto" src="./doc/screenshots/kafka_image_3.PNG" />
-<img width="auto" src="./doc/screenshots/platform_containers.PNG" />
+
+The Spring Eureka web dashboard allows us to know the status of the microservices that make up the platform
+
 <img width="auto" src="./doc/screenshots/spring_eureka.PNG" />
 
 
