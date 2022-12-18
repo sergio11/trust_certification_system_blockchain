@@ -1,6 +1,7 @@
 package com.dreamsoftware.tcs.services;
 
 import com.dreamsoftware.tcs.web.core.FileInfoDTO;
+import com.dreamsoftware.tcs.web.dto.request.AcceptCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.request.IssueCertificateRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuanceRequestDTO;
 import com.dreamsoftware.tcs.web.dto.response.CertificateIssuedDetailDTO;
@@ -78,10 +79,10 @@ public interface ITrustCertificationService {
     /**
      * Accept request for certificate issuance
      *
-     * @param id
+     * @param acceptCertificateRequestDTO
      * @return
      */
-    CertificateIssuanceRequestDTO acceptCertificateRequest(final String id);
+    CertificateIssuanceRequestDTO acceptCertificateRequest(final AcceptCertificateRequestDTO acceptCertificateRequestDTO);
 
     /**
      * Reject request for certificate issuance
