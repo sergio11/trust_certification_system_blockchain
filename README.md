@@ -16,6 +16,8 @@ A Certification Authority and a Student reach an agreement in order to issue a c
 
 TCS uses a private IPFS swarm to quickly process and store any number of files on multiple computers simultaneously.
 
+Also you can read more detail information about this project [in this Medium article](https://sanchezsanchezsergio418.medium.com/trust-certification-system-safeguarding-academic-integrity-with-blockchain-b212c78789e4).
+
 </br>
 
 <p align="center">
