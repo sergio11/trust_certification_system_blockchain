@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/github/last-commit/sergio11/trust_certification_system_blockchain.svg" />
 </p>
 
-<img width="auto" align="left" src="./tcs_logo.jpg" />
+<img width="auto" height="300" align="left" src="./doc/tcs_main_logo.PNG" />
 
 **Issuance of academic certificates or attendance certificates with Blockchain.**
 
