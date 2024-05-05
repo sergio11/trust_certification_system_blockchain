@@ -1,20 +1,17 @@
 # 🔗 Trust Certification System - Your Platform for Seamless Management and Issuance of Digital Certificates, Reinforced by Blockchain Technology for Ultimate Trust and Security. 🌐🛡️
 
-<p>
-  <img src="https://img.shields.io/github/last-commit/sergio11/trust_certification_system_blockchain.svg" />
-</p>
-
 <img width="auto" height="250" align="left" src="./doc/tcs_main_logo.PNG" />
 
-**Issuance of academic certificates or attendance certificates with Blockchain.**
+🎓 **Issuance of academic certificates or attendance certificates with Blockchain.** 📜
 
-TCS offers a simple system that eliminates paper traffic and complex operating procedures. Allows the creation of unique certificates, immediately verifiable and unfalsifiable for all types of academic diplomas.
+TCS offers a simple system that eliminates paper traffic and complex operating procedures. Allows the creation of unique certificates, immediately verifiable and unfalsifiable for all types of academic diplomas. 🔄
 
-TCS uses Blockchain technology in order to provide inviolability, immutability and easy verification for all your certificates. This platform guarantees students and certificate authorities the possibility of issuein a digital and unforgeable version of their certificates and it is guaranteed that any interested third party can verify their integrity.
+TCS uses Blockchain technology in order to provide inviolability, immutability and easy verification for all your certificates. This platform guarantees students and certificate authorities the possibility of issuing a digital and unforgeable version of their certificates and it is guaranteed that any interested third party can verify their integrity. 🔒
 
-A Certification Authority and a Student reach an agreement in order to issue a certificate on the platform, this certificate is generated, signed and stored using cryptographic techniques. After that, the Student can go to any other institution and share their certificate, whose veracity can be verified directly on the platform without having to contact the institution that issued it again.
+A Certification Authority and a Student reach an agreement in order to issue a certificate on the platform, this certificate is generated, signed and stored using cryptographic techniques. After that, the Student can go to any other institution and share their certificate, whose veracity can be verified directly on the platform without having to contact the institution that issued it again. 📄
 
-TCS uses a private IPFS swarm to quickly process and store any number of files on multiple computers simultaneously.
+TCS uses a private IPFS swarm to quickly process and store any number of files on multiple computers simultaneously. 🖥️🔐
+
 
 Also you can read more detail information about this project [in this Medium article](https://sanchezsanchezsergio418.medium.com/trust-certification-system-safeguarding-academic-integrity-with-blockchain-b212c78789e4).
 
