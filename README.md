@@ -50,7 +50,7 @@ This repository is based on the following projects:
     <img width="45%" src="./doc/tcs--13599917018255595355.png" />
 </p>
 
-## Why Blockchain Technology?
+## Why Blockchain Technology? 🌐
 
 The Blockchain technology is a new technology that appeared in 2008 that allows information to be recorded with guarantees of originality and security never possible before. It is based on a cryptographic system that allows the issuers to be irrefutably identified and that guarantees the immutability of the information.
 
@@ -60,41 +60,41 @@ The implementation of the blockchain network means that there are many copies of
 
 Taking into account all of this, blockchain technology can hasten the end of the paper certification system. Until now, the use of digital certificates had been paralyzed due to the ease with which they could be forged. Blockchain provides organizations with a way to issue digital certificates that are unalterable and valid in perpetuity, since their authenticity can be checked against the system itself. Certificates are transferred as a token on the blockchain and are always available. These advantages over current systems significantly increase the value proposition of digital certificates, possibly leading to their widespread use.
 
-## Advantages of the Trust Certification System.
+## Advantages of the Trust Certification System. 🛡️
 
-### Security
+### Security 🔒
 
 Digital certificates cannot be altered or manipulated. They are generated and securely stored on a private blockchain network. Nothing and no one can change the information registered in the Blockchain.
 
-### Integrity
+### Integrity ✅
 
 They assure in the face of third parties the authenticity of the identity and the information they contained. The registered information can be verified by third parties, such as companies, selection committees, etc.
 
-### Simplicity
+### Simplicity 📱
 
 Students or third parties can confirm the authenticity of the certificates immediately, using only the mobile phone.
 
-### Ownership
+### Ownership 👤
 
 The student or professional is the sovereign owner of the information and decides with whom to share it. The unequivocal identification of the individual or the products is guaranteed without the possibility of the information being falsified.
 
-## Benefits for students, certification authorities and third parties
+## Benefits for students, certification authorities and third parties 🎓
 
-### Students
+### Students 🎓
 
 * Comfortable system to share and validate certificates
 * Really easy to use, students can request new certificates through a couple steps.
 
-### Certificate Authorities
+### Certificate Authorities 🏛️
 
 * Eliminate the possibility of forging certificates.
 * Fast certification process.
 * Cheaper process, we use our own monetary system based on ERC 20 tokens.
 * It stick off as an innovative and avant-garde institution.
 * Provides greater value for students.
-* Preserves the prestige of the certificaction authority by ensuring the veracity of the certificates.
+* Preserves the prestige of the certification authority by ensuring the veracity of the certificates.
 
-### Third parties such as companies or other verification institutions.
+### Third parties such as companies or other verification institutions. 🏢
 
 * Ability to verify candidates' qualifications through a secure, fast and free system for the verifier.
 * Safer selection processes that enable economic savings derived from hiring errors.
