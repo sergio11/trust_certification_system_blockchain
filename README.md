@@ -12,7 +12,6 @@ A Certification Authority and a Student reach an agreement in order to issue a c
 
 TCS uses a private IPFS swarm to quickly process and store any number of files on multiple computers simultaneously. 🖥️🔐
 
-
 Also you can read more detail information about this project [in this Medium article](https://sanchezsanchezsergio418.medium.com/trust-certification-system-safeguarding-academic-integrity-with-blockchain-b212c78789e4).
 
 </br>
@@ -41,13 +40,16 @@ Also you can read more detail information about this project [in this Medium art
 This repository is based on the following projects:
 
 * [Decentralized application designed to guarantee the transparency, traceability, security and truthfulness of the certificates issued by certification authorities.](https://github.com/sergio11/trust_certification_system_ethereum_dapp) 
-* [Configuration for TCS microservices platform powered by Spring Cloud Config.](https://github.com/sergio11/trust_certification_system_blockchain_config) 
+* [Configuration for TCS microservices platform powered by Spring Cloud Config.](https://github.com/sergio11/trust_certification_system_blockchain_config)
+
+## ⚠️ Disclaimer  
+
+**Trust Certification System (TCS)** is an **experimental and educational project** designed to demonstrate the potential of **Blockchain technology** in the secure issuance and verification of digital certificates. 
 
 ### TCS-signed, self-generated certificates, securely stored in a private Blockchain.
 
-<p align="center">
-    <img width="45%" src="./doc/tcs--3761077930437957903.png" />
-    <img width="45%" src="./doc/tcs--13599917018255595355.png" />
+<p>
+    <img width="50%" src="./doc/tcs--3761077930437957903.png" />
 </p>
 
 ## Why Blockchain Technology? 🌐
