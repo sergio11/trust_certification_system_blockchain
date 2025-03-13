@@ -1,6 +1,6 @@
 # 🔗 Trust Certification System - Your Platform for Seamless Management and Issuance of Digital Certificates, Reinforced by Blockchain Technology for Ultimate Trust and Security. 🌐🛡️
 
-<img width="auto" height="250" align="left" src="./doc/tcs_main_logo.PNG" />
+<img width="auto" height="300" align="left" src="./doc/tcs_logo.webp" />
 
 🎓 **Issuance of academic certificates or attendance certificates with Blockchain.** 📜
 
